@@ -100,6 +100,13 @@ async function state() {
     phases,
     tasks,
     current: section(md, 'Current task'),
+    now: Object.fromEntries(
+      read('docs/NOW.md')
+        .split('\n')
+        .map((l) => /^([A-Za-z]+):\s*(.*)$/.exec(l))
+        .filter((m) => m !== null)
+        .map((m) => [m[1].toLowerCase(), m[2]]),
+    ),
     decisions: section(md, 'Decisions needed'),
     log: parseTable(section(md, 'Log')).slice(-12).reverse(),
     branch: git('branch', '--show-current'),

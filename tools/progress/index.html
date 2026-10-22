@@ -43,6 +43,16 @@
   .phase-head { display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; cursor: pointer; }
   .phase-head b { min-width: 28px; }
   .phase-name { flex: 1; min-width: 180px; }
+  .hero { background: var(--panel); border: 1px solid var(--line); border-left: 6px solid var(--doing);
+    border-radius: 12px; padding: 18px 20px; margin-bottom: 20px; }
+  .hero-label { font-size: 12px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin-bottom: 6px; }
+  .hero-doing { font-size: 22px; line-height: 1.3; font-weight: 650; margin-bottom: 14px; }
+  .hero-grid { display: grid; grid-template-columns: 90px 1fr; gap: 6px 14px; margin: 0; font-size: 15px; }
+  .hero-grid dt { color: var(--muted); }
+  .hero-grid dd { margin: 0; overflow-wrap: anywhere; }
+  .hero-where { margin-top: 12px; font-size: 13px; color: var(--muted); }
+  .hero-needs-yes { color: var(--crit); font-weight: 600; }
+  .plain { display: block; font-size: 12.5px; color: var(--muted); font-weight: 400; }
   .chip { font-size: 11.5px; padding: 1px 8px; border-radius: 99px; border: 1px solid var(--line);
     color: var(--muted); white-space: nowrap; }
   .chip.progress { color: var(--doing); border-color: currentColor; }
@@ -73,6 +83,19 @@
 </head>
 <body>
 <main>
+  <section class="hero" id="hero" aria-live="polite">
+    <div class="hero-label"><span class="pulse"></span>What I am doing right now</div>
+    <div class="hero-doing" id="hero-doing">loading…</div>
+    <dl class="hero-grid">
+      <dt>Why</dt><dd id="hero-why"></dd>
+      <dt>Folder</dt><dd id="hero-folder"></dd>
+      <dt>Who</dt><dd id="hero-who"></dd>
+      <dt>Next</dt><dd id="hero-next"></dd>
+      <dt>Needs you</dt><dd id="hero-needs"></dd>
+    </dl>
+    <div class="hero-where" id="hero-where"></div>
+  </section>
+
   <header>
     <div>
       <h1>Universal Pinout Finder — build progress</h1>
@@ -106,6 +129,15 @@
 </main>
 <script>
   const open = new Set();
+  const plainPhase = {
+    '0': 'Set up the tools',
+    '1': 'Foundation: the data safety checker',
+    '2a': 'Real boards and sensors, from official datasheets',
+    '2b': 'The pin-picking brain',
+    '3': 'The website you will use',
+    '4': 'Example code generator',
+    '5': 'Final release',
+  };
   const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const inline = (s) => esc(s).replace(/`([^`]+)`/g, '<code>$1</code>').replace(/\*\*([^*]+)\*\*/g, '<b>$1</b>')
     .replace(/_([^_]+)_/g, '<i>$1</i>');
@@ -135,6 +167,16 @@
     document.getElementById('pct').textContent = s.percent + '%';
     document.getElementById('pct-sub').textContent = `${T.done} of ${T.total} tasks done · ${T.doing} in progress · ${T.deferred} deferred`;
     document.getElementById('bar').innerHTML = bar(T.done, T.doing, T.deferred, T.total);
+    const n = s.now || {};
+    document.getElementById('hero-doing').textContent = n.doing || 'Waiting for the next step.';
+    document.getElementById('hero-why').textContent = n.why || '';
+    document.getElementById('hero-folder').textContent = n.folder || '';
+    document.getElementById('hero-who').textContent = n.who || '';
+    document.getElementById('hero-next').textContent = n.next || '';
+    const needs = document.getElementById('hero-needs');
+    needs.textContent = n.needs || 'Nothing right now.';
+    needs.className = /^nothing/i.test(n.needs || 'nothing') ? '' : 'hero-needs-yes';
+    document.getElementById('hero-where').textContent = (n.where ? n.where + ' · ' : '') + s.percent + '% of the whole project done (' + s.totals.done + ' of ' + s.totals.total + ' tasks)';
     document.getElementById('current').innerHTML = md(s.current);
     document.getElementById('decisions').innerHTML = md(s.decisions);
     document.getElementById('phases').innerHTML = s.phases.map((p) => {
@@ -143,7 +185,7 @@
       const tasks = s.tasks.filter((t) => t.phase === p.id).map((t) =>
         `<li><span class="ico ${markCls[t.mark]}" title="${esc(t.mark)}">${markIco[t.mark] ?? '?'}</span><code>${esc(t.id)}</code><span>${inline(t.desc)} <span class="owner">· ${esc(t.owner)}</span></span></li>`).join('');
       return `<div class="phase ${open.has(p.id) || cls === 'progress' && !open.has('!' + p.id) ? 'open' : ''}" data-id="${esc(p.id)}">
-        <div class="phase-head"><b>${esc(p.id)}</b><span class="phase-name">${inline(p.name)}</span>
+        <div class="phase-head"><b>${esc(p.id)}</b><span class="phase-name">${esc(plainPhase[p.id] || '')}<span class="plain">${inline(p.name)}</span></span>
         <span class="chip ${cls}">${esc(p.status)}</span><span class="count">${p.done}/${p.total}</span></div>
         <div class="bar">${bar(p.done, p.doing, p.deferred, p.total)}</div>
         ${p.notes ? `<div class="dim" style="font-size:12px;margin-top:4px">${inline(p.notes)}</div>` : ''}
