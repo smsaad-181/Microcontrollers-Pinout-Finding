@@ -39,7 +39,7 @@ claims:
   - id: abx00080-sch-v1.2#led-sck
     locator: "Sheet 1, LED block (transcribed)"
     quote: "SCK LED DL4 KPT-1608YC YELLOW 330 R17 P111_GPT3_A"
-    supports: "DL4 SCK LED with R17 330 ohm is driven from P111 (D13)"
+    supports: DL4 SCK LED (anode on the P111 net, D13) with R17 330 ohm in series to ground
   - id: abx00080-sch-v1.2#led-txrx
     locator: "Sheet 1, LED block (transcribed)"
     quote: "TX LED RX LED P012 P013 330 R14 330 R15"
@@ -54,8 +54,8 @@ claims:
     supports: "AREF header pin is the VREFH0 (P010) net, through ferrite L1, with R4 5.1 kohm to +5V"
   - id: abx00080-sch-v1.2#md-net
     locator: "Sheet 1, MICROCONTROLLER and JANALOG pin 1 (transcribed)"
-    quote: "MD/P201 MD 5.1k R5 5.1k R6"
-    supports: "MD (P201) net goes to JANALOG pin 1 (BOOT) and is tied to +5V through R5 and R6 (5.1 kohm each)"
+    quote: MD/P201 MD 5.1k R6
+    supports: MD (P201) net goes to JANALOG pin 1 (BOOT) and is tied to +5V through R6 (5.1 kohm); R5 is the P200 NMI pull-up, not on this net (image re-read in the reconcile)
   - id: abx00080-sch-v1.2#p500-divider
     locator: "Sheet 1, MICROCONTROLLER block (transcribed)"
     quote: "GTIOC2A/AN016/P500 R10 100k 0.1% R26 13.7k 0.1%"
@@ -63,7 +63,7 @@ claims:
   - id: abx00080-sch-v1.2#p407-network
     locator: "Sheet 1, MICROCONTROLLER and USB blocks (transcribed)"
     quote: "P407/USB_VBUS/ADTRG0 5.1k R7 5.1k R8 5.1k R9"
-    supports: "P407 is connected to a 5.1 kohm resistor network (R7, R8, R9); purpose not labelled"
+    supports: P407 is connected to the junction of R7 (5.1 kohm to +5V) and R8 + R9 (5.1 kohm each in series to ground); a USB VBUS sense divider; purpose not labelled
   - id: abx00080-sch-v1.2#swd-conn
     locator: "Sheet 1, SWD CONNECTOR (transcribed)"
     quote: "SWD CONNECTOR J2 HPH2-A-10-SGA P108_SWDIO P300_SWCLK P501_SCI1_TXD P502_SCI1_RXD"
@@ -76,3 +76,35 @@ claims:
     locator: "Sheet 1, RESET PUSHBUTTON block"
     quote: "RESET PUSHBUTTON"
     supports: "PB1 pulls the RES net (RESET) low"
+  - id: abx00080-sch-v1.2#usb-dp-dm
+    locator: Sheet 1, MICROCONTROLLER block, U1 pins 18 and 19 (transcribed)
+    quote: P915/USB_DM P914/USB_DP
+    supports: U1 pin 18 P915 is USB_DM (D-) and pin 19 P914 is USB_DP (D+), wired to the USB connector nets USB_D_N and USB_D_P
+  - id: abx00080-sch-v1.2#nmi-pullup
+    locator: Sheet 1, MICROCONTROLLER block, U1 pin 27 (transcribed)
+    quote: INPUT ONLY P200 5.1k R5
+    supports: P200 (NMI, input only) is pulled to +5V by R5 5.1 kohm; R5 is not on the MD net (R6 is)
+  - id: abx00080-sch-v1.2#reset-pullup
+    locator: Sheet 1, RESET PUSHBUTTON block (transcribed)
+    quote: RESET PUSHBUTTON PB1 1571636-3 R3 5.1k C2 DNP
+    supports: PB1 pulls the RESET net low; R3 5.1 kohm pulls it to +5V; C2 is not populated (DNP)
+  - id: abx00080-sch-v1.2#swd-reset
+    locator: Sheet 1, SWD CONNECTOR, J2 pin 10 (transcribed)
+    quote: J2 HPH2-A-10-SGA 10 RESET
+    supports: J2 pin 10 is the RESET net (the user manual prints this pin as NC)
+  - id: abx00080-sch-v1.2#icsp-conn
+    locator: Sheet 1, header block, J1 PH2-06-UA (transcribed)
+    quote: J1 PH2-06-UA P111_GPT3_A P110_SCI9_RXD RESET P109_SCI9_TXD
+    supports: "ICSP header J1: pin 1 on net P110, pin 3 on P111, pin 4 on P109, pin 5 RESET, pin 2 +5V, pin 6 GND (the same nets as D12, D13, D11)"
+  - id: abx00080-sch-v1.2#jdigital-numbering
+    locator: Sheet 1, header block, JDIGITAL 20TW-994 (transcribed)
+    quote: JDIGITAL 20TW-994 SCL 18 SDA 17 AREF 16 GND 15 D13/SCK 14 D0/RX 1
+    supports: Schematic pin numbers of JDIGITAL run D0 = 1 to SCL = 18, the reverse of the user manual table (SCL = 1 to D0 = 18)
+  - id: abx00080-sch-v1.2#janalog-pin1-nc
+    locator: Sheet 1, header block, JANALOG 20TW-995 pin 1 (transcribed)
+    quote: MD NC
+    supports: JANALOG pin 1 symbol text is NC but its net is MD (P201); the manual and pinout call it BOOT
+  - id: abx00080-sch-v1.2#usb-connector-parts
+    locator: Sheet 1, USB block (transcribed)
+    quote: J3 CX90B-16P D4 PRTR5V0U2X
+    supports: USB-C connector J3 CX90B-16P with ESD protection D4 PRTR5V0U2X

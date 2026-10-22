@@ -184,3 +184,27 @@ claims:
     locator: "§19 Change Log, p. 19"
     quote: "20/10/2026 6 Added note for Intended Use, and divided language"
     supports: "Manual revision 6 dated 20/10/2026; no board hardware revision is printed"
+  - id: abx00080-um-rev6#analog-5v-rail
+    locator: "§10.1 Analog, p. 13"
+    quote: +5V Power Rail
+    supports: JANALOG pin 5 is the +5V power rail
+  - id: abx00080-um-rev6#analog-3v3-rail
+    locator: "§10.1 Analog, p. 13"
+    quote: +3V3 Power Rail
+    supports: JANALOG pin 4 is the +3V3 power rail
+  - id: abx00080-um-rev6#icsp-table
+    locator: §10.3 ICSP, p. 14
+    quote: CIPO Internal Controller In Peripheral Out
+    supports: ICSP header pin 1 is CIPO (pins 2 +5V, 3 SCK, 4 COPI, 5 RESET, 6 GND); no pads are given
+  - id: abx00080-um-rev6#swd-pin10-nc
+    locator: §10.4 SWD/JTAG, p. 14 (pins 6 and 10)
+    quote: NC Internal Not connected
+    supports: The manual prints SWD pins 6 and 10 as NC; the schematic (J2 pin 10 = RESET) and the pinout say pin 10 is RESET
+  - id: abx00080-um-rev6#vusb-buck
+    locator: "§9 Power Options, p. 10"
+    quote: The VUSB, barrel jack connector and VIN pins are connected to the ISL854102FRZ buck converter
+    supports: Manual says VUSB feeds the buck converter; the schematic netlist has the USB Schottky D3 on the +5V net directly (disagreement, no value depends on it)
+  - id: abx00080-um-rev6#power-led-dl1
+    locator: §12.1, p. 16
+    quote: as indicated by the LED (DL1)
+    supports: Manual names DL1 as the power indicator although s4.1 and the schematic make DL1 the TX LED and DL3 the power LED
