@@ -1,0 +1,19 @@
+# Evidence record: ESP8266 Hardware Design Guidelines Version 2.8 (2024.10), read 2026-10-22 from sources/cache/esp8266-hdg.pdf.
+# Locators give the printed page number (PDF page = printed + 5). Boot-mode level combinations are NOT tabulated in this document.
+accessed: "2026-10-22"
+claims:
+  - {"id": "esp8266-hdg-v2.8#strap-register", "locator": "Chapter 1, note after the pin table, printed p.5", "quote": "GPIO2, GPIO0, and MTDO are configurable on PCB as the 3-bit strapping register that determines the booting mode and the SDIO timing mode.", "supports": "GPIO0, GPIO2 and MTDO (GPIO15) are the three strapping pins (boot mode and SDIO timing mode); no other pad is named"}
+  - {"id": "esp8266-hdg-v2.8#gpio15-low", "locator": "§1.4.7, printed p.11", "quote": "GPIO15, the strapping pin of ESP8266EX, needs to be at low-voltage level when the chip is powered on.", "supports": "GPIO15 must be low at power-on"}
+  - {"id": "esp8266-hdg-v2.8#io-3v3", "locator": "§1.4.7, printed p.11", "quote": "The IO of the ESP8266EX is a 3.3 V logic level.", "supports": "ESP8266EX I/O is 3.3 V logic"}
+doc_number: null
+id: "esp8266-hdg-v2.8"
+kind: "design-guide"
+manual: false
+publisher: "Espressif Systems"
+revision: "2.8"
+revision_date: "2024.10"
+secondary: false
+sha256: "ff98aeeed7fd07e2fac43cdeca9b0170e03de395b0c79d28a35a40408a16638c"
+title: "ESP8266 Hardware Design Guidelines"
+url: "https://documentation.espressif.com/esp8266_hardware_design_guidelines_en.pdf"
+url_original: "https://www.espressif.com/sites/default/files/documentation/esp8266_hardware_design_guidelines_en.pdf"

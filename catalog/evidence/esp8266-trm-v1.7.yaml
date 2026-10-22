@@ -1,0 +1,19 @@
+# Evidence record: ESP8266 Technical Reference Version 1.7 (2020.10 footer), read 2026-10-22 from sources/cache/esp8266-trm.pdf.
+# Locators give the printed page number. The TRM has no boot-mode table; its register list shows a GPIO_STRAPPING field without values.
+accessed: "2026-10-22"
+claims:
+  - {"id": "esp8266-trm-v1.7#gpio16-rtc-no-irq", "locator": "§2.2.5 GPIO16 Related APIs, printed p.7", "quote": "it can be configured to input or output mode; but it cannot trigger the IO interrupt.", "supports": "GPIO16 (XPD_DCDC) cannot trigger the IO interrupt"}
+  - {"id": "esp8266-trm-v1.7#gpio16-rtc-module", "locator": "§2.2.5 GPIO16 Related APIs, printed p.7", "quote": "GPIO16(XPD_DCDC) belongs to the RTC module instead of the general GPIO module.", "supports": "GPIO16 belongs to the RTC module, not the general GPIO module; it can wake the chip from deep sleep"}
+  - {"id": "esp8266-trm-v1.7#mtdo-not-pulled-up", "locator": "§11.6 Abandon Serial Output During Booting, printed p.83", "quote": "pin13 (mtdo) can not be pulled up by external in ESP8266 is booting.", "supports": "In the swapped-UART case, GPIO15 (MTDO) must not be pulled up externally while booting"}
+doc_number: null
+id: "esp8266-trm-v1.7"
+kind: "trm"
+manual: false
+publisher: "Espressif Systems"
+revision: "1.7"
+revision_date: null
+secondary: false
+sha256: "25f08aa786724a9c82ad503fda6b4339b154d59efedc5c9dfff9544aca756211"
+title: "ESP8266 Technical Reference"
+url: "https://documentation.espressif.com/esp8266-technical_reference_en.pdf"
+url_original: "https://www.espressif.com/sites/default/files/documentation/esp8266-technical_reference_en.pdf"

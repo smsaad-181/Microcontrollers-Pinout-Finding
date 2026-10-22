@@ -1,0 +1,293 @@
+# ESP8266EX (Espressif) - draft facts, all single-source or missing (hardware-researcher, task 2a.1/2a.2).
+# Sources: ESP8266EX Datasheet v7.1, ESP8266 Hardware Design Guidelines v2.8, ESP8266 Technical Reference v1.7.
+# Pads: GPIO0-GPIO16 exist (datasheet §4.1: 17 GPIO pins). Pads GPIO6-GPIO11 are the SDIO/SPI flash bus pins (Table 2-1).
+# Every function is a fixed per-pad function, hence routing 'iomux' (the documents give per-pad function tables, no matrix).
+# CATALOG-INTERNAL PAD 'TOUT' with gpio: 17: the ADC input (pin 6) is not a GPIO, but the schema requires a pad with a number
+#   to carry the ADC fact and to let a board header pin (A0) resolve. 17 is NOT a datasheet number (the chip has GPIO0-16 only;
+#   17 is the next free index). Flagged as a schema gap in the hand-off.
+# I2C, PWM and IR are software implementations in this chip (datasheet §4.4, §4.7, §4.8); the datasheet lists fixed example pins
+#   (I2C SCL IO14 / SDA IO2, PWM0-3 IO12/15/14/4, IR TX IO14 / RX IO5). They are recorded as printed with matrix_routable false
+#   (most restrictive reading of the pin tables); the documents do not say software I2C/PWM cannot use other GPIOs.
+# I2S functions are recorded per pad but there is no I2S peripheral kind in the schema.
+# 'GPIO15' strap: see its note (default_pull is a placeholder). reset_state and power_up_glitch are missing for every pad (no document states them).
+electrical:
+  abs_max_vin: {"evidence": [], "note": "Datasheet v7.1 has no absolute-maximum-ratings table (Table 5-1 is 'Electrical Characteristics'). Table 5-1 lists VIH min 0.75 VIO and max 3.6 V (esp8266ex-ds-v7.1#el-vih), an operating-characteristics value, not an absolute maximum rating, so it is not recorded here. Hardware design guidelines v2.8 and TRM v1.7 searched: no input-voltage rating either.", "status": "missing", "unit": "V", "value": null}
+  cumulative_current_max: {"evidence": [], "note": "No total/cumulative I/O current limit is stated in datasheet v7.1 Table 5-1 (only IMAX 12 mA in the I/O group).", "status": "missing", "unit": "mA", "value": null}
+  pin_current_max: {"evidence": ["esp8266ex-ds-v7.1#el-imax"], "note": "Table 5-1 row IMAX, max 12 mA, group 'I/O', no condition stated. Whether it is a per-pin rating or an operating limit is not further defined in the document.", "status": "single-source", "unit": "mA", "value": 12}
+  vih_min: {"evidence": ["esp8266ex-ds-v7.1#el-vih"], "note": "Table 5-1: VIH min 0.75 VIO (VIO = the digital I/O supply). Table 5-1 also lists VIH max 3.6 V (operating row; the schema has no field for it).", "status": "single-source", "unit": "V", "value": "VDDIO*0.75"}
+  vil_max: {"evidence": ["esp8266ex-ds-v7.1#el-vil"], "note": "Table 5-1: VIL max 0.25 VIO (min -0.3 V).", "status": "single-source", "unit": "V", "value": "VDDIO*0.25"}
+  voh_min: {"evidence": ["esp8266ex-ds-v7.1#el-voh"], "note": "Table 5-1: VOH min 0.8 VIO.", "status": "single-source", "unit": "V", "value": "VDDIO*0.8"}
+  vol_max: {"evidence": ["esp8266ex-ds-v7.1#el-vol"], "note": "Table 5-1: VOL max 0.1 VIO.", "status": "single-source", "unit": "V", "value": "VDDIO*0.1"}
+family: "ESP8266"
+id: "esp8266ex"
+pads:
+  GPIO0:
+    errata: []
+    functions:
+      - {"fn": "GPIO", "routing": "iomux"}
+      - {"fn": "SPI.CS2", "routing": "iomux"}
+    gpio: 0
+    input_only: {"evidence": ["esp8266ex-ds-v7.1#pin-gpio0"], "note": "Table 2-1 lists the pin as type I/O (can drive an output).", "status": "single-source", "value": false}
+    power_up_glitch: {"evidence": [], "note": "No document states a power-up output glitch for this pad (datasheet v7.1, hardware design guidelines v2.8, TRM v1.7 searched). No ESP8266 errata document was located: the Espressif chip-errata site returns HTTP 404 for an esp8266 page. Absence is not recorded as 'none'.", "status": "missing", "value": null}
+    reset_state: {"evidence": [], "note": "Reset-time pad state (input / pull / disabled) is not stated in the datasheet v7.1, hardware design guidelines v2.8 or technical reference v1.7 (searched pin tables, GPIO chapter, register list). The datasheet only says each pad can be software-configured with an internal pull (§4.1).", "status": "missing", "value": null}
+    strap: {"evidence": [], "note": "GPIO0 is a boot-mode / SDIO-mode strapping pin (datasheet v7.1 note after Table 2-1: esp8266ex-ds-v7.1#boot-mode-note; hardware design guidelines v2.8: esp8266-hdg-v2.8#strap-register), but no opened document tabulates the required level or default pull, so none is recorded. The 'ESP8266 Pin List' (Strapping List) linked from the datasheet Appendix A was not opened.", "status": "missing", "value": null}
+  GPIO1:
+    errata: []
+    functions:
+      - {"fn": "GPIO", "routing": "iomux"}
+      - {"fn": "UART0.TXD", "routing": "iomux"}
+      - {"fn": "SPI.CS1", "routing": "iomux"}
+    gpio: 1
+    input_only: {"evidence": ["esp8266ex-ds-v7.1#pin-gpio1"], "note": "Table 2-1 lists the pin as type I/O (can drive an output).", "status": "single-source", "value": false}
+    power_up_glitch: {"evidence": [], "note": "No document states a power-up output glitch for this pad (datasheet v7.1, hardware design guidelines v2.8, TRM v1.7 searched). No ESP8266 errata document was located: the Espressif chip-errata site returns HTTP 404 for an esp8266 page. Absence is not recorded as 'none'.", "status": "missing", "value": null}
+    reset_state: {"evidence": [], "note": "Reset-time pad state (input / pull / disabled) is not stated in the datasheet v7.1, hardware design guidelines v2.8 or technical reference v1.7 (searched pin tables, GPIO chapter, register list). The datasheet only says each pad can be software-configured with an internal pull (§4.1).", "status": "missing", "value": null}
+    strap: {"evidence": [], "note": "Datasheet v7.1 says U0TXD (GPIO1) 'should not be pulled externally to a low logic level during the powering-up' (esp8266ex-ds-v7.1#u0txd-powerup). The schema strap value cannot express 'not low', and the document does not call it a strap, so no strap value is recorded.", "status": "missing", "value": null}
+  GPIO10:
+    errata: []
+    functions:
+      - {"fn": "GPIO", "routing": "iomux"}
+      - {"fn": "SDIO.DATA3", "routing": "iomux"}
+      - {"fn": "SPI.WP", "routing": "iomux"}
+      - {"fn": "HSPI.WP", "routing": "iomux"}
+    gpio: 10
+    input_only: {"evidence": ["esp8266ex-ds-v7.1#pin-gpio10"], "note": "Table 2-1 lists the pin as type I/O (can drive an output).", "status": "single-source", "value": false}
+    power_up_glitch: {"evidence": [], "note": "No document states a power-up output glitch for this pad (datasheet v7.1, hardware design guidelines v2.8, TRM v1.7 searched). No ESP8266 errata document was located: the Espressif chip-errata site returns HTTP 404 for an esp8266 page. Absence is not recorded as 'none'.", "status": "missing", "value": null}
+    reset_state: {"evidence": [], "note": "Reset-time pad state (input / pull / disabled) is not stated in the datasheet v7.1, hardware design guidelines v2.8 or technical reference v1.7 (searched pin tables, GPIO chapter, register list). The datasheet only says each pad can be software-configured with an internal pull (§4.1).", "status": "missing", "value": null}
+    strap: {"evidence": ["esp8266-hdg-v2.8#strap-register"], "note": "Only GPIO0, GPIO2 and MTDO (GPIO15) are named as strapping pins (3-bit strapping register); no other pad is named. Absence-based.", "status": "single-source", "value": "none"}
+  GPIO11:
+    errata: []
+    functions:
+      - {"fn": "GPIO", "routing": "iomux"}
+      - {"fn": "SDIO.CMD", "routing": "iomux"}
+      - {"fn": "SPI.CS0", "routing": "iomux"}
+    gpio: 11
+    input_only: {"evidence": ["esp8266ex-ds-v7.1#pin-gpio11"], "note": "Table 2-1 lists the pin as type I/O (can drive an output).", "status": "single-source", "value": false}
+    power_up_glitch: {"evidence": [], "note": "No document states a power-up output glitch for this pad (datasheet v7.1, hardware design guidelines v2.8, TRM v1.7 searched). No ESP8266 errata document was located: the Espressif chip-errata site returns HTTP 404 for an esp8266 page. Absence is not recorded as 'none'.", "status": "missing", "value": null}
+    reset_state: {"evidence": [], "note": "Reset-time pad state (input / pull / disabled) is not stated in the datasheet v7.1, hardware design guidelines v2.8 or technical reference v1.7 (searched pin tables, GPIO chapter, register list). The datasheet only says each pad can be software-configured with an internal pull (§4.1).", "status": "missing", "value": null}
+    strap: {"evidence": ["esp8266-hdg-v2.8#strap-register"], "note": "Only GPIO0, GPIO2 and MTDO (GPIO15) are named as strapping pins (3-bit strapping register); no other pad is named. Absence-based.", "status": "single-source", "value": "none"}
+  GPIO12:
+    errata: []
+    functions:
+      - {"fn": "GPIO", "routing": "iomux"}
+      - {"fn": "HSPI.MISO", "routing": "iomux"}
+      - {"fn": "I2S.I_DATA", "routing": "iomux"}
+      - {"fn": "PWM0", "routing": "iomux"}
+    gpio: 12
+    input_only: {"evidence": ["esp8266ex-ds-v7.1#pin-gpio12"], "note": "Table 2-1 lists the pin as type I/O (can drive an output).", "status": "single-source", "value": false}
+    power_up_glitch: {"evidence": [], "note": "No document states a power-up output glitch for this pad (datasheet v7.1, hardware design guidelines v2.8, TRM v1.7 searched). No ESP8266 errata document was located: the Espressif chip-errata site returns HTTP 404 for an esp8266 page. Absence is not recorded as 'none'.", "status": "missing", "value": null}
+    reset_state: {"evidence": [], "note": "Reset-time pad state (input / pull / disabled) is not stated in the datasheet v7.1, hardware design guidelines v2.8 or technical reference v1.7 (searched pin tables, GPIO chapter, register list). The datasheet only says each pad can be software-configured with an internal pull (§4.1).", "status": "missing", "value": null}
+    strap: {"evidence": ["esp8266-hdg-v2.8#strap-register"], "note": "Only GPIO0, GPIO2 and MTDO (GPIO15) are named as strapping pins (3-bit strapping register); no other pad is named. Absence-based.", "status": "single-source", "value": "none"}
+  GPIO13:
+    errata: []
+    functions:
+      - {"fn": "GPIO", "routing": "iomux"}
+      - {"fn": "HSPI.MOSI", "routing": "iomux"}
+      - {"fn": "UART0.CTS", "routing": "iomux"}
+      - {"fn": "I2S.I_BCK", "routing": "iomux"}
+    gpio: 13
+    input_only: {"evidence": ["esp8266ex-ds-v7.1#pin-gpio13"], "note": "Table 2-1 lists the pin as type I/O (can drive an output).", "status": "single-source", "value": false}
+    power_up_glitch: {"evidence": [], "note": "No document states a power-up output glitch for this pad (datasheet v7.1, hardware design guidelines v2.8, TRM v1.7 searched). No ESP8266 errata document was located: the Espressif chip-errata site returns HTTP 404 for an esp8266 page. Absence is not recorded as 'none'.", "status": "missing", "value": null}
+    reset_state: {"evidence": [], "note": "Reset-time pad state (input / pull / disabled) is not stated in the datasheet v7.1, hardware design guidelines v2.8 or technical reference v1.7 (searched pin tables, GPIO chapter, register list). The datasheet only says each pad can be software-configured with an internal pull (§4.1).", "status": "missing", "value": null}
+    strap: {"evidence": ["esp8266-hdg-v2.8#strap-register"], "note": "Only GPIO0, GPIO2 and MTDO (GPIO15) are named as strapping pins (3-bit strapping register); no other pad is named. Absence-based.", "status": "single-source", "value": "none"}
+  GPIO14:
+    errata: []
+    functions:
+      - {"fn": "GPIO", "routing": "iomux"}
+      - {"fn": "HSPI.CLK", "routing": "iomux"}
+      - {"fn": "I2C.SCL", "routing": "iomux"}
+      - {"fn": "I2S.I_WS", "routing": "iomux"}
+      - {"fn": "PWM2", "routing": "iomux"}
+      - {"fn": "IR.TX", "routing": "iomux"}
+    gpio: 14
+    input_only: {"evidence": ["esp8266ex-ds-v7.1#pin-gpio14"], "note": "Table 2-1 lists the pin as type I/O (can drive an output).", "status": "single-source", "value": false}
+    power_up_glitch: {"evidence": [], "note": "No document states a power-up output glitch for this pad (datasheet v7.1, hardware design guidelines v2.8, TRM v1.7 searched). No ESP8266 errata document was located: the Espressif chip-errata site returns HTTP 404 for an esp8266 page. Absence is not recorded as 'none'.", "status": "missing", "value": null}
+    reset_state: {"evidence": [], "note": "Reset-time pad state (input / pull / disabled) is not stated in the datasheet v7.1, hardware design guidelines v2.8 or technical reference v1.7 (searched pin tables, GPIO chapter, register list). The datasheet only says each pad can be software-configured with an internal pull (§4.1).", "status": "missing", "value": null}
+    strap: {"evidence": ["esp8266-hdg-v2.8#strap-register"], "note": "Only GPIO0, GPIO2 and MTDO (GPIO15) are named as strapping pins (3-bit strapping register); no other pad is named. Absence-based.", "status": "single-source", "value": "none"}
+  GPIO15:
+    errata: []
+    functions:
+      - {"fn": "GPIO", "routing": "iomux"}
+      - {"fn": "HSPI.CS", "routing": "iomux"}
+      - {"fn": "UART0.RTS", "routing": "iomux"}
+      - {"fn": "I2S.O_BCK", "routing": "iomux"}
+      - {"fn": "PWM1", "routing": "iomux"}
+    gpio: 15
+    input_only: {"evidence": ["esp8266ex-ds-v7.1#pin-gpio15"], "note": "Table 2-1 lists the pin as type I/O (can drive an output).", "status": "single-source", "value": false}
+    power_up_glitch: {"evidence": [], "note": "No document states a power-up output glitch for this pad (datasheet v7.1, hardware design guidelines v2.8, TRM v1.7 searched). No ESP8266 errata document was located: the Espressif chip-errata site returns HTTP 404 for an esp8266 page. Absence is not recorded as 'none'.", "status": "missing", "value": null}
+    reset_state: {"evidence": [], "note": "Reset-time pad state (input / pull / disabled) is not stated in the datasheet v7.1, hardware design guidelines v2.8 or technical reference v1.7 (searched pin tables, GPIO chapter, register list). The datasheet only says each pad can be software-configured with an internal pull (§4.1).", "status": "missing", "value": null}
+    strap: {"evidence": ["esp8266-hdg-v2.8#gpio15-low", "esp8266-hdg-v2.8#strap-register", "esp8266ex-ds-v7.1#boot-mode-note"], "note": "GPIO15 must be low at power-on (hardware design guidelines §1.4.7). default_pull 'none' is a placeholder: no document states the default internal pull of this pad. The TRM adds (swapped-UART case) that MTDO must not be pulled up externally while booting (esp8266-trm-v1.7#mtdo-not-pulled-up).", "status": "single-source", "value": {"default_pull": "none", "required_at_reset": "low", "role": "boot-mode (MTDO); also SDIO timing mode"}}
+  GPIO16:
+    errata: []
+    functions:
+      - {"fn": "GPIO", "routing": "iomux"}
+      - {"fn": "XPD_DCDC", "routing": "iomux"}
+    gpio: 16
+    input_only: {"evidence": ["esp8266ex-ds-v7.1#pin-gpio16", "esp8266-trm-v1.7#gpio16-rtc-no-irq"], "note": "Type I/O (Table 2-1). GPIO16 belongs to the RTC module and cannot trigger the IO interrupt (TRM §2.2.5); it supports an internal pull-down only (datasheet §4.1).", "status": "single-source", "value": false}
+    power_up_glitch: {"evidence": [], "note": "No document states a power-up output glitch for this pad (datasheet v7.1, hardware design guidelines v2.8, TRM v1.7 searched). No ESP8266 errata document was located: the Espressif chip-errata site returns HTTP 404 for an esp8266 page. Absence is not recorded as 'none'.", "status": "missing", "value": null}
+    reset_state: {"evidence": [], "note": "Reset-time pad state (input / pull / disabled) is not stated in the datasheet v7.1, hardware design guidelines v2.8 or technical reference v1.7 (searched pin tables, GPIO chapter, register list). The datasheet only says each pad can be software-configured with an internal pull (§4.1).", "status": "missing", "value": null}
+    strap: {"evidence": ["esp8266-hdg-v2.8#strap-register"], "note": "Only GPIO0, GPIO2 and MTDO (GPIO15) are named as strapping pins (3-bit strapping register); no other pad is named. Absence-based.", "status": "single-source", "value": "none"}
+  GPIO2:
+    errata: []
+    functions:
+      - {"fn": "GPIO", "routing": "iomux"}
+      - {"fn": "UART1.TXD", "routing": "iomux"}
+      - {"fn": "I2C.SDA", "routing": "iomux"}
+      - {"fn": "I2S.O_WS", "routing": "iomux"}
+    gpio: 2
+    input_only: {"evidence": ["esp8266ex-ds-v7.1#pin-gpio2"], "note": "Table 2-1 lists the pin as type I/O (can drive an output).", "status": "single-source", "value": false}
+    power_up_glitch: {"evidence": [], "note": "No document states a power-up output glitch for this pad (datasheet v7.1, hardware design guidelines v2.8, TRM v1.7 searched). No ESP8266 errata document was located: the Espressif chip-errata site returns HTTP 404 for an esp8266 page. Absence is not recorded as 'none'.", "status": "missing", "value": null}
+    reset_state: {"evidence": [], "note": "Reset-time pad state (input / pull / disabled) is not stated in the datasheet v7.1, hardware design guidelines v2.8 or technical reference v1.7 (searched pin tables, GPIO chapter, register list). The datasheet only says each pad can be software-configured with an internal pull (§4.1).", "status": "missing", "value": null}
+    strap: {"evidence": [], "note": "GPIO2 is a boot-mode / SDIO-mode strapping pin (datasheet v7.1 note after Table 2-1: esp8266ex-ds-v7.1#boot-mode-note; hardware design guidelines v2.8: esp8266-hdg-v2.8#strap-register), but no opened document tabulates the required level or default pull, so none is recorded. The 'ESP8266 Pin List' (Strapping List) linked from the datasheet Appendix A was not opened.", "status": "missing", "value": null}
+  GPIO3:
+    errata: []
+    functions:
+      - {"fn": "GPIO", "routing": "iomux"}
+      - {"fn": "UART0.RXD", "routing": "iomux"}
+      - {"fn": "I2S.O_DATA", "routing": "iomux"}
+    gpio: 3
+    input_only: {"evidence": ["esp8266ex-ds-v7.1#pin-gpio3"], "note": "Table 2-1 lists the pin as type I/O (can drive an output).", "status": "single-source", "value": false}
+    power_up_glitch: {"evidence": [], "note": "No document states a power-up output glitch for this pad (datasheet v7.1, hardware design guidelines v2.8, TRM v1.7 searched). No ESP8266 errata document was located: the Espressif chip-errata site returns HTTP 404 for an esp8266 page. Absence is not recorded as 'none'.", "status": "missing", "value": null}
+    reset_state: {"evidence": [], "note": "Reset-time pad state (input / pull / disabled) is not stated in the datasheet v7.1, hardware design guidelines v2.8 or technical reference v1.7 (searched pin tables, GPIO chapter, register list). The datasheet only says each pad can be software-configured with an internal pull (§4.1).", "status": "missing", "value": null}
+    strap: {"evidence": ["esp8266-hdg-v2.8#strap-register"], "note": "Only GPIO0, GPIO2 and MTDO (GPIO15) are named as strapping pins (3-bit strapping register); no other pad is named. Absence-based.", "status": "single-source", "value": "none"}
+  GPIO4:
+    errata: []
+    functions:
+      - {"fn": "GPIO", "routing": "iomux"}
+      - {"fn": "PWM3", "routing": "iomux"}
+    gpio: 4
+    input_only: {"evidence": ["esp8266ex-ds-v7.1#pin-gpio4"], "note": "Table 2-1 lists the pin as type I/O (can drive an output).", "status": "single-source", "value": false}
+    power_up_glitch: {"evidence": [], "note": "No document states a power-up output glitch for this pad (datasheet v7.1, hardware design guidelines v2.8, TRM v1.7 searched). No ESP8266 errata document was located: the Espressif chip-errata site returns HTTP 404 for an esp8266 page. Absence is not recorded as 'none'.", "status": "missing", "value": null}
+    reset_state: {"evidence": [], "note": "Reset-time pad state (input / pull / disabled) is not stated in the datasheet v7.1, hardware design guidelines v2.8 or technical reference v1.7 (searched pin tables, GPIO chapter, register list). The datasheet only says each pad can be software-configured with an internal pull (§4.1).", "status": "missing", "value": null}
+    strap: {"evidence": ["esp8266-hdg-v2.8#strap-register"], "note": "Only GPIO0, GPIO2 and MTDO (GPIO15) are named as strapping pins (3-bit strapping register); no other pad is named. Absence-based.", "status": "single-source", "value": "none"}
+  GPIO5:
+    errata: []
+    functions:
+      - {"fn": "GPIO", "routing": "iomux"}
+      - {"fn": "IR.RX", "routing": "iomux"}
+    gpio: 5
+    input_only: {"evidence": ["esp8266ex-ds-v7.1#pin-gpio5"], "note": "Table 2-1 lists the pin as type I/O (can drive an output).", "status": "single-source", "value": false}
+    power_up_glitch: {"evidence": [], "note": "No document states a power-up output glitch for this pad (datasheet v7.1, hardware design guidelines v2.8, TRM v1.7 searched). No ESP8266 errata document was located: the Espressif chip-errata site returns HTTP 404 for an esp8266 page. Absence is not recorded as 'none'.", "status": "missing", "value": null}
+    reset_state: {"evidence": [], "note": "Reset-time pad state (input / pull / disabled) is not stated in the datasheet v7.1, hardware design guidelines v2.8 or technical reference v1.7 (searched pin tables, GPIO chapter, register list). The datasheet only says each pad can be software-configured with an internal pull (§4.1).", "status": "missing", "value": null}
+    strap: {"evidence": ["esp8266-hdg-v2.8#strap-register"], "note": "Only GPIO0, GPIO2 and MTDO (GPIO15) are named as strapping pins (3-bit strapping register); no other pad is named. Absence-based.", "status": "single-source", "value": "none"}
+  GPIO6:
+    errata: []
+    functions:
+      - {"fn": "GPIO", "routing": "iomux"}
+      - {"fn": "SDIO.CLK", "routing": "iomux"}
+      - {"fn": "SPI.CLK", "routing": "iomux"}
+    gpio: 6
+    input_only: {"evidence": ["esp8266ex-ds-v7.1#pin-gpio6"], "note": "Table 2-1 lists the pin as type I/O (can drive an output).", "status": "single-source", "value": false}
+    power_up_glitch: {"evidence": [], "note": "No document states a power-up output glitch for this pad (datasheet v7.1, hardware design guidelines v2.8, TRM v1.7 searched). No ESP8266 errata document was located: the Espressif chip-errata site returns HTTP 404 for an esp8266 page. Absence is not recorded as 'none'.", "status": "missing", "value": null}
+    reset_state: {"evidence": [], "note": "Reset-time pad state (input / pull / disabled) is not stated in the datasheet v7.1, hardware design guidelines v2.8 or technical reference v1.7 (searched pin tables, GPIO chapter, register list). The datasheet only says each pad can be software-configured with an internal pull (§4.1).", "status": "missing", "value": null}
+    strap: {"evidence": ["esp8266-hdg-v2.8#strap-register"], "note": "Only GPIO0, GPIO2 and MTDO (GPIO15) are named as strapping pins (3-bit strapping register); no other pad is named. Absence-based.", "status": "single-source", "value": "none"}
+  GPIO7:
+    errata: []
+    functions:
+      - {"fn": "GPIO", "routing": "iomux"}
+      - {"fn": "SDIO.DATA0", "routing": "iomux"}
+      - {"fn": "SPI.MISO", "routing": "iomux"}
+    gpio: 7
+    input_only: {"evidence": ["esp8266ex-ds-v7.1#pin-gpio7"], "note": "Table 2-1 lists the pin as type I/O (can drive an output).", "status": "single-source", "value": false}
+    power_up_glitch: {"evidence": [], "note": "No document states a power-up output glitch for this pad (datasheet v7.1, hardware design guidelines v2.8, TRM v1.7 searched). No ESP8266 errata document was located: the Espressif chip-errata site returns HTTP 404 for an esp8266 page. Absence is not recorded as 'none'.", "status": "missing", "value": null}
+    reset_state: {"evidence": [], "note": "Reset-time pad state (input / pull / disabled) is not stated in the datasheet v7.1, hardware design guidelines v2.8 or technical reference v1.7 (searched pin tables, GPIO chapter, register list). The datasheet only says each pad can be software-configured with an internal pull (§4.1).", "status": "missing", "value": null}
+    strap: {"evidence": ["esp8266-hdg-v2.8#strap-register"], "note": "Only GPIO0, GPIO2 and MTDO (GPIO15) are named as strapping pins (3-bit strapping register); no other pad is named. Absence-based.", "status": "single-source", "value": "none"}
+  GPIO8:
+    errata: []
+    functions:
+      - {"fn": "GPIO", "routing": "iomux"}
+      - {"fn": "SDIO.DATA1", "routing": "iomux"}
+      - {"fn": "SPI.MOSI", "routing": "iomux"}
+      - {"fn": "UART1.RXD", "routing": "iomux"}
+    gpio: 8
+    input_only: {"evidence": ["esp8266ex-ds-v7.1#pin-gpio8"], "note": "Table 2-1 lists the pin as type I/O (can drive an output).", "status": "single-source", "value": false}
+    power_up_glitch: {"evidence": [], "note": "No document states a power-up output glitch for this pad (datasheet v7.1, hardware design guidelines v2.8, TRM v1.7 searched). No ESP8266 errata document was located: the Espressif chip-errata site returns HTTP 404 for an esp8266 page. Absence is not recorded as 'none'.", "status": "missing", "value": null}
+    reset_state: {"evidence": [], "note": "Reset-time pad state (input / pull / disabled) is not stated in the datasheet v7.1, hardware design guidelines v2.8 or technical reference v1.7 (searched pin tables, GPIO chapter, register list). The datasheet only says each pad can be software-configured with an internal pull (§4.1).", "status": "missing", "value": null}
+    strap: {"evidence": ["esp8266-hdg-v2.8#strap-register"], "note": "Only GPIO0, GPIO2 and MTDO (GPIO15) are named as strapping pins (3-bit strapping register); no other pad is named. Absence-based.", "status": "single-source", "value": "none"}
+  GPIO9:
+    errata: []
+    functions:
+      - {"fn": "GPIO", "routing": "iomux"}
+      - {"fn": "SDIO.DATA2", "routing": "iomux"}
+      - {"fn": "SPI.HD", "routing": "iomux"}
+      - {"fn": "HSPI.HD", "routing": "iomux"}
+    gpio: 9
+    input_only: {"evidence": ["esp8266ex-ds-v7.1#pin-gpio9"], "note": "Table 2-1 lists the pin as type I/O (can drive an output).", "status": "single-source", "value": false}
+    power_up_glitch: {"evidence": [], "note": "No document states a power-up output glitch for this pad (datasheet v7.1, hardware design guidelines v2.8, TRM v1.7 searched). No ESP8266 errata document was located: the Espressif chip-errata site returns HTTP 404 for an esp8266 page. Absence is not recorded as 'none'.", "status": "missing", "value": null}
+    reset_state: {"evidence": [], "note": "Reset-time pad state (input / pull / disabled) is not stated in the datasheet v7.1, hardware design guidelines v2.8 or technical reference v1.7 (searched pin tables, GPIO chapter, register list). The datasheet only says each pad can be software-configured with an internal pull (§4.1).", "status": "missing", "value": null}
+    strap: {"evidence": ["esp8266-hdg-v2.8#strap-register"], "note": "Only GPIO0, GPIO2 and MTDO (GPIO15) are named as strapping pins (3-bit strapping register); no other pad is named. Absence-based.", "status": "single-source", "value": "none"}
+  TOUT:
+    adc:
+      channel: 0
+      radio_conflict: {"evidence": [], "note": "The datasheet says TOUT can measure either the VDD3P3 supply or the external input, not both at once (§4.9); it states no radio/Wi-Fi conflict, so none is recorded.", "status": "missing", "value": null}
+      unit: "ADC"
+    errata: []
+    functions:
+      - {"fn": "ADC", "routing": "fixed"}
+    gpio: 17
+    input_only: {"evidence": ["esp8266ex-ds-v7.1#pin-tout"], "note": "Table 2-1 type I (input). TOUT is pin 6, the ADC pin, not one of the 17 GPIOs.", "status": "single-source", "value": true}
+    power_up_glitch: {"evidence": [], "note": "No document states a power-up output glitch for this pad (datasheet v7.1, hardware design guidelines v2.8, TRM v1.7 searched). No ESP8266 errata document was located: the Espressif chip-errata site returns HTTP 404 for an esp8266 page. Absence is not recorded as 'none'.", "status": "missing", "value": null}
+    reset_state: {"evidence": [], "note": "Reset-time pad state (input / pull / disabled) is not stated in the datasheet v7.1, hardware design guidelines v2.8 or technical reference v1.7 (searched pin tables, GPIO chapter, register list). The datasheet only says each pad can be software-configured with an internal pull (§4.1).", "status": "missing", "value": null}
+    strap: {"evidence": ["esp8266-hdg-v2.8#strap-register"], "note": "Only GPIO0, GPIO2 and MTDO (GPIO15) are named as strapping pins. Absence-based.", "status": "single-source", "value": "none"}
+peripherals:
+  ADC:
+    adc_effective_range_mv: {"evidence": ["esp8266ex-ds-v7.1#adc-range"], "note": "Datasheet §4.9: input voltage range 0 to 1.0 V when TOUT is connected to an external circuit. The chip has no attenuation setting in the documents, so the single key 'default' is used. Requirement from the Hardware Design paragraph, 10-bit ADC (esp8266ex-ds-v7.1#adc-10bit).", "status": "single-source", "unit": "mV", "value": {"default": [0, 1000]}}
+    kind: "adc"
+    matrix_routable: false
+  HSPI:
+    iomux_pins:
+      cs0: "GPIO15"
+      miso: "GPIO12"
+      mosi: "GPIO13"
+      sck: "GPIO14"
+    kind: "spi"
+    limits:
+      iomux_max_hz: {"evidence": ["esp8266ex-ds-v7.1#hspi-max"], "note": "Datasheet Table 4-3 note: 20 MHz at maximum; SPI mode can be implemented via software programming.", "status": "single-source", "unit": "Hz", "value": 20000000}
+    matrix_routable: false
+  I2C0:
+    iomux_pins:
+      scl: "GPIO14"
+      sda: "GPIO2"
+    kind: "i2c"
+    limits:
+      iomux_max_hz: {"evidence": ["esp8266ex-ds-v7.1#i2c-max"], "note": "Datasheet §4.4: software I2C, 100 kHz at maximum.", "status": "single-source", "unit": "Hz", "value": 100000}
+    matrix_routable: false
+  PWM:
+    iomux_pins:
+      ch0: "GPIO12"
+      ch1: "GPIO15"
+      ch2: "GPIO14"
+      ch3: "GPIO4"
+    kind: "pwm"
+    matrix_routable: false
+  SPI:
+    iomux_pins:
+      cs0: "GPIO11"
+      cs1: "GPIO1"
+      cs2: "GPIO0"
+      hd: "GPIO9"
+      miso: "GPIO7"
+      mosi: "GPIO8"
+      sck: "GPIO6"
+      wp: "GPIO10"
+    kind: "spi"
+    limits:
+      iomux_max_hz: {"evidence": ["esp8266ex-ds-v7.1#spi-max"], "note": "Datasheet Table 4-2 note: 80 MHz at maximum as master (20 MHz as slave). On boards, GPIO6-GPIO11 carry the flash.", "status": "single-source", "unit": "Hz", "value": 80000000}
+    matrix_routable: false
+  UART0:
+    iomux_pins:
+      cts: "GPIO13"
+      rts: "GPIO15"
+      rx: "GPIO3"
+      tx: "GPIO1"
+    kind: "uart"
+    matrix_routable: false
+  UART1:
+    iomux_pins:
+      rx: "GPIO8"
+      tx: "GPIO2"
+    kind: "uart"
+    matrix_routable: false
+revisions: []
+series: "ESP8266EX"
+vdd_io: {"evidence": ["esp8266ex-ds-v7.1#el-working-v", "esp8266ex-ds-v7.1#vddpst"], "note": "Table 5-1 working voltage 2.5 V min, 3.3 V typical, 3.6 V max; VDDPST (digital/IO supply) accepts 1.8 V to 3.6 V. 3.3 V is the typical value; the schema stores a single number.", "status": "single-source", "unit": "V", "value": 3.3}
+vendor: "Espressif Systems"

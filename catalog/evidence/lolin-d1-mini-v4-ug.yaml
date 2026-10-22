@@ -1,0 +1,32 @@
+# Evidence record: LOLIN D1 mini V4.0.0 product page (WEMOS documentation), read 2026-10-22 from sources/cache/wemos-d1mini.html (HTML, sha256 null by convention;
+# the file's sha256 was 45169cd34bbbcae3cff65084f04cb0adf6cdc16e0c5ca56c233e09da227cc005).
+# The pin map is an image only (d1_mini_v4.0.0_5_16x9.png): claims with quote 'figure' are transcribed by hand.
+accessed: "2026-10-22"
+claims:
+  - {"id": "lolin-d1-mini-v4-ug#title", "locator": "Page heading", "quote": "A mini wifi board with 4MB flash based on ESP-8266EX.", "supports": "Board uses an ESP-8266EX and has 4 MB flash"}
+  - {"id": "lolin-d1-mini-v4-ug#features-io", "locator": "Features", "quote": "11 digital IO, interrupt/pwm/I2C/one-wire supported(except D0)", "supports": "11 digital IO; D0 lacks interrupt/PWM/I2C/one-wire (the page never maps D0 to a GPIO)"}
+  - {"id": "lolin-d1-mini-v4-ug#features-adc", "locator": "Features", "quote": "1 analog input(3.2V max input)", "supports": "A0 analog input accepts 3.2 V maximum"}
+  - {"id": "lolin-d1-mini-v4-ug#features-usb", "locator": "Features", "quote": "Type-C USB Port", "supports": "Board has a Type-C USB port"}
+  - {"id": "lolin-d1-mini-v4-ug#features-i2c", "locator": "Features", "quote": "LOLIN I2C Port", "supports": "Board has a LOLIN I2C port (connector P1 in the schematic)"}
+  - {"id": "lolin-d1-mini-v4-ug#spec-voltage", "locator": "Technical specs", "quote": "Operating Voltage 3.3V", "supports": "Operating voltage 3.3 V"}
+  - {"id": "lolin-d1-mini-v4-ug#spec-adc", "locator": "Technical specs", "quote": "Analog Input Pins 1(3.2V Max)", "supports": "One analog input pin, 3.2 V maximum"}
+  - {"id": "lolin-d1-mini-v4-ug#spec-flash", "locator": "Technical specs", "quote": "Flash 4M Bytes", "supports": "Flash size 4 MB"}
+  - {"id": "lolin-d1-mini-v4-ug#pin-note", "locator": "Pin section", "quote": "All of the IO pins run at 3.3V.", "supports": "All IO pins run at 3.3 V"}
+  - {"id": "lolin-d1-mini-v4-ug#version-current", "locator": "Version list", "quote": "V4.0.0 (current)", "supports": "V4.0.0 is the current revision of the page"}
+  - {"id": "lolin-d1-mini-v4-ug#schematic-link", "locator": "Documentation", "quote": "Schematic V4.0.0[PDF]", "supports": "The page links the V4.0.0 schematic PDF (sch_d1_mini_v4.0.0.pdf)"}
+  - {"id": "lolin-d1-mini-v4-ug#pinmap-left", "locator": "Pin section, figure d1_mini_v4.0.0_5_16x9.png (sha256 6891e979804e941a357a0f8ccb3b6ac2856eeface12375884f789394f263cf99)", "quote": "figure", "supports": "Left header, top to bottom, labels printed in the figure: RST, A0, 16, 14, 12, 13, 15, 3.3V; extra tags SCK on 14, MISO on 12, MOSI on 13. Transcribed by hand from the image. No D0-D8 labels are printed."}
+  - {"id": "lolin-d1-mini-v4-ug#pinmap-right", "locator": "Pin section, figure d1_mini_v4.0.0_5_16x9.png (sha256 6891e979804e941a357a0f8ccb3b6ac2856eeface12375884f789394f263cf99)", "quote": "figure", "supports": "Right header, top to bottom, labels printed in the figure: TX, RX, 5, 4, 0, 2, GND, VBUS; extra tags SCL on 5, SDA on 4, LED on 2. Transcribed by hand from the image."}
+  - {"id": "lolin-d1-mini-v4-ug#pinmap-i2c", "locator": "Pin section, figure d1_mini_v4.0.0_5_16x9.png", "quote": "figure", "supports": "Separate 'I2C' connector near the USB port, pins top to bottom: GND, 4, 5, 3.3V (labels 4 and 5 mark SDA and SCL). Transcribed by hand from the image."}
+  - {"id": "lolin-d1-mini-v4-ug#pinmap-rst-button", "locator": "Pin section, figure d1_mini_v4.0.0_5_16x9.png", "quote": "figure", "supports": "A second 'RST' label points at the push button beside the USB-C port. Transcribed by hand from the image."}
+doc_number: null
+id: "lolin-d1-mini-v4-ug"
+kind: "board-guide"
+manual: false
+publisher: "WEMOS (wemos.cc)"
+revision: "V4.0.0"
+revision_date: null
+secondary: false
+sha256: null
+title: "LOLIN D1 mini (V4.0.0)"
+url: "https://www.wemos.cc/en/latest/d1/d1_mini.html"
+url_original: "https://www.wemos.cc/en/latest/d1/d1_mini.html"

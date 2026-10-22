@@ -1,0 +1,35 @@
+# Evidence record: LOLIN D1 mini schematic V4.0.0 (sch_d1_mini_v4.0.0.pdf), read 2026-10-22 from sources/cache/wemos-sch_d1_mini_v4.0.0.pdf.
+# Quotes are label text from the PDF text layer; the connectivity in 'supports' is read from the rendered figure, so facts using these claims are transcribed.
+accessed: "2026-10-22"
+claims:
+  - {"id": "lolin-d1-mini-v4-sch#title-block", "locator": "LOLIN D1 mini schematic V4.0.0, sheet 1/1, title block", "quote": "File: D1_mini.kicad_sch KiCad E.D.A. kicad (5.99.0-12889-g70df3822b5) Size: A4 Id: 1/1", "supports": "Schematic identity; the title block has no printed revision, the V4.0.0 identity comes from the file name sch_d1_mini_v4.0.0.pdf and the product page link"}
+  - {"id": "lolin-d1-mini-v4-sch#j2-pins", "locator": "LOLIN D1 mini schematic V4.0.0, sheet 1/1, J2 (P_01x08-0.9)", "quote": "J2 P_01x08-0.9 RST A0 IO16 IO14 IO12 IO13 IO15 +3V3", "supports": "Header J2 pins 1-8 are RST, A0, IO16, IO14, IO12, IO13, IO15, +3V3 (connectivity read from the figure)"}
+  - {"id": "lolin-d1-mini-v4-sch#j3-pins", "locator": "LOLIN D1 mini schematic V4.0.0, sheet 1/1, J3 (P_01x08-0.9)", "quote": "J3 P_01x08-0.9 TX RX IO5 IO4 IO0 IO2 GND VBUS", "supports": "Header J3 pins 1-8 are TX, RX, IO5, IO4, IO0, IO2, GND, VBUS (connectivity read from the figure)"}
+  - {"id": "lolin-d1-mini-v4-sch#adc-divider", "locator": "LOLIN D1 mini schematic V4.0.0, sheet 1/1, around U1 pin 6", "quote": "R12 220k R13 100k TOUT/ADC A0", "supports": "A0 connects through R12 220 kohm to the TOUT/ADC node (U1 pin 6); R13 100 kohm connects that node to GND (read from the figure)"}
+  - {"id": "lolin-d1-mini-v4-sch#led", "locator": "LOLIN D1 mini schematic V4.0.0, sheet 1/1, LED1", "quote": "R5 2k LED1 LED_0603_B IO2", "supports": "LED1 is fed from +3V3 through R5 2 kohm and its cathode goes to IO2 (GPIO2): lit when GPIO2 is low (read from the figure)"}
+  - {"id": "lolin-d1-mini-v4-sch#pull-resistors", "locator": "LOLIN D1 mini schematic V4.0.0, sheet 1/1, R9 R10 R11", "quote": "R9 12k +3V3 IO0 R10 12k IO2 R11 12k IO15 GND", "supports": "R9 12 kohm pulls IO0 to +3V3, R10 12 kohm pulls IO2 to +3V3, R11 12 kohm pulls IO15 to GND (read from the figure)"}
+  - {"id": "lolin-d1-mini-v4-sch#reset-circuit", "locator": "LOLIN D1 mini schematic V4.0.0, sheet 1/1, SW1 C14 R4 R7", "quote": "SW1 SW_2x4x3.5 RST C14 100nF R4 12k R7 12k CHIP_EN EXT_RSTB", "supports": "SW1 pulls the RST net to GND (C14 100 nF on RST); R4 and R7 12 kohm pull CHIP_EN and EXT_RSTB (RST) to +3V3 (read from the figure)"}
+  - {"id": "lolin-d1-mini-v4-sch#rst-io16", "locator": "LOLIN D1 mini schematic V4.0.0, sheet 1/1, R14 JP1", "quote": "R14 470 JP1 JUMP_2_NO IO16 RST", "supports": "RST connects to IO16 (GPIO16) through R14 470 ohm and the normally-open solder jumper JP1 (deep-sleep wake link, open as drawn)"}
+  - {"id": "lolin-d1-mini-v4-sch#flash-part", "locator": "LOLIN D1 mini schematic V4.0.0, sheet 1/1, U3", "quote": "U3 25Q-150MIL CS DO(IO1) WP(IO2) DI(IO0) CLK HOLD(IO3) VCC", "supports": "Discrete SPI flash U3 (generic symbol 25Q-150MIL, size not stated in the schematic)"}
+  - {"id": "lolin-d1-mini-v4-sch#flash-pads", "locator": "LOLIN D1 mini schematic V4.0.0, sheet 1/1, U1 pins 18-23 and U3", "quote": "SPICS0/SD_CMD CS SPICLK/SD_CLK CLK SPIQ/SD_DATA_0 DO SPID/SD_DATA_1 DI SPIHD/SD_DATA_2 HD SPIWP/SD_DATA_3 WP", "supports": "U1 pads GPIO6-GPIO11 (SD_CLK, SD_DATA_0..3, SD_CMD) are wired only to the flash U3 pins CLK, DO, DI, HOLD, WP, CS (CLK through R6 200 ohm); none reach a header"}
+  - {"id": "lolin-d1-mini-v4-sch#flash-vcc", "locator": "LOLIN D1 mini schematic V4.0.0, sheet 1/1, U3 pin 8", "quote": "U3 25Q-150MIL VCC 8 +3V3", "supports": "Flash U3 VCC is on the +3V3 net"}
+  - {"id": "lolin-d1-mini-v4-sch#ldo", "locator": "LOLIN D1 mini schematic V4.0.0, sheet 1/1, U2", "quote": "U2 ME6211C33 VIN VOUT CE +3V3 VBUS", "supports": "3V3 rail: U2 ME6211C33 from VBUS (VIN and CE on VBUS, VOUT = +3V3); no current rating is printed in the schematic"}
+  - {"id": "lolin-d1-mini-v4-sch#usb-bridge", "locator": "LOLIN D1 mini schematic V4.0.0, sheet 1/1, U4", "quote": "U4 CH340C TXD RXD", "supports": "USB-serial bridge U4 CH340C; its TXD goes to the RX net and its RXD to the TX net (read from the figure)"}
+  - {"id": "lolin-d1-mini-v4-sch#uart-link", "locator": "LOLIN D1 mini schematic V4.0.0, sheet 1/1, U1 pins 25 and 26", "quote": "U0RXD RX U0TXD R8 470 TX", "supports": "U1 U0RXD (GPIO3) connects to the RX net, U0TXD (GPIO1) to the TX net through R8 470 ohm (read from the figure)"}
+  - {"id": "lolin-d1-mini-v4-sch#auto-program", "locator": "LOLIN D1 mini schematic V4.0.0, sheet 1/1, U5", "quote": "U5 UMH3N RST RTS DTR IO0", "supports": "U5 UMH3N dual transistor lets the bridge RTS and DTR lines drive RST and IO0 (GPIO0) (read from the figure)"}
+  - {"id": "lolin-d1-mini-v4-sch#usb-c", "locator": "LOLIN D1 mini schematic V4.0.0, sheet 1/1, J1", "quote": "J1 USB_C_16P VBUS CC1 CC2 R1 5.1k R2 5.1k", "supports": "USB-C receptacle J1; VBUS is the board's 5 V input net 'VBUS'; CC1 and CC2 have 5.1 kohm to GND"}
+  - {"id": "lolin-d1-mini-v4-sch#i2c-port", "locator": "LOLIN D1 mini schematic V4.0.0, sheet 1/1, P1", "quote": "P1 SH1.0_4P(I2C) GND SDA SCL +3V3", "supports": "4-pin I2C connector P1 (GND, SDA, SCL, +3V3); SDA on IO4 and SCL on IO5 (read from the figure)"}
+  - {"id": "lolin-d1-mini-v4-sch#silk-tags", "locator": "LOLIN D1 mini schematic V4.0.0, sheet 1/1, next to J2 and J3", "quote": "SCK MISO MOSI SCL SDA", "supports": "Schematic annotates IO14 SCK, IO12 MISO, IO13 MOSI on J2 and IO5 SCL, IO4 SDA on J3"}
+  - {"id": "lolin-d1-mini-v4-sch#chip-ref", "locator": "LOLIN D1 mini schematic V4.0.0, sheet 1/1, U1", "quote": "U1 ESP8266 XTAL_IN XTAL_OUT Y1 26Mhz", "supports": "The board is chip-down: bare ESP8266 chip U1 (QFN32 pin names) with 26 MHz crystal Y1 and PCB antenna ANT1, not a pre-made module"}
+doc_number: null
+id: "lolin-d1-mini-v4-sch"
+kind: "schematic"
+manual: false
+publisher: "WEMOS (wemos.cc)"
+revision: "V4.0.0"
+revision_date: null
+secondary: false
+sha256: "831c53db151995272787cae8bd8e01532b626314627920df88541be44e2364b4"
+title: "LOLIN D1 mini Schematic V4.0.0"
+url: "https://www.wemos.cc/en/latest/_static/files/sch_d1_mini_v4.0.0.pdf"
+url_original: "https://www.wemos.cc/en/latest/_static/files/sch_d1_mini_v4.0.0.pdf"
