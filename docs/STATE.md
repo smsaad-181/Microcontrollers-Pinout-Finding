@@ -101,7 +101,7 @@ Legend: `[x]` done · `[~]` in progress · `[-]` deferred (needs GitHub) · `[ ]
 
 ## Human prerequisites
 
-- [ ] Phase 0: GitHub CLI logged in (`gh auth status`) and repo name confirmed (default: `pinout-finder`)
+- [ ] Phase 0: GitHub CLI logged in (`gh auth status`) and repo name confirmed — repo name confirmed by user 2026-10-22: `smsaad-181/Microcontrollers-Pinout-Finding` (public, empty); `gh` login still open
   - 2026-10-22: `gh` 2.103.0 installed (winget). Login not completed; user will finish GitHub setup later.
 - [ ] Phase 2a: manual datasheet downloads listed in `sources/manual/README.md`
 - [ ] Phase 5 (mid-phase checkpoint after task 5.3): bench check on real boards
@@ -150,6 +150,8 @@ None of these block Phase 0. Re-check all three when a session is started inside
 - 2026-10-22 · Fix round 1 changed the error-code contract (fixtures README decisions 2, 6, 11–15): new `E_DUPLICATE_ID`, `E_REF_UNRESOLVED` (replaces the `W_DANGLING_REF` warning), `E_FILE_EXTENSION`; reviewer identity = trim + lower-case; evidence claims need non-blank quote/locator/supports, quote ≤ 25 words and 400 chars; evidence URLs http(s) only; `Board.variants` needs at least one; YAML anchors/aliases/merge keys and `__proto__`-style keys are rejected. CI: Node pinned via `.nvmrc` (24), `configure-pages` removed, CI runs once per PR, deploy only from `main`.
 
 ## Decisions needed
+
+- 2026-10-22 · **Repo name differs from the plan default** (`pinout-finder` → `Microcontrollers-Pinout-Finding`). `origin` is added locally (nothing pushed; user chose "connect only"). Pages URL will be `https://smsaad-181.github.io/Microcontrollers-Pinout-Finding/`. TODO after the running re-validation finishes (do not edit during validation): change the Vite `base` default, the CI/deploy `grep '/pinout-finder/assets/'` check, `apps/web/test/manifest.test.ts`, `package.json`, dashboard probe URL, and docs to the new base path `/Microcontrollers-Pinout-Finding/`; ask the user before the first push. Needs `gh auth login` for Pages/branch protection (or the user enables Pages source = GitHub Actions in repo settings).
 
 - 2026-10-22 · **GitHub deferred by user ("I will update later in github… continue").** Work continues locally
   (phase branches merged locally). When ready, the human runs `gh auth login --scopes repo,workflow`; then Claude:
