@@ -1,0 +1,22 @@
+# FAKE breakout for catalog-CLI tests only (fictional part DEMO-BREAKOUT-1 by "Demo Corp").
+hardwired:
+  - { strap: ADDR, value: GND }
+ic: demo-sensor-1
+id: demo-breakout-1
+interfaces_exposed: [i2c]
+level_shifter: { evidence: [demo-datasheet-1#breakout-pins], reviewers: [hardware-researcher, hardware-fact-auditor], status: verified, value: false }
+notes: "Fictional breakout used only by catalog-CLI tests."
+pins:
+  - { label: VCC, maps_to: VCC }
+  - { label: GND, maps_to: GND }
+  - { label: SDA, maps_to: SDA }
+  - { label: SCL, maps_to: SCL }
+pullups:
+  - line: SDA
+    value_ohm: { evidence: [demo-datasheet-1#breakout-pins], reviewers: [hardware-researcher, hardware-fact-auditor], status: verified, unit: ohm, value: 10000 }
+  - line: SCL
+    value_ohm: { evidence: [demo-datasheet-1#breakout-pins], reviewers: [hardware-researcher, hardware-fact-auditor], status: verified, unit: ohm, value: 10000 }
+regulator: { evidence: [demo-datasheet-1#breakout-pins], reviewers: [hardware-researcher, hardware-fact-auditor], status: verified, value: { present: false } }
+supply_current: { evidence: [demo-datasheet-1#sensor-supply], reviewers: [hardware-researcher, hardware-fact-auditor], status: verified, unit: mA, value: { max: 0.5, typ: 0.2 } }
+variant_names: ["DEMO-BREAKOUT-1"]
+vendor: Demo Corp

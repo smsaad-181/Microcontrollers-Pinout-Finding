@@ -1,0 +1,18 @@
+node_modules/
+dist/
+coverage/
+pnpm-lock.yaml
+apps/web/public/catalog/
+sources/
+docs/
+.claude/
+LICENSE
+catalog/LICENSE
+*.md
+# hand-authored catalog data and fixtures keep their own layout (keys sorted, one entity per file)
+catalog/
+packages/cli/test/fixtures/
+tools/
+.mcp.json
+# verbatim copy of the normative TS reference in skill catalog-schema (do not reformat)
+packages/schema/test/reference.ts

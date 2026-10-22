@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pinout Finder Build</title>
+<style>
+  :root {
+    --bg: #f6f7f9; --panel: #ffffff; --ink: #1b1f24; --muted: #5d6673; --line: #e3e6ea;
+    --accent: #2f6fde; --done: #1f8a4c; --doing: #c27a00; --deferred: #7a62c9; --todo: #b7bec7;
+    --crit: #c0362c; --track: #e9ecf0;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #111418; --panel: #191d22; --ink: #e6e9ed; --muted: #98a2ae; --line: #2a3038;
+      --accent: #6d9cff; --done: #3fbf74; --doing: #f0a630; --deferred: #a48df0; --todo: #4a525c;
+      --crit: #ff6b5e; --track: #262b32;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink);
+    font: 14px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  main { max-width: 1180px; margin: 0 auto; padding: 20px 16px 48px; }
+  header { display: flex; flex-wrap: wrap; align-items: center; gap: 16px 28px; margin-bottom: 18px; }
+  h1 { font-size: 20px; margin: 0; letter-spacing: -0.01em; }
+  h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin: 0 0 10px; }
+  .meta { color: var(--muted); font-size: 12.5px; }
+  .big { display: flex; align-items: center; gap: 14px; margin-left: auto; }
+  .pct { font-size: 34px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .bar { height: 8px; background: var(--track); border-radius: 99px; overflow: hidden; display: flex; }
+  .bar > span { display: block; height: 100%; }
+  .bar .d { background: var(--done); } .bar .w { background: var(--doing); } .bar .f { background: var(--deferred); }
+  .grid { display: grid; grid-template-columns: 1.15fr .85fr; gap: 16px; }
+  @media (max-width: 860px) { .grid { grid-template-columns: 1fr; } .big { margin-left: 0; } }
+  .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; }
+  .stack { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+  .now { border-left: 3px solid var(--doing); }
+  .md p { margin: 0 0 6px; } .md ul { margin: 0; padding-left: 18px; }
+  code { font: 12.5px ui-monospace, SFMono-Regular, Consolas, monospace; background: var(--track);
+    padding: 1px 4px; border-radius: 4px; overflow-wrap: anywhere; }
+  .phase { padding: 10px 0; border-top: 1px solid var(--line); }
+  .phase:first-of-type { border-top: 0; padding-top: 0; }
+  .phase-head { display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; cursor: pointer; }
+  .phase-head b { min-width: 28px; }
+  .phase-name { flex: 1; min-width: 180px; }
+  .chip { font-size: 11.5px; padding: 1px 8px; border-radius: 99px; border: 1px solid var(--line);
+    color: var(--muted); white-space: nowrap; }
+  .chip.progress { color: var(--doing); border-color: currentColor; }
+  .chip.done { color: var(--done); border-color: currentColor; }
+  .count { font-variant-numeric: tabular-nums; color: var(--muted); font-size: 12.5px; }
+  .phase .bar { margin-top: 7px; height: 6px; }
+  .tasks { list-style: none; margin: 8px 0 0; padding: 0; display: none; }
+  .phase.open .tasks { display: block; }
+  .tasks li { display: grid; grid-template-columns: 22px 44px 1fr; gap: 6px; padding: 3px 0; font-size: 13px; }
+  .tasks .owner { color: var(--muted); font-size: 12px; }
+  .ico { font-weight: 700; text-align: center; }
+  .m-x { color: var(--done); } .m-tilde { color: var(--doing); } .m-dash { color: var(--deferred); } .m-sp { color: var(--todo); }
+  .legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: 12px; color: var(--muted); margin-top: 8px; }
+  .commits { list-style: none; margin: 0; padding: 0; font-size: 12.5px; }
+  .commits li { display: grid; grid-template-columns: 62px 78px 1fr; gap: 8px; padding: 3px 0; border-top: 1px solid var(--line); }
+  .commits li:first-child { border-top: 0; }
+  .commits .ref { color: var(--accent); }
+  .dim { color: var(--muted); }
+  .warn { border-left: 3px solid var(--crit); }
+  a { color: var(--accent); }
+  .pulse { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--doing);
+    margin-right: 6px; animation: p 1.6s infinite; }
+  @keyframes p { 50% { opacity: .25; } }
+  @media (prefers-reduced-motion: reduce) { .pulse { animation: none; } }
+  table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+  td { padding: 3px 4px; border-top: 1px solid var(--line); vertical-align: top; }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <div>
+      <h1>Universal Pinout Finder — build progress</h1>
+      <div class="meta" id="meta">loading…</div>
+    </div>
+    <div class="big">
+      <div>
+        <div class="pct" id="pct">–</div>
+        <div class="meta" id="pct-sub"></div>
+      </div>
+      <div style="width:220px"><div class="bar" id="bar"></div>
+        <div class="legend"><span class="m-x">■ done</span><span class="m-tilde">■ in progress</span><span class="m-dash">■ deferred</span></div>
+      </div>
+    </div>
+  </header>
+
+  <div class="grid">
+    <div class="stack">
+      <section class="panel now"><h2><span class="pulse"></span>Doing now</h2><div class="md" id="current"></div></section>
+      <section class="panel"><h2>Files being written right now <span class="dim" style="text-transform:none;letter-spacing:0">(uncommitted work by agents)</span></h2><ul class="commits" id="working"></ul></section>
+      <section class="panel"><h2>Phases &amp; tasks <span class="dim" style="text-transform:none;letter-spacing:0">(click a phase)</span></h2><div id="phases"></div></section>
+    </div>
+    <div class="stack">
+      <section class="panel" id="web-panel"><h2>Local app</h2><div id="web"></div></section>
+      <section class="panel warn" id="dec-panel"><h2>Needs you</h2><div class="md" id="decisions"></div></section>
+      <section class="panel"><h2>Recent commits</h2><ul class="commits" id="commits"></ul></section>
+      <section class="panel"><h2>Validation reports</h2><div id="reports"></div></section>
+      <section class="panel"><h2>Log</h2><table id="log"></table></section>
+    </div>
+  </div>
+</main>
+<script>
+  const open = new Set();
+  const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const inline = (s) => esc(s).replace(/`([^`]+)`/g, '<code>$1</code>').replace(/\*\*([^*]+)\*\*/g, '<b>$1</b>')
+    .replace(/_([^_]+)_/g, '<i>$1</i>');
+  function md(text) {
+    if (!text) return '<p class="dim">(none)</p>';
+    const out = []; let list = false;
+    for (const raw of text.split('\n')) {
+      const line = raw.trimEnd();
+      if (/^\s*- /.test(line)) { if (!list) { out.push('<ul>'); list = true; } out.push('<li>' + inline(line.replace(/^\s*- /, '')) + '</li>'); }
+      else if (/^\s{2,}\S/.test(line) && list) { out[out.length - 1] = out[out.length - 1].replace(/<\/li>$/, ' ' + inline(line.trim()) + '</li>'); }
+      else { if (list) { out.push('</ul>'); list = false; } if (line.trim()) out.push('<p>' + inline(line) + '</p>'); }
+    }
+    if (list) out.push('</ul>');
+    return out.join('');
+  }
+  const markCls = { x: 'm-x', '~': 'm-tilde', '-': 'm-dash', ' ': 'm-sp' };
+  const markIco = { x: '✓', '~': '◐', '-': '⏸', ' ': '○' };
+  const bar = (d, w, f, t) => t ? `<span class="d" style="width:${d / t * 100}%"></span><span class="w" style="width:${w / t * 100}%"></span><span class="f" style="width:${f / t * 100}%"></span>` : '';
+
+  async function tick() {
+    let s;
+    try { s = await (await fetch('/api/state', { cache: 'no-store' })).json(); }
+    catch { document.getElementById('meta').textContent = 'dashboard server not reachable — run: node tools/progress/server.mjs'; return; }
+    const T = s.totals;
+    document.getElementById('meta').innerHTML =
+      `branch <code>${esc(s.branch || '—')}</code> · ${s.dirty} uncommitted file(s) · STATE updated ${esc(s.lastUpdated)} · refreshed ${new Date(s.updated).toLocaleTimeString()}`;
+    document.getElementById('pct').textContent = s.percent + '%';
+    document.getElementById('pct-sub').textContent = `${T.done} of ${T.total} tasks done · ${T.doing} in progress · ${T.deferred} deferred`;
+    document.getElementById('bar').innerHTML = bar(T.done, T.doing, T.deferred, T.total);
+    document.getElementById('current').innerHTML = md(s.current);
+    document.getElementById('decisions').innerHTML = md(s.decisions);
+    document.getElementById('phases').innerHTML = s.phases.map((p) => {
+      const st = p.status.toUpperCase();
+      const cls = st.startsWith('DONE') ? 'done' : st === 'NOT STARTED' ? '' : 'progress';
+      const tasks = s.tasks.filter((t) => t.phase === p.id).map((t) =>
+        `<li><span class="ico ${markCls[t.mark]}" title="${esc(t.mark)}">${markIco[t.mark] ?? '?'}</span><code>${esc(t.id)}</code><span>${inline(t.desc)} <span class="owner">· ${esc(t.owner)}</span></span></li>`).join('');
+      return `<div class="phase ${open.has(p.id) || cls === 'progress' && !open.has('!' + p.id) ? 'open' : ''}" data-id="${esc(p.id)}">
+        <div class="phase-head"><b>${esc(p.id)}</b><span class="phase-name">${inline(p.name)}</span>
+        <span class="chip ${cls}">${esc(p.status)}</span><span class="count">${p.done}/${p.total}</span></div>
+        <div class="bar">${bar(p.done, p.doing, p.deferred, p.total)}</div>
+        ${p.notes ? `<div class="dim" style="font-size:12px;margin-top:4px">${inline(p.notes)}</div>` : ''}
+        <ul class="tasks">${tasks}</ul></div>`;
+    }).join('');
+    document.getElementById('web').innerHTML = s.webDev
+      ? `<p>● Running: <a href="http://localhost:5173/pinout-finder/" target="_blank" rel="noopener">http://localhost:5173/pinout-finder/</a></p>`
+      : `<p class="dim">Web app dev server not running yet (starts once the workspace exists).</p>`;
+    const stName = { M: 'changed', A: 'added', D: 'deleted', '??': 'new' };
+    document.getElementById('working').innerHTML = (s.working || []).map((w) =>
+      `<li><span class="${w.st === 'D' ? 'm-dash' : 'm-tilde'}">${esc(stName[w.st] || w.st)}</span><span></span><code>${esc(w.path)}</code></li>`).join('')
+      || '<li class="dim">nothing uncommitted — all work is saved</li>';
+    document.getElementById('commits').innerHTML = s.commits.map(([h, d, ref, msg]) =>
+      `<li><code>${esc(h)}</code><span class="dim">${esc(d)}</span><span>${ref ? `<span class="ref">${esc(ref.trim())}</span> ` : ''}${esc(msg)}</span></li>`).join('') || '<li class="dim">none</li>';
+    document.getElementById('reports').innerHTML = s.reports.length
+      ? '<table>' + s.reports.map((r) => `<tr><td>${esc(r.phase)}</td><td>${esc(r.file)}</td><td class="${r.verdict === 'PASS' ? 'm-x' : r.verdict === 'FAIL' ? 'm-dash' : 'dim'}"><b>${esc(r.verdict)}</b></td></tr>`).join('') + '</table>'
+      : '<p class="dim">No validator has run yet.</p>';
+    document.getElementById('log').innerHTML = s.log.map(([d, p, e]) => `<tr><td class="dim" style="white-space:nowrap">${esc(d)}</td><td>${esc(p)}</td><td>${inline(e)}</td></tr>`).join('');
+  }
+  document.addEventListener('click', (e) => {
+    const h = e.target.closest('.phase-head'); if (!h) return;
+    const el = h.parentElement, id = el.dataset.id;
+    if (el.classList.toggle('open')) { open.add(id); open.delete('!' + id); } else { open.delete(id); open.add('!' + id); }
+  });
+  tick(); setInterval(tick, 3000);
+</script>
+</body>
+</html>

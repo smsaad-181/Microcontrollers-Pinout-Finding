@@ -1,0 +1,20 @@
+name: links
+
+on:
+  schedule:
+    # Mondays 06:17 UTC
+    - cron: '17 6 * * 1'
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  links:
+    name: links
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      # Stub until Phase 5: will run `pnpm catalog check-links` and open an issue on drift
+      # (that step will need `issues: write` on this job).
+      - run: echo "links.yml is a no-op stub until Phase 5 (source URL and hash re-check)."
