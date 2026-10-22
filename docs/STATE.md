@@ -21,7 +21,9 @@ Status values: NOT STARTED · IN PROGRESS · VALIDATING · FIXING (round n/3) ·
 ## Current task
 
 Phase 1 (local, branch `phase-1`). Running in parallel:
-Next (after 1.1): 1.2–1.4 schema + CLI (TDD), 1.6 web placeholder, then 1.9 docs.
+- **1.2 → 1.3 → 1.4** Zod schema, `catalog validate`, `catalog compile` (TDD) — _engine-developer_
+Web app dev server: http://localhost:5173/pinout-finder/
+Next: 1.9 docs, then Phase 1 validators (phase-validator, code-reviewer, github-actions-expert).
 
 ## Task checklist
 
@@ -37,11 +39,11 @@ Legend: `[x]` done · `[~]` in progress · `[-]` deferred (needs GitHub) · `[ ]
 
 **Phase 1**
 - [x] 1.1 · pnpm workspace · _ci-pages-engineer_
-- [ ] 1.2 · Zod schemas for Evidence, Fact<T>, Chip, Module, Board, Pin view, IC, Breakout, Fixture… · _engine-developer_
-- [ ] 1.3 · catalog validate [--root <dir>] (default catalog/) · _engine-developer_
-- [ ] 1.4 · catalog compile · _engine-developer_
+- [~] 1.2 · Zod schemas for Evidence, Fact<T>, Chip, Module, Board, Pin view, IC, Breakout, Fixture… · _engine-developer_
+- [~] 1.3 · catalog validate [--root <dir>] (default catalog/) · _engine-developer_
+- [~] 1.4 · catalog compile · _engine-developer_
 - [x] 1.5 · Seed fixtures for the CLI · _fixture-author_
-- [ ] 1.6 · apps/web · _ui-developer_
+- [x] 1.6 · apps/web · _ui-developer_
 - [x] 1.7 · Workflows · _ci-pages-engineer_
 - [-] 1.8 · Branch protection on main · _ci-pages-engineer_
 - [ ] 1.9 · Docs: docs/schema.md (generated from Zod descriptions), CONTRIBUTING.md skeleton. · _ci-pages-engineer_
@@ -154,6 +156,7 @@ None of these block Phase 0. Re-check all three when a session is started inside
 
 | Date | Phase | Event |
 | --- | --- | --- |
+| 2026-10-22 | 1 | 1.6 done: placeholder page (hash router, build-time CSP meta, manifest version card); web typecheck/lint 0, 35 tests pass, build OK, no inline script/style in dist, "Pinout Finder" in static HTML. Open for Phase 3: `worker-src` CSP for the Web Worker. |
 | 2026-10-22 | 1 | 1.1 done: pnpm workspace (schema, rules, engine, codegen, cli, web); frozen install, typecheck, lint, 6/6 test projects, web build (assets under `/pinout-finder/`) all exit 0 in orchestrator re-run. |
 | 2026-10-22 | 1 | 1.7 done: ci.yml (aggregate `ci` job), deploy.yml, links.yml stub, dependabot.yml; 22 `uses:` pinned to 40-char SHAs (grep check OK), actionlint 1.7.12 → 0 errors. Not yet run on GitHub. |
 | 2026-10-22 | 1 | 1.5 done: CLI fixtures (valid + 12 invalid cases, error-code contract in `packages/cli/test/fixtures/README.md`); each invalid case differs from valid in exactly one line (diff -r checked). |
