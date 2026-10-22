@@ -22,7 +22,7 @@ Status values: NOT STARTED · IN PROGRESS · VALIDATING · FIXING (round n/3) ·
 
 Phase 1 VALIDATING. phase-validator: **FAIL** (0 critical, 5 major, 8 minor) — report `docs/validation/phase-1/phase-validator.md`.
 Majors: F7 deploy `configure-pages` permissions · F2 duplicate entity ids accepted · F3 dangling refs only warnings · F4 reviewer names not normalised (two-key bypass) · F5 empty/over-long evidence quotes.
-Next: run code-reviewer, then github-actions-expert (one at a time) so all findings are fixed together in fix round 1, then re-validate.
+Running now: **code-reviewer** (validator 2/3: checker/schema correctness, determinism, mutation tests on the tests themselves, web XSS). Then github-actions-expert; then fix round 1 for all findings together.
 
 ## Task checklist
 
