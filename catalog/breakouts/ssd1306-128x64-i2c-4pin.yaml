@@ -1,0 +1,23 @@
+# Generic 4-pin 0.96" 128x64 I2C OLED module. No vendor schematic or datasheet for this generic module was found,
+# so every module-level electrical fact is missing (nothing is inferred from other boards such as the Adafruit 938/326).
+# Pin labels and the I2C-only wiring are the catalog's definition of this module variant, not a cited fact.
+hardwired: []
+ic: ssd1306
+id: ssd1306-128x64-i2c-4pin
+interfaces_exposed: [i2c]
+level_shifter: { evidence: [], status: missing, value: null }
+notes: "Generic module, no official schematic: regulator, pull-up values, level shifting, supply current and the 0x3C/0x3D address selection (solder jumper or resistor position, default) are unknown and need a datasheet or schematic of the specific module (e.g. a vendor module datasheet). Present a Caution in results. Pin order of generic modules varies (GND-VCC-SCL-SDA vs VCC-GND-SCL-SDA), so the user must read the silkscreen."
+pins:
+  - { label: GND, maps_to: GND }
+  - { label: VCC, maps_to: VCC }
+  - { label: SCL, maps_to: SCL }
+  - { label: SDA, maps_to: SDA }
+pullups:
+  - line: SDA
+    value_ohm: { evidence: [], status: missing, unit: ohm, value: null }
+  - line: SCL
+    value_ohm: { evidence: [], status: missing, unit: ohm, value: null }
+regulator: { evidence: [], status: missing, value: null }
+supply_current: { evidence: [], status: missing, unit: mA, value: null }
+variant_names: ["0.96 inch OLED 128x64 I2C", "SSD1306 OLED 4-pin", "SSD1306 128x64 I2C OLED", "OLED 0.96 I2C"]
+vendor: generic

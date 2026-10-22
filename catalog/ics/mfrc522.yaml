@@ -1,0 +1,46 @@
+# Evidence: NXP MFRC522 Product data sheet Rev. 3.9 (27 April 2016); see catalog/evidence/mfrc522-ds-v3.9.yaml.
+id: mfrc522
+input_abs_max: { evidence: ["mfrc522-ds-v3.9#abs-max-input"], status: single-source, unit: V, value: "VDDIO+0.5", note: "Datasheet: VI = VSS(PVSS) - 0.5 V to VDD(PVDD) + 0.5 V for all input pins except MFIN and RX. VDDIO means the PVDD pin supply." }
+interfaces:
+  - kind: spi
+    limits:
+      max_hz: { evidence: ["mfrc522-ds-v3.9#host-interfaces-speed"], status: single-source, unit: Hz, value: 10000000, note: "Datasheet states a data rate of 10 Mbit/s (SPI, one bit per SCK cycle); stored as an SCK frequency. SCK pulse width min 50 ns high and low (Table 154)." }
+      miso_tristate_when_deselected: { evidence: [], status: missing, value: null, note: "Searched the 95-page datasheet for 3-state/high-impedance wording: it states only the I2C SDA output stage and the IRQ pin as 3-state; MISO behaviour while NSS is high is not stated." }
+    signals:
+      - { dir: in, drive: push-pull, role: SCLK, shareable: true }
+      - { dir: in, drive: push-pull, role: MOSI, shareable: true }
+      - { dir: out, drive: push-pull, role: MISO, shareable: false }
+      - { dir: in, drive: push-pull, role: CS, shareable: false }
+      - { dir: out, drive: push-pull, role: IRQ, shareable: false }
+      - { dir: in, drive: push-pull, role: RST, shareable: false }
+  - kind: i2c
+    limits:
+      i2c_modes: [sm, fm, hs]
+      max_hz: { conditions: { mode: "Fast mode" }, evidence: ["mfrc522-ds-v3.9#i2c-fscl"], status: single-source, unit: Hz, value: 400000, note: "Table 155: fSCL 0-400 kHz in Fast mode; High-speed mode 3400 kHz. The address is set by pins ADR_0..ADR_5 and EA, not modelled here." }
+    signals:
+      - { dir: io, drive: open-drain, role: SDA, shareable: true }
+      - { dir: in, drive: open-drain, role: SCL, shareable: true }
+      - { dir: out, drive: push-pull, role: IRQ, shareable: false }
+      - { dir: in, drive: push-pull, role: RST, shareable: false }
+  - kind: uart
+    limits: {}
+    signals:
+      - { dir: in, drive: push-pull, role: RX, shareable: false }
+      - { dir: out, drive: push-pull, role: TX, shareable: false }
+      - { dir: out, drive: push-pull, role: IRQ, shareable: false }
+      - { dir: in, drive: push-pull, role: RST, shareable: false }
+logic_levels:
+  vih_min: { evidence: ["mfrc522-ds-v3.9#logic-levels"], status: single-source, unit: V, value: "VDDIO*0.7", note: "Datasheet: 0.7 x VDD(PVDD) for pins EA, I2C, NRSTPD, SDA and D1-D7 (SCK/MOSI/MISO/NSS share the D/SDA pads)." }
+  vil_max: { evidence: ["mfrc522-ds-v3.9#logic-levels"], status: single-source, unit: V, value: "VDDIO*0.3", note: "Datasheet: 0.3 x VDD(PVDD)." }
+part: MFRC522
+select_strap:
+  evidence: ["mfrc522-ds-v3.9#interface-table", "mfrc522-ds-v3.9#interface-detect"]
+  pins: [I2C, EA]
+  table:
+    - { selects: uart, value: { EA: 0, I2C: 0 } }
+    - { selects: spi, value: { EA: 1, I2C: 0 } }
+    - { selects: i2c, value: { I2C: 1 } } # EA then codes the I2C address
+supply_current: { conditions: { pin: "TVDD", VDD: "3 V", mode: "continuous wave" }, evidence: ["mfrc522-ds-v3.9#supply-current-tvdd"], status: single-source, unit: mA, value: { max: 100, typ: 60 }, note: "TVDD (transmitter) only. Separate datasheet currents: IDDD typ 6.5 / max 9 mA, IDDA typ 7 / max 10 mA (claim supply-current-digital-analog), SVDD max 4 mA, PVDD max 40 mA. No total is stated." }
+vdd_range: { evidence: ["mfrc522-ds-v3.9#op-supply-core"], status: single-source, unit: V, value: [2.5, 3.6], note: "VDDA = VDDD = VDD(TVDD), recommended operating range; below 3 V the operating distance drops." }
+vendor: NXP
+vio_range: { evidence: ["mfrc522-ds-v3.9#op-supply-pvdd"], status: single-source, unit: V, value: [1.6, 3.6], note: "VDD(PVDD) pin supply, must be the same or lower than VDDD." }

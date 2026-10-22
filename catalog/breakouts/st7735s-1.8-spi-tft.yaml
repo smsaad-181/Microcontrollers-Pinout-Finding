@@ -1,0 +1,23 @@
+# Generic 1.8" 128x160 SPI TFT module (ST7735S) with 8-pin header (VCC GND CS RESET A0 SDA SCK LED) and SD slot.
+# No vendor-published schematic or datasheet for this generic module was found, so every module-level electrical
+# fact is missing. Pin labels and the SPI-only exposure are the catalog's definition of this variant, not a cited fact.
+hardwired: []
+ic: st7735s
+id: st7735s-1.8-spi-tft
+interfaces_exposed: [spi]
+level_shifter: { evidence: [], status: missing, value: null }
+notes: "Generic module, no official schematic. Unknown: onboard regulator and its input range, level shifter or series resistors on the logic lines (the IC logic supply VDDI is at most 3.3 V per the ST7735 datasheet, so 5 V logic must be treated as unsafe until the module is documented), backlight (LED pin) current and any series resistor or transistor, and whether the IM/SPI4W interface straps are hardwired (the header exposes only SPI signals; A0 is the data/command pin). The SD-card slot pins, where present, are on a separate header and are not part of this 8-pin record. Present a Caution in results."
+pins:
+  - { label: VCC, maps_to: VCC }
+  - { label: GND, maps_to: GND }
+  - { label: CS, maps_to: CS }
+  - { label: RESET, maps_to: RST }
+  - { label: A0, maps_to: DC }
+  - { label: SDA, maps_to: MOSI }
+  - { label: SCK, maps_to: SCLK }
+  - { label: LED, maps_to: LED }
+pullups: []
+regulator: { evidence: [], status: missing, value: null }
+supply_current: { evidence: [], status: missing, unit: mA, value: null }
+variant_names: ["1.8 inch SPI TFT", "ST7735S 1.8 TFT", "1.8 TFT 128x160 SPI", "ST7735 1.8 inch display module", "ST7735S"]
+vendor: generic

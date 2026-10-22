@@ -1,0 +1,30 @@
+# ST7735S IC record. The ST7735S datasheet is blocked for automated download (sources/manual/README.md request 2).
+# Every non-missing value below comes from the ST7735 (NOT ST7735S) datasheet V2.1 / V1.9 and is interim.
+# The ST7735 also has parallel 8/9/16/18-bit buses (IM2/IM1/IM0); the schema has no parallel kind, so only SPI is modelled.
+id: st7735s
+input_abs_max: { evidence: ["st7735-ds-v2.1#abs-max", "st7735-ds-v1.9#abs-max"], status: interim, unit: V, value: "VDDIO+0.3", note: "From the ST7735 datasheet (not ST7735S): VIN -0.3 to VDDI + 0.3 V; V1.9 and V2.1 agree. VDDIO means VDDI." }
+interfaces:
+  - kind: spi
+    limits:
+      miso_tristate_when_deselected: { evidence: [], status: missing, value: null, note: "Not read; the module is treated as write-only by the plan (SDA is the only data line wired on the 8-pin board)." }
+      tscyc_min_s: { conditions: { mode: "3-line and 4-line serial write", VDDI: "1.65-3.3 V", VDD: "2.6-3.3 V", Ta: "25 C" }, evidence: ["st7735-ds-v2.1#serial-write-cycle-4line", "st7735-ds-v1.9#serial-write-cycle-4line"], status: interim, unit: s, value: 6.6e-8, note: "ST7735 (not ST7735S) datasheet TSCYCW min 66 ns, identical in V1.9 and V2.1, for both 3-line and 4-line serial. Read cycle TSCYCR min 150 ns. To be replaced by the ST7735S datasheet value." }
+    signals:
+      - { dir: in, drive: push-pull, role: SCLK, shareable: true }
+      - { dir: in, drive: push-pull, role: MOSI, shareable: true }
+      - { dir: in, drive: push-pull, role: CS, shareable: false }
+      - { dir: in, drive: push-pull, role: DC, shareable: false }
+      - { dir: in, drive: push-pull, role: RST, shareable: false }
+logic_levels:
+  vih_min: { conditions: { VDDI: "1.65-3.3 V", VDD: "2.6-3.3 V" }, evidence: ["st7735-ds-v2.1#dc-logic-levels"], status: interim, unit: V, value: "VDDIO*0.7", note: "ST7735 (not ST7735S) datasheet V2.1: 0.7 x VDDI." }
+  vil_max: { conditions: { VDDI: "1.65-3.3 V", VDD: "2.6-3.3 V" }, evidence: ["st7735-ds-v2.1#dc-logic-levels"], status: interim, unit: V, value: "VDDIO*0.3", note: "ST7735 (not ST7735S) datasheet V2.1: 0.3 x VDDI." }
+part: ST7735S
+select_strap:
+  evidence: ["st7735-ds-v2.1#pin-im2-spi4w"]
+  pins: [IM2, SPI4W]
+  table:
+    - { selects: spi, value: { IM2: 0, SPI4W: 0 } } # 3-line SPI
+    - { selects: spi, value: { IM2: 0, SPI4W: 1 } } # 4-line SPI with D/CX
+supply_current: { conditions: { VDD: "2.8 V", VDDI: "1.8 V", Ta: "25 C", mode: "normal, 60 Hz, all pixels black" }, evidence: ["st7735-ds-v2.1#power-consumption"], status: interim, unit: mA, value: { max: 0.7, typ: 0.5 }, note: "ST7735 (not ST7735S) V2.1 IDD (analog supply) only; IDDI typ 0.01 / max 0.02 mA. Excludes the LED backlight, which is a module-level load." }
+vdd_range: { evidence: ["st7735-ds-v2.1#dc-supply"], status: interim, unit: V, value: [2.6, 3.3], note: "ST7735 (not ST7735S) datasheet V2.1: VDD (analog) 2.6-3.3 V." }
+vendor: Sitronix
+vio_range: { evidence: ["st7735-ds-v2.1#dc-supply"], status: interim, unit: V, value: [1.65, 3.3], note: "ST7735 (not ST7735S) datasheet V2.1: VDDI 1.65-3.3 V, VDDI must not exceed VDD." }
