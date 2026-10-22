@@ -28,6 +28,33 @@ function git(...args) {
   }
 }
 
+// Uncommitted files in the other git worktrees (e.g. ../pinout-finder-2a), shown as "<folder>/<path>".
+function otherWorktreeFiles() {
+  const dirs = git('worktree', 'list', '--porcelain')
+    .split('\n')
+    .filter((l) => l.startsWith('worktree '))
+    .map((l) => l.slice('worktree '.length).trim())
+    .filter((d) => d.replace(/\\/g, '/').toLowerCase() !== root.replace(/\\/g, '/').toLowerCase());
+  const out = [];
+  for (const dir of dirs) {
+    let status = '';
+    try {
+      status = execFileSync('git', ['-C', dir, 'status', '--porcelain', '--untracked-files=all'], {
+        encoding: 'utf8',
+        timeout: 4000,
+      });
+    } catch {
+      continue;
+    }
+    const name = dir.replace(/\\/g, '/').split('/').pop();
+    for (const l of status.split('\n')) {
+      const m = /^\s*(\S+)\s+(.*)$/.exec(l);
+      if (m) out.push({ st: m[1], path: `[${name}] ${m[2]}` });
+    }
+  }
+  return out;
+}
+
 function parseTable(text) {
   return text
     .split('\n')
@@ -118,6 +145,7 @@ async function state() {
       .map((l) => /^\s*(\S+)\s+(.*)$/.exec(l))
       .filter((m) => m !== null)
       .map((m) => ({ st: m[1], path: m[2] }))
+      .concat(otherWorktreeFiles())
       .slice(0, 40),
     reports: validationReports(),
     webDev: await probe('http://localhost:5173/Microcontrollers-Pinout-Finding/'),

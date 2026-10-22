@@ -10,7 +10,7 @@ Catalog version: none yet · Rule-set version: none yet · Last updated: 2026-10
 | --- | --- | --- | --- | --- | --- |
 | 0 | Bootstrap: tools, repo, Pages enabled | IN PROGRESS (remote deferred) | main | — | 0.1, 0.2, 0.5, 0.6 done; 0.3/0.4 deferred by user (GitHub later) |
 | 1 | Foundation: monorepo, schema, evidence model, CI/CD, placeholder on Pages | FIXING (round 3/3 = LAST; already merged to main by user) | phase-1-fix-1 | phase-validator FAIL · code-reviewer FAIL · github-actions-expert PASS | local-only; 1.8 + CI/deploy gate items wait for GitHub |
-| 2a | Catalog: MVP boards and modules, two-key verified | NOT STARTED | phase-2a | — | needs manual PDFs |
+| 2a | Catalog: MVP boards and modules, two-key verified | IN PROGRESS (parallel with Phase 1 final check) | phase-2a (worktree ../pinout-finder-2a) | — | ESP32-DevKitC + Pico first; Uno R3 / ST7735S need manual PDFs |
 | 2b | Engine: interface selection, CSP solver, rules R1–R8, explanations | NOT STARTED | phase-2b | — | |
 | 3 | Web app: UI, Web Worker, projects, sharing, export, offline | NOT STARTED | phase-3 | — | |
 | 4 | Code generation: Arduino + MicroPython | NOT STARTED | phase-4 | — | |
@@ -47,8 +47,8 @@ Legend: `[x]` done · `[~]` in progress · `[-]` deferred (needs GitHub) · `[ ]
 - [x] 1.9 · Docs: docs/schema.md (generated from Zod descriptions), CONTRIBUTING.md skeleton. · _ci-pages-engineer_
 
 **Phase 2a**
-- [ ] 2a.1 · For each chip/module/board · _hardware-researcher_
-- [ ] 2a.2 · Create catalog/.drafting (pauses the on-edit validation hook) · _hardware-researcher_
+- [~] 2a.1 · For each chip/module/board · _hardware-researcher_
+- [~] 2a.2 · Create catalog/.drafting (pauses the on-edit validation hook) · _hardware-researcher_
 - [ ] 2a.3 · Blind re-derivation · _hardware-fact-auditor_
 - [ ] 2a.4 · Reconcile · _catalog-author_
 - [ ] 2a.5 · Module records · _hardware-researcher → catalog-author_
@@ -174,6 +174,7 @@ None of these block Phase 0. Re-check all three when a session is started inside
 
 | Date | Phase | Event |
 | --- | --- | --- |
+| 2026-10-22 | 2a | Started in parallel (user request) in git worktree `../pinout-finder-2a`, branch `phase-2a` (from `48c518d`), `catalog/.drafting` set. Researchers: ESP32-DevKitC V4 family and Raspberry Pi Pico/Pico W family (tasks 2a.1–2a.2). |
 | 2026-10-22 | 1 | Fix round 3 done (engine-developer): 21/21 surviving mutants now killed (+ extra), new `W_SYMLINK_SKIPPED`, wrong `--root` = exit 2, enum-walker test over every schema enum, focus/CSP web tests; 76 invalid fixtures, ~980 tests. Final re-validation next. |
 | 2026-10-22 | 1 | Re-validation 2: phase-validator **PASS** (0 critical/major, 3 minor); code-reviewer **FAIL** (0 critical, 2 major = missing tests, 10 minor; 107 mutations, 86 killed, 21 survived). Fix round 3 (last) started. |
 | 2026-10-22 | 1 | Fix round 2 done (engine-developer): N1(a–d), N4, N5, N7, N8 implemented; orchestrator re-run: typecheck/lint/format 0, tests schema 115 / cli 247 / web 46, 75/75 invalid roots exit 1 with their code, valid + empty catalog exit 0, compile twice identical. Re-validation next. |
