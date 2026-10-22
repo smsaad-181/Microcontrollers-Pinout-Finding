@@ -14,7 +14,8 @@ const webUrl = z
     error: 'URL must start with http:// or https:// (lower-case scheme)',
     abort: true,
   })
-  .refine((u) => !/^https?:\/\/[^/?#]*@/.test(u), 'URL must not contain credentials (user:pass@)')
+  // No `@` in the authority (user:pass@host). A pattern, so editors get it from the JSON Schema too.
+  .regex(/^https?:\/\/[^/?#@]*(?:[/?#]|$)/, 'URL must not contain credentials (user:pass@)')
   .refine((u) => URL.canParse(u), 'Invalid URL');
 
 export const EvidenceKindSchema = z

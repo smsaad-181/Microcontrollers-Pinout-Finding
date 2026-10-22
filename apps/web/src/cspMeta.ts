@@ -1,6 +1,6 @@
 // Build-only Vite plugin that adds the Content-Security-Policy <meta> tag to index.html.
 import type { Plugin } from 'vite';
-import { CONTENT_SECURITY_POLICY } from './csp';
+import { CONTENT_SECURITY_POLICY } from './csp.ts';
 
 const CHARSET = /<meta charset="UTF-8"\s*\/?>/i;
 

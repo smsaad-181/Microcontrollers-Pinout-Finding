@@ -1,11 +1,13 @@
-import { useEffect, useRef, type RefObject } from 'react';
+import type { RefObject } from 'react';
 import type { ManifestState } from './manifest';
 import { hrefFor, type Route } from './route';
 import { useCatalogManifest } from './useCatalogManifest';
+import { useFocusOnRouteChange } from './useFocusOnRouteChange';
 import { useHashRoute } from './useHashRoute';
 
 type HeadingRef = RefObject<HTMLHeadingElement | null>;
 
+/** Shows the catalog manifest state: loading, not built, unreadable, failed, or version + counts. */
 export function CatalogStatus({ state }: { state: ManifestState }) {
   switch (state.status) {
     case 'loading':
@@ -83,20 +85,10 @@ function routeKey(route: Route): string {
   return route.name === 'not-found' ? `not-found:${route.path}` : route.name;
 }
 
+/** The whole placeholder app: header, hash-routed page, and focus management on route changes. */
 export function App() {
   const route = useHashRoute();
-  const headingRef = useRef<HTMLHeadingElement>(null);
-  const firstRender = useRef(true);
-  const key = routeKey(route);
-
-  // On route change (not first load), move focus to the new page heading for screen readers.
-  useEffect(() => {
-    if (firstRender.current) {
-      firstRender.current = false;
-      return;
-    }
-    headingRef.current?.focus();
-  }, [key]);
+  const headingRef = useFocusOnRouteChange(routeKey(route));
 
   return (
     <>

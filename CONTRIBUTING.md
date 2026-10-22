@@ -33,7 +33,7 @@ pnpm install --frozen-lockfile
 | `pnpm -r lint` | ESLint (strict, type-aware) |
 | `pnpm -r test` | Vitest in every package |
 | `pnpm catalog:validate` | Validate `catalog/` (schemas, evidence links, pin numbering, statuses) |
-| `pnpm catalog:validate --root <dir>` | Validate another catalog root (used by tests) |
+| `pnpm catalog:validate --root <dir>` | Validate another catalog root (used by tests); a directory with none of the seven kind directories is rejected with exit 2, not "0 errors" |
 | `pnpm catalog:compile` | Emit `apps/web/public/catalog/<version>.json` and the manifest |
 | `pnpm --filter web build` | Build the site (base path `/Microcontrollers-Pinout-Finding/`, override with `PAGES_BASE`) |
 | `pnpm --filter web exec vite` | Dev server at http://localhost:5173/Microcontrollers-Pinout-Finding/ |

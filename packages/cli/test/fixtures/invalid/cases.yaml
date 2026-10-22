@@ -223,6 +223,10 @@
   code: E_FACT_STATUS
   file: "chips/demo-mcu-1.yaml"
   path_contains: "pads.GPIO0.reset_state.value"
+- case: conflict-reading-unknown-claim
+  code: E_EVIDENCE_UNKNOWN
+  file: "chips/demo-mcu-1.yaml"
+  path_contains: "pads.GPIO0.reset_state.readings.1.evidence.0"
 - case: ref-onboard-pad
   code: E_REF_UNRESOLVED
   file: "boards/demo-board-1@r1.yaml"

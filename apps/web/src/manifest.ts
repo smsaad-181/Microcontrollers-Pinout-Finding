@@ -1,6 +1,7 @@
 // Catalog manifest: the small JSON file `catalog:compile` writes next to the versioned catalog.
 // Validated with a minimal type guard so the web app does not depend on the CLI package.
 
+/** The fields of `catalog-manifest.json` the web app reads (a subset of what the CLI writes). */
 export interface CatalogManifest {
   version: string;
   date: string;
@@ -9,6 +10,7 @@ export interface CatalogManifest {
   counts?: Record<string, number>;
 }
 
+/** Load state of the manifest: `loading`, then `ready` or one of the three failure states. */
 export type ManifestState =
   | { status: 'loading' }
   | { status: 'ready'; manifest: CatalogManifest }
@@ -16,6 +18,7 @@ export type ManifestState =
   | { status: 'invalid'; reason: string }
   | { status: 'error'; message: string };
 
+/** A `ManifestState` after loading has finished. */
 export type LoadedManifestState = Exclude<ManifestState, { status: 'loading' }>;
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -26,6 +29,7 @@ function isNonEmptyString(value: unknown): value is string {
   return typeof value === 'string' && value.trim().length > 0;
 }
 
+/** Type guard: non-empty `version`, `date`, `sha256`, and `counts` (if present) of non-negative integers. */
 export function isCatalogManifest(value: unknown): value is CatalogManifest {
   if (!isRecord(value)) return false;
   if (!isNonEmptyString(value.version)) return false;
@@ -46,6 +50,7 @@ export function manifestUrl(baseUrl: string): string {
   return `${base}catalog/catalog-manifest.json`;
 }
 
+/** The part of `fetch` that `loadManifest` needs, so tests can pass a fake. */
 export type FetchLike = (input: string, init?: RequestInit) => Promise<Response>;
 
 /** Fetches and validates the manifest. Never rejects, except when `signal` aborts the request. */

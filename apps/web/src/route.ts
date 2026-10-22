@@ -1,5 +1,6 @@
 // Hash routes only: GitHub Pages has no rewrite rules, so path routes would 404 on refresh.
 
+/** A hash route: the home page, or a path with no page. */
 export type Route = { name: 'home' } | { name: 'not-found'; path: string };
 
 /** Hashes that are in-page anchors (ids in the document), not routes. */

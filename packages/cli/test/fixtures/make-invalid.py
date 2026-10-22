@@ -217,6 +217,11 @@ EXTRA_CASES: list[tuple[str, str, str, str, list[Op]]] = [
     conflict("conflict-reading-no-evidence", "readings.1.evidence", "pullup", "pullup", [("pullup", EV), ("input", "")]),
     conflict("conflict-active-not-reading", "active", "pullup", "pulldown", [("pullup", EV), ("input", EV)]),
     conflict("conflict-value-not-active", "value", "input", "pullup", [("pullup", EV), ("input", EV)]),
+    # Fix round 3 (S9): a conflict reading's evidence ids resolve like any other evidence id
+    ("conflict-reading-unknown-claim", "E_EVIDENCE_UNKNOWN", CHIP, "pads.GPIO0.reset_state.readings.1.evidence.0",
+     [("patch", CHIP, RESET_OLD,
+       "status: conflict, active: pullup, value: pullup, readings: "
+       f"[{{ value: pullup, evidence: [{EV}] }}, {{ value: input, evidence: [demo-datasheet-1#no-such-claim] }}] }}")]),
     # N1c: pad references must resolve to a pad of the chip
     ("ref-onboard-pad", "E_REF_UNRESOLVED", BOARD, "onboard.0.uses_pad.1",
      [("patch", BOARD, "uses_pad: [GPIO1]", "uses_pad: [GPIO1, GPIO99]")]),

@@ -58,7 +58,7 @@ export type ErrorCode =
   | 'E_FILE_EXTENSION'
   | 'E_PAD_KEY'
   | 'E_UNKNOWN_DIR';
-export type WarningCode = 'W_IGNORED_FILE';
+export type WarningCode = 'W_IGNORED_FILE' | 'W_SYMLINK_SKIPPED';
 
 export type Diagnostic =
   | { severity: 'error'; code: ErrorCode; file: string; path: string; message: string }

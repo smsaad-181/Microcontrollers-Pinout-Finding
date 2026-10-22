@@ -20,9 +20,8 @@ Status values: NOT STARTED · IN PROGRESS · VALIDATING · FIXING (round n/3) ·
 
 ## Current task
 
-Phase 1 FIXING (round 3/3 = the LAST allowed round) on branch `phase-1-fix-1`. Validators on the round-2 code: phase-validator **PASS** (0 critical/major); code-reviewer **FAIL** (0 critical, 2 major, 10 minor — 107 mutations, 21 survived: missing tests, code is correct); github-actions-expert not re-run yet.
-Running: fix agent adds tests that kill all 21 surviving mutants (majors CR1-R2 board status ignoring module facts, CR2-R2 id regex / strap enum / consumed enum) and fixes small checker gaps (empty/wrong `--root`, symlink warning, JSON Schema gaps).
-Then: re-run all three validators. **If any still FAILs, stop and ask the user** (3-round limit).
+Phase 1 FINAL RE-VALIDATION after fix round 3 (the last allowed round), branch `phase-1-fix-1`. Orchestrator re-run of round 3: typecheck/lint/format 0; tests schema 591, cli 330 (+1 skipped: file symlink needs privileges on Windows), web 59; 76/76 invalid roots exit 1 with their code; valid + empty catalog exit 0; wrong `--root` exit 2; compile twice identical.
+Order: code-reviewer (failed last time) -> phase-validator -> github-actions-expert. **If any still FAILs, stop and ask the user** (3-round limit).
 
 ## Task checklist
 
@@ -169,6 +168,7 @@ None of these block Phase 0. Re-check all three when a session is started inside
 
 | Date | Phase | Event |
 | --- | --- | --- |
+| 2026-10-22 | 1 | Fix round 3 done (engine-developer): 21/21 surviving mutants now killed (+ extra), new `W_SYMLINK_SKIPPED`, wrong `--root` = exit 2, enum-walker test over every schema enum, focus/CSP web tests; 76 invalid fixtures, ~980 tests. Final re-validation next. |
 | 2026-10-22 | 1 | Re-validation 2: phase-validator **PASS** (0 critical/major, 3 minor); code-reviewer **FAIL** (0 critical, 2 major = missing tests, 10 minor; 107 mutations, 86 killed, 21 survived). Fix round 3 (last) started. |
 | 2026-10-22 | 1 | Fix round 2 done (engine-developer): N1(a–d), N4, N5, N7, N8 implemented; orchestrator re-run: typecheck/lint/format 0, tests schema 115 / cli 247 / web 46, 75/75 invalid roots exit 1 with their code, valid + empty catalog exit 0, compile twice identical. Re-validation next. |
 | 2026-10-22 | 1 | Re-validation 1 (phase-validator): **FAIL** — 0 Critical, 3 Major (N1 checker still accepts pad-key/gpio mismatch, bad conflict facts, unresolved pad refs, same pad on two pins; N2 base path vs repo name; N3 Pages disabled), 5 Minor. All local gates pass (303 tests, 48/48 invalid fixtures, deterministic compile, 21/21 SHA pins); all round-1 fixes confirmed; 8/8 mutants killed; real CI on PR #1 = 7/7. Fix round 2 started: N2 done (`d461402`), N1 + minors with fix agent. |

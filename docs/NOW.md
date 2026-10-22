@@ -1,7 +1,7 @@
-Doing: A helper is adding the missing safety tests the code reviewer asked for, and fixing a few small checker weaknesses.
-Why: The code reviewer broke the code on purpose in 107 ways. 21 of those breaks went unnoticed by the tests, 4 of them on hardware-critical rules. The code is correct today, but without tests a later change could silently break it.
-Folder: D:\Development\pinout-finder-kit\pinout-finder\packages\schema, packages\cli and apps\web\test
-Who: One helper agent, writing tests that must fail when the code is broken. I check them myself afterwards.
-Next: Then I run all three reviewers once more. This is the last allowed fix round, so if a reviewer fails the phase again I stop and ask you what to do.
+Doing: The last round of fixes is finished and saved. Now the code reviewer checks it again, first because it is the reviewer that failed the phase.
+Why: The helper added tests for all 21 breaks that went unnoticed. The reviewer will repeat its break-the-code test to confirm they are all caught now.
+Folder: D:\Development\pinout-finder-kit\pinout-finder\docs\validation\phase-1 (the report goes here)
+Who: One reviewer agent. It temporarily edits code to break it and restores every file, so please do not change files in the project meanwhile.
+Next: If it passes, the main reviewer and the workflow reviewer run once more. If all three pass, Phase 1 is finished and I give you the push commands. If any fails, I stop and ask you, because this was the last allowed fix round.
 Needs you: Nothing right now.
-Where: Phase 1 of 6 (foundation) - fix round 3 of 3 (the last)
+Where: Phase 1 of 6 (foundation) - final check after fix round 3

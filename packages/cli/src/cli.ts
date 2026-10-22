@@ -2,11 +2,11 @@
 //   exit 0 = ok, 1 = validation errors (compile refuses to emit), 2 = usage error, root not found,
 //   or an unexpected internal error (one `error: ...` line, never a stack trace).
 import { execFileSync } from 'node:child_process';
-import { existsSync, mkdirSync, statSync, writeFileSync } from 'node:fs';
+import { existsSync, lstatSync, mkdirSync, statSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { MANIFEST_FILE, compileCatalog } from './compile.js';
 import { formatCoverage, formatDiagnostic, formatSummary } from './report.js';
-import type { ValidationResult } from './types.js';
+import { KINDS, type ValidationResult } from './types.js';
 import { validateRoot } from './validate.js';
 
 export interface CliIo {
@@ -109,6 +109,21 @@ function validateAndReport(
   const root = resolve(io.cwd, rootArg);
   if (!existsSync(root) || !statSync(root).isDirectory()) {
     io.stderr(`catalog: root "${rootArg}" is not a directory`);
+    return 2;
+  }
+  // A typo'd --root (or a wrong working directory) must never print "0 errors" and exit 0.
+  const isRealDir = (p: string): boolean => {
+    try {
+      return lstatSync(p).isDirectory();
+    } catch {
+      return false;
+    }
+  };
+  if (!KINDS.some((kind) => isRealDir(join(root, kind)))) {
+    io.stderr(
+      `catalog: root "${rootArg}" is not a catalog root: it has none of ` +
+        `${KINDS.map((k) => `${k}/`).join(', ')}. Check --root.`,
+    );
     return 2;
   }
   const result = validateRoot(root);

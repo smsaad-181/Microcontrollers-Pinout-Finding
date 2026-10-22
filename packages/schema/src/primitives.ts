@@ -60,15 +60,23 @@ export type Expr = z.infer<typeof ExprSchema>;
 /** A string with at least one non-whitespace character. */
 export const NON_BLANK = /\S/;
 
-/** Reviewer key charset after trim + lower-case: rejects zero-width characters and Unicode look-alikes. */
+/**
+ * Reviewer key as written in YAML: an ASCII token, optionally padded with whitespace (`trim()` removes
+ * it). Equivalent to "trim + lower-case matches `[a-z0-9][a-z0-9._-]*`" for ASCII input, and it
+ * rejects zero-width characters and look-alike letters. A plain pattern, so it is emitted into the
+ * JSON Schema as well.
+ */
+export const REVIEWER_KEY_RAW = /^\s*[A-Za-z0-9][A-Za-z0-9._-]*\s*$/;
+
+/** Reviewer key charset after trim + lower-case (what identity comparisons see). */
 export const REVIEWER_KEY = /^[a-z0-9][a-z0-9._-]*$/;
 
-/** Reviewer key: non-blank. Identity is `normalizeReviewer` (trim + lower-case). */
+/** Reviewer key: non-blank ASCII token. Identity is `normalizeReviewer` (trim + lower-case). */
 export const ReviewerSchema = z
   .string()
-  .regex(NON_BLANK, 'reviewer key must not be blank')
-  .refine(
-    (r) => !NON_BLANK.test(r) || REVIEWER_KEY.test(normalizeReviewer(r)),
+  .regex(NON_BLANK, { error: 'reviewer key must not be blank', abort: true })
+  .regex(
+    REVIEWER_KEY_RAW,
     'reviewer key must be plain ASCII letters, digits, ".", "_" or "-" (no spaces, zero-width or look-alike characters)',
   );
 

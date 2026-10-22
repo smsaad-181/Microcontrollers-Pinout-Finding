@@ -235,6 +235,30 @@ choices below.
     `url_original` must match `^https?://` (lower-case scheme), contain no whitespace anywhere and no credentials
     (`user:pass@`, `user@`), and parse as a URL (`E_SCHEMA`). The emitted JSON Schema carries the patterns, so editors flag
     `javascript:`.
+21. **`--root` must be a catalog root (exit 2).** `catalog validate|compile --root <dir>` where `<dir>` exists but contains
+    none of the seven kind directories (`evidence chips modules boards ics breakouts fixtures`, each a real directory)
+    exits 2 with `catalog: root "<dir>" is not a catalog root: ...`, so a typo or a wrong working directory can never print
+    `0 errors` and exit 0. One kind directory is enough: the real catalog (`catalog/`, seven `.gitkeep` directories) is valid
+    and empty (exit 0, compiles).
+22. **Links are never followed (`W_SYMLINK_SKIPPED`).** A symbolic link or junction (to a file or directory, even a dangling
+    one) directly in the catalog root, as a kind directory, or anywhere under a kind directory is skipped with the warning
+    `W_SYMLINK_SKIPPED` (file = its root-relative path, exit stays 0). It is not read, so a catalog cannot pull in files from
+    outside its root, and the result does not depend on how the operating system resolves links.
+23. **Kind directory names are case-sensitive.** `Chips/` is not `chips/`, on every file system (before, a case-insensitive
+    file system loaded it as `chips/` while Linux CI did not). A YAML file in `Chips/` is `E_UNKNOWN_DIR`; the message tells
+    the author to use the lower-case name because Linux CI will not load it. `E_EVIDENCE_UNKNOWN` for an unknown claim in an
+    existing evidence document appends `(known claims: a, b, c, d, e, ...)`: the first five claim ids of that document by
+    code unit, `...` when there are more. A reading inside a `conflict` fact (`readings.N.evidence.M`) is resolved like any
+    other claim id, and must have the `<doc>#<slug>` shape (`E_SCHEMA`).
+
+### Added in fix round 3 (new code `W_SYMLINK_SKIPPED`; no existing case changed)
+
+| case | code | file | path_contains | violation |
+| --- | --- | --- | --- | --- |
+| `conflict-reading-unknown-claim` | `E_EVIDENCE_UNKNOWN` | the chip | `pads.GPIO0.reset_state.readings.1.evidence.0` | a valid conflict whose second reading cites `demo-datasheet-1#no-such-claim` |
+
+Symlink, junction, `Chips/`, not-a-catalog-root and mutation-killing cases are built in temporary directories by
+`packages/cli/test/round3.test.ts` (they cannot be stored as fixtures).
 
 ### Deferred (not implemented; engine inputs, Phase 2b)
 

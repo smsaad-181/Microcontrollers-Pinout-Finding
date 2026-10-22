@@ -336,6 +336,7 @@ describe('loader (M6, CR7)', () => {
 
   it('a root-level YAML file alone stays a warning (exit 0)', () => {
     const root = tmp();
+    mkdirSync(join(root, 'chips')); // a root with no kind directory is "not a catalog root" (CR5-R2)
     writeFileSync(join(root, 'chips.yaml'), 'id: root\n');
     const out: string[] = [];
     const code = runCli(['validate', '--root', root], {

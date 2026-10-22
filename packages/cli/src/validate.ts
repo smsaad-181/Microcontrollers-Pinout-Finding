@@ -204,6 +204,17 @@ function shapeCheck(p: Parsed, out: Diagnostic[]): void {
   }
 }
 
+/** Most claim ids named in an `E_EVIDENCE_UNKNOWN` message, so a contributor can spot the typo. */
+const MAX_LISTED_CLAIMS = 5;
+
+/** ` (known claims: a, b, c, d, e, ...)`: the first claim ids of a document by code unit, or ''. */
+function knownClaims(claims: ReadonlySet<string>): string {
+  const sorted = [...claims].sort(byCodeUnit);
+  if (sorted.length === 0) return ' (the document has no claims)';
+  const more = sorted.length > MAX_LISTED_CLAIMS ? ', ...' : '';
+  return ` (known claims: ${sorted.slice(0, MAX_LISTED_CLAIMS).join(', ')}${more})`;
+}
+
 /** Board status rule (README decision 7), over the board plus its variants' modules and chips. */
 function computeBoardStatus(board: Board, modules: Module[], chips: Chip[]): BoardStatus {
   const hasGpio = board.connectors.some((c) => c.pins.some((pin) => pin.kind === 'gpio'));
@@ -345,7 +356,7 @@ export function validateCatalog(sources: readonly SourceFile[]): ValidationResul
         error('E_EVIDENCE_UNKNOWN', p)(
           ref.path,
           claims
-            ? `unknown claim "${ref.claim}" in evidence document "${doc}"`
+            ? `unknown claim "${ref.claim}" in evidence document "${doc}"${knownClaims(claims)}`
             : `unknown evidence document "${doc}" (cited as "${ref.claim}")`,
         );
       }
