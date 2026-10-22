@@ -157,6 +157,13 @@ None of these block Phase 0. Re-check all three when a session is started inside
 
 - Phase 1 minors from the validator reports (see `docs/validation/phase-1/*.md`): Uno A4/A5 duplicate-pad handling (decide in 2a), deferred breakout/fixture/IC cross-checks (2b), old catalog versions kept for share links (3/5), bundle-size check (3), Dependabot npm run failure (check in GitHub UI), Node 26 LTS bump (after 2026-10-28), DOM tests for the web router (3).
 
+## Later (schema gaps found by the 2a researchers, for the Phase 2a reconcile / schema round)
+
+- Per-variant pin maps: WROVER-E module must list GPIO16/17 as bonded (and `consumed: psram`) only because the board's shared connector requires every gpio pin to be bonded on every variant's module.
+- Connector pins cannot carry status/evidence, so a document disagreement about a pin (DevKitC J2/J3 pins D2/D3/CMD/D1/D0/CLK: user guide says GPIO6-11, modules leave them unconnected) is only in the board file header; modelled as `kind: nc`.
+- `iomux_pins` cannot list alternative pads per role (RP2040 SPI0.RX is on GPIO0/4/16/20); rail voltage cannot be a range (VSYS 1.8-5.5 V); no `enable` pin kind (3V3_EN recorded as `reset`); consumed-kind enum has no `radio` (CYW43439 pads recorded as `internal`); `VDD+0.3`-style expressions only as `VDDIO+0.3`.
+- Image-only facts (Pico header map, schematics) are `transcribed: true`; many ESP32 table-row quotes are flattened by PDF text extraction (auditor must check in the source).
+
 ## Decisions needed
 
 - 2026-10-22 · RESOLVED (user chose "add 3 tests, then close"): **Phase 1 hit the 3-fix-round limit.** Code-reviewer final pass: FAIL, 0 Critical, 3 Major, 8 Minor. All 3 Majors are TEST GAPS on correct code (reviewer proved the code behaves correctly with probes): CR1-R3 board status with a second variant's chip not covered by a test; CR2-R3 "pad bonded by module" for a second variant not covered; CR3-R3 conflict-fact deep equality ignoring an extra object key not covered. 20/21 earlier survivors now killed (W9 partial); 139 new mutations, 117 killed. Smallest fix per reviewer: three short tests, no source change. Waiting for the user to choose how to proceed.
@@ -176,6 +183,7 @@ None of these block Phase 0. Re-check all three when a session is started inside
 | Date | Phase | Event |
 | --- | --- | --- |
 | 2026-10-22 | 1 | Code-reviewer final pass after fix round 3: **FAIL** (0 Critical, 3 Major test gaps on correct code, 8 Minor). 3-round limit reached -> BLOCKED, user decision requested. |
+| 2026-10-22 | 2a | Drive D: failed 20:23-20:40 (disk errors), recovered by itself; full backup to E:ackup\pinout-finder-kit-20261022 (2,484 files, 0 failed); repo `git fsck` clean. ESP32-DevKitC drafted (commit b3a22a8 on phase-2a: chip esp32 34 pads, 2 modules, board esp32-devkitc-v4@V4, 9 evidence; 333 single-source / 2 conflicts / 9 missing across the whole draft catalog; validate exit 0, 9/9 PDF fingerprints match). Pico drafted (2dc8ed8). Blind audits of the Pico started. |
 | 2026-10-22 | 1 | User chose "add 3 tests, then close". Orchestrator added the 3 tests (CR1-R3, CR2-R3, CR3-R3) and proved each reviewer mutation is now killed (3 / 1 / 1 failing tests; sources restored byte-identical). Full suite: schema 592, cli 337 (+1 skipped), web 59; typecheck/lint/format 0. **Phase 1 DONE (local)**; remote gate items (CI on PR, branch protection 1.8, deploy, live URL) deferred to the final release by user decision. |
 | 2026-10-22 | 2a | Started in parallel (user request) in git worktree `../pinout-finder-2a`, branch `phase-2a` (from `48c518d`), `catalog/.drafting` set. Researchers: ESP32-DevKitC V4 family and Raspberry Pi Pico/Pico W family (tasks 2a.1–2a.2). |
 | 2026-10-22 | 1 | Fix round 3 done (engine-developer): 21/21 surviving mutants now killed (+ extra), new `W_SYMLINK_SKIPPED`, wrong `--root` = exit 2, enum-walker test over every schema enum, focus/CSP web tests; 76 invalid fixtures, ~980 tests. Final re-validation next. |
