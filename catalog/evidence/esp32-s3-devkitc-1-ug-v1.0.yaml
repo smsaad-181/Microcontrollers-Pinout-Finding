@@ -13,6 +13,10 @@ claims:
     locator: "Hardware Reference, Header Block, table J3"
     quote: "GPIO48, SPICLK_N, SUBSPICLK_N_DIFF, RGB LED"
     supports: "v1.0 header J3 pin 16 (GPIO48) is marked RGB LED"
+  - id: "esp32-s3-devkitc-1-ug-v1.0#ordering-n8r8-spi-voltage"
+    locator: "Contents and Packaging, Ordering Information table, SPI Voltage column"
+    quote: "ESP32-S3-DevKitC-1-N8R8 ESP32-S3-WROOM-1-N8R8 8 MB QD 8 MB OT 3.3 V"
+    supports: "v1.0 guide lists the SPI (flash/PSRAM VDD_SPI) voltage of the N8R8 board as 3.3 V (the v1.1 guide dropped this column)"
 doc_number: null
 id: "esp32-s3-devkitc-1-ug-v1.0"
 kind: "board-guide"

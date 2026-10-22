@@ -57,6 +57,10 @@ claims:
     locator: "Sheet 2, connector J3 CON22X1"
     quote: "GPIO42 GPIO41 GPIO40 GPIO39 GPIO38 GPIO37 GPIO36 GPIO35"
     supports: "J3 pins 6-13 are GPIO42, GPIO41, GPIO40, GPIO39, GPIO38, GPIO37, GPIO36, GPIO35; pin 1 GND, pin 2 U0TXD, pin 3 U0RXD, pins 4-5 GPIO1, GPIO2, pins 14-20 GPIO0, GPIO45, GPIO48, GPIO47, GPIO21, GPIO20, GPIO19, pins 21-22 GND (read from the drawing)"
+  - id: "esp32-s3-devkitc-1-sch-v1.1#esp-3v3-r24-link"
+    locator: "Sheet 2, power block (text layer entry R24 next to ESP_3V3 and VCC_3V3 nets)"
+    quote: "R24 0(1%)"
+    supports: "0 ohm R24 joins VCC_3V3 (U2 output) to the ESP_3V3 module supply net, so module GPIO levels are 3.3 V (net connection read from the drawing)"
 doc_number: null
 id: "esp32-s3-devkitc-1-sch-v1.1"
 kind: "schematic"

@@ -1,4 +1,4 @@
-# Espressif ESP32-S3-DevKitC-1 revision V1.1 (variants N8 = ESP32-S3-WROOM-1-N8, N8R8 = ESP32-S3-WROOM-1-N8R8) - draft facts, single-source (hardware-researcher, tasks 2a.1/2a.2).
+# Espressif ESP32-S3-DevKitC-1 revision V1.1 (variants N8 = ESP32-S3-WROOM-1-N8, N8R8 = ESP32-S3-WROOM-1-N8R8) - facts reconciled with the blind audit (task 2a.4).
 # Sources: ESP32-S3-DevKitC-1 v1.1 User Guide (esp-dev-kits docs, Header Block tables J1/J3) and schematic SCH_ESP32-S3-DevKitC-1_V1.1_20221130 (Rev V1.1, sheet 2 dated 2022-11-30).
 # REVISION: the v1.1 guide (the latest) is catalogued. v1.0 (initial release) is also on the market and differs in the RGB LED pad: GPIO48 on v1.0, GPIO38 on v1.1 (v1.1 guide 'Hardware
 #   Revision Details'; v1.0 guide); the header pin tables are otherwise identical. A v1.0 board needs its own record (not created here).
@@ -9,7 +9,7 @@
 #   because the schema has one connector map for all variants. The N8 variant (no PSRAM) has them as ordinary GPIOs. GPIO26-GPIO32 (flash) have no header pin.
 # GPIO19/GPIO20 (J3-20/J3-19) are the USB D-/D+ pads: wired to the native micro-USB connector J4 and also on the header.
 # rails max_current (3V3 and 5V) is missing: neither the guide nor the schematic states a current rating; the regulator part is U2 SGM2212-3.3XKC3G/TR (datasheet not opened).
-# `status` is the value the catalog CLI computes.
+# `status` is the value the catalog CLI computes. Connectors/onboard/labels were compared mechanically with the blind audit (J1/J3 identical; see docs/validation/phase-2a/reconcile-esp32-s3-modules-board.md).
 connectors:
   - id: "J1"
     pins:
@@ -60,7 +60,7 @@ connectors:
       - {"kind": "ground", "label": "G", "position": 21}
       - {"kind": "ground", "label": "G", "position": 22}
 id: "esp32-s3-devkitc-1"
-logic_voltage: {"evidence": ["esp32-s3-devkitc-1-ug-v1.1#ldo", "esp32-s3-devkitc-1-sch-v1.1#ldo-part"], "note": "Guide: 5 V to 3.3 V LDO; schematic: U2 SGM2212-3.3XKC3G/TR makes VCC_3V3, which feeds the module through the 0 ohm resistor R24 (ESP_3V3). The chip's I/O domains therefore run at 3.3 V.", "status": "single-source", "unit": "V", "value": 3.3}
+logic_voltage: {"evidence": ["esp32-s3-devkitc-1-ug-v1.1#ldo", "esp32-s3-devkitc-1-sch-v1.1#ldo-part", "esp32-s3-devkitc-1-sch-v1.1#esp-3v3-r24-link"], "note": "Guide: 5 V to 3.3 V LDO; schematic: U2 SGM2212-3.3XKC3G/TR makes VCC_3V3, which feeds the module through the 0 ohm resistor R24 (ESP_3V3). The chip's I/O domains therefore run at 3.3 V. No document states a logic voltage in words; both keys derived 3.3 V from the 3.3 V LDO U2 feeding the module supply ESP_3V3 through R24 (schematic drawing, hence transcribed; claim added for the R24 link).", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "transcribed": true, "unit": "V", "value": 3.3}
 name: "ESP32-S3-DevKitC-1"
 numbering: {"primary": "gpio"}
 onboard:
@@ -93,14 +93,14 @@ onboard:
     part: "D5 red 3.3 V power-on LED with R11 5.1 kohm"
     uses_pad: []
 rails:
-  - max_current: {"evidence": [], "note": "U2 SGM2212-3.3XKC3G/TR is the 3V3 LDO (schematic). Neither the user guide nor the schematic states a current rating; the regulator manufacturer datasheet was not opened.", "status": "missing", "unit": "mA", "value": null}
+  - max_current: {"evidence": [], "note": "U2 SGM2212-3.3XKC3G/TR is the 3V3 LDO (schematic). Neither the user guide nor the schematic states a current rating; the regulator manufacturer datasheet was not opened. Second key (blind audit) also searched schematic sheet 2 and both user guides and found no rating (the SGM2212 datasheet was outside its source set); stays missing.", "status": "missing", "unit": "mA", "value": null}
     name: "3V3"
     source: "U2 SGM2212-3.3XKC3G/TR LDO from VCC_5V (schematic)"
-    voltage: {"evidence": ["esp32-s3-devkitc-1-ug-v1.1#ldo", "esp32-s3-devkitc-1-sch-v1.1#ldo-part", "esp32-s3-devkitc-1-ug-v1.1#j1-power-rst"], "status": "single-source", "unit": "V", "value": 3.3}
-  - max_current: {"evidence": [], "note": "No current rating for the 5 V path is stated in the user guide or the schematic: VBUS of J2/J4 reaches VCC_5V through 1N5819HW-7-F diodes D1/D7; the 5V header pin J1-21 is the same net.", "status": "missing", "unit": "mA", "value": null}
+    voltage: {"evidence": ["esp32-s3-devkitc-1-ug-v1.1#ldo", "esp32-s3-devkitc-1-sch-v1.1#ldo-part", "esp32-s3-devkitc-1-ug-v1.1#j1-power-rst"], "note": "Second key (blind audit) read U2 SGM2212-3.3 (VIN VCC_5V, VOUT VCC_3V3 -> R24 -> ESP_3V3) from the schematic drawing; same 3.3 V.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "unit": "V", "value": 3.3}
+  - max_current: {"evidence": [], "note": "No current rating for the 5 V path is stated in the user guide or the schematic: VBUS of J2/J4 reaches VCC_5V through 1N5819HW-7-F diodes D1/D7; the 5V header pin J1-21 is the same net. Second key (blind audit) also found no 5 V current rating (USB, diodes D1/D7 or header) in the schematic or user guides; stays missing.", "status": "missing", "unit": "mA", "value": null}
     name: "5V"
     source: "Micro-USB VBUS (J2 USB to UART or J4 ESP USB) through diodes D1/D7 (VCC_5V), or the 5V header pin"
-    voltage: {"evidence": ["esp32-s3-devkitc-1-ug-v1.1#j1-5v-gnd", "esp32-s3-devkitc-1-sch-v1.1#vcc-5v-diode"], "status": "single-source", "unit": "V", "value": 5}
+    voltage: {"evidence": ["esp32-s3-devkitc-1-ug-v1.1#j1-5v-gnd", "esp32-s3-devkitc-1-sch-v1.1#vcc-5v-diode"], "note": "Second key (blind audit) identified the rail as 5 V from either micro-USB VBUS (D1/D7 to VCC_5V) or the J1-21 5V pin; it notes no document gives a numeric tolerance, USB voltage or current limit, so only the nominal 5 V is verified.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "unit": "V", "value": 5}
 revision: "V1.1"
 status: "partially-verified"
 variants:
