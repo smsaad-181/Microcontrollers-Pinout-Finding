@@ -62,6 +62,26 @@ describe('conflict facts (N1b)', () => {
     expect(rule({ ...str, value: 'pullup' })).toEqual([['E_FACT_STATUS', 'f.value']]);
   });
 
+  // CR3-R3: an object with an extra or a missing key is a different value. Otherwise an invented
+  // key could reach the engine as part of the "most restrictive reading".
+  it('objects: an extra or missing key makes active/value differ from every reading', () => {
+    const narrow = [rd({ typ: 45000 }), rd({ typ: 50000 })];
+    const extra = { typ: 45000, max: 99999 };
+    expect(rule(conflict({ readings: narrow, active: extra, value: extra }))).toEqual([
+      ['E_FACT_STATUS', 'f.active'],
+    ]);
+    const wide = [rd({ typ: 45000, max: 99999 }), rd({ typ: 50000, max: 99999 })];
+    expect(
+      rule(conflict({ readings: wide, active: { typ: 45000 }, value: { typ: 45000 } })),
+    ).toEqual([['E_FACT_STATUS', 'f.active']]);
+    expect(rule(conflict({ readings: narrow, active: { typ: 45000 }, value: extra }))).toEqual([
+      ['E_FACT_STATUS', 'f.value'],
+    ]);
+    expect(
+      rule(conflict({ readings: wide, active: wide[0]?.value, value: { typ: 45000 } })),
+    ).toEqual([['E_FACT_STATUS', 'f.value']]);
+  });
+
   it('booleans: false is a real value, not "absent"', () => {
     const b = conflict({ readings: [rd(false), rd(true)], active: true, value: true });
     expect(rule(b)).toEqual([]);

@@ -156,6 +156,96 @@ describe('board status covers board, module and chip facts (CR1-R2, H21)', () =>
     const r = validateCatalog([...withVariant, source('modules/demo-module-2.yaml', module2)]);
     expect(brief(r)).toEqual([['E_BOARD_STATUS', 'boards/demo-board-1@r1.yaml', 'status']]);
   });
+
+  // CR1-R3: the chip of every variant feeds the status, not only the first variant's chip.
+  describe('a second variant with its own chip (CR1-R3)', () => {
+    const verifiedChip = allVerified().find((s) => s.file.startsWith('chips/'))?.text ?? '';
+    const chip2 = (reset: string) =>
+      source(
+        'chips/demo-mcu-2.yaml',
+        verifiedChip.replace('id: demo-mcu-1', 'id: demo-mcu-2').replace(RESET3, reset),
+      );
+    const module2 = source(
+      'modules/demo-module-2.yaml',
+      textOf('modules/')
+        .replace('id: demo-module-1', 'id: demo-module-2')
+        .replace('chip: demo-mcu-1', 'chip: demo-mcu-2'),
+    );
+    const twoVariants = (from: SourceFile[]) =>
+      patched(
+        'boards/',
+        '  - { id: demo-variant-a, module: demo-module-1 }\n',
+        '  - { id: demo-variant-a, module: demo-module-1 }\n  - { id: demo-variant-b, module: demo-module-2 }\n',
+        from,
+      );
+
+    it('all verified: declared fully-verified is accepted', () => {
+      const r = validateCatalog([...twoVariants(asFully(allVerified())), module2, chip2(RESET3)]);
+      expect(r.diagnostics).toEqual([]);
+      expect(r.coverage.boards[0]?.computed).toBe('fully-verified');
+    });
+
+    it.each(['interim', 'single-source'])(
+      'variant B chip fact %s: declared fully-verified is E_BOARD_STATUS',
+      (status) => {
+        const weaker = `status: ${status}, value: disabled }`;
+        const r = validateCatalog([...twoVariants(asFully(allVerified())), module2, chip2(weaker)]);
+        expect(brief(r)).toEqual([['E_BOARD_STATUS', 'boards/demo-board-1@r1.yaml', 'status']]);
+        expect(r.coverage.boards[0]?.computed).toBe('partially-verified');
+      },
+    );
+
+    it('variant B chip fact interim: declared partially-verified is accepted', () => {
+      const weaker = 'status: interim, value: disabled }';
+      const r = validateCatalog([...twoVariants(allVerified()), module2, chip2(weaker)]);
+      expect(r.diagnostics).toEqual([]);
+      expect(r.coverage.boards[0]?.computed).toBe('partially-verified');
+    });
+  });
+});
+
+// ---------------------------------------------------------------------------------------------
+// CR2-R3: a header pad must be bonded out by the module of EVERY variant, not only the first
+// ---------------------------------------------------------------------------------------------
+describe('header pads are bonded out by the module of every variant (CR2-R3)', () => {
+  const FULL = 'bonded_pads: [GPIO0, GPIO1, GPIO2, GPIO3]';
+  const NO_GPIO2 = 'bonded_pads: [GPIO0, GPIO1, GPIO3]';
+  const module2 = (bonded: string) =>
+    source(
+      'modules/demo-module-2.yaml',
+      textOf('modules/').replace('id: demo-module-1', 'id: demo-module-2').replace(FULL, bonded),
+    );
+  const twoVariants = (from: SourceFile[]) =>
+    patched(
+      'boards/',
+      '  - { id: demo-variant-a, module: demo-module-1 }\n',
+      '  - { id: demo-variant-a, module: demo-module-1 }\n  - { id: demo-variant-b, module: demo-module-2 }\n',
+      from,
+    );
+
+  it('both modules bond every header pad: no error', () => {
+    expect(validateCatalog([...twoVariants(validSources()), module2(FULL)]).diagnostics).toEqual(
+      [],
+    );
+  });
+
+  it('only variant B module lacks GPIO2: E_PIN_NUMBERING naming variant B', () => {
+    const r = validateCatalog([...twoVariants(validSources()), module2(NO_GPIO2)]);
+    expect(brief(r)).toEqual([
+      ['E_PIN_NUMBERING', 'boards/demo-board-1@r1.yaml', 'connectors.0.pins.4.pad'],
+    ]);
+    expect(errorsOf(r)[0]?.message).toContain('demo-module-2 (variant demo-variant-b)');
+    expect(errorsOf(r)[0]?.message).not.toContain('demo-module-1');
+  });
+
+  it('only variant A module lacks GPIO2: E_PIN_NUMBERING naming variant A', () => {
+    const r = validateCatalog([...twoVariants(patched('modules/', FULL, NO_GPIO2)), module2(FULL)]);
+    expect(brief(r)).toEqual([
+      ['E_PIN_NUMBERING', 'boards/demo-board-1@r1.yaml', 'connectors.0.pins.4.pad'],
+    ]);
+    expect(errorsOf(r)[0]?.message).toContain('demo-module-1 (variant demo-variant-a)');
+    expect(errorsOf(r)[0]?.message).not.toContain('demo-module-2');
+  });
 });
 
 // ---------------------------------------------------------------------------------------------
