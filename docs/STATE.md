@@ -21,7 +21,6 @@ Status values: NOT STARTED · IN PROGRESS · VALIDATING · FIXING (round n/3) ·
 ## Current task
 
 Phase 1 (local, branch `phase-1`). Running in parallel:
-- **1.1** pnpm workspace + all dependencies — _ci-pages-engineer_
 Next (after 1.1): 1.2–1.4 schema + CLI (TDD), 1.6 web placeholder, then 1.9 docs.
 
 ## Task checklist
@@ -37,7 +36,7 @@ Legend: `[x]` done · `[~]` in progress · `[-]` deferred (needs GitHub) · `[ ]
 - [x] 0.6 · Fill sources/manual/README.md with the known manual downloads (ATmega328P DS40002061, S… · _hardware-researcher_
 
 **Phase 1**
-- [~] 1.1 · pnpm workspace · _ci-pages-engineer_
+- [x] 1.1 · pnpm workspace · _ci-pages-engineer_
 - [ ] 1.2 · Zod schemas for Evidence, Fact<T>, Chip, Module, Board, Pin view, IC, Breakout, Fixture… · _engine-developer_
 - [ ] 1.3 · catalog validate [--root <dir>] (default catalog/) · _engine-developer_
 - [ ] 1.4 · catalog compile · _engine-developer_
@@ -139,6 +138,8 @@ None of these block Phase 0. Re-check all three when a session is started inside
   whose official datasheet must be downloaded by hand.
 - 2026-10-22 · Licence holder line is "Pinout Finder contributors" (MIT `LICENSE`); `catalog/LICENSE` is the
   official CC-BY-4.0 legal code from creativecommons.org. Change the holder if you want a person/company name.
+- 2026-10-22 · Node floor `>=22.12.0` (not 20): Vitest 5 requires it and Node 20 is EOL (Apr 2026); still "Node LTS" per CLAUDE.md, CI uses `lts/*`. TypeScript pinned to 6.0.3 (typescript-eslint 8.72 supports `<6.1`; TS 7 native port not yet supported).
+- 2026-10-22 · Workspace packages resolve each other from source via the `@pinout/source` export condition (no prebuild needed for typecheck/test/CLI); catalog scripts run from the repo root, so `--root` and the default `catalog/` are relative to the root.
 
 ## Decisions needed
 
@@ -153,6 +154,7 @@ None of these block Phase 0. Re-check all three when a session is started inside
 
 | Date | Phase | Event |
 | --- | --- | --- |
+| 2026-10-22 | 1 | 1.1 done: pnpm workspace (schema, rules, engine, codegen, cli, web); frozen install, typecheck, lint, 6/6 test projects, web build (assets under `/pinout-finder/`) all exit 0 in orchestrator re-run. |
 | 2026-10-22 | 1 | 1.7 done: ci.yml (aggregate `ci` job), deploy.yml, links.yml stub, dependabot.yml; 22 `uses:` pinned to 40-char SHAs (grep check OK), actionlint 1.7.12 → 0 errors. Not yet run on GitHub. |
 | 2026-10-22 | 1 | 1.5 done: CLI fixtures (valid + 12 invalid cases, error-code contract in `packages/cli/test/fixtures/README.md`); each invalid case differs from valid in exactly one line (diff -r checked). |
 | 2026-10-22 | 0 | Started. Local git repo on `main`. Tasks 0.1 (tools), 0.2 (MCP), 0.5 (LICENSE, catalog/LICENSE, .editorconfig, .gitattributes) done; 0.6 already satisfied by `sources/manual/README.md`. Waiting on `gh` install/login + repo name. |

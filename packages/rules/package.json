@@ -1,0 +1,26 @@
+{
+  "name": "@pinout/rules",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Electrical rules R1-R8.",
+  "type": "module",
+  "exports": {
+    ".": {
+      "@pinout/source": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "eslint .",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@pinout/schema": "workspace:*"
+  }
+}

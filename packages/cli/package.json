@@ -1,0 +1,29 @@
+{
+  "name": "@pinout/cli",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Catalog CLI: validate and compile.",
+  "type": "module",
+  "exports": {
+    ".": {
+      "@pinout/source": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "eslint .",
+    "test": "vitest run",
+    "catalog": "tsx --conditions=@pinout/source src/main.ts"
+  },
+  "dependencies": {
+    "@pinout/schema": "workspace:*",
+    "yaml": "2.9.1",
+    "zod": "4.6.7"
+  }
+}

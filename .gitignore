@@ -13,3 +13,4 @@ playwright-report/
 test-results/
 reports/mutation/
 .DS_Store
+*.tsbuildinfo
