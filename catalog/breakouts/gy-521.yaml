@@ -1,0 +1,37 @@
+# Generic GY-521 (MPU-6050) module. No vendor publishes a schematic for this generic board, so every board fact is missing. Drafted by hardware-researcher.
+hardwired: []
+ic: mpu-6050
+id: gy-521
+interfaces_exposed: [i2c]
+level_shifter:
+  evidence: []
+  note: "No official schematic for the generic GY-521."
+  status: missing
+  value: null
+notes: "Pin labels VCC, GND, SCL, SDA, XDA, XCL, AD0, INT come from the task brief, not from an opened vendor document. XDA/XCL (auxiliary I2C master) are recorded as NC; AD0 and INT use their own names because the MPU-6050 IC record has no address or INT signal yet (TDK datasheet not retrievable). Regulator part and input range, pull-up values and the AD0 pull-down are unknown: show a Caution and do not assume."
+pins:
+  - { label: VCC, maps_to: VCC }
+  - { label: GND, maps_to: GND }
+  - { label: SCL, maps_to: SCL }
+  - { label: SDA, maps_to: SDA }
+  - { label: XDA, maps_to: NC }
+  - { label: XCL, maps_to: NC }
+  - { label: AD0, maps_to: AD0 }
+  - { label: INT, maps_to: INT }
+pullups:
+  - line: SDA
+    value_ohm: { evidence: [], status: missing, unit: ohm, value: null }
+  - line: SCL
+    value_ohm: { evidence: [], status: missing, unit: ohm, value: null }
+regulator:
+  evidence: []
+  note: "No official schematic for the generic GY-521."
+  status: missing
+  value: null
+supply_current:
+  evidence: []
+  status: missing
+  unit: mA
+  value: null
+variant_names: ["GY-521", "GY-521 MPU-6050", "MPU6050 module", "MPU-6050 module"]
+vendor: generic

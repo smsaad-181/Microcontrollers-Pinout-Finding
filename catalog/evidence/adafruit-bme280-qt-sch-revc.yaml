@@ -1,0 +1,35 @@
+# Evidence record: Adafruit BME280 STEMMA QT schematic image "BME280 rev C" (read 2026-10-23). Image only: values are transcribed from the drawing.
+accessed: "2026-10-23"
+claims:
+  - id: "adafruit-bme280-qt-sch-revc#title-block"
+    locator: "Title block, bottom right"
+    quote: "BME280 rev C 20/7/20 16:44 Adafruit Industries"
+    supports: "Schematic is revision C of the Adafruit BME280 (STEMMA QT version), drawn 20/7/20"
+  - id: "adafruit-bme280-qt-sch-revc#regulator-u2"
+    locator: "Power supply block, U2"
+    quote: "U2 AP2112K-3.3 IN EN GND OUT"
+    supports: "Onboard regulator is an AP2112K-3.3 (IN and EN tied to VCC, OUT to the 3.3 V rail)"
+  - id: "adafruit-bme280-qt-sch-revc#i2c-pullups-shift"
+    locator: "I2C Pullups & Shift block, R3G$1-R3G$4, Q21, Q22"
+    quote: "I2C Pullups & Shift 10K R3G$1 10K R3G$3 10K R3G$2 10K R3G$4 BSS138 Q21 BSS138 Q22"
+    supports: "SDA and SCL each have a 10K pull-up to VCC on the header side and a 10K pull-up to 3.3 V on the sensor side, joined by a BSS138 MOSFET level shifter"
+  - id: "adafruit-bme280-qt-sch-revc#csb-sdo"
+    locator: "CS and SDO/ADR section (R4, R5, D2, SJ1)"
+    quote: "10K R5 CS_3V 1N4148 D2 CS SDO/ADR 10K R4 SJ1"
+    supports: "CS_3V pulled up to 3.3 V through 10K R5 (diode D2 to the CS pin); SDO/ADR pulled up to 3.3 V through 10K R4 with solder jumper SJ1 to GND"
+  - id: "adafruit-bme280-qt-sch-revc#header-jp1"
+    locator: "Header JP1 and STEMMA QT connectors"
+    quote: "JP1 3.3V VCC GND SCK/SCL SDO/ADR SDI/SDA CS"
+    supports: "7-pin header JP1 carries VCC, 3.3 V, GND, SCK/SCL, SDO/ADR, SDI/SDA, CS; the STEMMA QT connectors carry GND, VCC, SDA, SCL"
+doc_number: null
+id: adafruit-bme280-qt-sch-revc
+kind: schematic
+manual: false
+publisher: Adafruit Industries
+revision: "rev C"
+revision_date: "20/7/20 16:44 (as printed)"
+secondary: false
+sha256: "8e0048283c03aa7adb3c5e488d8a46924cafef4259ea082176bd97f9b9c4fd28"
+title: Adafruit BME280 STEMMA QT schematic (learn guide Downloads page image)
+url: https://cdn-learn.adafruit.com/assets/assets/000/097/136/original/adafruit_products_BME280_sch.png?1605727658
+url_original: https://learn.adafruit.com/adafruit-bme280-humidity-barometric-pressure-temperature-sensor-breakout/downloads

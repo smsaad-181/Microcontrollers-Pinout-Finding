@@ -1,0 +1,17 @@
+# TDK InvenSense MPU-6050. The official TDK/InvenSense datasheet (PS-MPU-6000A-00) and register map (RM-MPU-6000A-00) could not be fetched
+# (invensense.tdk.com redirects the PDF URL to a search page, product.tdk.com returns 403), so every fact is missing. Drafted by hardware-researcher.
+# Not recorded for the same reason: I2C addresses (AD0 strap), INT pin, XDA/XCL auxiliary bus.
+id: mpu-6050
+input_abs_max: { evidence: [], status: missing, unit: V, value: null }
+interfaces:
+  - kind: i2c
+    limits:
+      max_hz: { evidence: [], status: missing, unit: Hz, value: null }
+    signals:
+      - { dir: io, drive: open-drain, role: SDA, shareable: true }
+      - { dir: in, drive: open-drain, role: SCL, shareable: true }
+part: MPU-6050
+supply_current: { evidence: [], status: missing, unit: mA, value: null }
+vdd_range: { evidence: [], status: missing, unit: V, value: null }
+vendor: TDK InvenSense
+vio_range: { evidence: [], status: missing, unit: V, value: null }

@@ -1,0 +1,92 @@
+# Bosch Sensortec BME280, from datasheet BST-BME280-DS001-24 rev 1.24. Drafted by hardware-researcher; nothing verified.
+id: bme280
+input_abs_max:
+  evidence: ["bme280-ds-1.24#abs-max-interface"]
+  note: "Table 5: any interface pin -0.3 V to VDDIO + 0.3 V. The VDD and VDDIO pins themselves: -0.3 V to 4.25 V (claim bme280-ds-1.24#abs-max-supply)."
+  status: single-source
+  unit: V
+  value: "VDDIO+0.3"
+interfaces:
+  - kind: i2c
+    limits:
+      addresses:
+        - { strap: "SDO=GND", value: 118 } # 0x76
+        - { strap: "SDO=VDDIO", value: 119 } # 0x77
+      i2c_modes: [sm, fm, hs]
+      max_hz:
+        evidence: ["bme280-ds-1.24#i2c-max-speed"]
+        note: "3.4 MHz is the high-speed-mode ceiling quoted in Key features; standard (100 kHz) and fast (400 kHz) mode are the other supported modes."
+        status: single-source
+        unit: Hz
+        value: 3400000
+    signals:
+      - { dir: io, drive: open-drain, role: SDA, shareable: true }
+      - { dir: in, drive: open-drain, role: SCL, shareable: true }
+  - kind: spi
+    limits:
+      max_hz:
+        evidence: ["bme280-ds-1.24#spi-fspi"]
+        note: "Applies to 4-wire and 3-wire SPI (datasheet 6.4.3). 3-wire mode is enabled by register spi3w_en and uses SDI as the bidirectional data pin."
+        status: single-source
+        unit: Hz
+        value: 10000000
+      spi_modes: [0, 3]
+    signals:
+      - { dir: in, drive: push-pull, role: SCK, shareable: true }
+      - { dir: in, drive: push-pull, role: MOSI, shareable: true }
+      - { dir: out, drive: push-pull, role: MISO, shareable: true }
+      - { dir: in, drive: push-pull, role: CS, shareable: false }
+logic_levels:
+  vih_min:
+    conditions: { VDDIO: "1.2 V to 3.6 V" }
+    evidence: ["bme280-ds-1.24#logic-levels"]
+    note: "Table 32 gives 80 %VDDIO."
+    status: single-source
+    unit: V
+    value: "VDDIO*0.8"
+  vil_max:
+    conditions: { VDDIO: "1.2 V to 3.6 V" }
+    evidence: ["bme280-ds-1.24#logic-levels"]
+    note: "Table 32 gives 20 %VDDIO."
+    status: single-source
+    unit: V
+    value: "VDDIO*0.2"
+  voh_min:
+    conditions: { Ioh_mA: 1, VDDIO: "1.62 V" }
+    evidence: ["bme280-ds-1.24#output-levels"]
+    note: "Table 32 gives 80 %VDDIO for SDO/SDI at 1 mA (60 %VDDIO at VDDIO = 1.2 V)."
+    status: single-source
+    unit: V
+    value: "VDDIO*0.8"
+  vol_max:
+    conditions: { Iol_mA: 3, VDDIO: "1.62 V" }
+    evidence: ["bme280-ds-1.24#output-low-i2c"]
+    note: "Table 32 gives 20 %VDDIO for I2C SDA at 3 mA."
+    status: single-source
+    unit: V
+    value: "VDDIO*0.2"
+part: BME280
+select_strap:
+  evidence: ["bme280-ds-1.24#iface-selection-csb", "bme280-ds-1.24#iface-lockout-csb"]
+  pins: [CSB]
+  table:
+    - { selects: i2c, value: { CSB: 1 } }
+    - { selects: spi, value: { CSB: 0 } }
+supply_current:
+  conditions: { typ: "average at 1 Hz humidity+pressure+temperature sampling", max: "Table 1 IDDP pressure measurement phase, max value at -40 C" }
+  evidence: ["bme280-ds-1.24#current-consumption-1hz", "bme280-ds-1.24#current-pressure-meas"]
+  note: "typ 3.6 uA is a duty-cycled average; max 714 uA is the highest tabulated current during a measurement phase, not a continuous rating. Sleep current typ 0.1 uA, max 0.3 uA (bme280-ds-1.24#current-sleep)."
+  status: single-source
+  unit: mA
+  value: { max: 0.714, typ: 0.0036 }
+vdd_range:
+  evidence: ["bme280-ds-1.24#supply-voltage"]
+  status: single-source
+  unit: V
+  value: [1.71, 3.6]
+vendor: Bosch Sensortec
+vio_range:
+  evidence: ["bme280-ds-1.24#supply-voltage"]
+  status: single-source
+  unit: V
+  value: [1.2, 3.6]

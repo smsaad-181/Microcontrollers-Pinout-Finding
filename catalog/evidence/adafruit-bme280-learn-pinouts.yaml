@@ -1,0 +1,47 @@
+# Evidence record: Adafruit BME280 learn guide, Pinouts page (read 2026-10-23). Guide covers the STEMMA QT product 2652 and the original version.
+accessed: "2026-10-23"
+claims:
+  - id: "adafruit-bme280-learn-pinouts#vin-regulator"
+    locator: "Pinouts, Power Pins, Vin"
+    quote: "we have included a voltage regulator on board that will take 3-5VDC and safely convert it down."
+    supports: "Onboard 3.3 V regulator; Vin accepts 3-5 V DC"
+  - id: "adafruit-bme280-learn-pinouts#3vo-output"
+    locator: "Pinouts, Power Pins, 3Vo"
+    quote: "this is the 3.3V output from the voltage regulator, you can grab up to 100mA from this if you like"
+    supports: "3Vo is the regulator output, 100 mA available"
+  - id: "adafruit-bme280-learn-pinouts#level-shifting"
+    locator: "Pinouts, SPI Logic pins"
+    quote: "All pins going into the breakout have level shifting circuitry to make them 3-5V logic level safe."
+    supports: "Level shifting on the logic pins, 3-5 V logic safe"
+  - id: "adafruit-bme280-learn-pinouts#spi-pins"
+    locator: "Pinouts, SPI Logic pins"
+    quote: "CS - this is the Chip Select pin, drop it low to start an SPI transaction. Its an input to the chip"
+    supports: "Header pins SCK, SDO, SDI, CS carry SPI; CS is active low"
+  - id: "adafruit-bme280-learn-pinouts#i2c-pins"
+    locator: "Pinouts, I2C Logic pins"
+    quote: "SCK - this is also the I2C clock pin, connect to your microcontrollers I2C clock line."
+    supports: "SCK pin doubles as I2C SCL; SDI pin doubles as I2C SDA (adjacent line); leave the other pins disconnected"
+  - id: "adafruit-bme280-learn-pinouts#i2c-sda"
+    locator: "Pinouts, I2C Logic pins"
+    quote: "SDI - this is also the I2C data pin, connect to your microcontrollers I2C data line."
+    supports: "SDI pin doubles as I2C SDA"
+  - id: "adafruit-bme280-learn-pinouts#i2c-address"
+    locator: "Pinouts, I2C Address"
+    quote: "By default, the I2C address is 0x77."
+    supports: "Default I2C address 0x77 (SDO pulled up on the board)"
+  - id: "adafruit-bme280-learn-pinouts#i2c-address-alt"
+    locator: "Pinouts, I2C Address"
+    quote: "soldering the ADDR jumper on the back closed, the address will change to 0x76."
+    supports: "SDO to GND (wire or closed ADDR jumper on the back) gives 0x76"
+doc_number: null
+id: adafruit-bme280-learn-pinouts
+kind: board-guide
+manual: false
+publisher: Adafruit Industries
+revision: null
+revision_date: "Page last edited March 08, 2024"
+secondary: false
+sha256: null
+title: Adafruit BME280 Humidity + Barometric Pressure + Temperature Sensor Breakout, Pinouts
+url: https://learn.adafruit.com/adafruit-bme280-humidity-barometric-pressure-temperature-sensor-breakout/pinouts
+url_original: null

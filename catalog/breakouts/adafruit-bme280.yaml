@@ -1,0 +1,52 @@
+# Adafruit BME280 breakout, product 2652 (STEMMA QT version, schematic "BME280 rev C"). Drafted by hardware-researcher; nothing verified.
+hardwired:
+  - { strap: SDO, value: "pulled up to 3.3 V by 10 kohm (R4); solder jumper SJ1 (ADDR) to GND gives address 0x76" }
+  - { strap: CSB, value: "pulled up to 3.3 V by 10 kohm (R5) through diode D2; CS pin left open keeps I2C selected" }
+ic: bme280
+id: adafruit-bme280
+interfaces_exposed: [i2c, spi]
+level_shifter:
+  evidence: ["adafruit-bme280-learn-pinouts#level-shifting", "adafruit-bme280-qt-sch-revc#i2c-pullups-shift"]
+  note: "BSS138 MOSFET shifters on SDA and SCL (schematic); CS is isolated from the 3.3 V side by diode D2 with a pull-up. Learn guide: all pins into the breakout are 3-5 V logic level safe."
+  status: single-source
+  transcribed: true
+  value: true
+notes: "Pin order on header JP1 per schematic: Vin, 3Vo, GND, SCK, SDO, SDI, CS. 3Vo is the regulator output (up to 100 mA per learn guide), recorded as NC because it is not a signal. SCK/SDI double as I2C SCL/SDA, SDO is MISO in SPI and the address strap in I2C (the strap is pulled up on the board, so I2C address is 0x77 unless the ADDR jumper is closed). The breakout also has a STEMMA QT connector (GND, VCC, SDA, SCL) in parallel with the header, and a 10 kohm + LED power indicator. Schematic is an image: values transcribed by hand. The original non-QT board has a different regulator in its Eagle file and was not recorded here."
+pins:
+  - { label: Vin, maps_to: VCC }
+  - { label: 3Vo, maps_to: NC }
+  - { label: GND, maps_to: GND }
+  - { label: SCK, maps_to: "SCK/SCL" }
+  - { label: SDO, maps_to: MISO }
+  - { label: SDI, maps_to: "MOSI/SDA" }
+  - { label: CS, maps_to: CS }
+pullups:
+  - line: SDA
+    value_ohm:
+      conditions: { pulled_to: "Vin (header side); a second 10 kohm to 3.3 V sits on the sensor side of the BSS138 shifter" }
+      evidence: ["adafruit-bme280-qt-sch-revc#i2c-pullups-shift"]
+      status: single-source
+      transcribed: true
+      unit: ohm
+      value: 10000
+  - line: SCL
+    value_ohm:
+      conditions: { pulled_to: "Vin (header side); a second 10 kohm to 3.3 V sits on the sensor side of the BSS138 shifter" }
+      evidence: ["adafruit-bme280-qt-sch-revc#i2c-pullups-shift"]
+      status: single-source
+      transcribed: true
+      unit: ohm
+      value: 10000
+regulator:
+  evidence: ["adafruit-bme280-learn-pinouts#vin-regulator", "adafruit-bme280-qt-sch-revc#regulator-u2"]
+  note: "Regulator is an AP2112K-3.3 per schematic rev C. Input range 3-5 V is the learn guide's statement, not a regulator datasheet rating."
+  status: single-source
+  value: { present: true, vin_range: [3, 5] }
+supply_current:
+  evidence: []
+  note: "Adafruit publishes no board supply current; regulator quiescent current and the power LED are not documented."
+  status: missing
+  unit: mA
+  value: null
+variant_names: ["Adafruit BME280", "Adafruit BME280 STEMMA QT", "Adafruit 2652", "Adafruit product 2652"]
+vendor: Adafruit Industries
