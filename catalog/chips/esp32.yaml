@@ -1,0 +1,590 @@
+# ESP32 chip series (ESP32-D0WD-V3 etc.) - draft facts, all single-source (hardware-researcher).
+# Sources: ESP32 Series Datasheet v5.3, ESP32 TRM v5.8 (Ch. 6 IO MUX, Ch. 31 ADC), ESP32 Series SoC Errata v3.1,
+# ESP-IDF v6.1 SPI Master and ADC Oneshot docs. Functions: 'GPIO' = GPIO-matrix route; other IO_MUX functions from
+# TRM Table 6.10-1 (HSPI* -> SPI2, VSPI* -> SPI3, U0/U1/U2* -> UART0/1/2, MT* -> JTAG per datasheet Appendix A note 6;
+# other names kept as printed); analog/RTC functions from TRM Table 6.11-1 are 'fixed'. Matrix routing of I2C/UART/SPI
+# is expressed by peripherals.*.matrix_routable, not repeated per pad. GPIO20/24/28-31 do not exist on this series.
+electrical:
+  abs_max_vin: {"conditions": {"temperature": "25 C", "vdd": "3.3 V"}, "evidence": ["esp32-ds-v5.3#dc-input-levels", "esp32-ds-v5.3#dc-vdd-definition"], "note": "Table 5-3 VIH max = VDD + 0.3 V, where VDD is the pad's I/O supply (written VDDIO+0.3 because the schema has no VDD+ form). Table 5-1 lists no separate absolute maximum for IO pins (supply pins: -0.3 to 3.6 V).", "status": "single-source", "unit": "V", "value": "VDDIO+0.3"}
+  cumulative_current_max: {"evidence": ["esp32-ds-v5.3#abs-max-cumulative-current"], "status": "single-source", "unit": "mA", "value": 1200}
+  internal_pull_ohm: {"evidence": ["esp32-ds-v5.3#dc-pull-resistance"], "note": "Datasheet value 45 kohm typical (pull-up and pull-down); no min/max given.", "status": "single-source", "unit": "ohm", "value": {"typ": 45000}}
+  pin_current_max: {"evidence": [], "note": "ESP32 Datasheet v5.3 gives no per-pin maximum current. Table 5-3 gives only typical IOH 40 mA (VDD3P3_CPU/RTC domains, 20 mA VDD_SDIO) and IOL 28 mA at maximum drive strength; per-pin source current falls to about 29 mA as more pins source current (note 2). Not a rating.", "status": "missing", "unit": "mA", "value": null}
+  vih_min: {"conditions": {"temperature": "25 C", "vdd": "3.3 V"}, "evidence": ["esp32-ds-v5.3#dc-input-levels", "esp32-ds-v5.3#dc-vdd-definition"], "status": "single-source", "unit": "V", "value": "VDD*0.75"}
+  vil_max: {"conditions": {"temperature": "25 C", "vdd": "3.3 V"}, "evidence": ["esp32-ds-v5.3#dc-input-levels", "esp32-ds-v5.3#dc-vdd-definition"], "status": "single-source", "unit": "V", "value": "VDD*0.25"}
+  voh_min: {"conditions": {"temperature": "25 C", "vdd": "3.3 V"}, "evidence": ["esp32-ds-v5.3#dc-output-levels", "esp32-ds-v5.3#dc-vdd-definition"], "status": "single-source", "unit": "V", "value": "VDD*0.8"}
+  vol_max: {"conditions": {"temperature": "25 C", "vdd": "3.3 V"}, "evidence": ["esp32-ds-v5.3#dc-output-levels", "esp32-ds-v5.3#dc-vdd-definition"], "status": "single-source", "unit": "V", "value": "VDD*0.1"}
+family: "ESP32"
+id: "esp32"
+pads:
+  GPIO0:
+    adc:
+      channel: 1
+      radio_conflict: {"evidence": ["esp32-trm-v5.8#adc2-wifi", "esp-idf-adc-oneshot-v6.1#adc2-wifi"], "status": "single-source", "value": true}
+      unit: "ADC2"
+    errata: ["GPIO-3.6", "GPIO-3.14"]
+    functions:
+      - {"fn": "GPIO", "routing": "matrix"}
+      - {"fn": "CLK_OUT1", "routing": "iomux"}
+      - {"fn": "EMAC_TX_CLK", "routing": "iomux"}
+      - {"fn": "ADC2_CH1", "routing": "fixed"}
+      - {"fn": "TOUCH1", "routing": "fixed"}
+      - {"fn": "RTC_GPIO11", "routing": "fixed"}
+      - {"fn": "RTC_I2C_SDA", "routing": "fixed"}
+    gpio: 0
+    input_only: {"evidence": ["esp32-trm-v5.8#iomux-gpio0", "esp32-trm-v5.8#io-pins-output-pins"], "status": "single-source", "value": false}
+    power_up_glitch: {"evidence": ["esp32-errata-v3.1#gpio-errata-summary"], "note": "No power-up glitch is documented in ESP32 Series Datasheet v5.3 or ESP32 Series SoC Errata v3.1 (the errata GPIO category lists only GPIO-3.6, GPIO-3.14 and GPIO-3.11).", "status": "single-source", "value": "none"}
+    reset_state: {"evidence": ["esp32-trm-v5.8#iomux-gpio0", "esp32-trm-v5.8#reset-column", "esp32-trm-v5.8#reset-legend-2-3"], "status": "single-source", "value": "pullup"}
+    strap: {"evidence": ["esp32-ds-v5.3#strap-default-config", "esp32-trm-v5.8#gpio-strap-reg", "esp32-ds-v5.3#boot-mode-control", "esp32-ds-v5.3#boot-mode-table"], "status": "single-source", "value": {"default_pull": "up", "required_at_reset": "high", "role": "boot mode select (SPI boot vs joint download boot)"}}
+    touch: {"channel": 1}
+  GPIO1:
+    errata: ["GPIO-3.14"]
+    functions:
+      - {"fn": "GPIO", "routing": "matrix"}
+      - {"fn": "UART0.TX", "routing": "iomux"}
+      - {"fn": "CLK_OUT3", "routing": "iomux"}
+      - {"fn": "EMAC_RXD2", "routing": "iomux"}
+    gpio: 1
+    input_only: {"evidence": ["esp32-trm-v5.8#iomux-gpio1", "esp32-trm-v5.8#io-pins-output-pins"], "status": "single-source", "value": false}
+    power_up_glitch: {"evidence": ["esp32-errata-v3.1#gpio-errata-summary"], "note": "No power-up glitch is documented in ESP32 Series Datasheet v5.3 or ESP32 Series SoC Errata v3.1 (the errata GPIO category lists only GPIO-3.6, GPIO-3.14 and GPIO-3.11).", "status": "single-source", "value": "none"}
+    reset_state: {"evidence": ["esp32-trm-v5.8#iomux-gpio1", "esp32-trm-v5.8#reset-column", "esp32-trm-v5.8#reset-legend-2-3"], "status": "single-source", "value": "pullup"}
+    strap: {"evidence": ["esp32-ds-v5.3#strap-default-config", "esp32-trm-v5.8#gpio-strap-reg"], "note": "Not in datasheet Table 3-1 (five straps) nor in TRM GPIO_STRAP_REG (six bits).", "status": "single-source", "value": "none"}
+  GPIO10:
+    errata: ["GPIO-3.14"]
+    functions:
+      - {"fn": "GPIO", "routing": "matrix"}
+      - {"fn": "SD_DATA3", "routing": "iomux"}
+      - {"fn": "SPIWP", "routing": "iomux"}
+      - {"fn": "HS1_DATA3", "routing": "iomux"}
+      - {"fn": "UART1.TX", "routing": "iomux"}
+    gpio: 10
+    input_only: {"evidence": ["esp32-trm-v5.8#iomux-gpio10", "esp32-trm-v5.8#io-pins-output-pins"], "status": "single-source", "value": false}
+    power_up_glitch: {"evidence": ["esp32-errata-v3.1#gpio-errata-summary"], "note": "No power-up glitch is documented in ESP32 Series Datasheet v5.3 or ESP32 Series SoC Errata v3.1 (the errata GPIO category lists only GPIO-3.6, GPIO-3.14 and GPIO-3.11).", "status": "single-source", "value": "none"}
+    reset_state: {"evidence": ["esp32-trm-v5.8#iomux-gpio10", "esp32-trm-v5.8#reset-column", "esp32-trm-v5.8#reset-legend-2-3"], "status": "single-source", "value": "pullup"}
+    strap: {"evidence": ["esp32-ds-v5.3#strap-default-config", "esp32-trm-v5.8#gpio-strap-reg"], "note": "Not in datasheet Table 3-1 (five straps) nor in TRM GPIO_STRAP_REG (six bits).", "status": "single-source", "value": "none"}
+  GPIO11:
+    errata: ["GPIO-3.14"]
+    functions:
+      - {"fn": "GPIO", "routing": "matrix"}
+      - {"fn": "SD_CMD", "routing": "iomux"}
+      - {"fn": "SPICS0", "routing": "iomux"}
+      - {"fn": "HS1_CMD", "routing": "iomux"}
+      - {"fn": "UART1.RTS", "routing": "iomux"}
+    gpio: 11
+    input_only: {"evidence": ["esp32-trm-v5.8#iomux-gpio11", "esp32-trm-v5.8#io-pins-output-pins"], "status": "single-source", "value": false}
+    power_up_glitch: {"evidence": ["esp32-errata-v3.1#gpio-errata-summary"], "note": "No power-up glitch is documented in ESP32 Series Datasheet v5.3 or ESP32 Series SoC Errata v3.1 (the errata GPIO category lists only GPIO-3.6, GPIO-3.14 and GPIO-3.11).", "status": "single-source", "value": "none"}
+    reset_state: {"evidence": ["esp32-trm-v5.8#iomux-gpio11", "esp32-trm-v5.8#reset-column", "esp32-trm-v5.8#reset-legend-2-3"], "status": "single-source", "value": "pullup"}
+    strap: {"evidence": ["esp32-ds-v5.3#strap-default-config", "esp32-trm-v5.8#gpio-strap-reg"], "note": "Not in datasheet Table 3-1 (five straps) nor in TRM GPIO_STRAP_REG (six bits).", "status": "single-source", "value": "none"}
+  GPIO12:
+    adc:
+      channel: 5
+      radio_conflict: {"evidence": ["esp32-trm-v5.8#adc2-wifi", "esp-idf-adc-oneshot-v6.1#adc2-wifi"], "status": "single-source", "value": true}
+      unit: "ADC2"
+    errata: ["GPIO-3.6", "GPIO-3.14"]
+    functions:
+      - {"fn": "GPIO", "routing": "matrix"}
+      - {"fn": "JTAG.MTDI", "routing": "iomux"}
+      - {"fn": "SPI2.MISO", "routing": "iomux"}
+      - {"fn": "HS2_DATA2", "routing": "iomux"}
+      - {"fn": "SD_DATA2", "routing": "iomux"}
+      - {"fn": "EMAC_TXD3", "routing": "iomux"}
+      - {"fn": "ADC2_CH5", "routing": "fixed"}
+      - {"fn": "TOUCH5", "routing": "fixed"}
+      - {"fn": "RTC_GPIO15", "routing": "fixed"}
+    gpio: 12
+    input_only: {"evidence": ["esp32-trm-v5.8#iomux-gpio12", "esp32-trm-v5.8#io-pins-output-pins"], "status": "single-source", "value": false}
+    jtag: "MTDI"
+    power_up_glitch: {"evidence": ["esp32-errata-v3.1#gpio-errata-summary"], "note": "No power-up glitch is documented in ESP32 Series Datasheet v5.3 or ESP32 Series SoC Errata v3.1 (the errata GPIO category lists only GPIO-3.6, GPIO-3.14 and GPIO-3.11).", "status": "single-source", "value": "none"}
+    reset_state: {"evidence": ["esp32-trm-v5.8#iomux-gpio12", "esp32-trm-v5.8#reset-column", "esp32-trm-v5.8#reset-legend-2-3"], "status": "single-source", "value": "pulldown"}
+    strap: {"conditions": {"flash_voltage": "3.3 V"}, "evidence": ["esp32-ds-v5.3#strap-default-config", "esp32-trm-v5.8#gpio-strap-reg", "esp32-ds-v5.3#vdd-sdio-mtdi0", "esp32-ds-v5.3#vdd-sdio-mtdi1", "esp32-trm-v5.8#vdd-sdio-mtdi"], "note": "Required level depends on the flash/PSRAM voltage: low for 3.3 V parts (WROOM-32E and WROVER-E: 'IO12 should be kept low when the module is powered on'), high for 1.8 V parts; eFuse EFUSE_SDIO_FORCE can override the strap.", "status": "single-source", "value": {"default_pull": "down", "required_at_reset": "low", "role": "VDD_SDIO (flash/PSRAM supply) voltage select: 0 = VDD3P3_RTC (3.3 V), 1 = 1.8 V LDO"}}
+    touch: {"channel": 5}
+  GPIO13:
+    adc:
+      channel: 4
+      radio_conflict: {"evidence": ["esp32-trm-v5.8#adc2-wifi", "esp-idf-adc-oneshot-v6.1#adc2-wifi"], "status": "single-source", "value": true}
+      unit: "ADC2"
+    errata: ["GPIO-3.6", "GPIO-3.14"]
+    functions:
+      - {"fn": "GPIO", "routing": "matrix"}
+      - {"fn": "JTAG.MTCK", "routing": "iomux"}
+      - {"fn": "SPI2.MOSI", "routing": "iomux"}
+      - {"fn": "HS2_DATA3", "routing": "iomux"}
+      - {"fn": "SD_DATA3", "routing": "iomux"}
+      - {"fn": "EMAC_RX_ER", "routing": "iomux"}
+      - {"fn": "ADC2_CH4", "routing": "fixed"}
+      - {"fn": "TOUCH4", "routing": "fixed"}
+      - {"fn": "RTC_GPIO14", "routing": "fixed"}
+    gpio: 13
+    input_only: {"evidence": ["esp32-trm-v5.8#iomux-gpio13", "esp32-trm-v5.8#io-pins-output-pins"], "status": "single-source", "value": false}
+    jtag: "MTCK"
+    power_up_glitch: {"evidence": ["esp32-errata-v3.1#gpio-errata-summary"], "note": "No power-up glitch is documented in ESP32 Series Datasheet v5.3 or ESP32 Series SoC Errata v3.1 (the errata GPIO category lists only GPIO-3.6, GPIO-3.14 and GPIO-3.11).", "status": "single-source", "value": "none"}
+    reset_state: {"evidence": ["esp32-trm-v5.8#iomux-gpio13", "esp32-trm-v5.8#reset-column", "esp32-trm-v5.8#reset-legend-2-3", "esp32-ds-v5.3#iomux-reset-gpio13"], "note": "Value is the state right after reset (TRM Reset column; datasheet After Reset 'oe=0, ie=1, wpd'). During reset the datasheet gives 'oe=0, ie=0' (input disabled, no pull): the pad floats until reset is released.", "status": "single-source", "value": "pulldown"}
+    strap: {"evidence": ["esp32-ds-v5.3#strap-default-config", "esp32-trm-v5.8#gpio-strap-reg"], "note": "Not in datasheet Table 3-1 (five straps) nor in TRM GPIO_STRAP_REG (six bits).", "status": "single-source", "value": "none"}
+    touch: {"channel": 4}
+  GPIO14:
+    adc:
+      channel: 6
+      radio_conflict: {"evidence": ["esp32-trm-v5.8#adc2-wifi", "esp-idf-adc-oneshot-v6.1#adc2-wifi"], "status": "single-source", "value": true}
+      unit: "ADC2"
+    errata: ["GPIO-3.6", "GPIO-3.14"]
+    functions:
+      - {"fn": "GPIO", "routing": "matrix"}
+      - {"fn": "JTAG.MTMS", "routing": "iomux"}
+      - {"fn": "SPI2.SCK", "routing": "iomux"}
+      - {"fn": "HS2_CLK", "routing": "iomux"}
+      - {"fn": "SD_CLK", "routing": "iomux"}
+      - {"fn": "EMAC_TXD2", "routing": "iomux"}
+      - {"fn": "ADC2_CH6", "routing": "fixed"}
+      - {"fn": "TOUCH6", "routing": "fixed"}
+      - {"fn": "RTC_GPIO16", "routing": "fixed"}
+    gpio: 14
+    input_only: {"evidence": ["esp32-trm-v5.8#iomux-gpio14", "esp32-trm-v5.8#io-pins-output-pins"], "status": "single-source", "value": false}
+    jtag: "MTMS"
+    power_up_glitch: {"evidence": ["esp32-errata-v3.1#gpio-errata-summary"], "note": "No power-up glitch is documented in ESP32 Series Datasheet v5.3 or ESP32 Series SoC Errata v3.1 (the errata GPIO category lists only GPIO-3.6, GPIO-3.14 and GPIO-3.11).", "status": "single-source", "value": "none"}
+    reset_state: {"evidence": ["esp32-trm-v5.8#iomux-gpio14", "esp32-trm-v5.8#reset-column", "esp32-trm-v5.8#reset-legend-2-3", "esp32-ds-v5.3#iomux-reset-gpio14"], "note": "Value is the state right after reset (TRM Reset column; datasheet After Reset 'oe=0, ie=1, wpu'). During reset the datasheet gives 'oe=0, ie=0' (input disabled, no pull): the pad floats until reset is released.", "status": "single-source", "value": "pullup"}
+    strap: {"evidence": ["esp32-ds-v5.3#strap-default-config", "esp32-trm-v5.8#gpio-strap-reg"], "note": "Not in datasheet Table 3-1 (five straps) nor in TRM GPIO_STRAP_REG (six bits).", "status": "single-source", "value": "none"}
+    touch: {"channel": 6}
+  GPIO15:
+    adc:
+      channel: 3
+      radio_conflict: {"evidence": ["esp32-trm-v5.8#adc2-wifi", "esp-idf-adc-oneshot-v6.1#adc2-wifi"], "status": "single-source", "value": true}
+      unit: "ADC2"
+    errata: ["GPIO-3.6", "GPIO-3.14"]
+    functions:
+      - {"fn": "GPIO", "routing": "matrix"}
+      - {"fn": "JTAG.MTDO", "routing": "iomux"}
+      - {"fn": "SPI2.CS0", "routing": "iomux"}
+      - {"fn": "HS2_CMD", "routing": "iomux"}
+      - {"fn": "SD_CMD", "routing": "iomux"}
+      - {"fn": "EMAC_RXD3", "routing": "iomux"}
+      - {"fn": "ADC2_CH3", "routing": "fixed"}
+      - {"fn": "TOUCH3", "routing": "fixed"}
+      - {"fn": "RTC_GPIO13", "routing": "fixed"}
+      - {"fn": "RTC_I2C_SDA", "routing": "fixed"}
+    gpio: 15
+    input_only: {"evidence": ["esp32-trm-v5.8#iomux-gpio15", "esp32-trm-v5.8#io-pins-output-pins"], "status": "single-source", "value": false}
+    jtag: "MTDO"
+    power_up_glitch: {"evidence": ["esp32-errata-v3.1#gpio-errata-summary"], "note": "No power-up glitch is documented in ESP32 Series Datasheet v5.3 or ESP32 Series SoC Errata v3.1 (the errata GPIO category lists only GPIO-3.6, GPIO-3.14 and GPIO-3.11).", "status": "single-source", "value": "none"}
+    reset_state: {"evidence": ["esp32-trm-v5.8#iomux-gpio15", "esp32-trm-v5.8#reset-column", "esp32-trm-v5.8#reset-legend-2-3"], "status": "single-source", "value": "pullup"}
+    strap: {"evidence": ["esp32-ds-v5.3#strap-default-config", "esp32-trm-v5.8#gpio-strap-reg", "esp32-ds-v5.3#u0txd-printing", "esp32-ds-v5.3#sdio-timing"], "note": "MTDO = 0 disables boot-log printing on U0TXD; boot itself is not blocked.", "status": "single-source", "value": {"default_pull": "up", "required_at_reset": "any", "role": "U0TXD boot-log printing enable; SDIO slave timing"}}
+    touch: {"channel": 3}
+  GPIO16:
+    errata: ["GPIO-3.14"]
+    functions:
+      - {"fn": "GPIO", "routing": "matrix"}
+      - {"fn": "HS1_DATA4", "routing": "iomux"}
+      - {"fn": "UART2.RX", "routing": "iomux"}
+      - {"fn": "EMAC_CLK_OUT", "routing": "iomux"}
+    gpio: 16
+    input_only: {"evidence": ["esp32-trm-v5.8#iomux-gpio16", "esp32-trm-v5.8#io-pins-output-pins"], "status": "single-source", "value": false}
+    power_up_glitch: {"evidence": ["esp32-errata-v3.1#gpio-errata-summary"], "note": "No power-up glitch is documented in ESP32 Series Datasheet v5.3 or ESP32 Series SoC Errata v3.1 (the errata GPIO category lists only GPIO-3.6, GPIO-3.14 and GPIO-3.11).", "status": "single-source", "value": "none"}
+    reset_state: {"evidence": ["esp32-trm-v5.8#iomux-gpio16", "esp32-trm-v5.8#reset-column", "esp32-trm-v5.8#reset-legend-0-1", "esp32-ds-v5.3#iomux-reset-gpio16"], "note": "Value is the state right after reset (TRM Reset column; datasheet After Reset 'oe=0, ie=1'). During reset the datasheet gives 'oe=0, ie=0' (input disabled, no pull): the pad floats until reset is released.", "status": "single-source", "value": "input"}
+    strap: {"evidence": ["esp32-ds-v5.3#strap-default-config", "esp32-trm-v5.8#gpio-strap-reg"], "note": "Not in datasheet Table 3-1 (five straps) nor in TRM GPIO_STRAP_REG (six bits).", "status": "single-source", "value": "none"}
+  GPIO17:
+    errata: ["GPIO-3.14"]
+    functions:
+      - {"fn": "GPIO", "routing": "matrix"}
+      - {"fn": "HS1_DATA5", "routing": "iomux"}
+      - {"fn": "UART2.TX", "routing": "iomux"}
+      - {"fn": "EMAC_CLK_180", "routing": "iomux"}
+    gpio: 17
+    input_only: {"evidence": ["esp32-trm-v5.8#iomux-gpio17", "esp32-trm-v5.8#io-pins-output-pins"], "status": "single-source", "value": false}
+    power_up_glitch: {"evidence": ["esp32-errata-v3.1#gpio-errata-summary"], "note": "No power-up glitch is documented in ESP32 Series Datasheet v5.3 or ESP32 Series SoC Errata v3.1 (the errata GPIO category lists only GPIO-3.6, GPIO-3.14 and GPIO-3.11).", "status": "single-source", "value": "none"}
+    reset_state: {"evidence": ["esp32-trm-v5.8#iomux-gpio17", "esp32-trm-v5.8#reset-column", "esp32-trm-v5.8#reset-legend-0-1", "esp32-ds-v5.3#iomux-reset-gpio17"], "note": "Value is the state right after reset (TRM Reset column; datasheet After Reset 'oe=0, ie=1'). During reset the datasheet gives 'oe=0, ie=0' (input disabled, no pull): the pad floats until reset is released.", "status": "single-source", "value": "input"}
+    strap: {"evidence": ["esp32-ds-v5.3#strap-default-config", "esp32-trm-v5.8#gpio-strap-reg"], "note": "Not in datasheet Table 3-1 (five straps) nor in TRM GPIO_STRAP_REG (six bits).", "status": "single-source", "value": "none"}
+  GPIO18:
+    errata: ["GPIO-3.14"]
+    functions:
+      - {"fn": "GPIO", "routing": "matrix"}
+      - {"fn": "SPI3.SCK", "routing": "iomux"}
+      - {"fn": "HS1_DATA7", "routing": "iomux"}
+    gpio: 18
+    input_only: {"evidence": ["esp32-trm-v5.8#iomux-gpio18", "esp32-trm-v5.8#io-pins-output-pins"], "status": "single-source", "value": false}
+    power_up_glitch: {"evidence": ["esp32-errata-v3.1#gpio-errata-summary"], "note": "No power-up glitch is documented in ESP32 Series Datasheet v5.3 or ESP32 Series SoC Errata v3.1 (the errata GPIO category lists only GPIO-3.6, GPIO-3.14 and GPIO-3.11).", "status": "single-source", "value": "none"}
+    reset_state: {"evidence": ["esp32-trm-v5.8#iomux-gpio18", "esp32-trm-v5.8#reset-column", "esp32-trm-v5.8#reset-legend-0-1", "esp32-ds-v5.3#iomux-reset-gpio18"], "note": "Value is the state right after reset (TRM Reset column; datasheet After Reset 'oe=0, ie=1'). During reset the datasheet gives 'oe=0, ie=0' (input disabled, no pull): the pad floats until reset is released.", "status": "single-source", "value": "input"}
+    strap: {"evidence": ["esp32-ds-v5.3#strap-default-config", "esp32-trm-v5.8#gpio-strap-reg"], "note": "Not in datasheet Table 3-1 (five straps) nor in TRM GPIO_STRAP_REG (six bits).", "status": "single-source", "value": "none"}
+  GPIO19:
+    errata: ["GPIO-3.14"]
+    functions:
+      - {"fn": "GPIO", "routing": "matrix"}
+      - {"fn": "SPI3.MISO", "routing": "iomux"}
+      - {"fn": "UART0.CTS", "routing": "iomux"}
+      - {"fn": "EMAC_TXD0", "routing": "iomux"}
+    gpio: 19
+    input_only: {"evidence": ["esp32-trm-v5.8#iomux-gpio19", "esp32-trm-v5.8#io-pins-output-pins"], "status": "single-source", "value": false}
+    power_up_glitch: {"evidence": ["esp32-errata-v3.1#gpio-errata-summary"], "note": "No power-up glitch is documented in ESP32 Series Datasheet v5.3 or ESP32 Series SoC Errata v3.1 (the errata GPIO category lists only GPIO-3.6, GPIO-3.14 and GPIO-3.11).", "status": "single-source", "value": "none"}
+    reset_state: {"evidence": ["esp32-trm-v5.8#iomux-gpio19", "esp32-trm-v5.8#reset-column", "esp32-trm-v5.8#reset-legend-0-1", "esp32-ds-v5.3#iomux-reset-gpio19"], "note": "Value is the state right after reset (TRM Reset column; datasheet After Reset 'oe=0, ie=1'). During reset the datasheet gives 'oe=0, ie=0' (input disabled, no pull): the pad floats until reset is released.", "status": "single-source", "value": "input"}
+    strap: {"evidence": ["esp32-ds-v5.3#strap-default-config", "esp32-trm-v5.8#gpio-strap-reg"], "note": "Not in datasheet Table 3-1 (five straps) nor in TRM GPIO_STRAP_REG (six bits).", "status": "single-source", "value": "none"}
+  GPIO2:
+    adc:
+      channel: 2
+      radio_conflict: {"evidence": ["esp32-trm-v5.8#adc2-wifi", "esp-idf-adc-oneshot-v6.1#adc2-wifi"], "status": "single-source", "value": true}
+      unit: "ADC2"
+    errata: ["GPIO-3.6", "GPIO-3.14"]
+    functions:
+      - {"fn": "GPIO", "routing": "matrix"}
+      - {"fn": "SPI2.WP", "routing": "iomux"}
+      - {"fn": "HS2_DATA0", "routing": "iomux"}
+      - {"fn": "SD_DATA0", "routing": "iomux"}
+      - {"fn": "ADC2_CH2", "routing": "fixed"}
+      - {"fn": "TOUCH2", "routing": "fixed"}
+      - {"fn": "RTC_GPIO12", "routing": "fixed"}
+      - {"fn": "RTC_I2C_SCL", "routing": "fixed"}
+    gpio: 2
+    input_only: {"evidence": ["esp32-trm-v5.8#iomux-gpio2", "esp32-trm-v5.8#io-pins-output-pins"], "status": "single-source", "value": false}
+    power_up_glitch: {"evidence": ["esp32-errata-v3.1#gpio-errata-summary"], "note": "No power-up glitch is documented in ESP32 Series Datasheet v5.3 or ESP32 Series SoC Errata v3.1 (the errata GPIO category lists only GPIO-3.6, GPIO-3.14 and GPIO-3.11).", "status": "single-source", "value": "none"}
+    reset_state: {"evidence": ["esp32-trm-v5.8#iomux-gpio2", "esp32-trm-v5.8#reset-column", "esp32-trm-v5.8#reset-legend-2-3"], "status": "single-source", "value": "pulldown"}
+    strap: {"evidence": ["esp32-ds-v5.3#strap-default-config", "esp32-trm-v5.8#gpio-strap-reg", "esp32-ds-v5.3#boot-mode-control", "esp32-ds-v5.3#boot-mode-table"], "note": "SPI (normal) boot accepts any GPIO2 level when GPIO0 = 1 (Table 3-3).", "status": "single-source", "value": {"default_pull": "down", "required_at_reset": "any", "role": "boot mode select with GPIO0 (must be 0 for joint download boot)"}}
+    touch: {"channel": 2}
+  GPIO21:
+    errata: ["GPIO-3.14"]
+    functions:
+      - {"fn": "GPIO", "routing": "matrix"}
+      - {"fn": "SPI3.HD", "routing": "iomux"}
+      - {"fn": "EMAC_TX_EN", "routing": "iomux"}
+    gpio: 21
+    input_only: {"evidence": ["esp32-trm-v5.8#iomux-gpio21", "esp32-trm-v5.8#io-pins-output-pins"], "status": "single-source", "value": false}
+    power_up_glitch: {"evidence": ["esp32-errata-v3.1#gpio-errata-summary"], "note": "No power-up glitch is documented in ESP32 Series Datasheet v5.3 or ESP32 Series SoC Errata v3.1 (the errata GPIO category lists only GPIO-3.6, GPIO-3.14 and GPIO-3.11).", "status": "single-source", "value": "none"}
+    reset_state: {"evidence": ["esp32-trm-v5.8#iomux-gpio21", "esp32-trm-v5.8#reset-column", "esp32-trm-v5.8#reset-legend-0-1", "esp32-ds-v5.3#iomux-reset-gpio21"], "note": "Value is the state right after reset (TRM Reset column; datasheet After Reset 'oe=0, ie=1'). During reset the datasheet gives 'oe=0, ie=0' (input disabled, no pull): the pad floats until reset is released.", "status": "single-source", "value": "input"}
+    strap: {"evidence": ["esp32-ds-v5.3#strap-default-config", "esp32-trm-v5.8#gpio-strap-reg"], "note": "Not in datasheet Table 3-1 (five straps) nor in TRM GPIO_STRAP_REG (six bits).", "status": "single-source", "value": "none"}
+  GPIO22:
+    errata: ["GPIO-3.14"]
+    functions:
+      - {"fn": "GPIO", "routing": "matrix"}
+      - {"fn": "SPI3.WP", "routing": "iomux"}
+      - {"fn": "UART0.RTS", "routing": "iomux"}
+      - {"fn": "EMAC_TXD1", "routing": "iomux"}
+    gpio: 22
+    input_only: {"evidence": ["esp32-trm-v5.8#iomux-gpio22", "esp32-trm-v5.8#io-pins-output-pins"], "status": "single-source", "value": false}
+    power_up_glitch: {"evidence": ["esp32-errata-v3.1#gpio-errata-summary"], "note": "No power-up glitch is documented in ESP32 Series Datasheet v5.3 or ESP32 Series SoC Errata v3.1 (the errata GPIO category lists only GPIO-3.6, GPIO-3.14 and GPIO-3.11).", "status": "single-source", "value": "none"}
+    reset_state: {"evidence": ["esp32-trm-v5.8#iomux-gpio22", "esp32-trm-v5.8#reset-column", "esp32-trm-v5.8#reset-legend-0-1", "esp32-ds-v5.3#iomux-reset-gpio22"], "note": "Value is the state right after reset (TRM Reset column; datasheet After Reset 'oe=0, ie=1'). During reset the datasheet gives 'oe=0, ie=0' (input disabled, no pull): the pad floats until reset is released.", "status": "single-source", "value": "input"}
+    strap: {"evidence": ["esp32-ds-v5.3#strap-default-config", "esp32-trm-v5.8#gpio-strap-reg"], "note": "Not in datasheet Table 3-1 (five straps) nor in TRM GPIO_STRAP_REG (six bits).", "status": "single-source", "value": "none"}
+  GPIO23:
+    errata: ["GPIO-3.14"]
+    functions:
+      - {"fn": "GPIO", "routing": "matrix"}
+      - {"fn": "SPI3.MOSI", "routing": "iomux"}
+      - {"fn": "HS1_STROBE", "routing": "iomux"}
+    gpio: 23
+    input_only: {"evidence": ["esp32-trm-v5.8#iomux-gpio23", "esp32-trm-v5.8#io-pins-output-pins"], "status": "single-source", "value": false}
+    power_up_glitch: {"evidence": ["esp32-errata-v3.1#gpio-errata-summary"], "note": "No power-up glitch is documented in ESP32 Series Datasheet v5.3 or ESP32 Series SoC Errata v3.1 (the errata GPIO category lists only GPIO-3.6, GPIO-3.14 and GPIO-3.11).", "status": "single-source", "value": "none"}
+    reset_state: {"evidence": ["esp32-trm-v5.8#iomux-gpio23", "esp32-trm-v5.8#reset-column", "esp32-trm-v5.8#reset-legend-0-1", "esp32-ds-v5.3#iomux-reset-gpio23"], "note": "Value is the state right after reset (TRM Reset column; datasheet After Reset 'oe=0, ie=1'). During reset the datasheet gives 'oe=0, ie=0' (input disabled, no pull): the pad floats until reset is released.", "status": "single-source", "value": "input"}
+    strap: {"evidence": ["esp32-ds-v5.3#strap-default-config", "esp32-trm-v5.8#gpio-strap-reg"], "note": "Not in datasheet Table 3-1 (five straps) nor in TRM GPIO_STRAP_REG (six bits).", "status": "single-source", "value": "none"}
+  GPIO25:
+    adc:
+      channel: 8
+      radio_conflict: {"evidence": ["esp32-trm-v5.8#adc2-wifi", "esp-idf-adc-oneshot-v6.1#adc2-wifi"], "status": "single-source", "value": true}
+      unit: "ADC2"
+    dac: {"channel": 1}
+    errata: ["GPIO-3.6", "GPIO-3.14"]
+    functions:
+      - {"fn": "GPIO", "routing": "matrix"}
+      - {"fn": "EMAC_RXD0", "routing": "iomux"}
+      - {"fn": "DAC_1", "routing": "fixed"}
+      - {"fn": "ADC2_CH8", "routing": "fixed"}
+      - {"fn": "RTC_GPIO6", "routing": "fixed"}
+    gpio: 25
+    input_only: {"evidence": ["esp32-trm-v5.8#iomux-gpio25", "esp32-trm-v5.8#io-pins-output-pins"], "status": "single-source", "value": false}
+    power_up_glitch: {"evidence": ["esp32-errata-v3.1#gpio-errata-summary"], "note": "No power-up glitch is documented in ESP32 Series Datasheet v5.3 or ESP32 Series SoC Errata v3.1 (the errata GPIO category lists only GPIO-3.6, GPIO-3.14 and GPIO-3.11).", "status": "single-source", "value": "none"}
+    reset_state: {"evidence": ["esp32-trm-v5.8#iomux-gpio25", "esp32-trm-v5.8#reset-column", "esp32-trm-v5.8#reset-legend-0-1"], "status": "single-source", "value": "disabled"}
+    strap: {"evidence": ["esp32-ds-v5.3#strap-default-config", "esp32-trm-v5.8#gpio-strap-reg"], "note": "Not in datasheet Table 3-1 (five straps) nor in TRM GPIO_STRAP_REG (six bits).", "status": "single-source", "value": "none"}
+  GPIO26:
+    adc:
+      channel: 9
+      radio_conflict: {"evidence": ["esp32-trm-v5.8#adc2-wifi", "esp-idf-adc-oneshot-v6.1#adc2-wifi"], "status": "single-source", "value": true}
+      unit: "ADC2"
+    dac: {"channel": 2}
+    errata: ["GPIO-3.6", "GPIO-3.14"]
+    functions:
+      - {"fn": "GPIO", "routing": "matrix"}
+      - {"fn": "EMAC_RXD1", "routing": "iomux"}
+      - {"fn": "DAC_2", "routing": "fixed"}
+      - {"fn": "ADC2_CH9", "routing": "fixed"}
+      - {"fn": "RTC_GPIO7", "routing": "fixed"}
+    gpio: 26
+    input_only: {"evidence": ["esp32-trm-v5.8#iomux-gpio26", "esp32-trm-v5.8#io-pins-output-pins"], "status": "single-source", "value": false}
+    power_up_glitch: {"evidence": ["esp32-errata-v3.1#gpio-errata-summary"], "note": "No power-up glitch is documented in ESP32 Series Datasheet v5.3 or ESP32 Series SoC Errata v3.1 (the errata GPIO category lists only GPIO-3.6, GPIO-3.14 and GPIO-3.11).", "status": "single-source", "value": "none"}
+    reset_state: {"evidence": ["esp32-trm-v5.8#iomux-gpio26", "esp32-trm-v5.8#reset-column", "esp32-trm-v5.8#reset-legend-0-1"], "status": "single-source", "value": "disabled"}
+    strap: {"evidence": ["esp32-ds-v5.3#strap-default-config", "esp32-trm-v5.8#gpio-strap-reg"], "note": "Not in datasheet Table 3-1 (five straps) nor in TRM GPIO_STRAP_REG (six bits).", "status": "single-source", "value": "none"}
+  GPIO27:
+    adc:
+      channel: 7
+      radio_conflict: {"evidence": ["esp32-trm-v5.8#adc2-wifi", "esp-idf-adc-oneshot-v6.1#adc2-wifi"], "status": "single-source", "value": true}
+      unit: "ADC2"
+    errata: ["GPIO-3.6", "GPIO-3.14"]
+    functions:
+      - {"fn": "GPIO", "routing": "matrix"}
+      - {"fn": "EMAC_RX_DV", "routing": "iomux"}
+      - {"fn": "ADC2_CH7", "routing": "fixed"}
+      - {"fn": "TOUCH7", "routing": "fixed"}
+      - {"fn": "RTC_GPIO17", "routing": "fixed"}
+    gpio: 27
+    input_only: {"evidence": ["esp32-trm-v5.8#iomux-gpio27", "esp32-trm-v5.8#io-pins-output-pins"], "status": "single-source", "value": false}
+    power_up_glitch: {"evidence": ["esp32-errata-v3.1#gpio-errata-summary"], "note": "No power-up glitch is documented in ESP32 Series Datasheet v5.3 or ESP32 Series SoC Errata v3.1 (the errata GPIO category lists only GPIO-3.6, GPIO-3.14 and GPIO-3.11).", "status": "single-source", "value": "none"}
+    reset_state: {"evidence": ["esp32-trm-v5.8#iomux-gpio27", "esp32-trm-v5.8#reset-column", "esp32-trm-v5.8#reset-legend-0-1"], "status": "single-source", "value": "disabled"}
+    strap: {"evidence": ["esp32-ds-v5.3#strap-default-config", "esp32-trm-v5.8#gpio-strap-reg"], "note": "Not in datasheet Table 3-1 (five straps) nor in TRM GPIO_STRAP_REG (six bits).", "status": "single-source", "value": "none"}
+    touch: {"channel": 7}
+  GPIO3:
+    errata: ["GPIO-3.14"]
+    functions:
+      - {"fn": "GPIO", "routing": "matrix"}
+      - {"fn": "UART0.RX", "routing": "iomux"}
+      - {"fn": "CLK_OUT2", "routing": "iomux"}
+    gpio: 3
+    input_only: {"evidence": ["esp32-trm-v5.8#iomux-gpio3", "esp32-trm-v5.8#io-pins-output-pins"], "status": "single-source", "value": false}
+    power_up_glitch: {"evidence": ["esp32-errata-v3.1#gpio-errata-summary"], "note": "No power-up glitch is documented in ESP32 Series Datasheet v5.3 or ESP32 Series SoC Errata v3.1 (the errata GPIO category lists only GPIO-3.6, GPIO-3.14 and GPIO-3.11).", "status": "single-source", "value": "none"}
+    reset_state: {"evidence": ["esp32-trm-v5.8#iomux-gpio3", "esp32-trm-v5.8#reset-column", "esp32-trm-v5.8#reset-legend-2-3"], "status": "single-source", "value": "pullup"}
+    strap: {"evidence": ["esp32-ds-v5.3#strap-default-config", "esp32-trm-v5.8#gpio-strap-reg"], "note": "Not in datasheet Table 3-1 (five straps) nor in TRM GPIO_STRAP_REG (six bits).", "status": "single-source", "value": "none"}
+  GPIO32:
+    adc:
+      channel: 4
+      radio_conflict: {"evidence": ["esp32-trm-v5.8#adc2-wifi", "esp-idf-adc-oneshot-v6.1#adc2-wifi"], "note": "Both sources name only SAR ADC2 as shared with Wi-Fi; ADC1 is not named (false is read from that omission, no source states it positively).", "status": "single-source", "value": false}
+      unit: "ADC1"
+    errata: ["GPIO-3.6", "GPIO-3.14"]
+    functions:
+      - {"fn": "GPIO", "routing": "matrix"}
+      - {"fn": "XTAL_32K_P", "routing": "fixed"}
+      - {"fn": "ADC1_CH4", "routing": "fixed"}
+      - {"fn": "TOUCH9", "routing": "fixed"}
+      - {"fn": "RTC_GPIO9", "routing": "fixed"}
+    gpio: 32
+    input_only: {"evidence": ["esp32-trm-v5.8#iomux-gpio32", "esp32-trm-v5.8#io-pins-output-pins"], "status": "single-source", "value": false}
+    power_up_glitch: {"evidence": ["esp32-errata-v3.1#gpio-errata-summary"], "note": "No power-up glitch is documented in ESP32 Series Datasheet v5.3 or ESP32 Series SoC Errata v3.1 (the errata GPIO category lists only GPIO-3.6, GPIO-3.14 and GPIO-3.11).", "status": "single-source", "value": "none"}
+    reset_state: {"evidence": ["esp32-trm-v5.8#iomux-gpio32", "esp32-trm-v5.8#reset-column", "esp32-trm-v5.8#reset-legend-0-1"], "status": "single-source", "value": "disabled"}
+    strap: {"evidence": ["esp32-ds-v5.3#strap-default-config", "esp32-trm-v5.8#gpio-strap-reg"], "note": "Not in datasheet Table 3-1 (five straps) nor in TRM GPIO_STRAP_REG (six bits).", "status": "single-source", "value": "none"}
+    touch: {"channel": 9}
+  GPIO33:
+    adc:
+      channel: 5
+      radio_conflict: {"evidence": ["esp32-trm-v5.8#adc2-wifi", "esp-idf-adc-oneshot-v6.1#adc2-wifi"], "note": "Both sources name only SAR ADC2 as shared with Wi-Fi; ADC1 is not named (false is read from that omission, no source states it positively).", "status": "single-source", "value": false}
+      unit: "ADC1"
+    errata: ["GPIO-3.6", "GPIO-3.14"]
+    functions:
+      - {"fn": "GPIO", "routing": "matrix"}
+      - {"fn": "XTAL_32K_N", "routing": "fixed"}
+      - {"fn": "ADC1_CH5", "routing": "fixed"}
+      - {"fn": "TOUCH8", "routing": "fixed"}
+      - {"fn": "RTC_GPIO8", "routing": "fixed"}
+    gpio: 33
+    input_only: {"evidence": ["esp32-trm-v5.8#iomux-gpio33", "esp32-trm-v5.8#io-pins-output-pins"], "status": "single-source", "value": false}
+    power_up_glitch: {"evidence": ["esp32-errata-v3.1#gpio-errata-summary"], "note": "No power-up glitch is documented in ESP32 Series Datasheet v5.3 or ESP32 Series SoC Errata v3.1 (the errata GPIO category lists only GPIO-3.6, GPIO-3.14 and GPIO-3.11).", "status": "single-source", "value": "none"}
+    reset_state: {"evidence": ["esp32-trm-v5.8#iomux-gpio33", "esp32-trm-v5.8#reset-column", "esp32-trm-v5.8#reset-legend-0-1"], "status": "single-source", "value": "disabled"}
+    strap: {"evidence": ["esp32-ds-v5.3#strap-default-config", "esp32-trm-v5.8#gpio-strap-reg"], "note": "Not in datasheet Table 3-1 (five straps) nor in TRM GPIO_STRAP_REG (six bits).", "status": "single-source", "value": "none"}
+    touch: {"channel": 8}
+  GPIO34:
+    adc:
+      channel: 6
+      radio_conflict: {"evidence": ["esp32-trm-v5.8#adc2-wifi", "esp-idf-adc-oneshot-v6.1#adc2-wifi"], "note": "Both sources name only SAR ADC2 as shared with Wi-Fi; ADC1 is not named (false is read from that omission, no source states it positively).", "status": "single-source", "value": false}
+      unit: "ADC1"
+    errata: ["GPIO-3.6", "GPIO-3.14"]
+    functions:
+      - {"fn": "GPIO", "routing": "matrix"}
+      - {"fn": "ADC1_CH6", "routing": "fixed"}
+      - {"fn": "RTC_GPIO4", "routing": "fixed"}
+    gpio: 34
+    input_only: {"evidence": ["esp32-trm-v5.8#iomux-gpio34", "esp32-trm-v5.8#input-only-34-39", "esp32-trm-v5.8#note-input-only", "esp32-ds-v5.3#input-only-note"], "status": "single-source", "value": true}
+    power_up_glitch: {"evidence": ["esp32-errata-v3.1#gpio-errata-summary"], "note": "No power-up glitch is documented in ESP32 Series Datasheet v5.3 or ESP32 Series SoC Errata v3.1 (the errata GPIO category lists only GPIO-3.6, GPIO-3.14 and GPIO-3.11).", "status": "single-source", "value": "none"}
+    reset_state: {"evidence": ["esp32-trm-v5.8#iomux-gpio34", "esp32-trm-v5.8#reset-column", "esp32-trm-v5.8#reset-legend-0-1"], "status": "single-source", "value": "disabled"}
+    strap: {"evidence": ["esp32-ds-v5.3#strap-default-config", "esp32-trm-v5.8#gpio-strap-reg"], "note": "Not in datasheet Table 3-1 (five straps) nor in TRM GPIO_STRAP_REG (six bits).", "status": "single-source", "value": "none"}
+  GPIO35:
+    adc:
+      channel: 7
+      radio_conflict: {"evidence": ["esp32-trm-v5.8#adc2-wifi", "esp-idf-adc-oneshot-v6.1#adc2-wifi"], "note": "Both sources name only SAR ADC2 as shared with Wi-Fi; ADC1 is not named (false is read from that omission, no source states it positively).", "status": "single-source", "value": false}
+      unit: "ADC1"
+    errata: ["GPIO-3.6", "GPIO-3.14"]
+    functions:
+      - {"fn": "GPIO", "routing": "matrix"}
+      - {"fn": "ADC1_CH7", "routing": "fixed"}
+      - {"fn": "RTC_GPIO5", "routing": "fixed"}
+    gpio: 35
+    input_only: {"evidence": ["esp32-trm-v5.8#iomux-gpio35", "esp32-trm-v5.8#input-only-34-39", "esp32-trm-v5.8#note-input-only", "esp32-ds-v5.3#input-only-note"], "status": "single-source", "value": true}
+    power_up_glitch: {"evidence": ["esp32-errata-v3.1#gpio-errata-summary"], "note": "No power-up glitch is documented in ESP32 Series Datasheet v5.3 or ESP32 Series SoC Errata v3.1 (the errata GPIO category lists only GPIO-3.6, GPIO-3.14 and GPIO-3.11).", "status": "single-source", "value": "none"}
+    reset_state: {"evidence": ["esp32-trm-v5.8#iomux-gpio35", "esp32-trm-v5.8#reset-column", "esp32-trm-v5.8#reset-legend-0-1"], "status": "single-source", "value": "disabled"}
+    strap: {"evidence": ["esp32-ds-v5.3#strap-default-config", "esp32-trm-v5.8#gpio-strap-reg"], "note": "Not in datasheet Table 3-1 (five straps) nor in TRM GPIO_STRAP_REG (six bits).", "status": "single-source", "value": "none"}
+  GPIO36:
+    adc:
+      channel: 0
+      radio_conflict: {"evidence": ["esp32-trm-v5.8#adc2-wifi", "esp-idf-adc-oneshot-v6.1#adc2-wifi"], "note": "Both sources name only SAR ADC2 as shared with Wi-Fi; ADC1 is not named (false is read from that omission, no source states it positively).", "status": "single-source", "value": false}
+      unit: "ADC1"
+    errata: ["GPIO-3.6", "GPIO-3.14", "GPIO-3.11"]
+    functions:
+      - {"fn": "GPIO", "routing": "matrix"}
+      - {"fn": "ADC_H", "routing": "fixed"}
+      - {"fn": "ADC1_CH0", "routing": "fixed"}
+      - {"fn": "RTC_GPIO0", "routing": "fixed"}
+    gpio: 36
+    input_only: {"evidence": ["esp32-trm-v5.8#iomux-gpio36", "esp32-trm-v5.8#input-only-34-39", "esp32-trm-v5.8#note-input-only", "esp32-ds-v5.3#input-only-note"], "status": "single-source", "value": true}
+    power_up_glitch: {"evidence": ["esp32-errata-v3.1#gpio-errata-summary"], "note": "No power-up glitch is documented in ESP32 Series Datasheet v5.3 or ESP32 Series SoC Errata v3.1 (the errata GPIO category lists only GPIO-3.6, GPIO-3.14 and GPIO-3.11). Erratum GPIO-3.11 (input pulled low for about 80 ns when SAR ADC1/ADC2/AMP power on) is a runtime event, listed under errata.", "status": "single-source", "value": "none"}
+    reset_state: {"evidence": ["esp32-trm-v5.8#iomux-gpio36", "esp32-trm-v5.8#reset-column", "esp32-trm-v5.8#reset-legend-0-1"], "status": "single-source", "value": "disabled"}
+    strap: {"evidence": ["esp32-ds-v5.3#strap-default-config", "esp32-trm-v5.8#gpio-strap-reg"], "note": "Not in datasheet Table 3-1 (five straps) nor in TRM GPIO_STRAP_REG (six bits).", "status": "single-source", "value": "none"}
+  GPIO37:
+    adc:
+      channel: 1
+      radio_conflict: {"evidence": ["esp32-trm-v5.8#adc2-wifi", "esp-idf-adc-oneshot-v6.1#adc2-wifi"], "note": "Both sources name only SAR ADC2 as shared with Wi-Fi; ADC1 is not named (false is read from that omission, no source states it positively).", "status": "single-source", "value": false}
+      unit: "ADC1"
+    errata: ["GPIO-3.6", "GPIO-3.14"]
+    functions:
+      - {"fn": "GPIO", "routing": "matrix"}
+      - {"fn": "ADC_H", "routing": "fixed"}
+      - {"fn": "ADC1_CH1", "routing": "fixed"}
+      - {"fn": "RTC_GPIO1", "routing": "fixed"}
+    gpio: 37
+    input_only: {"evidence": ["esp32-trm-v5.8#iomux-gpio37", "esp32-trm-v5.8#input-only-34-39", "esp32-trm-v5.8#note-input-only", "esp32-ds-v5.3#input-only-note"], "status": "single-source", "value": true}
+    power_up_glitch: {"evidence": ["esp32-errata-v3.1#gpio-errata-summary"], "note": "No power-up glitch is documented in ESP32 Series Datasheet v5.3 or ESP32 Series SoC Errata v3.1 (the errata GPIO category lists only GPIO-3.6, GPIO-3.14 and GPIO-3.11).", "status": "single-source", "value": "none"}
+    reset_state: {"evidence": ["esp32-trm-v5.8#iomux-gpio37", "esp32-trm-v5.8#reset-column", "esp32-trm-v5.8#reset-legend-0-1"], "status": "single-source", "value": "disabled"}
+    strap: {"evidence": ["esp32-ds-v5.3#strap-default-config", "esp32-trm-v5.8#gpio-strap-reg"], "note": "Not in datasheet Table 3-1 (five straps) nor in TRM GPIO_STRAP_REG (six bits).", "status": "single-source", "value": "none"}
+  GPIO38:
+    adc:
+      channel: 2
+      radio_conflict: {"evidence": ["esp32-trm-v5.8#adc2-wifi", "esp-idf-adc-oneshot-v6.1#adc2-wifi"], "note": "Both sources name only SAR ADC2 as shared with Wi-Fi; ADC1 is not named (false is read from that omission, no source states it positively).", "status": "single-source", "value": false}
+      unit: "ADC1"
+    errata: ["GPIO-3.6", "GPIO-3.14"]
+    functions:
+      - {"fn": "GPIO", "routing": "matrix"}
+      - {"fn": "ADC_H", "routing": "fixed"}
+      - {"fn": "ADC1_CH2", "routing": "fixed"}
+      - {"fn": "RTC_GPIO2", "routing": "fixed"}
+    gpio: 38
+    input_only: {"evidence": ["esp32-trm-v5.8#iomux-gpio38", "esp32-trm-v5.8#input-only-34-39", "esp32-trm-v5.8#note-input-only", "esp32-ds-v5.3#input-only-note"], "status": "single-source", "value": true}
+    power_up_glitch: {"evidence": ["esp32-errata-v3.1#gpio-errata-summary"], "note": "No power-up glitch is documented in ESP32 Series Datasheet v5.3 or ESP32 Series SoC Errata v3.1 (the errata GPIO category lists only GPIO-3.6, GPIO-3.14 and GPIO-3.11).", "status": "single-source", "value": "none"}
+    reset_state: {"evidence": ["esp32-trm-v5.8#iomux-gpio38", "esp32-trm-v5.8#reset-column", "esp32-trm-v5.8#reset-legend-0-1"], "status": "single-source", "value": "disabled"}
+    strap: {"evidence": ["esp32-ds-v5.3#strap-default-config", "esp32-trm-v5.8#gpio-strap-reg"], "note": "Not in datasheet Table 3-1 (five straps) nor in TRM GPIO_STRAP_REG (six bits).", "status": "single-source", "value": "none"}
+  GPIO39:
+    adc:
+      channel: 3
+      radio_conflict: {"evidence": ["esp32-trm-v5.8#adc2-wifi", "esp-idf-adc-oneshot-v6.1#adc2-wifi"], "note": "Both sources name only SAR ADC2 as shared with Wi-Fi; ADC1 is not named (false is read from that omission, no source states it positively).", "status": "single-source", "value": false}
+      unit: "ADC1"
+    errata: ["GPIO-3.6", "GPIO-3.14", "GPIO-3.11"]
+    functions:
+      - {"fn": "GPIO", "routing": "matrix"}
+      - {"fn": "ADC_H", "routing": "fixed"}
+      - {"fn": "ADC1_CH3", "routing": "fixed"}
+      - {"fn": "RTC_GPIO3", "routing": "fixed"}
+    gpio: 39
+    input_only: {"evidence": ["esp32-trm-v5.8#iomux-gpio39", "esp32-trm-v5.8#input-only-34-39", "esp32-trm-v5.8#note-input-only", "esp32-ds-v5.3#input-only-note"], "status": "single-source", "value": true}
+    power_up_glitch: {"evidence": ["esp32-errata-v3.1#gpio-errata-summary"], "note": "No power-up glitch is documented in ESP32 Series Datasheet v5.3 or ESP32 Series SoC Errata v3.1 (the errata GPIO category lists only GPIO-3.6, GPIO-3.14 and GPIO-3.11). Erratum GPIO-3.11 (input pulled low for about 80 ns when SAR ADC1/ADC2/AMP power on) is a runtime event, listed under errata.", "status": "single-source", "value": "none"}
+    reset_state: {"evidence": ["esp32-trm-v5.8#iomux-gpio39", "esp32-trm-v5.8#reset-column", "esp32-trm-v5.8#reset-legend-0-1"], "status": "single-source", "value": "disabled"}
+    strap: {"evidence": ["esp32-ds-v5.3#strap-default-config", "esp32-trm-v5.8#gpio-strap-reg"], "note": "Not in datasheet Table 3-1 (five straps) nor in TRM GPIO_STRAP_REG (six bits).", "status": "single-source", "value": "none"}
+  GPIO4:
+    adc:
+      channel: 0
+      radio_conflict: {"evidence": ["esp32-trm-v5.8#adc2-wifi", "esp-idf-adc-oneshot-v6.1#adc2-wifi"], "status": "single-source", "value": true}
+      unit: "ADC2"
+    errata: ["GPIO-3.6", "GPIO-3.14"]
+    functions:
+      - {"fn": "GPIO", "routing": "matrix"}
+      - {"fn": "SPI2.HD", "routing": "iomux"}
+      - {"fn": "HS2_DATA1", "routing": "iomux"}
+      - {"fn": "SD_DATA1", "routing": "iomux"}
+      - {"fn": "EMAC_TX_ER", "routing": "iomux"}
+      - {"fn": "ADC2_CH0", "routing": "fixed"}
+      - {"fn": "TOUCH0", "routing": "fixed"}
+      - {"fn": "RTC_GPIO10", "routing": "fixed"}
+      - {"fn": "RTC_I2C_SCL", "routing": "fixed"}
+    gpio: 4
+    input_only: {"evidence": ["esp32-trm-v5.8#iomux-gpio4", "esp32-trm-v5.8#io-pins-output-pins"], "status": "single-source", "value": false}
+    power_up_glitch: {"evidence": ["esp32-errata-v3.1#gpio-errata-summary"], "note": "No power-up glitch is documented in ESP32 Series Datasheet v5.3 or ESP32 Series SoC Errata v3.1 (the errata GPIO category lists only GPIO-3.6, GPIO-3.14 and GPIO-3.11).", "status": "single-source", "value": "none"}
+    reset_state: {"evidence": ["esp32-trm-v5.8#iomux-gpio4", "esp32-trm-v5.8#reset-column", "esp32-trm-v5.8#reset-legend-2-3"], "status": "single-source", "value": "pulldown"}
+    strap: {"active": {"default_pull": "down", "required_at_reset": "any", "role": "boot_sel_chip[2] strapping bit (GPIO_STRAP_REG); effect not documented"}, "evidence": ["esp32-trm-v5.8#gpio-strap-reg", "esp32-trm-v5.8#iomux-gpio4", "esp32-ds-v5.3#strap-default-config", "esp32-ds-v5.3#five-strapping-gpios"], "note": "ESP32 Datasheet v5.3 Table 3-1 lists five strapping pins (GPIO0, GPIO2, MTDI, MTDO, GPIO5) and not GPIO4; TRM v5.8 Register 6.13 GPIO_STRAP_REG maps boot_sel_chip bits 5..0 to MTDI, GPIO0, GPIO2, GPIO4, MTDO, GPIO5. Active reading = TRM (treat GPIO4 as a strap, more restrictive). Default pull from TRM Table 6.10-1 reset code 2 (pull-down).", "readings": [{"evidence": ["esp32-ds-v5.3#strap-default-config", "esp32-ds-v5.3#five-strapping-gpios"], "value": "none"}, {"evidence": ["esp32-trm-v5.8#gpio-strap-reg", "esp32-trm-v5.8#iomux-gpio4"], "value": {"default_pull": "down", "required_at_reset": "any", "role": "boot_sel_chip[2] strapping bit (GPIO_STRAP_REG); effect not documented"}}], "status": "conflict", "value": {"default_pull": "down", "required_at_reset": "any", "role": "boot_sel_chip[2] strapping bit (GPIO_STRAP_REG); effect not documented"}}
+    touch: {"channel": 0}
+  GPIO5:
+    errata: ["GPIO-3.14"]
+    functions:
+      - {"fn": "GPIO", "routing": "matrix"}
+      - {"fn": "SPI3.CS0", "routing": "iomux"}
+      - {"fn": "HS1_DATA6", "routing": "iomux"}
+      - {"fn": "EMAC_RX_CLK", "routing": "iomux"}
+    gpio: 5
+    input_only: {"evidence": ["esp32-trm-v5.8#iomux-gpio5", "esp32-trm-v5.8#io-pins-output-pins"], "status": "single-source", "value": false}
+    power_up_glitch: {"evidence": ["esp32-errata-v3.1#gpio-errata-summary"], "note": "No power-up glitch is documented in ESP32 Series Datasheet v5.3 or ESP32 Series SoC Errata v3.1 (the errata GPIO category lists only GPIO-3.6, GPIO-3.14 and GPIO-3.11).", "status": "single-source", "value": "none"}
+    reset_state: {"evidence": ["esp32-trm-v5.8#iomux-gpio5", "esp32-trm-v5.8#reset-column", "esp32-trm-v5.8#reset-legend-2-3"], "status": "single-source", "value": "pullup"}
+    strap: {"evidence": ["esp32-ds-v5.3#strap-default-config", "esp32-trm-v5.8#gpio-strap-reg", "esp32-ds-v5.3#sdio-timing"], "status": "single-source", "value": {"default_pull": "up", "required_at_reset": "any", "role": "SDIO slave timing"}}
+  GPIO6:
+    errata: ["GPIO-3.14"]
+    functions:
+      - {"fn": "GPIO", "routing": "matrix"}
+      - {"fn": "SD_CLK", "routing": "iomux"}
+      - {"fn": "SPICLK", "routing": "iomux"}
+      - {"fn": "HS1_CLK", "routing": "iomux"}
+      - {"fn": "UART1.CTS", "routing": "iomux"}
+    gpio: 6
+    input_only: {"evidence": ["esp32-trm-v5.8#iomux-gpio6", "esp32-trm-v5.8#io-pins-output-pins"], "status": "single-source", "value": false}
+    power_up_glitch: {"evidence": ["esp32-errata-v3.1#gpio-errata-summary"], "note": "No power-up glitch is documented in ESP32 Series Datasheet v5.3 or ESP32 Series SoC Errata v3.1 (the errata GPIO category lists only GPIO-3.6, GPIO-3.14 and GPIO-3.11).", "status": "single-source", "value": "none"}
+    reset_state: {"evidence": ["esp32-trm-v5.8#iomux-gpio6", "esp32-trm-v5.8#reset-column", "esp32-trm-v5.8#reset-legend-2-3"], "status": "single-source", "value": "pullup"}
+    strap: {"evidence": ["esp32-ds-v5.3#strap-default-config", "esp32-trm-v5.8#gpio-strap-reg"], "note": "Not in datasheet Table 3-1 (five straps) nor in TRM GPIO_STRAP_REG (six bits).", "status": "single-source", "value": "none"}
+  GPIO7:
+    errata: ["GPIO-3.14"]
+    functions:
+      - {"fn": "GPIO", "routing": "matrix"}
+      - {"fn": "SD_DATA0", "routing": "iomux"}
+      - {"fn": "SPIQ", "routing": "iomux"}
+      - {"fn": "HS1_DATA0", "routing": "iomux"}
+      - {"fn": "UART2.RTS", "routing": "iomux"}
+    gpio: 7
+    input_only: {"evidence": ["esp32-trm-v5.8#iomux-gpio7", "esp32-trm-v5.8#io-pins-output-pins"], "status": "single-source", "value": false}
+    power_up_glitch: {"evidence": ["esp32-errata-v3.1#gpio-errata-summary"], "note": "No power-up glitch is documented in ESP32 Series Datasheet v5.3 or ESP32 Series SoC Errata v3.1 (the errata GPIO category lists only GPIO-3.6, GPIO-3.14 and GPIO-3.11).", "status": "single-source", "value": "none"}
+    reset_state: {"evidence": ["esp32-trm-v5.8#iomux-gpio7", "esp32-trm-v5.8#reset-column", "esp32-trm-v5.8#reset-legend-2-3"], "status": "single-source", "value": "pullup"}
+    strap: {"evidence": ["esp32-ds-v5.3#strap-default-config", "esp32-trm-v5.8#gpio-strap-reg"], "note": "Not in datasheet Table 3-1 (five straps) nor in TRM GPIO_STRAP_REG (six bits).", "status": "single-source", "value": "none"}
+  GPIO8:
+    errata: ["GPIO-3.14"]
+    functions:
+      - {"fn": "GPIO", "routing": "matrix"}
+      - {"fn": "SD_DATA1", "routing": "iomux"}
+      - {"fn": "SPID", "routing": "iomux"}
+      - {"fn": "HS1_DATA1", "routing": "iomux"}
+      - {"fn": "UART2.CTS", "routing": "iomux"}
+    gpio: 8
+    input_only: {"evidence": ["esp32-trm-v5.8#iomux-gpio8", "esp32-trm-v5.8#io-pins-output-pins"], "status": "single-source", "value": false}
+    power_up_glitch: {"evidence": ["esp32-errata-v3.1#gpio-errata-summary"], "note": "No power-up glitch is documented in ESP32 Series Datasheet v5.3 or ESP32 Series SoC Errata v3.1 (the errata GPIO category lists only GPIO-3.6, GPIO-3.14 and GPIO-3.11).", "status": "single-source", "value": "none"}
+    reset_state: {"evidence": ["esp32-trm-v5.8#iomux-gpio8", "esp32-trm-v5.8#reset-column", "esp32-trm-v5.8#reset-legend-2-3"], "status": "single-source", "value": "pullup"}
+    strap: {"evidence": ["esp32-ds-v5.3#strap-default-config", "esp32-trm-v5.8#gpio-strap-reg"], "note": "Not in datasheet Table 3-1 (five straps) nor in TRM GPIO_STRAP_REG (six bits).", "status": "single-source", "value": "none"}
+  GPIO9:
+    errata: ["GPIO-3.14"]
+    functions:
+      - {"fn": "GPIO", "routing": "matrix"}
+      - {"fn": "SD_DATA2", "routing": "iomux"}
+      - {"fn": "SPIHD", "routing": "iomux"}
+      - {"fn": "HS1_DATA2", "routing": "iomux"}
+      - {"fn": "UART1.RX", "routing": "iomux"}
+    gpio: 9
+    input_only: {"evidence": ["esp32-trm-v5.8#iomux-gpio9", "esp32-trm-v5.8#io-pins-output-pins"], "status": "single-source", "value": false}
+    power_up_glitch: {"evidence": ["esp32-errata-v3.1#gpio-errata-summary"], "note": "No power-up glitch is documented in ESP32 Series Datasheet v5.3 or ESP32 Series SoC Errata v3.1 (the errata GPIO category lists only GPIO-3.6, GPIO-3.14 and GPIO-3.11).", "status": "single-source", "value": "none"}
+    reset_state: {"evidence": ["esp32-trm-v5.8#iomux-gpio9", "esp32-trm-v5.8#reset-column", "esp32-trm-v5.8#reset-legend-2-3"], "status": "single-source", "value": "pullup"}
+    strap: {"evidence": ["esp32-ds-v5.3#strap-default-config", "esp32-trm-v5.8#gpio-strap-reg"], "note": "Not in datasheet Table 3-1 (five straps) nor in TRM GPIO_STRAP_REG (six bits).", "status": "single-source", "value": "none"}
+peripherals:
+  ADC1:
+    adc_effective_range_mv: {"conditions": {"calibration": "eFuse Vref (ESP-IDF)"}, "evidence": ["esp32-ds-v5.3#adc-range-atten0-1", "esp32-ds-v5.3#adc-range-atten2-3", "esp32-ds-v5.3#adc-calibration-adc1"], "note": "Keys are the datasheet attenuation settings Atten = 0..3.", "status": "single-source", "unit": "mV", "value": {"0": [100, 950], "1": [100, 1250], "2": [150, 1750], "3": [150, 2450]}}
+    kind: "adc"
+    matrix_routable: false
+  ADC2: {"kind": "adc", "matrix_routable": false}
+  I2C0: {"kind": "i2c", "matrix_routable": true}
+  I2C1: {"kind": "i2c", "matrix_routable": true}
+  SPI2:
+    iomux_pins: {"cs0": "GPIO15", "hd": "GPIO4", "miso": "GPIO12", "mosi": "GPIO13", "sck": "GPIO14", "wp": "GPIO2"}
+    kind: "spi"
+    limits:
+      iomux_max_hz: {"evidence": ["esp-idf-spi-master-v6.1#matrix-40mhz-iomux-80mhz"], "note": "80 MHz in the source.", "status": "single-source", "unit": "Hz", "value": 80000000}
+      matrix_max_hz: {"evidence": ["esp-idf-spi-master-v6.1#matrix-40mhz-iomux-80mhz", "esp-idf-spi-master-v6.1#full-duplex-read-limit"], "note": "40 MHz in the source. For full-duplex reads without dummy bits the same document gives 26.6 MHz via the GPIO matrix (80 MHz via IO_MUX).", "status": "single-source", "unit": "Hz", "value": 40000000}
+    matrix_routable: true
+  SPI3:
+    iomux_pins: {"cs0": "GPIO5", "hd": "GPIO21", "miso": "GPIO19", "mosi": "GPIO23", "sck": "GPIO18", "wp": "GPIO22"}
+    kind: "spi"
+    limits:
+      iomux_max_hz: {"evidence": ["esp-idf-spi-master-v6.1#matrix-40mhz-iomux-80mhz"], "note": "80 MHz in the source.", "status": "single-source", "unit": "Hz", "value": 80000000}
+      matrix_max_hz: {"evidence": ["esp-idf-spi-master-v6.1#matrix-40mhz-iomux-80mhz", "esp-idf-spi-master-v6.1#full-duplex-read-limit"], "note": "40 MHz in the source. For full-duplex reads without dummy bits the same document gives 26.6 MHz via the GPIO matrix (80 MHz via IO_MUX).", "status": "single-source", "unit": "Hz", "value": 40000000}
+    matrix_routable: true
+  UART0:
+    iomux_pins: {"cts": "GPIO19", "rts": "GPIO22", "rx": "GPIO3", "tx": "GPIO1"}
+    kind: "uart"
+    matrix_routable: true
+  UART1:
+    iomux_pins: {"cts": "GPIO6", "rts": "GPIO11", "rx": "GPIO9", "tx": "GPIO10"}
+    kind: "uart"
+    matrix_routable: true
+  UART2:
+    iomux_pins: {"cts": "GPIO8", "rts": "GPIO7", "rx": "GPIO16", "tx": "GPIO17"}
+    kind: "uart"
+    matrix_routable: true
+revisions: ["v0.0", "v1.0", "v1.1", "v3.0", "v3.1"]
+series: "ESP32"
+vdd_io: {"evidence": ["esp32-ds-v5.3#supply-recommended-3v3"], "status": "single-source", "unit": "V", "value": 3.3}
+vendor: "Espressif Systems"

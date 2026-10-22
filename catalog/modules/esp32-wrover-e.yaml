@@ -1,0 +1,47 @@
+# ESP32-WROVER-E module (N4R8/N8R8/N16R8) - draft, single-source.
+# Source: ESP32-WROVER-E & ESP32-WROVER-IE Datasheet v2.4 (+ ESP32 Datasheet v5.3 §2.6 notes, DevKitC V4 guide).
+# SCHEMA LIMITATION (reported to the orchestrator): the datasheet leads out only 24 GPIOs - module pins 27/28
+# (IO16/IO17) are NC and GPIO16/GPIO17 are wired inside the module to the PSRAM. GPIO16 and GPIO17 are nevertheless
+# listed in bonded_pads, because the catalog validator requires every gpio header pin of the shared DevKitC V4
+# connector (J3-11/J3-12) to be in bonded_pads of every variant's module, and the schema has no per-variant pin map.
+# The facts that matter to the engine are in `consumed` (GPIO16/GPIO17 = psram), which removes them from use.
+bonded_pads:
+  - "GPIO0"
+  - "GPIO1"
+  - "GPIO2"
+  - "GPIO3"
+  - "GPIO4"
+  - "GPIO5"
+  - "GPIO12"
+  - "GPIO13"
+  - "GPIO14"
+  - "GPIO15"
+  - "GPIO16"
+  - "GPIO17"
+  - "GPIO18"
+  - "GPIO19"
+  - "GPIO21"
+  - "GPIO22"
+  - "GPIO23"
+  - "GPIO25"
+  - "GPIO26"
+  - "GPIO27"
+  - "GPIO32"
+  - "GPIO33"
+  - "GPIO34"
+  - "GPIO35"
+  - "GPIO36"
+  - "GPIO39"
+chip: "esp32"
+consumed:
+  GPIO10: {"evidence": ["esp32-wrover-e-ds-v2.4#gpio6-11-flash"], "status": "single-source", "value": "flash"}
+  GPIO11: {"evidence": ["esp32-wrover-e-ds-v2.4#gpio6-11-flash"], "status": "single-source", "value": "flash"}
+  GPIO16: {"evidence": ["esp32-wrover-e-ds-v2.4#sch-gpio16-psram-cs", "esp32-ds-v5.3#psram-gpio16-ce", "esp32-devkitc-v4-ug#note-gpio16-17-wrover", "esp32-wrover-e-ds-v2.4#pin-layout-26-37"], "note": "PSRAM CS#; module pin 27 is NC (not led out).", "status": "single-source", "value": "psram"}
+  GPIO17: {"evidence": ["esp32-wrover-e-ds-v2.4#sch-gpio17-sram-clk", "esp32-ds-v5.3#psram-gpio17-sclk", "esp32-devkitc-v4-ug#note-gpio16-17-wrover", "esp32-wrover-e-ds-v2.4#pin-layout-26-37"], "note": "PSRAM SCLK via R13 (0 ohm); module pin 28 is NC (not led out).", "status": "single-source", "value": "psram"}
+  GPIO6: {"evidence": ["esp32-wrover-e-ds-v2.4#gpio6-11-flash"], "status": "single-source", "value": "flash"}
+  GPIO7: {"evidence": ["esp32-wrover-e-ds-v2.4#gpio6-11-flash"], "status": "single-source", "value": "flash"}
+  GPIO8: {"evidence": ["esp32-wrover-e-ds-v2.4#gpio6-11-flash"], "status": "single-source", "value": "flash"}
+  GPIO9: {"evidence": ["esp32-wrover-e-ds-v2.4#gpio6-11-flash"], "status": "single-source", "value": "flash"}
+flash_voltage: {"evidence": ["esp32-wrover-e-ds-v2.4#series-vdd-sdio", "esp32-wrover-e-ds-v2.4#vdd-sdio-mtdi0", "esp32-wrover-e-ds-v2.4#io12-kept-low"], "status": "single-source", "unit": "V", "value": 3.3}
+id: "esp32-wrover-e"
+psram: {"conditions": {"part_number": "ESP32-WROVER-E-N4R8/N8R8/N16R8"}, "evidence": ["esp32-wrover-e-ds-v2.4#series-n8r8", "esp32-devkitc-v4-ug#ordering-ve"], "note": "EOL ...R2 part numbers carry 2 MB in-package PSRAM instead (U4 not fitted).", "status": "single-source", "value": "8 MB Quad SPI"}
