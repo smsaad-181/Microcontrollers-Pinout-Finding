@@ -20,7 +20,84 @@ Status values: NOT STARTED · IN PROGRESS · VALIDATING · FIXING (round n/3) ·
 
 ## Current task
 
-Phase 1 (local). Task 1.1 workspace, then 1.2–1.4 (schema+CLI), 1.5 (CLI fixtures), 1.6 (web placeholder), 1.7 (workflows) in parallel.
+Phase 1 (local, branch `phase-1`). Running in parallel:
+- **1.1** pnpm workspace + all dependencies — _ci-pages-engineer_
+- **1.5** fake-part CLI fixtures (valid + 12 invalid catalogs) — _fixture-author_
+Next: 1.2–1.4 schema + CLI (TDD), 1.6 web placeholder, 1.7 workflows.
+
+## Task checklist
+
+Legend: `[x]` done · `[~]` in progress · `[-]` deferred (needs GitHub) · `[ ]` not started. The local progress dashboard (`node tools/progress/server.mjs` → http://localhost:4300) reads this list.
+
+**Phase 0**
+- [x] 0.1 · Check tool versions · _main_
+- [x] 0.2 · Confirm MCP servers respond · _main_
+- [-] 0.3 · Create the GitHub repo if absent and push main. · _ci-pages-engineer_
+- [-] 0.4 · Enable Pages with workflow builds · _ci-pages-engineer_
+- [x] 0.5 · Add LICENSE (MIT for code) and catalog/LICENSE (CC-BY-4.0 for catalog facts), plus .edi… · _ci-pages-engineer_
+- [x] 0.6 · Fill sources/manual/README.md with the known manual downloads (ATmega328P DS40002061, S… · _hardware-researcher_
+
+**Phase 1**
+- [~] 1.1 · pnpm workspace · _ci-pages-engineer_
+- [ ] 1.2 · Zod schemas for Evidence, Fact<T>, Chip, Module, Board, Pin view, IC, Breakout, Fixture… · _engine-developer_
+- [ ] 1.3 · catalog validate [--root <dir>] (default catalog/) · _engine-developer_
+- [ ] 1.4 · catalog compile · _engine-developer_
+- [~] 1.5 · Seed fixtures for the CLI · _fixture-author_
+- [ ] 1.6 · apps/web · _ui-developer_
+- [ ] 1.7 · Workflows · _ci-pages-engineer_
+- [-] 1.8 · Branch protection on main · _ci-pages-engineer_
+- [ ] 1.9 · Docs: docs/schema.md (generated from Zod descriptions), CONTRIBUTING.md skeleton. · _ci-pages-engineer_
+
+**Phase 2a**
+- [ ] 2a.1 · For each chip/module/board · _hardware-researcher_
+- [ ] 2a.2 · Create catalog/.drafting (pauses the on-edit validation hook) · _hardware-researcher_
+- [ ] 2a.3 · Blind re-derivation · _hardware-fact-auditor_
+- [ ] 2a.4 · Reconcile · _catalog-author_
+- [ ] 2a.5 · Module records · _hardware-researcher → catalog-author_
+- [ ] 2a.6 · Known conflict to record explicitly · _catalog-author_
+- [ ] 2a.7 · Golden fixtures (hand-written from documents, before Phase 2b) · _fixture-author_
+- [ ] 2a.8 · Delete catalog/.drafting · _catalog-author_
+
+**Phase 2b**
+- [ ] 2b.1 · packages/rules · _engine-developer_
+- [ ] 2b.2 · Pin view composer · _engine-developer_
+- [ ] 2b.3 · Interface selection per module (rules 1–7 in skill interface-selection), producing cand… · _engine-developer_
+- [ ] 2b.4 · Signal expansion · _engine-developer_
+- [ ] 2b.5 · CSP solver · _engine-developer_
+- [ ] 2b.6 · Unsat path · _engine-developer_
+- [ ] 2b.7 · Explanation traces · _engine-developer_
+- [ ] 2b.8 · Property tests (fast-check) · _test-automator_
+- [ ] 2b.9 · Run all golden fixtures from Phase 2a · _engine-developer_
+- [ ] 2b.10 · Mutation testing (Stryker) on packages/rules and solver constraints; target ≥ 85 % muta… · _test-automator_
+- [ ] 2b.11 · Performance · _engine-developer_
+
+**Phase 3**
+- [ ] 3.1 · App shell, hash routes #/, #/board, #/modules, #/constraints, #/results, #/p/<shared> · _ui-developer_
+- [ ] 3.2 · Engine in a Web Worker via Comlink; progress + cancel; 2 s timeout message. · _ui-developer_
+- [ ] 3.3 · Board picker with filters (manufacturer, family, chip, module, revision) and status bad… · _ui-developer_
+- [ ] 3.4 · Module search (MiniSearch over part numbers, nicknames, aliases) with variant prompt wh… · _ui-developer_
+- [ ] 3.5 · Constraints: locked pins, reserved pins, voltage rails, framework, existing connections. · _ui-developer_
+- [ ] 3.6 · Results · _ui-developer_
+- [ ] 3.7 · SVG header view generated from board connector data; states · _ui-developer_
+- [ ] 3.8 · Persistence · _ui-developer_
+- [ ] 3.9 · Share links · _ui-developer_
+- [ ] 3.10 · Offline: vite-plugin-pwa; "update available" prompt when the manifest changes. · _ui-developer_
+- [ ] 3.11 · E2E (Playwright) · _test-automator_
+- [ ] 3.12 · Disclaimer + "how to verify" panel on every result. · _ui-developer_
+
+**Phase 4**
+- [ ] 4.1 · Research the canonical library for each MVP module per framework (maintainer repo, vers… · _hardware-researcher_
+- [ ] 4.2 · Template engine in packages/codegen · _engine-developer_
+- [ ] 4.3 · Templates · _engine-developer_
+- [ ] 4.4 · CI compile check · _ci-pages-engineer_
+- [ ] 4.5 · UI: code tab with copy/download, library install notes. · _ui-developer_
+
+**Phase 5**
+- [ ] 5.1 · links.yml · _ci-pages-engineer_
+- [ ] 5.2 · Docs · _ci-pages-engineer_
+- [ ] 5.3 · Bench-check procedure for the user · _hardware-researcher_
+- [ ] 5.4 · Enable required human reviews on catalog/ via CODEOWNERS when a second maintainer exist… · _ci-pages-engineer_
+- [ ] 5.5 · Release prep on the branch · _ci-pages-engineer_
 
 ## Human prerequisites
 
