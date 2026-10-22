@@ -1,0 +1,22 @@
+# catalog/boards/<id>@<rev>.yaml (see skill: catalog-schema)
+id: <vendor-board-id>
+vendor: <vendor>
+name: <exact product name>
+revision: <rev>
+variants:
+  - { id: <variant-id>, module: <module-id> }
+logic_voltage: { value: 3.3, unit: V, evidence: [], status: single-source }
+rails:
+  - name: 3V3
+    voltage: { value: 3.3, unit: V, evidence: [], status: single-source }
+    max_current: { value: null, unit: mA, evidence: [], status: missing, note: "regulator part + its datasheet" }
+    source: <regulator part or USB>
+connectors:
+  - id: J2
+    pins:
+      - { position: 1, label: "3V3", kind: power }
+      - { position: 3, label: "VP", kind: gpio, pad: GPIO36 }
+onboard:
+  - { part: <USB-UART bridge>, uses_pad: [GPIO1, GPIO3], effect: "UART0 to USB", evidence: [] }
+numbering: { primary: gpio }
+status: datasheet-required      # computed by the CLI; do not hand-edit after Phase 1

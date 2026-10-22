@@ -1,0 +1,19 @@
+# catalog/evidence/<doc-id>.yaml — one file per document (see skill: datasheet-evidence)
+id: <doc-id>                    # e.g. esp32-wroom-32e-ds-v2.1
+title: <exact document title>
+publisher: <manufacturer / organisation>
+doc_number: null
+revision: "<as printed>"
+revision_date: null             # only if printed in the document
+url: <final URL after redirects>
+url_original: null
+accessed: <YYYY-MM-DD>
+sha256: null                    # hex of the downloaded file; null for HTML
+kind: datasheet                 # board-guide | datasheet | trm | errata | schematic | design-guide | api-doc | library | app-note | standard
+secondary: false
+manual: false
+claims:
+  - id: <doc-id>#<slug>
+    locator: "<section / table / page>"
+    quote: "<verbatim, ≤ 25 words>"
+    supports: "<the exact fact this supports>"

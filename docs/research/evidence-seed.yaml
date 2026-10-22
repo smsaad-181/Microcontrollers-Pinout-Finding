@@ -1,0 +1,169 @@
+# Research leads verified during planning (2026-10-11).
+# STATUS: lead — every item must be re-opened and re-recorded as catalog evidence in Phase 2a.
+# Do not copy values into the catalog without opening the source yourself (two-key rule).
+
+documents:
+  - id: esp32-ds-v5.3
+    title: ESP32 Series Datasheet
+    revision: "5.3"
+    url: https://documentation.espressif.com/esp32_datasheet_en.pdf
+    leads:
+      - { locator: "§3, Tables 3-1..3-5", claim: "Straps GPIO0 (PU), GPIO2 (PD), MTDI/GPIO12 (PD), MTDO/GPIO15 (PU), GPIO5 (PU); hold time 1 ms" }
+      - { locator: "§3.2", claim: "MTDI=1 at reset selects internal 1.8 V LDO for VDD_SDIO; eFuse can override" }
+      - { locator: "§4.9.1", claim: "ADC effective range by attenuation: 100–950, 100–1250, 150–1750, 150–2450 mV" }
+      - { locator: "Table 5-1", claim: "Supply abs max −0.3..3.6 V; cumulative IO output current 1200 mA" }
+      - { locator: "§2.3.1", claim: "GPIO34–39 input-only (no pulls)" }
+    note: "Table 5-3 (DC characteristics) did not extract via automated reading; use the module datasheet Table 15 or read the PDF page directly."
+
+  - id: esp32-wroom-32e-ds-v2.1
+    title: ESP32-WROOM-32E & ESP32-WROOM-32UE Datasheet
+    revision: "2.1"
+    url: https://documentation.espressif.com/esp32-wroom-32e_esp32-wroom-32ue_datasheet_en.pdf
+    leads:
+      - { locator: "Table 15", claim: "VIH ≥0.75·VDD, VIL ≤0.25·VDD, VOH ≥0.8·VDD, VOL ≤0.1·VDD, IOH typ 40 mA (20 mA VDD_SDIO), IOL typ 28 mA, RPU/RPD typ 45 kΩ" }
+      - { locator: "Table 3 note 2", claim: "GPIO6–11 connected to in-module flash, not led out" }
+      - { locator: "§9 note", claim: "IO12 should be kept low when the module is powered on" }
+
+  - id: esp32-trm-v5.8
+    title: ESP32 Technical Reference Manual
+    revision: "5.8"
+    url: "(Espressif technical documents page; local transcription in .claude/skills/esp32-gpio-reference)"
+    leads:
+      - { locator: "Table 6.10-1", claim: "IO_MUX functions and reset pull states per GPIO" }
+      - { locator: "Table 6.11-1", claim: "RTC/ADC/DAC/touch mapping; ADC1 = GPIO32–39, ADC2 = GPIO0,2,4,12–15,25–27" }
+      - { locator: "Register 6.13", claim: "boot_sel_chip bits = MTDI, GPIO0, GPIO2, GPIO4, MTDO, GPIO5 (GPIO4 conflict vs datasheet)" }
+
+  - id: esp32-errata
+    title: ESP32 Series SoC Errata
+    url: https://docs.espressif.com/projects/esp-chip-errata/en/latest/esp32/03-errata-description/index.html
+    leads:
+      - { locator: "GPIO-3.11", claim: "GPIO36/39 pulled down ~80 ns when SAR ADC1/ADC2/AMP power on; revs v0.0–v3.1; ignore inputs then" }
+
+  - id: esp32-devkitc-v4-ug
+    title: ESP32-DevKitC V4 User Guide
+    url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32/esp32-devkitc/user_guide.html
+    leads:
+      - { locator: "Header block J2/J3", claim: "J2: 1 3V3, 2 EN, 3 GPIO36, 4 GPIO39, 5 GPIO34, 6 GPIO35, 7 GPIO32, 8 GPIO33, 9 GPIO25, 10 GPIO26, 11 GPIO27, 12 GPIO14, 13 GPIO12, 14 GND, 15 GPIO13, 16 GPIO9, 17 GPIO10, 18 GPIO11, 19 5V" }
+      - { locator: "Header block J2/J3", claim: "J3: 1 GND, 2 GPIO23, 3 GPIO22, 4 GPIO1, 5 GPIO3, 6 GPIO21, 7 GND, 8 GPIO19, 9 GPIO18, 10 GPIO5, 11 GPIO17, 12 GPIO16, 13 GPIO4, 14 GPIO0, 15 GPIO2, 16 GPIO15, 17 GPIO8, 18 GPIO7, 19 GPIO6" }
+      - { locator: "Notes", claim: "GPIO16/17 usable only with WROOM/SOLO-1; reserved on WROVER. GPIO6–11 used for flash. UART0 on GPIO1/3 via USB-UART bridge" }
+    missing: "3V3 regulator part/rating → read the DevKitC V4 schematic"
+
+  - id: esp-idf-spi-master-v6.1
+    title: ESP-IDF Programming Guide v6.1 — SPI Master Driver
+    url: https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/peripherals/spi_master.html
+    leads:
+      - { locator: "GPIO matrix vs IO_MUX", claim: "Matrix up to 40 MHz vs 80 MHz IO_MUX; ~26.6 MHz full-duplex table value; SPI3 IO_MUX CS0 5, SCLK 18, MISO 19, MOSI 23; SPI2 CS0 15, SCLK 14, MISO 12, MOSI 13" }
+
+  - id: esp32-s3-ds-v2.2
+    title: ESP32-S3 Series Datasheet
+    url: https://documentation.espressif.com/esp32-s3_datasheet_en.pdf
+    leads:
+      - { locator: "§3", claim: "Straps GPIO0, GPIO3 (floating, no pulls), GPIO45 (VDD_SPI), GPIO46; hold 3 ms" }
+      - { locator: "§2.6 Table 2-14", claim: "GPIO26–32 flash/PSRAM; GPIO33–37 used by octal flash/PSRAM in 8-line mode (confirm exact pads per module/board)" }
+      - { locator: "§2.3", claim: "USB D-/D+ = GPIO19/20, default USB Serial/JTAG; JTAG GPIO39–42" }
+
+  - id: esp32-c3-ds-v2.4
+    title: ESP32-C3 Series Datasheet
+    url: https://documentation.espressif.com/esp32-c3_datasheet_en.pdf
+    leads:
+      - { locator: "§3", claim: "Straps GPIO2, 8, 9; hold 3 ms" }
+      - { locator: "Table 2-2", claim: "GPIO18 ~50 µs high glitch at power-up" }
+      - { locator: "§4.2.2.1", claim: "ADC2 not operable on some revisions" }
+
+  - id: esp8266ex-ds-v7.1
+    title: ESP8266EX Datasheet
+    url: https://documentation.espressif.com/0a-esp8266ex_datasheet_en.pdf
+    leads:
+      - { locator: "Table 5-1", claim: "VIH max 3.6 V; IMAX 12 mA per pin" }
+      - { locator: "§4.9", claim: "TOUT ADC input range 0–1.0 V" }
+      - { locator: "§2 note", claim: "GPIO0, GPIO2, MTDO select boot mode (levels not tabulated in this doc — find the boot-mode source)" }
+
+  - id: lolin-d1-mini-v4
+    title: LOLIN D1 mini V4.0.0
+    url: https://www.wemos.cc/en/latest/d1/d1_mini.html
+    leads:
+      - { locator: "Features/specs", claim: "A0 max 3.2 V; all IO 3.3 V; D0 lacks interrupt/PWM/I2C/1-Wire" }
+    note: "Pin map is an image only → transcribe by hand (transcribed: true)"
+
+  - id: arduino-uno-r4-minima-um-rev5
+    title: Arduino UNO R4 Minima User Manual (ABX00080)
+    url: https://docs.arduino.cc/resources/datasheets/ABX00080-datasheet.pdf
+    leads:
+      - { locator: "§9.3", claim: "GPIO up to 8 mA" }
+      - { locator: "§10.2", claim: "SPI D10 CS, D11 COPI, D12 CIPO, D13 SCK; I2C A4/A5; UART D0/D1" }
+      - { locator: "§7", claim: "DAC on A0 (12-bit)" }
+    note: "Document has internal errors (D0/D1 both labelled TX0; CAN TX/RX swapped) — record as conflict where relevant"
+
+  - id: arduino-uno-r3-um
+    title: Arduino UNO R3 User Manual (A000066)
+    url: https://docs.arduino.cc/resources/datasheets/A000066-datasheet.pdf
+    leads:
+      - { locator: "pinout tables", claim: "I2C A4/A5; SPI on JDIGITAL 11–14" }
+    note: "No per-pin current or thresholds → need ATmega328P datasheet (manual download)"
+
+  - id: pico-ds-rel21
+    title: Raspberry Pi Pico Datasheet (release 21)
+    url: https://pip-assets.raspberrypi.com/categories/610-raspberry-pi-pico/documents/RP-008307-DS-2-pico-datasheet.pdf
+    leads:
+      - { locator: "§2.1, §4.4", claim: "GP23 SMPS PS, GP24 VBUS sense, GP25 LED, GP29 = ADC3 = VSYS/3" }
+      - { locator: "§4.2", claim: "ADC GPIO26–29 must not exceed IOVDD + ~300 mV when unpowered" }
+    todo: "Pico W datasheet for CYW43439 pin usage (GP23/24/25/29)"
+
+  - id: rpi4-ds-rel1.1
+    title: Raspberry Pi 4 Model B Datasheet (release 1.1)
+    url: https://pip-assets.raspberrypi.com/categories/545-raspberry-pi-4-model-b/documents/RP-008341-DS-1-raspberry-pi-4-datasheet.pdf
+    leads:
+      - { locator: "§4 Table 3", claim: "VIL ≤0.8 V, VIH ≥2.0 V, VOH ≥VDDIO−0.4 V @2 mA, VOL ≤0.4 V; default drive 8 mA, max 16 mA; pulls 18–73 kΩ typ 47 kΩ" }
+
+  - id: bme280-ds-1.24
+    title: BME280 Data Sheet (BST-BME280-DS001-24)
+    url: https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bme280-ds002.pdf
+    leads:
+      - { locator: "§6.1", claim: "CSB=VDDIO → I2C; CSB pulled low → SPI until power-on reset" }
+      - { locator: "§6.2", claim: "I2C 0x76 (SDO=GND) / 0x77 (SDO=VDDIO); SDO must not float" }
+      - { locator: "§6.3–6.4, Table 34", claim: "SPI modes 00/11, max 10 MHz" }
+      - { locator: "Table 1, Table 5", claim: "VDD 1.71–3.6 V, VDDIO 1.2–3.6 V; pins abs max VDDIO+0.3 V" }
+
+  - id: mfrc522-ds-3.9
+    title: MFRC522 Product Data Sheet rev 3.9
+    url: https://www.nxp.com/docs/en/data-sheet/MFRC522.pdf
+    leads:
+      - { locator: "§8.1.1 Table 5", claim: "Interface select: I2C pin=1 → I2C; I2C=0, EA=1 → SPI; I2C=0, EA=0 → UART" }
+      - { locator: "Table 1", claim: "VDDA/VDDD/TVDD 2.5–3.6 V; IDDD typ 6.5 / max 9 mA; IDDA typ 7 / max 10 mA; ITVDD typ 60 / max 100 mA" }
+      - { locator: "§8.1.2", claim: "SPI up to 10 Mbit/s, MSB first" }
+    todo: "MISO tri-state when NSS high; digital input abs max (§14)"
+
+  - id: st7735-ds-v2.1
+    secondary: true   # third-party host; ST7735 not ST7735S → interim until the official ST7735S sheet is in
+    title: Sitronix ST7735 datasheet V2.1 (third-party host)
+    url: https://www.displayfuture.com/Display/datasheet/controller/ST7735.pdf
+    leads:
+      - { locator: "serial timing", claim: "tSCYCW ≥ 66 ns, tSCYCR ≥ 150 ns; inputs −0.3..VDDI+0.3 V" }
+    note: "ST7735 not ST7735S — manual download of ST7735S requested"
+
+  - id: srd-relay-ds
+    secondary: true   # third-party host → interim until a manufacturer sheet is found
+    title: SRD relay datasheet (secondary host)
+    url: https://www.circuitbasics.com/wp-content/uploads/2015/11/SRD-05VDC-SL-C-Datasheet.pdf
+    leads:
+      - { locator: "coil data", claim: "5 V coil: 0.36 W 70 Ω 71.4 mA; 0.45 W 55 Ω 89.3 mA; pick-up ≤75 %, drop-out ≥10 %" }
+    note: "Secondary host; look for the manufacturer's own sheet"
+
+  - id: nxp-um10204-rev7
+    title: UM10204 I2C-bus specification and user manual rev 7.0
+    url: https://www.nxp.com/docs/en/user-guide/UM10204.pdf
+    leads:
+      - { locator: "§3.1.2", claim: "VIL 0.3·VDD, VIH 0.7·VDD" }
+      - { locator: "§4.2.3", claim: "3 mA sink at VOL 0.4 V" }
+      - { locator: "§7.2", claim: "Pull-up sizing (formulas also in TI SLVA689)" }
+
+  - id: ti-slva689
+    title: TI SLVA689 I2C Bus Pullup Resistor Calculation
+    url: https://www.ti.com/lit/an/slva689/slva689.pdf
+    leads:
+      - { locator: "Eq. 1, 6", claim: "Rp(min)=(VCC−VOL)/IOL; Rp(max)=tr/(0.8473·Cb); tr 1000/300/120 ns; Cb 400/400/550 pF" }
+
+platform:
+  - { url: https://docs.github.com/en/pages/getting-started-with-github-pages/github-pages-limits, claim: "1 GB site, 100 GB/mo soft bandwidth, 10-min deploy timeout, public repos only on free plans, no commercial SaaS" }
+  - { url: https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages, claim: "configure-pages / upload-pages-artifact / deploy-pages; pages:write + id-token:write; environment github-pages" }
+  - { url: https://vite.dev/guide/static-deploy, claim: "base '/<REPO>/' for project pages" }

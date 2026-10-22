@@ -1,0 +1,15 @@
+node_modules/
+dist/
+coverage/
+.turbo/
+*.log
+.env
+.env.*
+# downloaded datasheets: never commit (copyright); hashes live in catalog/evidence
+sources/cache/
+sources/manual/*
+!sources/manual/README.md
+playwright-report/
+test-results/
+reports/mutation/
+.DS_Store

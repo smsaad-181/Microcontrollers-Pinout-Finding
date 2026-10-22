@@ -1,0 +1,26 @@
+# catalog/ics/<ic-id>.yaml
+id: <ic-id>
+vendor: <manufacturer>
+part: <part number>
+vdd_range: { value: [null, null], unit: V, evidence: [], status: missing }
+vio_range: { value: [null, null], unit: V, evidence: [], status: missing }
+input_abs_max: { value: "VDDIO+0.3", unit: V, evidence: [], status: missing }
+interfaces:
+  - kind: i2c
+    signals: [ { role: SDA, dir: io, drive: open-drain, shareable: true }, { role: SCL, dir: in, drive: open-drain, shareable: true } ]
+    limits: { max_hz: { value: null, unit: Hz, evidence: [], status: missing }, addresses: [ { value: 0x76, strap: "SDO=GND" } ] }
+select_strap: null
+supply_current: { value: { typ: null, max: null }, unit: mA, evidence: [], status: missing }
+---
+# catalog/breakouts/<breakout-id>.yaml
+id: <breakout-id>
+ic: <ic-id>
+vendor: <breakout vendor or "generic">
+variant_names: ["<alias 1>", "<alias 2>"]
+pins: [ { label: VCC, maps_to: VCC }, { label: GND, maps_to: GND }, { label: SDA, maps_to: SDA } ]
+regulator: { value: { present: null, vin_range: null }, evidence: [], status: missing }
+level_shifter: { value: null, evidence: [], status: missing }
+pullups: [ { line: SDA, value_ohm: { value: null, unit: ohm, evidence: [], status: missing } } ]
+hardwired: []
+interfaces_exposed: [i2c]
+supply_current: { value: null, unit: mA, evidence: [], status: missing }
