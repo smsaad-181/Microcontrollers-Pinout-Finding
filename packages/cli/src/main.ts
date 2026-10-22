@@ -1,4 +1,14 @@
-// Stub entry point for `pnpm catalog:validate` / `pnpm catalog:compile` (implemented in tasks 1.3/1.4).
-const args = process.argv.slice(2);
-console.error(`pinout catalog: not implemented (argv: ${JSON.stringify(args)})`);
-process.exitCode = 1;
+// Entry point for `pnpm catalog:validate` / `pnpm catalog:compile` (run from the repo root, so
+// `--root`/`--out` and their defaults are relative to process.cwd()).
+import { runCli } from './cli.js';
+
+process.exitCode = runCli(process.argv.slice(2), {
+  cwd: process.cwd(),
+  env: process.env,
+  stdout: (line) => {
+    process.stdout.write(`${line}\n`);
+  },
+  stderr: (line) => {
+    process.stderr.write(`${line}\n`);
+  },
+});

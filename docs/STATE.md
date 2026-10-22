@@ -21,9 +21,9 @@ Status values: NOT STARTED · IN PROGRESS · VALIDATING · FIXING (round n/3) ·
 ## Current task
 
 Phase 1 (local, branch `phase-1`). Running in parallel:
-- **1.2 → 1.3 → 1.4** Zod schema, `catalog validate`, `catalog compile` (TDD) — _engine-developer_
+- **1.9** docs: CONTRIBUTING.md done; `docs/schema.md` (generated from the Zod descriptions) next — _main_
 Web app dev server: http://localhost:5173/pinout-finder/
-Next: 1.9 docs, then Phase 1 validators (phase-validator, code-reviewer, github-actions-expert).
+Next: finish 1.9, then Phase 1 validators (phase-validator, code-reviewer, github-actions-expert).
 
 ## Task checklist
 
@@ -39,14 +39,14 @@ Legend: `[x]` done · `[~]` in progress · `[-]` deferred (needs GitHub) · `[ ]
 
 **Phase 1**
 - [x] 1.1 · pnpm workspace · _ci-pages-engineer_
-- [~] 1.2 · Zod schemas for Evidence, Fact<T>, Chip, Module, Board, Pin view, IC, Breakout, Fixture… · _engine-developer_
-- [~] 1.3 · catalog validate [--root <dir>] (default catalog/) · _engine-developer_
-- [~] 1.4 · catalog compile · _engine-developer_
+- [x] 1.2 · Zod schemas for Evidence, Fact<T>, Chip, Module, Board, Pin view, IC, Breakout, Fixture… · _engine-developer_
+- [x] 1.3 · catalog validate [--root <dir>] (default catalog/) · _engine-developer_
+- [x] 1.4 · catalog compile · _engine-developer_
 - [x] 1.5 · Seed fixtures for the CLI · _fixture-author_
 - [x] 1.6 · apps/web · _ui-developer_
 - [x] 1.7 · Workflows · _ci-pages-engineer_
 - [-] 1.8 · Branch protection on main · _ci-pages-engineer_
-- [ ] 1.9 · Docs: docs/schema.md (generated from Zod descriptions), CONTRIBUTING.md skeleton. · _ci-pages-engineer_
+- [~] 1.9 · Docs: docs/schema.md (generated from Zod descriptions), CONTRIBUTING.md skeleton. · _ci-pages-engineer_
 
 **Phase 2a**
 - [ ] 2a.1 · For each chip/module/board · _hardware-researcher_
@@ -143,6 +143,10 @@ None of these block Phase 0. Re-check all three when a session is started inside
 - 2026-10-22 · Node floor `>=22.12.0` (not 20): Vitest 5 requires it and Node 20 is EOL (Apr 2026); still "Node LTS" per CLAUDE.md, CI uses `lts/*`. TypeScript pinned to 6.0.3 (typescript-eslint 8.72 supports `<6.1`; TS 7 native port not yet supported).
 - 2026-10-22 · Workspace packages resolve each other from source via the `@pinout/source` export condition (no prebuild needed for typecheck/test/CLI); catalog scripts run from the repo root, so `--root` and the default `catalog/` are relative to the root.
 
+- 2026-10-22 · Catalog compiler: `version` = first 12 hex chars of the SHA-256 of the canonical catalog JSON (content-addressed, so old share links keep resolving); manifest `date` = SOURCE_DATE_EPOCH → last git commit touching the catalog → latest evidence date. New codes beyond the fixture contract: `E_YAML` (syntax/duplicate keys), warnings `W_DANGLING_REF`, `W_IGNORED_FILE`. `PinView` schema is a provisional addition (revisit in 2b.2).
+- 2026-10-22 · `apps/web/public/catalog/` is generated at deploy time and git-ignored. Phase 3/5 must decide how old `<version>.json` files stay available for share links (PLAN: previous versions remain in `dist/`).
+- 2026-10-22 · Open for later: duplicate entity ids have no error code yet; CI uses a shallow checkout so the manifest `date` may differ from a local build (content/version are unaffected).
+
 ## Decisions needed
 
 - 2026-10-22 · **GitHub deferred by user ("I will update later in github… continue").** Work continues locally
@@ -156,6 +160,7 @@ None of these block Phase 0. Re-check all three when a session is started inside
 
 | Date | Phase | Event |
 | --- | --- | --- |
+| 2026-10-22 | 1 | 1.2–1.4 done (TDD): Zod schemas match the skill reference (type-level equality tests, 24 types), `catalog validate` (every invalid fixture → its contracted code, valid + empty real catalog → 0), `catalog compile` (twice → byte-identical; version = first 12 hex of content sha256). Orchestrator re-run: typecheck/lint 0; schema 62, cli 61, web 35 tests pass. |
 | 2026-10-22 | 1 | 1.6 done: placeholder page (hash router, build-time CSP meta, manifest version card); web typecheck/lint 0, 35 tests pass, build OK, no inline script/style in dist, "Pinout Finder" in static HTML. Open for Phase 3: `worker-src` CSP for the Web Worker. |
 | 2026-10-22 | 1 | 1.1 done: pnpm workspace (schema, rules, engine, codegen, cli, web); frozen install, typecheck, lint, 6/6 test projects, web build (assets under `/pinout-finder/`) all exit 0 in orchestrator re-run. |
 | 2026-10-22 | 1 | 1.7 done: ci.yml (aggregate `ci` job), deploy.yml, links.yml stub, dependabot.yml; 22 `uses:` pinned to 40-char SHAs (grep check OK), actionlint 1.7.12 → 0 errors. Not yet run on GitHub. |
