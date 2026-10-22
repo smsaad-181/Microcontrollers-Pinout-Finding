@@ -9,7 +9,7 @@ Catalog version: none yet · Rule-set version: none yet · Last updated: 2026-10
 | Phase | Name | Status | Branch | Validation | Notes |
 | --- | --- | --- | --- | --- | --- |
 | 0 | Bootstrap: tools, repo, Pages enabled | IN PROGRESS (remote deferred) | main | — | 0.1, 0.2, 0.5, 0.6 done; 0.3/0.4 deferred by user (GitHub later) |
-| 1 | Foundation: monorepo, schema, evidence model, CI/CD, placeholder on Pages | IN PROGRESS | phase-1 | — | local-only; 1.8 + CI/deploy gate items wait for GitHub |
+| 1 | Foundation: monorepo, schema, evidence model, CI/CD, placeholder on Pages | VALIDATING | phase-1 | — | local-only; 1.8 + CI/deploy gate items wait for GitHub |
 | 2a | Catalog: MVP boards and modules, two-key verified | NOT STARTED | phase-2a | — | needs manual PDFs |
 | 2b | Engine: interface selection, CSP solver, rules R1–R8, explanations | NOT STARTED | phase-2b | — | |
 | 3 | Web app: UI, Web Worker, projects, sharing, export, offline | NOT STARTED | phase-3 | — | |
@@ -20,10 +20,9 @@ Status values: NOT STARTED · IN PROGRESS · VALIDATING · FIXING (round n/3) ·
 
 ## Current task
 
-Phase 1 (local, branch `phase-1`). Running in parallel:
-- (all Phase 1 build tasks done locally except 1.8; validators next)
-Web app dev server: http://localhost:5173/pinout-finder/
-Next: Phase 1 validators, one at a time (phase-validator, code-reviewer, github-actions-expert).
+Phase 1 is VALIDATING (local; no GitHub remote yet). Validator 1 of 3 running:
+- **phase-validator** — runs every local gate item fresh, probes the checker for gaps, writes `docs/validation/phase-1/phase-validator.md`.
+Then: code-reviewer, then github-actions-expert (one at a time).
 
 ## Task checklist
 
