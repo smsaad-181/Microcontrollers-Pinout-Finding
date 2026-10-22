@@ -33,6 +33,12 @@ export const ConnectorPinSchema = z
       'Chip pad (gives the GPIO number); required for gpio pins.',
     ),
     rail: z.string().exactOptional().describe('Power rail name for power pins.'),
+    alias_of: z
+      .string()
+      .exactOptional()
+      .describe(
+        "Reference '<connector-id>:<position>' of the primary pin of this board that shares this pad (Arduino SDA/SCL = A4/A5, ICSP header).",
+      ),
   })
   .describe('One connector/header pin.');
 export type ConnectorPin = z.infer<typeof ConnectorPinSchema>;

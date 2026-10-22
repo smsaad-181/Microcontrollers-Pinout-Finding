@@ -1,0 +1,36 @@
+# FAKE board for catalog-CLI tests only (fictional part DEMO-BOARD-1 by "Demo Corp").
+#
+# Why `status: partially-verified`:
+# - The pin map is complete: header J1 has gpio pins, and every gpio pin resolves all three
+#   numbering systems (pad -> chip GPIO number via variant demo-variant-a -> demo-module-1 ->
+#   demo-mcu-1, silkscreen `label`, connector J1 + `position`). So it is not `datasheet-required`.
+# - Not every fact is `verified`: rails[0].max_current (3V3 rail) is `missing` (non-critical field),
+#   and the chip's electrical.internal_pull_ohm is `interim`. So it is not `fully-verified`.
+# Per the board-status rule in skill catalog-schema that makes it `partially-verified`. The result is
+# the same whether the CLI counts only this file's facts or also the module's and chip's facts.
+connectors:
+  - id: J1
+    pins:
+      - { kind: power, label: "3V3", position: 1, rail: "3V3" }
+      - { kind: ground, label: GND, position: 2 }
+      - { kind: gpio, label: "0", pad: GPIO0, position: 3 }
+      - { alias_of: "J1:9", kind: gpio, label: "1", pad: GPIO0, position: 4 }
+      - { kind: gpio, label: "2", pad: GPIO2, position: 5 }
+      - { kind: reset, label: EN, position: 6 }
+    side: left
+id: demo-board-1
+logic_voltage: { evidence: [demo-datasheet-1#board-pinout], reviewers: [hardware-researcher, hardware-fact-auditor], status: verified, unit: V, value: 3.3 }
+name: DEMO-BOARD-1
+numbering: { primary: gpio }
+onboard:
+  - { effect: "User LED to GND; GPIO1 high lights it", evidence: [demo-datasheet-1#board-pinout], part: DEMO-LED-1, uses_pad: [GPIO1] }
+rails:
+  - max_current: { evidence: [], note: "Regulator DEMO-LDO-1 rating not cited yet.", status: missing, unit: mA, value: null }
+    name: "3V3"
+    source: DEMO-LDO-1
+    voltage: { evidence: [demo-datasheet-1#board-pinout], reviewers: [hardware-researcher, hardware-fact-auditor], status: verified, unit: V, value: 3.3 }
+revision: r1
+status: partially-verified
+variants:
+  - { id: demo-variant-a, module: demo-module-1 }
+vendor: Demo Corp

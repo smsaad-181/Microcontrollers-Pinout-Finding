@@ -79,7 +79,9 @@ export interface Module { id: string; chip: string; bonded_pads: PadId[];
 
 // ---------- board ----------
 export type BoardStatus = 'fully-verified' | 'partially-verified' | 'datasheet-required' | 'unsupported';
-export interface ConnectorPin { position: number; label: string; kind: 'power'|'ground'|'gpio'|'reset'|'nc'|'analog-ref'; pad?: PadId; rail?: string; }
+export interface ConnectorPin { position: number; label: string; kind: 'power'|'ground'|'gpio'|'reset'|'nc'|'analog-ref'; pad?: PadId; rail?: string;
+  alias_of?: string;  // '<connector-id>:<position>' of the primary pin that shares this pad (Arduino SDA/SCL = A4/A5, ICSP)
+}
 export interface Board {
   id: string; vendor: string; name: string; revision: string;
   variants: { id: string; module: string }[];

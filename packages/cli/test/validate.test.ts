@@ -6,7 +6,14 @@ import {
   validateRoot,
   type SourceFile,
 } from '../src/index.js';
-import { INVALID_DIR, REAL_CATALOG, VALID_ROOT, invalidCases, invalidRoot } from './helpers.js';
+import {
+  EMPTY_CATALOG,
+  INVALID_DIR,
+  REAL_CATALOG,
+  VALID_ROOT,
+  invalidCases,
+  invalidRoot,
+} from './helpers.js';
 
 const errorsOf = (r: ReturnType<typeof validateCatalog>) =>
   r.diagnostics.filter((d) => d.severity === 'error');
@@ -58,11 +65,18 @@ describe('valid fixture catalog', () => {
   });
 });
 
-describe('empty real catalog (catalog/ with only .gitkeep + LICENSE)', () => {
+describe('empty catalog (seven kind directories with only .gitkeep)', () => {
   it('validates with no diagnostics and zero counts', () => {
-    const r = validateRoot(REAL_CATALOG);
+    const r = validateRoot(EMPTY_CATALOG);
     expect(r.diagnostics).toEqual([]);
     expect(Object.values(r.coverage.entities).every((n) => n === 0)).toBe(true);
+  });
+});
+
+describe('the real catalog (grows with Phase 2a)', () => {
+  it('validates without errors', () => {
+    const r = validateRoot(REAL_CATALOG);
+    expect(r.diagnostics.filter((d) => d.severity === 'error')).toEqual([]);
   });
 });
 
@@ -158,7 +172,7 @@ describe('loader and YAML details', () => {
       'ics/demo-sensor-1.yaml',
       'modules/demo-module-1.yaml',
     ]);
-    expect(loadCatalogSources(REAL_CATALOG).sources).toEqual([]);
+    expect(loadCatalogSources(EMPTY_CATALOG).sources).toEqual([]);
   });
 
   it('errors (E_REF_UNRESOLVED) on a dangling reference', () => {

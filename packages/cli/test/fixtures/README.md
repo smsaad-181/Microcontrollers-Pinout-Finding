@@ -219,13 +219,13 @@ choices below.
     chip is unresolved, duplicated or broken is not checked and not reported again (decisions 8, 11, 12). Board pad
     references need not be bonded out (only gpio header pins are held to `bonded_pads`, decision 6). A board with an
     unresolved reference gets no computed status.
-19. **One pad on two connector pins (`E_PIN_NUMBERING`).** Across all connectors of one board, every pin that carries a
-    `pad` (any kind) is compared; the second occurrence is reported at `connectors.I.pins.J.pad` and the message names
+19. **One pad on two connector pins (`E_PIN_NUMBERING`).** An undeclared duplicate pad is an error; a declared `alias_of` is
+    allowed (decision 24). Across all connectors of one board, every pin that carries a
+    `pad` (any kind) and no `alias_of` is compared; the second occurrence is reported at `connectors.I.pins.J.pad` and the message names
     the first (`J1-3`). Power, ground, `nc` and `reset` pins carry no `pad`, so they never clash. This is an error, not a
     warning: neither the schema reference, the catalog-schema skill nor the plan describes a board that routes one pad to
-    two header positions. **Hardware-realism caveat:** some real boards do (the Arduino Uno R3 repeats A4/A5 as the SDA/SCL
-    header pins). If such a board is catalogued, downgrade this check to a warning (`W_DUPLICATE_PAD`) in a later round
-    rather than inventing a second pad.
+    two header positions. **Hardware-realism:** some real boards do (the Arduino Uno R3 repeats A4/A5 as the SDA/SCL
+    header pins, and the ICSP header repeats D11-D13); those repeats are declared with `alias_of`, not by a warning.
 20. **Unknown directories (`E_UNKNOWN_DIR`), evidence text and reviewer keys.** Any directory directly under the catalog
     root that is not one of the seven kind directories and contains a `.yaml` / `.yml` file (any case, any depth) is an
     error per such file (`chip/demo-mcu-1.yaml`, path empty); the file is not loaded. Directories without YAML, directories
@@ -250,6 +250,31 @@ choices below.
     existing evidence document appends `(known claims: a, b, c, d, e, ...)`: the first five claim ids of that document by
     code unit, `...` when there are more. A reading inside a `conflict` fact (`readings.N.evidence.M`) is resolved like any
     other claim id, and must have the `<doc>#<slug>` shape (`E_SCHEMA`).
+
+24. **Declared repeated pads (`alias_of`).** `ConnectorPin.alias_of` is an optional `<connector-id>:<position>` reference to
+    another pin of the same board. Every physical position stays in the catalog (own label, own position, all three
+    numbering systems); the alias says it is the same physical pad as the primary. Rules, reported at
+    `connectors.I.pins.J.alias_of`: the pin must carry a `pad` that at least one other pin also carries (otherwise
+    `E_PIN_NUMBERING`: an alias must alias something); the reference must name an existing pin of the board
+    (`E_REF_UNRESOLVED`; a malformed reference, an unknown connector or position are unresolved; the position is written
+    without leading zeros); the named pin must not be the pin itself, must carry the same `pad` and must not itself be an
+    alias (no chains) (`E_PIN_NUMBERING`). A pin with `alias_of` is never reported as a duplicate pad; the non-alias pins of
+    one pad still compare as in decision 19. Label and position uniqueness, pad existence and bonding apply to an alias as to
+    any pin. A board with an alias error gets no computed status. `alias_of` is compiled unchanged.
+
+### Added in the alias round (no new code; decision 24)
+
+| case | code | file | path_contains | violation |
+| --- | --- | --- | --- | --- |
+| `alias-unknown-target` | `E_REF_UNRESOLVED` | the board | `connectors.0.pins.3.alias_of` | J1-4 on GPIO0, `alias_of: "J1:9"` (no such pin) |
+| `alias-pad-mismatch` | `E_PIN_NUMBERING` | the board | `connectors.0.pins.3.alias_of` | J1-4 on GPIO0 aliases J1:5, which is on GPIO2 |
+| `alias-of-alias` | `E_PIN_NUMBERING` | the board | `connectors.0.pins.4.alias_of` | J1-5 aliases J1:4, which is itself an alias |
+| `alias-without-shared-pad` | `E_PIN_NUMBERING` | the board | `connectors.0.pins.3.alias_of` | J1-4 on GPIO1 (used by no other pin) has `alias_of` |
+| `alias-without-pad` | `E_PIN_NUMBERING` | the board | `connectors.0.pins.1.alias_of` | ground pin J1-2 has `alias_of` |
+| `alias-self` | `E_PIN_NUMBERING` | the board | `connectors.0.pins.3.alias_of` | J1-4 aliases J1:4 |
+
+The valid case (two pins sharing a pad with `alias_of`, exit 0, status computed, alias in the compiled JSON) is built in
+memory by `packages/cli/test/alias.test.ts`; `valid/` never changes.
 
 ### Added in fix round 3 (new code `W_SYMLINK_SKIPPED`; no existing case changed)
 

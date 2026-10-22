@@ -255,6 +255,30 @@
   code: E_PIN_NUMBERING
   file: "boards/demo-board-1@r1.yaml"
   path_contains: "connectors.1.pins.0.pad"
+- case: alias-unknown-target
+  code: E_REF_UNRESOLVED
+  file: "boards/demo-board-1@r1.yaml"
+  path_contains: "connectors.0.pins.3.alias_of"
+- case: alias-pad-mismatch
+  code: E_PIN_NUMBERING
+  file: "boards/demo-board-1@r1.yaml"
+  path_contains: "connectors.0.pins.3.alias_of"
+- case: alias-of-alias
+  code: E_PIN_NUMBERING
+  file: "boards/demo-board-1@r1.yaml"
+  path_contains: "connectors.0.pins.4.alias_of"
+- case: alias-without-shared-pad
+  code: E_PIN_NUMBERING
+  file: "boards/demo-board-1@r1.yaml"
+  path_contains: "connectors.0.pins.3.alias_of"
+- case: alias-without-pad
+  code: E_PIN_NUMBERING
+  file: "boards/demo-board-1@r1.yaml"
+  path_contains: "connectors.0.pins.1.alias_of"
+- case: alias-self
+  code: E_PIN_NUMBERING
+  file: "boards/demo-board-1@r1.yaml"
+  path_contains: "connectors.0.pins.3.alias_of"
 - case: duplicate-variant-id
   code: E_DUPLICATE_ID
   file: "boards/demo-board-1@r1.yaml"

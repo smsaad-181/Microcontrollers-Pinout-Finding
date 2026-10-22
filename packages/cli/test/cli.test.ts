@@ -3,7 +3,7 @@ import { tmpdir } from 'node:os';
 import { join, relative } from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
 import { formatDiagnostic, runCli } from '../src/index.js';
-import { REAL_CATALOG, REPO_ROOT, VALID_ROOT, invalidCases, invalidRoot } from './helpers.js';
+import { EMPTY_CATALOG, REPO_ROOT, VALID_ROOT, invalidCases, invalidRoot } from './helpers.js';
 
 function run(argv: string[], env: Record<string, string | undefined> = {}) {
   const out: string[] = [];
@@ -131,9 +131,9 @@ describe('catalog compile (in-process)', () => {
     }
   });
 
-  it('compiles the empty real catalog', () => {
+  it('compiles an empty catalog', () => {
     const out = tmp();
-    const r = run(['compile', '--root', rel(REAL_CATALOG), '--out', out]);
+    const r = run(['compile', '--root', rel(EMPTY_CATALOG), '--out', out]);
     expect(r.code).toBe(0);
     expect(readdirSync(out)).toHaveLength(2);
   });

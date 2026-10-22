@@ -1,7 +1,7 @@
 import { createHash } from 'node:crypto';
 import { describe, expect, it } from 'vitest';
 import { compileCatalog, stableStringify, validateRoot } from '../src/index.js';
-import { REAL_CATALOG, VALID_ROOT, invalidRoot } from './helpers.js';
+import { EMPTY_CATALOG, VALID_ROOT, invalidRoot } from './helpers.js';
 
 const sha = (s: string) => createHash('sha256').update(s, 'utf8').digest('hex');
 
@@ -104,7 +104,7 @@ describe('compileCatalog', () => {
   });
 
   it('compiles the empty catalog', () => {
-    const c = compileCatalog(validateRoot(REAL_CATALOG), { date: '2026-01-01' });
+    const c = compileCatalog(validateRoot(EMPTY_CATALOG), { date: '2026-01-01' });
     const parsed = JSON.parse(c.catalogText) as Record<string, unknown[]>;
     expect(parsed.chips).toEqual([]);
     expect(JSON.parse(c.manifestText)).toMatchObject({ counts: { boards: 0 } });
