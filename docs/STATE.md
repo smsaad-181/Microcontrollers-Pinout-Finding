@@ -9,7 +9,7 @@ Catalog version: none yet · Rule-set version: none yet · Last updated: 2026-10
 | Phase | Name | Status | Branch | Validation | Notes |
 | --- | --- | --- | --- | --- | --- |
 | 0 | Bootstrap: tools, repo, Pages enabled | IN PROGRESS (remote deferred) | main | — | 0.1, 0.2, 0.5, 0.6 done; 0.3/0.4 deferred by user (GitHub later) |
-| 1 | Foundation: monorepo, schema, evidence model, CI/CD, placeholder on Pages | FIXING (round 3/3 = LAST; already merged to main by user) | phase-1-fix-1 | phase-validator FAIL · code-reviewer FAIL · github-actions-expert PASS | local-only; 1.8 + CI/deploy gate items wait for GitHub |
+| 1 | Foundation: monorepo, schema, evidence model, CI/CD, placeholder on Pages | BLOCKED (3 fix rounds used; user decision needed) | phase-1-fix-1 | phase-validator FAIL · code-reviewer FAIL · github-actions-expert PASS | local-only; 1.8 + CI/deploy gate items wait for GitHub |
 | 2a | Catalog: MVP boards and modules, two-key verified | IN PROGRESS (parallel with Phase 1 final check) | phase-2a (worktree ../pinout-finder-2a) | — | ESP32-DevKitC + Pico first; Uno R3 / ST7735S need manual PDFs |
 | 2b | Engine: interface selection, CSP solver, rules R1–R8, explanations | NOT STARTED | phase-2b | — | |
 | 3 | Web app: UI, Web Worker, projects, sharing, export, offline | NOT STARTED | phase-3 | — | |
@@ -160,6 +160,8 @@ None of these block Phase 0. Re-check all three when a session is started inside
 
 ## Decisions needed
 
+- 2026-10-22 · **Phase 1 hit the 3-fix-round limit.** Code-reviewer final pass: FAIL, 0 Critical, 3 Major, 8 Minor. All 3 Majors are TEST GAPS on correct code (reviewer proved the code behaves correctly with probes): CR1-R3 board status with a second variant's chip not covered by a test; CR2-R3 "pad bonded by module" for a second variant not covered; CR3-R3 conflict-fact deep equality ignoring an extra object key not covered. 20/21 earlier survivors now killed (W9 partial); 139 new mutations, 117 killed. Smallest fix per reviewer: three short tests, no source change. Waiting for the user to choose how to proceed.
+
 - 2026-10-22 · **GitHub facts observed (read-only API):** repo `smsaad-181/Microcontrollers-Pinout-Finding` is public. PR #1 "Phase 1" merged by the user (21 commits, 463 files, merge commit, not squash). `ci` on the PR: all 7 jobs success (first real CI run — confirms the clean-clone simulation). `deploy` on main: `build` job success (validate, tests, compile, web build, upload-pages-artifact all green); `deploy` job failed at `actions/deploy-pages` with HTTP 404 "Ensure GitHub Pages has been enabled" — Pages is not enabled yet. **User action:** Settings → Pages → Source = "GitHub Actions" (or `gh auth login` and I do it). Do not re-run deploy until the base-path rename is on main, otherwise the published page would 404 its assets. Dependabot opened its first update runs.
 - 2026-10-22 · **Repo name differs from the plan default** (`pinout-finder` → `Microcontrollers-Pinout-Finding`). `origin` is added locally (nothing pushed; user chose "connect only"). Pages URL will be `https://smsaad-181.github.io/Microcontrollers-Pinout-Finding/`. TODO after the running re-validation finishes (do not edit during validation): change the Vite `base` default, the CI/deploy `grep '/pinout-finder/assets/'` check, `apps/web/test/manifest.test.ts`, `package.json`, dashboard probe URL, and docs to the new base path `/Microcontrollers-Pinout-Finding/`; ask the user before the first push. Needs `gh auth login` for Pages/branch protection (or the user enables Pages source = GitHub Actions in repo settings).
 
@@ -174,6 +176,7 @@ None of these block Phase 0. Re-check all three when a session is started inside
 
 | Date | Phase | Event |
 | --- | --- | --- |
+| 2026-10-22 | 1 | Code-reviewer final pass after fix round 3: **FAIL** (0 Critical, 3 Major test gaps on correct code, 8 Minor). 3-round limit reached -> BLOCKED, user decision requested. |
 | 2026-10-22 | 2a | Started in parallel (user request) in git worktree `../pinout-finder-2a`, branch `phase-2a` (from `48c518d`), `catalog/.drafting` set. Researchers: ESP32-DevKitC V4 family and Raspberry Pi Pico/Pico W family (tasks 2a.1–2a.2). |
 | 2026-10-22 | 1 | Fix round 3 done (engine-developer): 21/21 surviving mutants now killed (+ extra), new `W_SYMLINK_SKIPPED`, wrong `--root` = exit 2, enum-walker test over every schema enum, focus/CSP web tests; 76 invalid fixtures, ~980 tests. Final re-validation next. |
 | 2026-10-22 | 1 | Re-validation 2: phase-validator **PASS** (0 critical/major, 3 minor); code-reviewer **FAIL** (0 critical, 2 major = missing tests, 10 minor; 107 mutations, 86 killed, 21 survived). Fix round 3 (last) started. |

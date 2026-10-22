@@ -1,251 +1,210 @@
-# Validation report — Phase 1 (re-review after fix rounds 1 and 2) — code-reviewer
+# Validation report — Phase 1 (final re-review after fix round 3) — code-reviewer
 
-- Date: 2026-10-22 · Commit: `036c4b4` (branch `phase-1-fix-1`; source equals `b50c8a9`, later commits are docs only; working tree clean before and after) · Catalog version: `35e8668ed210` (empty real catalog) · Validator: code-reviewer
-- Scope (every file read in full): `packages/schema/{src,scripts,test}`, `packages/cli/{src,test/*.ts}` including `integrity.ts`, `order.ts`, `test/fixtures/{README.md,make-invalid.py}`, `apps/web/{src,test,vite.config.ts,index.html}`, `.github/workflows/*.yml` (shell snippets only), root config, `tools/progress` (security skim). `docs/STATE.md` not used as evidence; `phase-validator.md` was read only at the very end to mark overlaps ("already F-N..").
-- Scratch evidence (outside the repo): `C:\Users\SAAD\AppData\Local\Temp\claude\d--Development-pinout-finder-kit\ddb4f849-ef4d-4359-a359-7f2a6e0f4722\scratchpad\code-review-r2\` (`p1.ts`-`p3.ts` probes, `lib.ts`, `mut.mjs` + `m1..m6.json` mutation harness and `m*.out` results, `js.cjs` ajv check, generated catalog copies).
-- Method: every mutation was applied to the real tree, only the targeted vitest project run, the file restored with `git checkout -- <file>` in a `finally` block. `git status --short` was empty after every run and is empty at the end except for this report.
+- Date: 2026-10-22 · Commit: `48c518d` on branch `phase-1-fix-1` (the fix-round-3 source is `b97049a`; `48c518d` only changes `docs/NOW.md` and `docs/STATE.md`, checked with `git diff b97049a 48c518d --stat`) · Catalog version: `35e8668ed210` (empty real catalog, same as the previous round) · Validator: code-reviewer
+- Scope (read in full): `packages/cli/src/{load,cli,validate,compile,integrity,order,stable-json,types}.ts`, `packages/schema/src/{primitives,evidence,fact-rules,json-schema,board,chip,ic}.ts`, `apps/web/src/{focus,useFocusOnRouteChange,App,cspMeta,csp,manifest}.ts(x)` and `vite.config.ts`, the web tests `focus.test.ts` and `viteConfig.test.ts`, the new `round3.test.ts` files (enum walker, link tests), `packages/cli/test/fixtures/README.md` decisions 16-23, `tools/progress/server.mjs`. Prior report `CR*-R2` rows are re-verified below.
+- Scratch evidence (outside the repo): `C:\Users\SAAD\AppData\Local\Temp\claude\d--Development-pinout-finder-kit\ddb4f849-ef4d-4359-a359-7f2a6e0f4722\scratchpad\code-review-r3\` (`gen.mjs` + `new.json` + `new.out` = 130 new mutations, `walker.json` = 9 walker/emitter mutations, `sel.out` = the 21 reruns, `p4.ts` / `p5.ts` probes, `fs.mjs` file-system matrix, `url.mjs` URL probe).
+- Method: each mutation applied to the real tree, only the targeted vitest project run, the file restored with `git checkout -- <file>` in a `finally` block (tree was clean at HEAD). `git status --short` was empty after every batch and shows only this report at the end. Probes that call `validateCatalog` in memory were run only while no mutation was applied.
 
 ## Gate items
 
-Only items that overlap this role; the full gate belongs to `phase-validator`.
+Only the items that overlap this role; the full gate belongs to `phase-validator`.
 
 | # | Gate item | Command / method | Exit / result | Evidence (key output lines) | PASS/FAIL |
 | --- | --- | --- | --- | --- | --- |
-| 1 | Typecheck | `pnpm -r typecheck` | 0 | all projects `Done` | PASS |
-| 2 | Lint | `pnpm -r lint` | 0 | all projects `Done` | PASS |
-| 3 | Tests | `pnpm test` (root) | 0 | `Test Files 19 passed (19)`, `Tests 411 passed (411)` | PASS |
-| 4 | Generator reproducible | `py -3 -I make-invalid.py` on a scratch copy of `fixtures/`, `diff -r` against the repo | 0 | `generated 75 invalid cases`; `diff -r` empty (committed `invalid/` equals generator output) | PASS |
-| 5 | Dependency CVEs | `pnpm audit --prod`; `pnpm audit` | 0 / 0 | both `No known vulnerabilities found` | PASS |
-| 6 | Secrets | `grep -rEn "(api[_-]?key\|secret\|password\|token)\s*[:=]\s*['\"][^'\"]{8,}"` over `packages/*/src,test`, `apps/web/src,test`, `.github`, `tools` | no match | empty | PASS |
-| 7 | Web build: CSP present, nothing inline | `pnpm --filter web build`, read `dist/index.html` | 0 | `<meta http-equiv="Content-Security-Policy" ...>` directly after `<meta charset>`, one external module script and one stylesheet under `/Microcontrollers-Pinout-Finding/assets/`, no inline script or `style=`; the policy does not block the app | PASS |
-| 8 | JSON Schema emission validates the valid fixtures | `pnpm --filter @pinout/schema build`; ajv 6.15.0 (already installed, transitive of ESLint; nothing added) with the draft 2020-12 tuple form (`prefixItems` + `items:false`) rewritten to draft-07 `items:[..]` + `additionalItems:false`, because ajv 6 does not know `prefixItems` | 0 | all 7 valid fixtures (evidence, chip, module, board, ic, breakout, fixture) validate. Without the rewrite the IC fails at `vdd_range` (ajv limitation, as in the previous round). Gaps for invalid input: finding CR14 | PASS (Minor gaps) |
-| 9 | `docs/schema.md` up to date | `node scripts/emit-docs.mjs <scratch>` and `diff` | 0 | identical to `docs/schema.md` | PASS |
+| 1 | Install | `pnpm install --frozen-lockfile` | 0 | `Already up to date` | PASS |
+| 2 | Typecheck | `pnpm typecheck` | 0 | every project `Done` | PASS |
+| 3 | Lint | `pnpm lint` | 0 | no output (eslint clean) | PASS |
+| 4 | Format | `pnpm format:check` | 0 | `All matched files use Prettier code style!` | PASS |
+| 5 | Tests | `pnpm -r test` | 0 | schema `591 passed`; cli `330 passed, 1 skipped` (file-symlink test, `EPERM` on this Windows account); web `59 passed`; codegen 1, engine 1, rules 1 | PASS |
+| 6 | Dependency CVEs | `pnpm audit` and `pnpm audit --prod` | 0 / 0 | both `No known vulnerabilities found` | PASS |
+| 7 | Secrets | `grep -rnE "(api_key\|secret\|password\|token)\s*=\s*['\"][^'\"]{8,}"` over `*.ts *.tsx *.js *.mjs` (no `node_modules`, `dist`) | no match | empty | PASS |
+| 8 | Generator reproducible | `py -3 -I make-invalid.py` on a scratch copy of `packages/cli/test/fixtures`, `diff -r` against the repo | 0 | `generated 76 invalid cases`; `diff -r` empty (committed `invalid/` equals generator output) | PASS |
+| 9 | Real empty `catalog/` still validates and compiles | `catalog validate`; `catalog compile --out <scratch>` | 0 / 0 | `0 errors, 0 warnings in 0 files (root: catalog)`; wrote `35e8668ed210.json` + manifest (`date 2026-10-22 from git`); two compiles with `SOURCE_DATE_EPOCH=1700000000` into two folders: `diff -r` identical | PASS |
+| 10 | Wrong `--root` exits 2 | `--root nonexist`, `--root packages`, `--root catalog/chips`, `--root=`, unknown command | 2 each | `root "packages" is not a catalog root: it has none of evidence/, chips/, ...`; `--root=` gives `option --root needs a value` | PASS |
+| 11 | `SOURCE_DATE_EPOCH` contract | `-1`, `1e3`, `0x10`, `abc`, `253402300800` give exit 2 with usage; `0`, empty, `253402300799` give exit 0 (date `9999-12-31`) | as stated | usage text, no stack trace | PASS |
+| 12 | Web build and CSP | `pnpm --filter web build`, read `apps/web/dist/index.html` | 0 | `<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">` right after `<meta charset>`; one external module script, one stylesheet, no inline script or style; the policy does not block the app | PASS |
+| 13 | JSON Schema export (ajv 6.15.0, already installed; tuples rewritten to draft-07 `items:[..]`, nothing added) | `pnpm --filter @pinout/schema build`; `js.cjs` from the last round | 0 | all 7 valid fixtures validate against the emitted `*.schema.json`; of the 23 `E_SCHEMA`/extension invalid fixtures, 17 are flagged (was 11 last round), including `reviewer-zero-width`, `reviewer-cyrillic`, `url-userinfo`. Not flaggable by JSON Schema (documented in `docs/schema.md`): `claim-quote-too-many-words`, `claim-id-prefix-mismatch`, `yaml-proto-key`, `yaml-constructor-key`, `file-extension-*`. Patterns present in `evidence.schema.json`: `^https?:\/\/[^/?#@]*(?:[/?#]\|$)`, `^[^#\s]+#\S+$`, `^[a-z0-9]+(?:[-._][a-z0-9]+)*$`, `^[0-9a-f]{64}$` | PASS |
+| 14 | Datasheet URLs still accepted by the new URL pattern | all 25 distinct URLs of `docs/research/evidence-seed.yaml`, `docs/PLAN.md`, `docs/research/*.md` through the four URL checks (`url.mjs`) | 0 rejected | `total 25 rejected 0` (Espressif, Arduino, TI, NXP, Bosch, raspberrypi.com `pip-assets`, GitHub); credential tricks rejected: `https://a.com:80@b/`, `https://a@`, `https://%40@a.com/`, `https://good.com\@evil.com/` (backslash); `@` after the first `/`, `?` or `#` is accepted and the WHATWG parser reads it as path (`user=''`, `host=a.com`) | PASS |
 
-## Status of my previous findings CR1-CR9
+## The 21 survivors of the previous round, re-run
 
-| ID | Was | Now | Evidence (original failing input re-run) |
+Each was re-applied exactly as last time (same `find`/`replace`, same harness; `W9` needs a different anchor because `App.tsx` changed) and the whole targeted project was run.
+
+| ID | Mutation | Result | Failing test (first) |
 | --- | --- | --- | --- |
-| CR1 board with `variants: []` / unresolved `variant.module` reaches `fully-verified`, exit 0 | Major | **FIXED** | `variants: []`: `error E_SCHEMA boards/demo-board-1@r1.yaml variants: Too small: expected array to have >=1 items`, exit 1. `module: nope`: `error E_REF_UNRESOLVED ... variants.0.module: module "nope" is not in the catalog`, exit 1. A blocked board gets `computed: null`. I then tried to build an invalid catalog that exits 0 through reference suppression (see "Suppression attempts"): none succeeded. Mutations S3, B4, B8, H5, H6 killed |
-| CR2 `fully-verified` branch and compile `version` content-addressing untested | Major | **FIXED** (for chip facts; a new gap for module facts is CR1-R2 below) | `computeBoardStatus` never returning `fully-verified` is killed (R2: 2 failed); compile version ignoring content is killed (R3: 1 failed); `interim` counted as verified is killed (B5) |
-| CR3 `__proto__` pad key silently dropped by Zod | Minor | **FIXED** | AST scan rejects `__proto__`, `constructor`, `prototype` as keys anywhere: `E_SCHEMA chips/demo-mcu-1.yaml pads.__proto__` exit 1. Prototype names as pad names/values (`toString`, `constructor` as a board pin pad) behave correctly (`toString` pad accepted when consistently used; `constructor` as an unknown pad value gives `E_PIN_NUMBERING`). All lookups are `Map`/`Set` or `Object.hasOwn`. One test gap remains (B6, CR12) |
-| CR4 alias bomb gives a stack trace | Minor | **FIXED** | 12 levels x 9 aliases: `error E_YAML chips/demo-mcu-1.yaml (root): line 67: YAML anchors (&name) are not allowed in catalog files`, exit 1, no trace. 5,000-level `[`, `{a:` and block nesting: `E_YAML ... Maximum call stack size exceeded`, exit 1 |
-| CR5 `SOURCE_DATE_EPOCH=99999999999999` RangeError | Minor | **FIXED** | `99999999999999`, `-1`, `1e3`, `253402300800`, `0x10`: usage text, exit 2, no trace; `253402300799` and empty string accepted. Mutations E3/E4 killed |
-| CR6 surviving mutants M3, M6, M10, M16, M18, M22, M24; web W2, W4, W7 | Minor | **FIXED** except web focus (W4) | Killed now: M3 (R1), M6 (R4), M10 (F3), M16 (G1), M18 (R3), M22 (H8), M24 (B1, B2), web abort-while-reading (W8), CSP plugin transform and `apply:'build'` (W5, W6). Still surviving: focus on route change (W9, already F13) and registration of the plugin in `vite.config.ts` (W10) |
-| CR7 misplaced / mis-named files give only warnings | Minor | **PARTIAL** | `.yml`, `.YAML`, `.Yml` in a kind directory are now `E_FILE_EXTENSION` errors; a YAML file in an unknown directory is `E_UNKNOWN_DIR` (tested: `Chips/`, nested, `chip/`). A root-level `boards.yaml` is still only `W_IGNORED_FILE`, exit 0; this is documented (README decision 13) and pinned by a test, so I treat it as accepted. New edge cases: CR13 |
-| CR8 web abort / overflow / skip link | Minor | **FIXED** | abort during `response.text()` is rethrown (test + mutation W8 killed); `code { overflow-wrap }` tested; `#main` is treated as an in-page anchor, not a not-found route |
-| CR9 duplicated helpers, unhelpful messages | Minor | **PARTIAL** | `byCodeUnit` and `compareDiagnostics` now live in `order.ts` (the only definition; grep confirms); `ErrorCode` derives from `FactRuleCode`; `ExprSchema` has a hint (`expected a number, or an expression of the form VDD*<k>, VDDIO+<v> or VDDIO*<k>`). Still open: `E_EVIDENCE_UNKNOWN` does not list the claim ids of the cited document; `CatalogManifest` is duplicated in web (acknowledged in a comment); web exports have no JSDoc (CR16) |
+| H21 | board status ignores module facts | KILLED (9 tests) | `round3.test.ts > board status covers board, module and chip facts (CR1-R2, H21) > module flash_voltage single-source: declared fully-verified is E_BOARD_STATUS` |
+| S2 | `ENTITY_ID_PATTERN` loosened | KILLED (218 tests) | `schema round3 > entity id format (S2) > evidence: rejects "Demo MCU"` |
+| S15 | strap `required_at_reset` any string | KILLED (13) | `schema round3 > strap levels (S15) > required_at_reset rejects "hgih"` |
+| S12 | module `consumed` kind any string | KILLED (11) | `schema round3 > module consumed kinds (S12) > rejects "flsh"` |
+| B6 | `Object.hasOwn` to `in` (pin pad lookup) | KILLED (5) | `cli round3 > pad names that exist on Object.prototype are not pads (B6) > board gpio pin: "toString" is reported as unknown` |
+| S4 | pad `gpio` loses `.int()` | KILLED (5) | `schema round3 > pad gpio number (S4) > rejects -1` |
+| S7 | `URL.canParse` refine removed | KILLED (7) | `schema round3 > evidence URL must parse as a URL (S7) > rejects "https://"` |
+| S9 | conflict reading evidence unchecked | KILLED (8) | `cli round3 > conflict reading evidence (S9) > a reading id that is not <doc>#<slug> is a shape error` |
+| S11 | `community` dropped from `StatusSchema` | KILLED (6) | `cli round3 > community facts (S11) > a community fact is accepted, counted separately, and keeps the board partially-verified` |
+| S14 | pin `position` loses `.positive()` | KILLED (4) | `schema round3 > connector pin position (S14) > rejects 0` |
+| D3 | manifest `board_status` counts wrong | KILLED (1) | `cli round3 > manifest board_status counts (D3) ... has one exact count per status` |
+| D4 | manifest `bytes` counts characters | KILLED (1) | `cli round3 > ... bytes is the UTF-8 byte length of the written catalog file` |
+| F2 | stable-json sorts arrays | KILLED (1) | `cli round3 > stableStringify keeps array order and sorts object keys at every depth (F2)` |
+| F4 | input sort removed | KILLED (2) | `cli round3 > validateCatalog does not depend on input order (F4, F5) > names the other files of a duplicate in code-unit order` |
+| F5 | diagnostic sort removed | KILLED (1) | `cli round3 > ... reports diagnostics sorted by file, path, code` |
+| F6 | `byCodeUnit` to `localeCompare` | KILLED (5) | `cli round3 > byCodeUnit is locale independent (F6) > orders by UTF-16 code unit` |
+| H2 | `uniqueByKey` keeps duplicated ids | KILLED (2) | `cli round3 > duplicate ids keep nothing (H2) > two chips with one id: ... NOT given a status from a winner` |
+| H10 | YAML version 1.2 to 1.1 | KILLED (1) | `cli round3 > YAML is parsed as 1.2 (H10) > explicit tags that would turn a string into another type are shape errors` |
+| H15 | evidence-date fallback takes the earliest | KILLED (1) | `cli round3 > manifest date fallback (H15) > ... takes the LATEST evidence accessed date` |
+| W9 | focus move on route change removed | PARTIAL | The old anchor is gone (logic moved to `focus.ts` + `useFocusOnRouteChange.ts`). Helper and hook mutations W1-W5 are KILLED by `focus.test.ts` (3 hook tests, 2 helper tests). The wiring in `App.tsx` is not covered: replacing the hook by a plain ref (W6) or passing a constant route key (W7) SURVIVES (59 passed). Minor (finding CR4-R3). |
+| W10 | `vite.config.ts` does not register `cspMeta` | KILLED (1) | `web viteConfig.test.ts > vite.config.ts (W10) > registers the CSP meta plugin, for production builds only` |
 
-## Mutation check (real tree, restore verified)
+Result: 20 of 21 killed, 1 partial (W9, Minor). Both Majors of the last round (CR1-R2, CR2-R2) are closed.
 
-Run: 107 mutations (95 on cli/schema, 12 on web). Killed 86, survived 21. Killed rows name the first failing test; the full lists are in `m*.out` in the scratch folder.
+## Fresh, different mutation sweep (139 new mutations)
 
-### Killed (86)
+139 mutations, none of them used in a previous round: 130 over `load.ts`, `cli.ts`, `validate.ts`, `integrity.ts`, `order.ts`, `stable-json.ts`, `compile.ts`, `primitives.ts`, `fact-rules.ts`, `evidence.ts`, enums in `board.ts/chip.ts/ic.ts`, and the web focus/CSP/manifest code, plus 9 on the enum walker itself and the JSON Schema emitter. **Killed 117, survived 22** (every survivor was then analysed: 3 are real gaps on safety-relevant behaviour, 3 are equivalent mutants, 16 are Minor test gaps). No anchor failed.
 
-| Mutation (file) | Killed by |
+### Survivors that matter (safety-relevant: reproduced, current code is correct, no test pins it)
+
+| ID | Mutation | Why it is safety-relevant | Reproduction |
+| --- | --- | --- | --- |
+| n-V14 | `computeBoardStatus` input: `chips = resolved.slice(0,1)...` (only the FIRST variant's chip facts count) in `validate.ts` (`const chips = [...new Map(resolved.map(`) | board status is the user-facing trust label; every-variant resolution is on the brief's list | Probe `p4.ts`: two variants, variant B's chip (`demo-mcu-2`) has `internal_pull_ohm` `interim`, board declared `fully-verified`. Current code: `E_BOARD_STATUS ... computed: partially-verified`. With the mutant: `errors=0, declared fully-verified, computed fully-verified`. All 330 cli tests pass under the mutant. (The sibling mutant n-V13, same for the variant's MODULE facts, is killed by `round3.test.ts > a second variant with its own less-verified module is included`, so the test author covered modules and forgot chips.) |
+| n-V15 | "not bonded out" check only for the first variant: `const notBonded = resolved.slice(0, 1).filter(` | a gpio header pin whose pad the second variant's module does not bond out would be accepted, and a user would be told to wire a pin that does not exist on that variant | Probe: variant B's module `bonded_pads: [GPIO0, GPIO1, GPIO3]` while pin 4 uses `GPIO2`. Current code: `E_PIN_NUMBERING ... pins.4.pad`. Mutant: `errors=0`, status `fully-verified`. 330 cli tests pass. (`M24` covers "pad not in chip of every variant", not "not bonded by module of every variant".) |
+| n-F5 | `deepEqual` ignores the object key count: `ka.length === Object.keys(b).length &&` removed in `fact-rules.ts` | the conflict rule says `active` must be one of the cited readings; object-valued facts with optional keys exist (`internal_pull_ohm {min,typ,max}`, `supply_current {typ,max}`, `analog_range_v`, `vin_range`) | Probe: `internal_pull_ohm` `conflict`, readings `{typ:45000}` and `{typ:50000}`, `active` and `value` `{typ:45000, max:99999}`. Current code: `E_FACT_STATUS ... internal_pull_ohm.active`. Mutant: `errors=0`: an invented `max` reaches the engine as the "most restrictive reading". 921 schema + cli tests pass. The array twin (n-F4, length ignored) IS killed, so only the object branch is unpinned. |
+
+### Survivors that are equivalent or low risk (Minor test gaps, no hardware-fact path)
+
+| ID | Mutation | Analysis |
+| --- | --- | --- |
+| n-N8 | root check `lstatSync` to `statSync` (`cli.ts`) | a root whose only kind directory is a junction would pass the root check; today it exits 2 (`fs.mjs`: junction-only root, exit 2). Untested. |
+| n-C6 | UsageError branch of `runCli` never taken | exit code stays 2; only the usage text is lost for `SOURCE_DATE_EPOCH` errors. Untested. |
+| n-C8 | `validate` falls through and also compiles/writes output | no test asserts that `validate` writes nothing; `catalog validate` would then write into `apps/web/public/catalog`. Contract gap. |
+| n-C10 | `--x=` empty value accepted | `--root=` would become the CWD (still exit 2, not a catalog root); `--out=` would write into the CWD. Untested. |
+| n-V2 | evidence resolution does not skip when an id-less evidence file is broken | only extra noise (more errors), fail-safe direction. |
+| n-V5 | `known claims` ellipsis `>` to `>=` | wrong only for documents with exactly 5 claims (a stray `, ...`). |
+| n-V21 | YAML alias scan removed | equivalent: an alias without an anchor is a YAML error, and anchors are rejected one line below. |
+| n-V30 | gpio label duplicate check also for empty labels | only adds a second error next to the existing "empty silkscreen label" error. |
+| n-I2 | pad-key regex loses `^` | wrongly applies the GPIO-number rule to names such as `MIO5` or `PIO3` (extra false error, fail-closed). No test uses such a key. |
+| n-O4 | stable-json array `undefined` item rendered `0` instead of `null` | equivalent in practice: parsed YAML never contains `undefined`. |
+| n-O8 | compile: `format` removed from the version hash | a future `CATALOG_FORMAT` bump without content change would keep the same file name with different bytes (stale cache), contradicting the file header. Only one format exists today. |
+| n-P7 | claim-id pattern `[^#\s]+` to `[^\s]+` for the doc part | differs only for ids like `##x`, which then fail resolution as an unknown document `""` (fail-safe). |
+| n-E3 | URL scheme check made case-insensitive | equivalent: the next regex in the chain (`^https?:\/\/[^/?#@]*...`) is case-sensitive and rejects `HTTP://` anyway. |
+| n-E7 | quote word count `split(/\s+/)` to `split(' ')` | a 30-word quote joined by tabs or newlines would count as fewer words. The 25-word limit is the copyright guard (rule 6), not a hardware fact. |
+| n-E11 | claim-id prefix `startsWith(\`${id}#\`)` to `startsWith(id)` | `abc#x` is then accepted inside evidence `ab`; the claim cannot be cited (it resolves through document `abc`), so fail-safe. |
+| n-E12, n-E13 | `sha256` accepts 63 characters; `accessed` loses its anchors (`x2026-01-01x`) | integrity metadata and the manifest date fallback only. |
+| n-W6, n-W7 | `App.tsx` does not use the hook / constant route key | the W9 remainder (CR4-R3). |
+
+### Killed (117 new mutations, first failing test)
+
+| Group | Mutations (all KILLED) | Killed by |
+| --- | --- | --- |
+| `load.ts` links and dirs | N1 links not recorded; N2 root-level link warning dropped; N3 dot-dirs scanned; N4 `node_modules` scanned; N5 non-YAML files in unknown dirs flagged; N6 kind-dir match case-insensitive; N7 `.YAML` not flagged; N12 lower-case hint dropped; N13 wrong-extension file still loaded; N14 walk does not descend | `round3.test.ts > CR4-R2: links are skipped...`, `integrity.test.ts > unknown directories > ignores directories without YAML, dot-directories and node_modules`, `round3.test.ts > CR6-R2: a wrongly cased kind directory`, `cli.test.ts > exits 1 on invalid/file-extension-upper`, `hardening.test.ts > loader (M6, CR7) > reads nested files with forward-slash names` |
+| `cli.ts` root and exit codes | N9 `some` to `every`; N10/N11 root-check exit 1 / `isRealDir` returns true on error; C1 epoch max +1; C2 `>` to `>=`; C3 minus allowed; C4 empty epoch treated as set; C5 catch-all exit 1; C7 stderr/stdout swapped; C9 one error exits 0; C11, C12 usage / missing root exit 1; C13 evidence-date fallback removed | `round3.test.ts > CR5-R2: --root must look like a catalog`, `hardening.test.ts > CLI error handling (CR4, CR5)` (253402300800, -1, abc, "largest valid epoch and an empty value"), `cli.test.ts > exits 1 on invalid/schema-error`, `cli.test.ts > exits 2 on a missing root, an unknown command or an unknown option`, `round3.test.ts > manifest date fallback (H15)` |
+| `validate.ts` | V1 suppression ignores `null` id; V3 broken-doc skip removed; V4 claim list limit 6; V6 claims unsorted; V7 chip facts dropped from status; V8 board facts dropped; V9 `every` to `some`; V10 gpio detection any kind; V11 status computed while blocked; V12 status computed with pin errors; V13 only first variant's module; V16 `unsupported` also checked; V17 duplicate threshold 3; V18 duplicate claim id; V19 `lastIndexOf('#')`; V20 `uniqueKeys:false`; V22 anchor scan off; V23 unknown-key path; V24 breakout-IC ref; V25 fixture board ref; V26 warnings counted as errors; V27 duplicate message includes self; V28 consumed pad ref; V29 iomux pad ref; V31 rail scope; V32 position duplicate; V33 power label rule; V34 pad duplicate across connectors | fixtures (`yaml-proto-key`, `duplicate-evidence-id`, `ref-breakout-ic`, `ref-fixture-board`, `ref-consumed-pad`, `ref-iomux-pad`, `pin-duplicate-position`, `pin-duplicate-pad-connectors`, `pin-empty-label-power`, `ref-power-pin-rail`), `round3.test.ts > board status covers board, module and chip facts > chip pad fact single-source`, `... board fact single-source`, `... a second variant with its own less-verified module is included`, `> E_EVIDENCE_UNKNOWN lists known claim ids (CR9) > names up to 5 claims...`, `> duplicate ids keep nothing (H2)`, `> manifest board_status counts (D3)`, `hardening.test.ts > M16: a claim id with a second "#" resolves`, `integrity.test.ts > a board with an unresolved pad reference gets no computed status` |
+| `integrity.ts`, `order.ts`, `stable-json.ts`, `compile.ts` | I1 `\d+` to `\d`; I3 string compare; O1 equal returns 1; O2 no code tie-break; O3 path before file; O5 nested indent; O6 empty object `null`; O7 version 13 chars; O9 fixtures compiled; O10 refuses only at >1 error; O11 digest of version; O12 no trailing newline | `integrity.test.ts > leading zeros are numerically equal`, `round3.test.ts > byCodeUnit is locale independent (F6)`, `compile.test.ts > stableStringify > pretty-prints with an indent`, `compile.test.ts > compileCatalog > manifest sha256 matches the catalog bytes; version names the file`, `... throws when the validation result has errors`, `... the catalog JSON has sorted keys...` |
+| `primitives.ts`, `fact-rules.ts` | P1 reviewer regex no trailing ws; P2 no leading ws; P3 first char punctuation; P4 no lower-case; P5 no trim; P6 `NON_BLANK` any; P8 slug whitespace; P9 `_` dropped from id; P10 `.` dropped; P11 id trailing anchor dropped; F1 blank reviewers counted; F2 `<2` to `<1`; F3 value==active uses `!=`; F4 array length ignored; F6 missing+value inverted; F7 evidence rule applies to missing; F8 `isFact` needs only status; F9 readings evidence not collected; F10 reading evidence min; F11 readings min 3 | `validate.test.ts > verified-trim-reviewer`, `verified-case-reviewer`, `verified-one-reviewer`, `claim-empty-locator`, `round2.test.ts > reviewer key charset (N5) > rejects "-a"`, `round2.test.ts > conflict facts (N1b) > compares with deep equality...`, `round3.test.ts > emitted JSON Schema carries the expressible rules > reviewer keys`, `round3.test.ts > entity id format (S2)`, `hardening.test.ts > reviewer identity (F4) > an empty / blank reviewer key never counts`, `validate.test.ts > valid fixture catalog > has no errors and no warnings`, fixtures `conflict-reading-unknown-claim`, `conflict-reading-no-evidence` |
+| `evidence.ts`, enums | E1 credentials allowed; E2 whitespace allowed; E4 URL `$` alternative dropped; E5 25 to 26 words; E6 400 to 401 chars; E8/E9/E10/E15/E16 blank title / publisher / locator / quote / supports; E14 evidence kind widened; E17 prefix check removed; E18 `url_original` unchecked; X1 pin kind enum widened; X2 reset-state enum widened; X3 IC drive enum widened; X4 board status enum widened | fixtures (`url-userinfo`, `url-inner-space`, `claim-quote-too-long`, `evidence-empty-title`, `evidence-empty-publisher`, `claim-empty-quote`, `claim-empty-supports`, `claim-id-prefix-mismatch`, `url-original-file`), `cli.test.ts > exits 1 on invalid/claim-quote-too-many-words`, `schema round3 > evidence URL must parse as a URL (S7) > accepts "https://example.com"`, `schema round3 > every enum in the emitted JSON Schemas > the set of enum fields and their values equals the contract: nothing added, widened or lost` |
+| web | W1 hook focus call removed; W2 previous key not stored; W3 deps `[]`; W4 first render focuses; W5 unchanged route focuses; W8 `'unsafe-inline'` in `script-src`; W9' plugin `apply` undefined; W10' manifest guard accepts blank strings | `focus.test.ts > useFocusOnRouteChange > focuses the heading once per route change`, `focus.test.ts > shouldFocusHeading (W9) > never on the first render / not when the route is unchanged`, `route.test.ts > CONTENT_SECURITY_POLICY`, `cspMeta.test.ts > ... applies to production builds only`, `manifest.test.ts > isCatalogManifest > rejects empty version` |
+
+### Enum walker cannot go vacuous (9 further mutations, all KILLED)
+
+The new test walks the emitted JSON Schemas and compares the found enum set with a hand-written contract table. I mutated the walker and the emitter: T1 walker skips the first schema; T2 does not descend into `items`; T3 records no enums; T4 finds no facts; T5 ignores `additionalProperties`; T6 ignores `anyOf/oneOf/allOf`; T7, T8, T9 the emitter no longer emits the `project`, `pin-view`, `breakout` schema. Every one fails `round3.test.ts > every enum in the emitted JSON Schemas > the walker finds enums at all (the test cannot go vacuous)` and `... the set of enum fields and their values equals the contract` (T7-T9 also `json-schema.test.ts > generates one schema per catalog/output entity`). The contract table is static (not derived from the schemas), so widening (X1-X4, E14), narrowing or losing an enum is also caught.
+
+## Attempts to build an invalid catalog that exits 0 (with a wrong hardware fact)
+
+Run on the clean tree with `validateCatalog` (probes `p4.ts`, `p5.ts`) and with the real CLI on scratch roots (`fs.mjs`).
+
+| Attempt | Result |
 | --- | --- |
-| A1 unique `gpio` check off (`integrity.ts`) | `integrity.test.ts > a gpio number used twice is reported at the later pad` |
-| A2 key vs `gpio` mismatch check off | `integrity.test.ts > GPIO<n> must equal gpio` (12 failed) |
-| A3 `GP` dropped from the pad-key regex | `integrity.test.ts > GP<n> must equal gpio`, `validate.test.ts > pad-key-gp-mismatch` |
-| A4 regex `/i` dropped | `integrity.test.ts > gpio<n> must equal gpio` |
-| A5 conflict: `active` in readings check removed | `round2.test.ts > active must be one of the readings`, fixture `conflict-active-not-reading` |
-| A6 `deepEqual` replaced by `===` | `round2.test.ts > compares with deep equality for objects, arrays and strings, regardless of key order` |
-| A7 conflict: `value` equals `active` removed | `round2.test.ts > value must equal active` |
-| A8 conflict `readings < 2` to `< 1` | `round2.test.ts > needs at least two readings` |
-| B1 pin pad: "every variant" to "some variant" | `hardening.test.ts > M24: every variant must have the pad in its chip` |
-| B2 onboard/overlay pad: "every variant" to "some variant" | `integrity.test.ts > resolves against every variant` |
-| B3 power-pin rail check off | fixture `ref-power-pin-rail` |
-| B4 reference suppression always on (`targetMayBeBroken`) | 13 failed, `ref-variant-module`, `ref-module-chip`, ... |
-| B5 `interim` counted as verified in board status | `validate.test.ts > includes chip facts in the board status` |
-| B7 duplicate pad on a board off | fixtures `pin-duplicate-pad`, `-connectors` |
-| B8 module to chip reference check off | fixture `ref-module-chip`, `hardening.test.ts > a module with an unresolved chip blocks the board status` |
-| B9 `bonded_pads` pad existence off | fixture `ref-bonded-pad` |
-| B10 forbidden keys not rejected | fixtures `yaml-proto-key`, `yaml-constructor-key` |
-| B11 evidence resolution off | fixtures `unknown-evidence`, `unknown-evidence-doc` |
-| B12 fixture variant-of-board check off | fixture `ref-fixture-variant` |
-| C1 `E_UNKNOWN_DIR`: every `.yaml` under any other directory ignored (ignore-list too broad) | fixture `unknown-dir`, `integrity.test.ts > unknown directories` |
-| C2 `E_UNKNOWN_DIR`: nested files not scanned | `integrity.test.ts > reports every YAML file inside an unknown directory, including nested ones` |
-| C3 `E_FILE_EXTENSION` off | fixtures `file-extension-yml`, `-upper` |
-| C4 reviewer normalisation drops trim | fixture `verified-trim-reviewer` |
-| C5 reviewer normalisation drops lower-case | fixture `verified-case-reviewer` |
-| C6 reviewer charset regex loosened | fixtures `reviewer-zero-width`, `reviewer-cyrillic` |
-| C7 URL userinfo check removed | fixture `url-userinfo`, `round2.test.ts > evidence URL hygiene` |
-| C8 quote word limit 25 to 250 | fixture `claim-quote-too-many-words` |
-| C9 claim-prefix check off | fixture `claim-id-prefix-mismatch` |
-| C10 URL scheme check off | fixtures `url-javascript`, `url-original-file` |
-| C11 quote character limit 400 to 4000 | fixture `claim-quote-too-long` |
-| D1 manifest `facts` counts the wrong status set | `compile.test.ts > manifest carries counts per fact status, per board status and per entity kind` |
-| D2 `compileCatalog` includes fixtures | `compile.test.ts` (2 failed) |
-| D5 manifest `sha256` hashes different text | `compile.test.ts > manifest sha256 matches the catalog bytes` |
-| E1 exit 1 also for warnings only | `hardening.test.ts > a root-level YAML file alone stays a warning (exit 0)` |
-| E2 exit code 1 to 0 on validation errors | 79 failed |
-| E3 unexpected-error exit 2 to 1 | `hardening.test.ts > an invalid SOURCE_DATE_EPOCH ... is a usage error (exit 2)` |
-| E4 `SOURCE_DATE_EPOCH` upper bound removed | `hardening.test.ts` (99999999999999, 253402300800) |
-| F1 stable-json key sort removed | `compile.test.ts > sorts keys lexicographically at every depth` |
-| F3 entity sort removed | `hardening.test.ts > M10: compiled entities are ordered by id` |
-| G1 evidence split at last `#` | `hardening.test.ts > M16` |
-| G2 `missing` counted as `verified` in coverage | `validate.test.ts > counts facts per status exactly as the fixture README states` |
-| G3 verified needs 1 reviewer | 13 failed |
-| G4, G5, G6 `missing`-with-value / null-value / evidence-required rules off | `fact-rules.test.ts`, fixtures |
-| G7 duplicate claim id check off | fixture `duplicate-claim-id` |
-| G8 board uniqueness by `id` only (not `id@rev`) | 109 failed |
-| H1 duplicate variant id off | fixture `duplicate-variant-id` |
-| H3 `anyBoardBroken` always true | fixtures `ref-fixture-board` |
-| H4 `consumed` key pad check off | fixture `ref-consumed-pad` |
-| H5 / H6 blocked board still gets a status / board with pin errors gets a status | `hardening.test.ts` |
-| H7 `iomux_pins` check off | fixture `ref-iomux-pad` |
-| H8 empty silkscreen label rule off | fixtures `pin-empty-label*` |
-| H9 YAML `uniqueKeys: false` | `validate.test.ts` duplicate-key test |
-| H11 merge key (`<<`) rejection off | `validate.test.ts` |
-| H12 loader ignore-list widened | `integrity.test.ts` |
-| H13 gpio uniqueness compares the wrong value | `integrity.test.ts` |
-| H14 `E_PAD_KEY` not wired into `validateCatalog` | 7 failed |
-| H16 pin position duplicate off | fixture `pin-duplicate-position` |
-| H17 "pad not bonded by module" off | fixture `pin-pad-not-bonded` |
-| H18 `E_BOARD_STATUS` mismatch not reported | fixture `board-status-mismatch` |
-| H19 `datasheet-required` rule off | `validate.test.ts` |
-| H20 board status ignores chip facts | `validate.test.ts > includes chip facts in the board status` |
-| H22 `unsupported` is recomputed | `validate.test.ts` |
-| R1 evidence keyed by file name instead of `id` | 4 failed |
-| R2 `computeBoardStatus` can never return `fully-verified` | 2 failed |
-| R3 compile `version` ignores content | `compile.test.ts` |
-| R4 loader `toPosix` removed | 3 failed |
-| S1 `ClaimId` regex loosened | schema test |
-| S3 `variants.min(1)` removed | fixture `board-no-variants` |
-| S5 `accessed` date regex off; S6 `sha256` regex off | schema tests |
-| S8 fact evidence ids unchecked; S10 `VDDIO+` template removed; S13 pin `kind` enum to string | schema tests |
-| W1 web manifest guard without `sha256`; W2 counts validation weakened | `manifest.test.ts` |
-| W3 route query string not stripped; W4 trailing slashes not stripped | `route.test.ts` (2 and 9 failed) |
-| W5 CSP plugin without `apply: 'build'`; W6 `injectCsp` no longer throws; W7 `'unsafe-inline'` in `script-src` | `cspMeta.test.ts`, `route.test.ts > CONTENT_SECURITY_POLICY` |
-| W8 abort while reading the body not rethrown | `manifest.test.ts > rethrows an abort that happens while the body is being read` |
-| W11 HTML-with-200 fallback removed; W12 manifest URL ignores the Vite base | `manifest.test.ts` |
+| module fact `single-source` while board declared `fully-verified` | caught (`E_BOARD_STATUS`) |
+| second variant with a less verified MODULE / CHIP | caught (`E_BOARD_STATUS`) (current code; chip case unpinned, CR1-R3) |
+| second variant's module does not bond a header pad | caught (`E_PIN_NUMBERING`) (current code; unpinned, CR2-R3) |
+| conflict fact whose `active` carries a key no reading has | caught (`E_FACT_STATUS` at `active`) (current code; unpinned, CR3-R3) |
+| conflict with two identical readings | NOT caught (exit 0): known, fail-safe (CR6-R3) |
+| reviewer look-alikes: `Hardware-Researcher` + `hardware-researcher`; NBSP-padded; tab/newline-padded; fullwidth `ｈ`; zero-width space; NUL; `-a` | caught (`E_VERIFIED_REVIEWERS` once normalised to one reviewer, `E_SCHEMA` for non-ASCII). Normalisation (trim + lower-case) still runs before counting distinct reviewers: `[a, " A "]` counts 1 |
+| two real reviewers `x-one`, `y-two` (control) | accepted (correct) |
+| URL tricks: userinfo, backslash-userinfo, `%40@`, `https://a.com@`, `javascript:`, `http://`, whitespace | caught; `https:///x` (empty authority, parses as host `x`) is accepted: Minor (CR10-R3) |
+| prototype-named keys: `__proto__`, `constructor` (also nested in `conditions`, quoted, flow maps); pad `toString`/`hasOwnProperty` in a board pin, in `consumed` | caught (`E_SCHEMA`, `E_PIN_NUMBERING`, `E_REF_UNRESOLVED`); lookups use `Object.hasOwn`/`Map` |
+| YAML: multi-document, `%YAML 1.1` directive with `3:30` / `no`, duplicate keys (plain and quoted), merge key, alias bomb (12 x 9), 5,000-deep flow, 3,000-deep block, NUL byte, empty file, `!!binary`, unknown tag, `.inf`, `-.inf`, `.nan`, `1e400` | all caught (`E_YAML` or `E_SCHEMA`), no crash or stack trace. Accepted (YAML 1.2 core, by the spec): `0x10`, `0o17`, `+.5`, `!!int "7"`, `!!float "3.3"` (an explicit tag in the author's own text) |
+| reference suppression (broken evidence, chip, module, board, id-less file) | no new way: a suppressed reference error always coexists with the broken file's own error (same proof as last round; `V1`, `V2`, `B4` mutations) |
+| duplicate ids (same kind) | caught in every file of the clash; the id is then treated as broken (`H2`, `V17`, `V27` killed) |
+| same pad on two pins / two connectors | caught (`E_PIN_NUMBERING`) (documented Uno A4/A5 caveat, decision 19) |
+| `reset` pin with `pad: NOPE` or `pad: toString` | NOT caught, exit 0 (CR5-R3): only `gpio` pins resolve their pad |
+| gpio header pin on a module-`consumed` (flash) pad | NOT caught, exit 0: documented as deliberate and deferred to Phase 2b (README "Deferred", decision 6); not counted |
+| link tricks (Windows junctions): kind dir replaced by a junction; junction inside a kind dir; junction cycle `chips/loop -> chips`; dangling junction; junction-only root; file symlink | never followed, `W_SYMLINK_SKIPPED` warning, no infinite recursion; kind dir as junction drops that kind (exit 0 with a warning if nothing references it: by design, decision 22); file symlink needs privileges here (`EPERM`, test skipped, not run) |
+| dot-dirs / `node_modules` with YAML at the root | ignored (documented). `chips/.hidden/z.yaml` IS loaded and validated (dot-dirs under a kind dir are not ignored): fail-safe |
+| size: 400-level directory tree; 3,000 broken files; 32 MB YAML (8 M comment lines) | tree walks and 3,000 files in 4.4 s; the 32 MB file validates in about 62 s with correct errors (no cap: Info, CR11-R3) |
 
-`CRLF normalisation removed` (asked for in the brief) does not exist as code: CRLF is handled by the YAML parser. I verified the behaviour instead: a CRLF copy of every fixture validates with exit 0 and `catalog:compile` output is byte-identical to the LF copy (`diff -r` empty).
+## Code review of the round-3 changes
 
-### Survived (21)
+- **Reviewer regex** `^\s*[A-Za-z0-9][A-Za-z0-9._-]*\s*$` (`primitives.ts:70`): `\s` and `String.prototype.trim` use the same whitespace set, so every string accepted by the regex normalises (`trim().toLowerCase()`) to a key matching `REVIEWER_KEY`; the distinct count in `fact-rules.ts` still normalises before counting (mutations P4, P5, F1 killed). The `$` has no `m` flag, so an embedded newline is rejected. No bug.
+- **URL regex** `^https?://[^/?#@]*(?:[/?#]|$)`: all 25 vendor datasheet URLs of the repo pass; credential tricks fail; `@` after the authority is accepted as path. The empty-authority form `https:///x` passes (CR10-R3).
+- **`load.ts` walk**: `withFileTypes`, links recorded and never followed, sorted at each level, recursion only on real directories, so cycles cannot recurse (junction cycle run: finished, one warning). Dangling links do not throw. Case-sensitive kind matching via exact name compare, so `Chips/` gives `E_UNKNOWN_DIR` on every OS. `E_UNKNOWN_DIR` ignores `.`-prefixed directories and `node_modules` only at the root (documented). Unreadable directory: an unexpected error becomes the one-line `error:` and exit 2 by the catch-all (not tested, acceptable). One inconsistency: the "is this a catalog root" check in `cli.ts` uses `lstat(join(root, kind))`, which is case-insensitive on NTFS/APFS, so a root containing only `Chips/` exits 1 here (`E_UNKNOWN_DIR`) and 2 on Linux; both non-zero (CR9-R3).
+- **`--root` check**: real empty `catalog/` (seven kind directories) still exits 0 and compiles (gate item 9). One kind directory is enough, by design (decision 21).
+- **`E_EVIDENCE_UNKNOWN` hint**: first five claim ids by code unit, `...` when more, `(the document has no claims)` when empty; only the `>=` boundary at exactly five claims is untested (n-V5).
+- **`focus.ts` / `useFocusOnRouteChange.ts`**: first run stores the key without focusing; the second effect run of React StrictMode sees `previous === key` and does not focus; a route change focuses once (also between two different `not-found:<path>` keys); a not-yet-rendered heading is skipped. The test replaces `react` with a fake `useRef`/`useEffect` and covers first render, StrictMode re-run, same-route re-render and each change. Correct. Gap: nothing proves `App.tsx` calls the hook with `routeKey(route)` (CR4-R3); `App.test.tsx` renders to a string only.
+- **`vite.config.ts` guard**: `viteConfig.test.ts` flattens `config.plugins`, requires exactly one plugin named `pinout-csp-meta` with `apply: 'build'`, still sees the React plugin (so the flattening cannot go blind), and checks `base`. The `./csp` import warning of the last round is gone (`./csp.ts`).
+- **Manifest guard** (`manifest.ts`): non-empty strings, non-negative integer counts; mutation W10' killed.
+- **CLI exit-code contract** 0 / 1 / 2 holds in every probe; the catch-all prints one `error:` line and returns 2 (mutation C5 killed); usage errors print the usage text (mutation C6 survives only on that text).
 
-| ID | Mutation | Why it matters | Grade |
+## Status of earlier findings
+
+| ID | Was | Now | Evidence |
 | --- | --- | --- | --- |
-| H21 | `computeBoardStatus` ignores module facts (`[board, ...chips]`) | board status is the user-facing trust label. Current code is correct (probe: all facts verified, module `flash_voltage` made `single-source`, board declared `fully-verified` gives `E_BOARD_STATUS ... declared fully-verified, computed partially-verified`); no test builds that case (finding CR1-R2) | **Major** |
-| S2 | `ENTITY_ID_PATTERN` loosened to `/^.+$/` | entity ids are the resolution key of every reference and of the evidence-doc split at `#`. Current code rejects `"Demo MCU"` (`E_SCHEMA ... id`), no test pins the pattern (CR2-R2) | **Major** |
-| S15 | strap `required_at_reset` enum to `z.string()` | boot-strap level is on the hardware-critical list; `required_at_reset: hgih` is rejected today (`E_SCHEMA ... strap.value`), nothing pins it (CR2-R2) | **Major** |
-| S12 | module `consumed` kind enum to `z.string()` | flash/PSRAM/USB-consumed pads are on the 100 % audit list; `value: flsh` is rejected today, nothing pins it (CR2-R2) | **Major** |
-| B6 | `Object.hasOwn(chip.pads, pad)` to `pad in chip.pads` (pin pad lookup) | with `in`, a board pin on `toString`/`constructor` would resolve; no test uses a prototype-named pad | Minor |
-| S4 | pad `gpio` loses `.int().nonnegative()` | `gpio: 1.5` is rejected today (`E_SCHEMA`), untested | Minor |
-| S7 | `URL.canParse` refine removed | `http://` with no host passes the regex checks | Minor |
-| S9 | conflict reading evidence ids unchecked (`z.string()`) | still caught later as `E_EVIDENCE_UNKNOWN`, so fail-safe | Minor |
-| S11 | `community` removed from `StatusSchema` | no test uses a `community` fact; a `community` fact is accepted today and the board stays partially verified | Minor |
-| S14 | connector `position` loses `.positive()` | position 0 / negative untested | Minor |
-| D3 | manifest `board_status` always counts `partially-verified` | the counts may be shown by the UI later | Minor |
-| D4 | manifest `bytes` uses `string.length` instead of UTF-8 bytes | ASCII-only fixture | Minor |
-| F2 | stable-json sorts arrays | array order is semantic (pin order, readings); only sorted arrays in fixtures | Minor |
-| F4 | `validateCatalog` input sort removed | masked by the final diagnostic sort | Minor |
-| F5 | diagnostic sort removed in `validateCatalog` (in-process API) | `validateRoot` re-sorts only when the loader added diagnostics | Minor |
-| F6 | `byCodeUnit` replaced by `localeCompare('en')` | determinism relies on code-unit order; no test has ids whose order differs (for example `a-b` vs `ab`, upper/lower case) | Minor |
-| H2 | `uniqueByKey` keeps duplicated ids | the duplicate error stays; only a second-order effect | Minor |
-| H10 | YAML version option 1.2 to 1.1 | `schema: 'core'` is also set, so likely equivalent; `no`/`on` as labels stay strings (probe exit 0) | Minor |
-| H15 | evidence-date fallback takes the earliest instead of the latest | only reached without epoch and without git | Minor |
-| W9 | focus move on route change removed | already F13 (no DOM test) | Minor |
-| W10 | `vite.config.ts` no longer registers `cspMeta()` | the plugin is unit-tested, its registration is not, and CI only greps the base path; the CSP could vanish unnoticed | Minor |
+| CR1 variants empty / unresolved module reaches `fully-verified` | Major | FIXED | `variants: []` is `E_SCHEMA`; unknown module `E_REF_UNRESOLVED`; blocked board `computed: null`; mutations V11, V12, V13, B4 killed |
+| CR2 `fully-verified` branch and version content-addressing untested | Major | FIXED | V7, V8, V9, V13, O8-family killed; module, chip and board facts pinned; version hash pinned (n-O8 survives only for the `format` field, Minor) |
+| CR3 `__proto__` pad key | Minor | FIXED | `E_SCHEMA` at any depth; `toString` / `hasOwnProperty` pads behave; B6 killed |
+| CR4 alias bomb | Minor | FIXED | alias bomb, 5,000-deep nesting: one `E_YAML`, exit 1, no trace |
+| CR5 `SOURCE_DATE_EPOCH` RangeError | Minor | FIXED | gate item 11; C1-C4 killed |
+| CR6 surviving mutants incl. web focus | Minor | FIXED, with the W9 remainder (CR4-R3) | all other listed mutants killed |
+| CR7 misplaced files only warn | Minor | FIXED (root-level YAML stays a warning by decision 13) | `E_FILE_EXTENSION`, `E_UNKNOWN_DIR` verified; N3-N7, N12-N14 killed |
+| CR8 web abort / overflow / skip link | Minor | FIXED | unchanged and green |
+| CR9 duplicated helpers, messages | Minor | FIXED | `order.ts` single definition; known-claims hint added (mutations V4, V6 killed); JSDoc added to the web exports |
+| CR1-R2 board status ignores module facts | Major | FIXED | H21 killed by 9 tests; positive case (`all verified` and `fully-verified`: 0 errors) and negative case pinned. Chip scope of a SECOND variant still unpinned: CR1-R3 |
+| CR2-R2 id regex, strap and consumed enums unpinned | Major | FIXED | S2, S15, S12, S4, S14, S11, S9, S7 killed; static-contract enum walker over every emitted schema, proven not vacuous (T1-T9) |
+| CR3-R2 determinism tests | Minor | FIXED | F2, F4, F5, F6, O1-O3 killed; compile determinism reproduced (two folders identical) |
+| CR4-R2 links skipped silently | Minor | FIXED | `W_SYMLINK_SKIPPED` for root, kind dir, nested, dangling, cycle (Windows junctions run) |
+| CR5-R2 `--root` any directory exits 0 | Minor | FIXED | exit 2; real catalog still 0 (gate items 9, 10); N9-N11 killed |
+| CR6-R2 `Chips/` message | Minor | FIXED | message now says use lower-case, Linux will not load it; N6, N12 killed |
+| CR7-R2 conflict with identical readings accepted | Minor | NOT FIXED | still exit 0 (probe); fail-safe; carried as CR6-R3 |
+| CR8-R2 low-risk survivors | Minor | FIXED | B6, S4, S7, S9, S11, S14, D3, D4, H2, H10, H15 all killed |
+| CR9-R2 `./csp` import, W10 registration test, CI grep | Minor | FIXED (test); CI grep not added | import warning gone; W10 killed by `viteConfig.test.ts`; `ci.yml:129` still greps only the base path, which is acceptable now that a unit test guards registration. Cosmetic: built page keeps the template comment "CSP meta tag: inserted here at build time only" |
+| CR10-R2 JSDoc / known claims | Minor | FIXED | JSDoc present on web exports (`App.tsx`, `manifest.ts`, `csp.ts`); hint present. `CatalogManifest` duplicate in web is documented |
+| CR11-R2 JSON Schema export gaps | Minor | FIXED | reviewer and URL patterns are emitted; 17 of 23 schema-error fixtures flagged by ajv; remaining six cannot be expressed and are listed in `docs/schema.md` (tested by `round3.test.ts > docs/schema.md names the rules JSON Schema cannot express`) |
+| CR12-R2 dashboard Host header | Minor (Info) | NOT FIXED, accepted by design | `tools/progress/server.mjs` unchanged (`.listen(port, '127.0.0.1')`, two fixed routes, no path from `req.url`). A DNS-rebinding page could read `/api/state` (STATE.md text, git subjects, changed paths) of a local read-only dashboard; low impact. Minor at most (CR12-R3) |
 
 ## Findings
 
 | ID | Severity | Area | File:line / fact path | Finding | Evidence / source | Recommended fix |
 | --- | --- | --- | --- | --- | --- | --- |
-| CR1-R2 | **Major** | test meaningfulness (status computation) | `packages/cli/src/validate.ts:208-213`; tests in `validate.test.ts`, `hardening.test.ts` | Mutant H21 survives: `computeBoardStatus` can ignore module facts and all 247 cli tests pass. Only chip facts (H20) and board facts are pinned. The README (decision 7) says the status covers board + variant modules + chips. | mutation H21 (`247 passed`); correct behaviour shown by probe `p2.ts` (module `flash_voltage` `single-source`, board `fully-verified`: `E_BOARD_STATUS`) | Add to `hardening.test.ts`: valid fixture with `max_current` and `internal_pull_ohm` made verified and the board `fully-verified` expects 0 errors (the positive case), then the module's `flash_voltage` set to `single-source` expects `E_BOARD_STATUS` with `computed: partially-verified`. |
-| CR2-R2 | **Major** | test meaningfulness (schema constraints on safety data not pinned) | `packages/schema/src/primitives.ts:44` (`ENTITY_ID_PATTERN`), `chip.ts` strap `required_at_reset`, `board.ts` `consumed` kind enum; tests `schemas.test.ts`, `round2.test.ts` | Mutants S2, S15, S12 survive all 362 schema + cli tests. Nothing asserts that an id such as `"Demo MCU"` or `a#b`, a strap level `hgih`, or a consumed kind `flsh` is rejected. Ids key every reference and the evidence split; straps and consumed pads are on the hardware-critical audit list. Current code rejects all three (probe `p3.ts`), so this is a missing test, not a code bug. | mutations S2, S15, S12; probe `p3.ts` | In `schemas.test.ts` add table tests: ids `Demo`, `a b`, `a#b`, `a@b`, `-a`, `a--b`, empty (each `E_SCHEMA`), strap `required_at_reset: hgih`, consumed `value: flsh`, and also `gpio: 1.5`, `gpio: -1`, `position: 0`, a fact with `status: community` (accepted). |
-| CR3-R2 | Minor | determinism tests | `packages/cli/src/order.ts:5`, `stable-json.ts`, `validate.ts:639` | F6 (`localeCompare`), F5, F4, F2 survive. The code is deterministic today (code-unit sort everywhere, no locale or clock use; two compiles from a deleted output folder under `TZ=Asia/Tokyo LC_ALL=tr_TR.UTF-8` vs default are byte identical, `diff -r` empty), but a regression to a locale-aware sort would pass. | mutations F2, F4, F5, F6; `diff -r o1 o2` empty | Add ids whose code-unit order differs from locale order (`Zed`-style capitals cannot occur, so use `a-b`, `a.b`, `ab`, `a_b`) to a compile test and assert the exact output order; add an array-order test (pins out of position order) to `stableStringify`. |
-| CR4-R2 | Minor | loader robustness | `packages/cli/src/load.ts:44-46` | Symbolic links and junctions in the catalog root are skipped silently: a directory junction `chipz` to a folder with YAML gives exit 0 and no diagnostic (`Dirent.isDirectory()` is false for links). Inside a kind directory a junction is followed and loaded (`chips/linked/bad.yaml` gives `E_YAML`), so the two cases differ. | `junc` and `jk` probes: exit 0 vs exit 1 | Use `entry.isDirectory() \|\| entry.isSymbolicLink()` in the unknown-directory scan (and stat the target), or document that links are ignored. |
-| CR5-R2 | Minor | CLI usability | `packages/cli/src/cli.ts:109-119` | `--root` pointing at any existing directory with no kind subdirectories validates "0 files" with exit 0 (`pnpm catalog:validate --root packages/cli/test/fixtures/valid/chips` prints `0 errors, 1 warning in 0 files`, exit 0). A typo such as `--root catlog/..` or a wrong CWD in CI would pass silently. | reproduced, exit 0 | When the root has none of the seven kind directories, exit 2 with "root is not a catalog (no evidence/, chips/ ... directory)"; keep exit 0 for the real empty catalog (it has the `.gitkeep` directories). |
-| CR6-R2 | Minor | loader message on case-insensitive file systems | `packages/cli/src/load.ts:57` | On Windows/macOS a directory named `Chips/` is reported as `E_UNKNOWN_DIR ... this file is not loaded`, but it is loaded as `chips/` (the run shows `chips 1` in the entity counts). The exit code (1) is right; the text is wrong there. Phase-validator saw the same behaviour and called it harmless. | `case` probe output | Change the wording to "is not a catalog directory (expected exactly one of ...)", without the claim about loading. |
-| CR7-R2 | Minor | conflict facts | `packages/schema/src/fact-rules.ts:119-124` | The message says "a conflict needs at least 2 disagreeing readings" but two readings with the same value are accepted (`readings [3.3, 3.3]`, `active 3.3`: 0 errors). Already F-N11. | probe `p1.ts` ("conflict identical readings") | Report `E_FACT_STATUS` at `readings` when all reading values are deep-equal, or reword the message. |
-| CR8-R2 | Minor | surviving low-risk mutants | see "Survived" table | B6 (`in` vs `Object.hasOwn`), S4, S7, S9, S11, S14, D3, D4, H2, H10, H15 survive; each has a correct current behaviour that no test asserts. B6 is the only one with a real regression risk (prototype-named pad resolves). | mutation table | One test per mutant: a board pin on pad `toString` gives `E_PIN_NUMBERING`; `http://` rejected; `position: 0` rejected; a compile test with a `fully-verified` and a `datasheet-required` board checks `board_status` counts; an evidence record with a non-ASCII title checks `bytes`. |
-| CR9-R2 | Minor | web | `apps/web/vite.config.ts:3`, `apps/web/src/cspMeta.ts:3` | `pnpm test` prints a Vite warning: `import "./csp" without a file extension (apps/web/src/cspMeta.ts:3:41)` ("unsupported by configLoader: native"). The built page also keeps the template's "CSP meta tag: inserted here at build time" comment after the inserted tag. W10: nothing checks that `vite.config.ts` registers `cspMeta()`, and CI only greps the base path in `dist/index.html`. | `pnpm test` output; mutation W10 | `import ... from './csp.ts'` (the config already imports `./src/cspMeta.ts`); add `grep -q 'Content-Security-Policy' apps/web/dist/index.html` to the "dist/index.html" step in `ci.yml` and `deploy.yml`. |
-| CR10-R2 | Minor | maintainability | `apps/web/src/*.ts(x)`, `validate.ts` messages | Web exports (`isCatalogManifest`, `useCatalogManifest`, `useHashRoute`, `CatalogStatus`, `App`) have no JSDoc; `E_EVIDENCE_UNKNOWN` still does not list the claim ids that exist in the cited document (open part of CR9); `CatalogManifest` is duplicated between cli and web (acknowledged in a comment). | reading | JSDoc one line each; append `known claims: a, b, c` (at most 5) to the "unknown claim" message. |
-| CR11-R2 | Minor | JSON Schema export gaps | `packages/schema/dist/*.schema.json` | Checked with ajv on every `E_SCHEMA` invalid fixture: flagged by the emitted schema: wrong type, missing key, `variants` `minItems`, blank reviewer/quote/locator/supports/title/publisher, quote over 400 characters, non-http(s) URL, leading/inner space in URL. NOT flagged: quote over 25 words (`claim-quote-too-many-words`), claim-id prefix (`claim-id-prefix-mismatch`), reviewer charset (`reviewer-zero-width`, `reviewer-cyrillic`), URL userinfo (`url-userinfo`), reserved keys. These rules live in Zod `refine`/`superRefine`, which cannot be emitted. Editors therefore accept input the CLI rejects (the CLI stays the authority). | `js.cjs` output (`NOT FLAGGED by JSON schema`) | Add `.meta({ pattern })` or a `.regex()` where an equivalent regex exists: reviewer `^\s*[A-Za-z0-9][A-Za-z0-9._-]*\s*$`, URL userinfo `^https?://[^/?#@]*([/?#]\|$)`, and say in `docs/schema.md` which rules only the CLI checks. |
-| CR12-R2 | Minor (Info) | local dashboard | `tools/progress/server.mjs:127-140` | Binds `127.0.0.1` only, serves two fixed routes (no path built from `req.url`, no traversal), `execFileSync` with fixed argv, the page escapes every interpolated field with `esc()`. It does not check the `Host` header, so a DNS-rebinding page could read `/api/state` (STATE.md text, git log subjects, changed file paths). Information only, local repo. | reading | Reject requests whose `Host` is not `localhost:<port>` or `127.0.0.1:<port>`. |
+| CR1-R3 | **Major** | test meaningfulness: board status over every variant | `packages/cli/src/validate.ts` (`const chips = [...new Map(resolved.map(...` in the status block, line 531) | Mutant n-V14 (only the first variant's chip facts feed `computeBoardStatus`) survives all 330 cli tests. Probe: variant B's chip has an `interim` fact, board declared `fully-verified`: current code reports `E_BOARD_STATUS`, the mutant reports 0 errors and the board would be shown as fully verified. The module twin (n-V13) is killed, the chip twin is not. | probe `p4.ts` row "V14", run under the clean tree and under the mutant | Add one test in `packages/cli/test/round3.test.ts` next to "a second variant with its own less-verified module": a second variant (module 2 + chip 2, all verified except one `interim`/`single-source` chip fact in chip 2), board `fully-verified`, expect exactly one `E_BOARD_STATUS` with `computed: partially-verified`; and the same board declared `partially-verified` expects 0 errors. |
+| CR2-R3 | **Major** | test meaningfulness: "pad bonded by the module of EVERY variant" | `packages/cli/src/validate.ts` (`const notBonded = resolved.filter(`, line 518) | Mutant n-V15 (check only the first variant) survives. Probe: variant B's module bonds `[GPIO0, GPIO1, GPIO3]`, pin 4 uses `GPIO2`: current code gives `E_PIN_NUMBERING ... not bonded out by module demo-module-2 (variant demo-variant-b)`; mutant gives 0 errors and `fully-verified`. `M24` pins only the "pad exists in the chip of every variant" check. | probe `p4.ts` row "V15" | Add a test: two-variant board where only variant B's module lacks a header pad in `bonded_pads`; expect `E_PIN_NUMBERING` at `connectors.0.pins.N.pad` naming `demo-module-2 (variant demo-variant-b)`; one more where only variant A lacks it. |
+| CR3-R3 | **Major** | test meaningfulness: conflict `active` must be a real reading | `packages/schema/src/fact-rules.ts:100` (`deepEqual`, object branch `ka.length === Object.keys(b).length &&`) | Mutant n-F5 (object key count ignored) survives all 921 schema + cli tests. With object-valued facts having optional keys (`internal_pull_ohm`, `supply_current`, `analog_range_v`, `vin_range`), a `conflict` fact whose `active`/`value` carries an extra key that no reading has (`{typ:45000, max:99999}` over readings `{typ:45000}`, `{typ:50000}`) would be accepted and the engine would read an invented value as the "most restrictive reading". Current code is correct (probe: `E_FACT_STATUS ... active`). The array twin (n-F4) is killed. | probe `p4.ts` row "F5": current code 1 error, mutant 0 errors | In `packages/schema/test/round2.test.ts` (conflict block) add: readings `[{typ:1},{typ:2}]` with `active` `{typ:1,max:9}` expects `E_FACT_STATUS` at `active`; and the reverse (reading `{typ:1,max:9}`, `active` `{typ:1}`); same for `value` vs `active`. |
+| CR4-R3 | Minor | web: focus wiring | `apps/web/src/App.tsx:91` | W9 is only half closed: helper and hook are tested, but replacing the hook by a plain ref (n-W6) or passing a constant key (n-W7) survives. | mutations n-W6, n-W7 (59 passed) | Add an assertion that `App` calls `useFocusOnRouteChange` with `routeKey(route)` (mock the hook module and render `renderToString(<App/>)`), or accept as a documented no-DOM-library limit. |
+| CR5-R3 | Minor | board pins: non-gpio pad references | `packages/cli/src/validate.ts:497` (`if (pin.kind !== 'gpio') return;` before the pad lookup) | A `reset`, `nc` or `power` pin with `pad: NOPE` (or `toString`) exits 0: only gpio pins resolve their pad, and decision 18/19 say pad references must resolve. The engine may read a `reset` pin's pad. | probe `p4.ts` rows "reset pin with pad NOPE / toString" (`errors=0`) | Move the `Object.hasOwn(chip.pads, pad)` check above the `kind !== 'gpio'` return for every pin that carries a `pad` (bonded-pad check stays gpio-only). |
+| CR6-R3 | Minor | conflict facts | `packages/schema/src/fact-rules.ts:119` | A `conflict` with two identical readings is accepted (CR7-R2, still open). Fail-safe. | probe `p5.ts` (`errors=0`) | Report `E_FACT_STATUS` at `readings` when all reading values are deep-equal, or reword the message ("at least 2 readings"). |
+| CR7-R3 | Minor | CLI contract tests | `packages/cli/src/cli.ts:168` (`validate` returns 0 before compiling), `:145` (UsageError branch), `:47` (empty option value), `:115` (`lstat` root check) | Mutants n-C8, n-C6, n-C10, n-N8 survive: nothing asserts that `validate` writes no files, that a bad `SOURCE_DATE_EPOCH` prints the usage text, that `--out=` is rejected, or that a root with only a junction kind directory exits 2. | mutation table | One test each (about ten lines). |
+| CR8-R3 | Minor | low-risk survivors | see "Survivors that are equivalent or low risk" | n-E7 (tab/newline word count), n-E11 (claim-id prefix without `#`), n-E12 (63-char sha256), n-E13 (`accessed` anchors), n-O8 (`format` not in version hash), n-I2 (`^` of pad regex), n-P7, n-V2, n-V5, n-V30 survive; n-V21, n-E3, n-O4 are equivalent. Each has a correct current behaviour that no test asserts. | mutation table | Optional: one boundary test per mutant; for n-O8 add a compile test that two different `CATALOG_FORMAT` values give different versions. |
+| CR9-R3 | Minor (Info) | cross-platform consistency | `packages/cli/src/cli.ts:115-122` | The "is a catalog root" check uses `lstat` on `join(root, kind)`, which is case-insensitive on Windows/macOS, so a root with only `Chips/` exits 1 on Windows and 2 on Linux (both non-zero). Decision 23 says kind names are case-sensitive "on every file system". | `fs.mjs` ("only Chips/": `exit=1`) | Look the kind up in `readdirSync(root, {withFileTypes:true})` by exact name, as `load.ts` does. |
+| CR10-R3 | Minor | evidence URL | `packages/schema/src/evidence.ts:17` | `https:///x` (empty authority) passes all four checks and parses as host `x`. | `url.mjs` | Add `[^/?#@]+` (one or more) instead of `*` before the authority terminator. |
+| CR11-R3 | Info | resource limits | `packages/cli/src/load.ts` | No file-size cap: a 32 MB YAML file takes about 62 s to validate (correct errors, no crash); 3,000 files take 4 s. Local tool and CI, not a runtime risk. | `fs.mjs` | None required. |
+| CR12-R3 | Minor (Info) | local dashboard | `tools/progress/server.mjs:127-140` | No `Host` header check (carried from CR12-R2); read-only, bound to `127.0.0.1`, fixed routes. | reading | Optional: reject requests whose `Host` is not `localhost:<port>` or `127.0.0.1:<port>`. |
+| CR13-R3 | Info | links | `packages/cli/src/load.ts:101-107` | A link at a kind directory or catalog file is skipped with a warning and exit 0 (decision 22). A symlinked `boards/` would drop all boards from the compiled catalog without failing CI. By design; no wrong fact can result (references to dropped entities fail). | `fs.mjs` row "chips/ is a junction" | Optional: treat `W_SYMLINK_SKIPPED` as an error in `compile`. |
 
-Already reported by phase-validator (re-confirmed, not counted): conflict with identical readings (F-N11, my CR7-R2), symlinked unknown directory skipped (F-N13, my CR4-R2 adds that the inside-kind case differs), `Chips/` on NTFS (called harmless; CR6-R2 is only the wording), full-width digits and e-mail reviewer ids (F-N13), `W_DUPLICATE_PAD` wording (F-N10), manifest `date` depends on clone depth (F6; `resolveCatalogDate` still uses `git log -1 -- .`, and CI does not set `SOURCE_DATE_EPOCH`; the catalog JSON and version are not affected, only the manifest label).
-
-## Correctness of the new code (item 2, probes)
-
-| Probe | Result |
-| --- | --- |
-| pad key `GPIO000` with `gpio: 0` | accepted as the name for GPIO 0 (`Number("000") === 0`); a board pin on `GPIO0` then fails `E_REF_UNRESOLVED`/`E_PIN_NUMBERING`, so a mismatched name is still caught elsewhere |
-| `GPIO99999999999999999999` with `gpio: 3` | `E_PAD_KEY` (`Number()` gives 1e20, not equal) |
-| `gpio: 9007199254740993` | `E_SCHEMA ... Too big: expected int to be <=9007199254740991` |
-| `gpio3` (lower case) vs `gpio: 4` | `E_PAD_KEY`; `gpio3` with `gpio: 3` accepted but unreferenced `GPIO3` then fails `E_REF_UNRESOLVED` (lookups are case-sensitive) |
-| `gpio: 1.5` | `E_SCHEMA` |
-| pad `toString` used consistently in chip and module | 0 errors; `__proto__` pad: `E_SCHEMA`; board pin on `constructor` or `__proto__` as value: `E_PIN_NUMBERING` |
-| deep equality: object key order, arrays vs objects, `-0` vs `0`, `null` | key order independent (killed A6); `-0.0` equals `0` (`===`); an array never equals an object; `NaN` cannot occur (Zod rejects `.nan`) |
-| conflict: active not a reading / value not active / one reading / reading without evidence | each one `E_FACT_STATUS` at the exact path |
-| every-variant chip resolution | killed (B1, B2); `mods`/`chips` de-duplicated by id before status |
-| uniqueness maps keyed by user strings | all `Map`/`Set`; objects only through `Object.hasOwn` (one `in` mutation survives, B6) |
-| `GPIO_STYLE_PAD` with `/i` | `gpio`, `Gp`, `bcm` handled (A3, A4 killed); `GPIO` + full-width digit is a free name (F-N13) |
-
-### Suppression attempts (could a broken entity hide an error so the catalog exits 0?)
-
-I built eight catalogs; each exits 1 because every "broken" entity carries its own error, and the suppression only removes derived noise:
-
-| Catalog | errors | Result |
-| --- | --- | --- |
-| evidence file fails YAML parse and is the only doc everything cites | 1 (`E_YAML`) | exit 1; no extra `E_EVIDENCE_UNKNOWN`; board still computed |
-| evidence doc duplicated (`copy.yaml`) | 2 (`E_DUPLICATE_ID` in both) | exit 1 |
-| two boards share one module, second board broken (`vendor: 5`) | 1 (`E_SCHEMA` on board 2) | exit 1; board 1 keeps its status |
-| two boards share one module, both valid | 0 | exit 0, both computed (correct) |
-| chip YAML broken, module and board cite it | 1 (`E_YAML`) | exit 1; board `computed: null` |
-| module with no `id` (schema broken), board cites `demo-module-1` | 4 (`E_SCHEMA`) | exit 1; `computed: null` |
-| unknown `variant.module` plus an unrelated id-less broken module (`brokenModules.has(null)`) | 4 (`E_SCHEMA` of the broken file) | exit 1 (the unknown-module error is suppressed, but the broken file's errors remain, so exit 1 is guaranteed) |
-| fixture cites an unknown board while another board file is broken | 12 | exit 1 |
-
-Proof sketch (reading `validate.ts:294-310, 339, 367-387`): an entity is "broken" only if `entity === undefined` (an E_YAML or E_SCHEMA diagnostic was pushed for that file; `shapeCheck` always pushes at least one issue) or if its id is in `duplicated` (E_DUPLICATE_ID pushed). A suppressed reference error therefore always coexists with an error, so exit 0 cannot be produced by suppression. Mutation B4 (suppression always on) is killed. Loader side: `E_FILE_EXTENSION` and `E_UNKNOWN_DIR` are errors; only a root-level YAML file and (CR4-R2) a root-level link are silent.
-
-### Loader and exit-code contract on odd input (item 2)
-
-| Input | Exit | Output |
-| --- | --- | --- |
-| zero-byte `chips/demo-mcu-1.yaml` | 1 | `E_SCHEMA ... (root): Invalid input: expected object, received null` |
-| UTF-8 BOM before an IC file | 0 | accepted |
-| CRLF line endings on all files | 0 | accepted; compile output byte-identical to LF |
-| 5 MB comment line / 5 MB string value | 0 / 1 | 1.8 s / 2.8 s; `E_SCHEMA Unrecognized key "zzz"` for the string case, no trace |
-| 5,000-level flow sequence, flow map, 3,000-level block map | 1 | `E_YAML ... Maximum call stack size exceeded at line N`, no trace |
-| 700-level nested value inside `fixtures/*.yaml expect.properties` (z.unknown) | 0 | accepted; 900 levels and above give `E_YAML` (the YAML parser's limit comes before any later recursion) |
-| no command / unknown option / `--root` without value / root is a file | 2 | usage text or `catalog: root "..." is not a directory` |
-| `--out` is an existing file | 2 | `error: EEXIST: file already exists, mkdir ...`, one line, no trace |
-| `compile` with errors | 1 | `refusing to emit output because validation failed`, nothing written |
-
-## Determinism (item 3)
-
-`stableStringify` sorts keys by code unit at every depth (integer-like keys included) and keeps array order; numbers use `JSON.stringify` (the same text on every V8: `1e+21`, `-0` prints `0`); no `Date.now`, `Math.random`, `localeCompare` or `toLocale*` remains in `packages/*/src` (grep shows only the definition in `order.ts`). The compile `version` is content-addressed and the date lives only in the manifest. Two runs from a deleted output folder (`rm -rf o1; compile`) and a run under `TZ=Asia/Tokyo LC_ALL=tr_TR.UTF-8` are byte identical (`diff -r` empty; version `96bc08372c1d` for the valid fixture, `SOURCE_DATE_EPOCH=1700000000` gives `date 2023-11-14`). Pad uniqueness messages that name "the first pad" follow JS key order (integer-like names first), which is deterministic but not file order: cosmetic.
-
-## Web app (item 6)
-
-- XSS/injection: every manifest field (`version`, `date`, `counts` keys and values) and the route path are rendered as React text; there is no `dangerouslySetInnerHTML`, no `href` built from data (`hrefFor` takes constants), no `eval`. The guard accepts only non-empty strings and non-negative integer counts. Not exploitable.
-- Fetch/abort: abort is rethrown both for `fetch()` and while reading the body (W8 killed); `useCatalogManifest` swallows the abort rejection on unmount; HTML-with-200 (Vite dev fallback) is `missing`; non-404 failures are `error`. Remaining: setting state after unmount is harmless in React 18.
-- Hash routes: `#`, `#/`, `#//`, `#/?x`, trailing slashes, `#main` (anchor), unknown paths; no `decodeURIComponent`, so malformed `%` cannot throw. Long hashes wrap (`overflow-wrap`, tested).
-- CSP string vs build output: identical to `csp.ts`; no inline script or style in the build; `img-src data:` covers the `data:,` favicon. Dev server has no CSP by design (React Refresh preamble); the plugin is `apply: 'build'` (W5 killed).
-- Three required web mutations: manifest guard (W1, W2 killed), route parsing (W3, W4 killed), csp plugin (W5, W6, W7 killed; W10 registration survives, CR9-R2).
-
-## Workflows (shell snippets only)
-
-`ci.yml` "Every uses is pinned" grep (`grep -nE '^\s*-?\s*uses:' ... | grep -vE 'uses:\s*[^@[:space:]]+@[0-9a-f]{40}(\s|$)'`) is correct and fails closed; `grep -qF "${PAGES_BASE}assets/" apps/web/dist/index.html` uses an `env:` value, not an interpolated expression; the `ci` gate job uses `jq -e 'length > 0 and all(.[]; .result == "success")'` with `NEEDS_JSON` in `env:` (no injection). Remote runs are deferred by the user and not judged.
+Counts: Critical 0, **Major 3**, Minor 8 (CR4-R3 to CR10-R3, CR12-R3), Info 2 (CR11-R3, CR13-R3).
 
 ## External claims checked
 
 | Claim | Source opened (URL · revision · section) | Result |
 | --- | --- | --- |
-| none: the review judged code behaviour against the repository's own contracts (`CLAUDE.md`, `PHASE-1.md`, fixtures README) and local reproduction; no hardware, standard or library claim was relied on | n/a | n/a |
+| Vendor datasheet URLs in the repo still pass the URL checks | `docs/research/evidence-seed.yaml`, `docs/PLAN.md`, `docs/research/*.md` (25 distinct URLs, tested for syntax only; no network) | all 25 accepted |
+| `\s` equals the whitespace set removed by `String.prototype.trim` | ECMAScript `WhiteSpace` + `LineTerminator` (reasoning, confirmed by the NBSP / tab / newline probes) | consistent |
 
 ## Not verified (and why)
 
-- Emitted JSON Schema for tuple types against a native draft 2020-12 validator: only ajv 6 is installed. I rewrote `prefixItems` to draft-07 tuples for the check (all 7 valid fixtures pass); a native 2020-12 check is not done and no dependency was added.
-- Real symlinks on Linux/macOS (junction behaviour on Windows was tested; semantics are the same for `Dirent`).
-- Browser behaviour (hash-router focus, layout at phone width).
-- Remote CI, deploy and branch protection: deferred by the user.
+- Remote GitHub gate items (Pages deploy, branch protection, remote CI run) — intentionally deferred by the user to the final release.
+- A real file symlink inside a kind directory — `EPERM` on this Windows account (the cli test is skipped here for the same reason); only directory junctions were exercised.
+- Behaviour on Linux/macOS file systems — only Windows 11 / NTFS was available; the case-insensitivity finding CR9-R3 was derived from the Windows run and from reading `lstatSync` semantics.
+- Datasheet content correctness — out of scope (hardware-fact-auditor).
 
 ## Summary
 
-All nine previous findings are fixed or accepted (CR7 and CR9 partial, both Minor); the checker's new code is sound: I could not construct an invalid catalog that exits 0 through reference suppression, prototype-named keys, pad-key edge cases, odd files or oversized input, and compile output is deterministic across locale and time zone. The tests are strong (86 of 107 mutants killed) but four safety-relevant mutants survive: board status ignoring module facts (CR1-R2), and unpinned entity-id format, strap-level enum and consumed-pad enum (CR2-R2). Both are missing tests for code that behaves correctly today, and each takes a few lines to fix. Per the phase-validation rule (a survived mutant on status computation or on hardware-critical schema constraints is Major), the gate fails until those tests exist.
-
-Counts: Critical 0, Major 2, Minor 10.
+Fix round 3 closed both Majors of the last round: all 21 previous survivors were re-run and 20 are killed (W9 is half closed: logic tested, `App.tsx` wiring not), the JSON Schema export now carries the reviewer and URL patterns, the `--root`, link and case-sensitivity hardening works as described, and the enum walker is proven not vacuous (9 of 9 mutations of it fail the suite). A fresh sweep of 139 new mutations found 22 survivors; three of them are real test gaps on safety-relevant behaviour where the current code is correct but nothing pins it: the board status over the chips of every variant (CR1-R3), the "bonded by the module of every variant" check (CR2-R3) and the object branch of the conflict `active` equality (CR3-R3). By the project's severity rule these are Major, so the verdict is FAIL; the smallest fix is three short tests (about 30 lines, no source change) listed in the findings, after which this review would pass: no source bug, no invalid catalog that exits 0 with a wrong hardware fact was found in the current code.
 
 VERDICT: FAIL
