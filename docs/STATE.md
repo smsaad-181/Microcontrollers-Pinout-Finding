@@ -20,8 +20,10 @@ Status values: NOT STARTED · IN PROGRESS · VALIDATING · FIXING (round n/3) ·
 
 ## Current task
 
-Phase 1 FIXING (round 1/3): all fixes done and re-checked by the orchestrator (typecheck, lint, format, 301 tests, 48/48 invalid fixtures rejected, valid + empty catalog exit 0).
-Next: re-run the three validators on the fixed code (waiting for the user's go).
+Phase 1 RE-VALIDATING after fix round 1 (of max 3), local only. One validator at a time:
+- **phase-validator** — running now: re-runs every gate item, reproduces every earlier finding (F1–F15, CR1–CR9) and probes the new code; overwrites `docs/validation/phase-1/phase-validator.md`.
+- code-reviewer — next (after user's go).
+- github-actions-expert — last.
 
 ## Task checklist
 
