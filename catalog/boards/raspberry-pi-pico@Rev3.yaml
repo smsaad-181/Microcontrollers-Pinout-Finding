@@ -1,4 +1,4 @@
-# Raspberry Pi Pico, board revision Rev3 (pico-ds-rel21#board-revision). Draft, single-source.
+# Raspberry Pi Pico, board revision Rev3 (pico-ds-rel21#board-revision). Reconciled with the blind audit (task 2a.4).
 # Header map transcribed from the pinout image (Figure 2) of the Pico datasheet release 21
 # (pico-ds-rel21#pinout-figure); positions are the official physical pin numbers 1-40 (Figure 4): 1-20 down the
 # left edge, 21-40 up the right edge (USB at the top). Board label GPn = RP2040 pad GPIOn.
@@ -54,7 +54,7 @@ connectors:
       - { kind: power, label: VBUS, position: 40, rail: VBUS }
     side: right
 id: raspberry-pi-pico
-logic_voltage: { evidence: [pico-ds-rel21#gpio-3v3], status: single-source, unit: V, value: 3.3 }
+logic_voltage: { evidence: [pico-ds-rel21#gpio-3v3, pico-ds-rel21#io-voltage-note], reviewers: [hardware-researcher, hardware-fact-auditor], status: verified, unit: V, value: 3.3 }
 name: Raspberry Pi Pico
 numbering: { primary: label }
 onboard:
@@ -65,14 +65,14 @@ onboard:
   - { effect: "Pulls the flash chip select QSPI_SS low through R11 1 kOhm; held at power-up it forces USB mass-storage (BOOTSEL) boot. Uses no GPIO0-29 pad.", evidence: [pico-ds-rel21#bootsel-button, pico-ds-rel21#tp6-bootsel, pico-ds-rel21#schematic-bootsel, rp2040-ds-3184e62#boot-cs-button], part: "BOOTSEL button SW1 (TP6)", uses_pad: [] }
   - { effect: "2 MB flash on the dedicated QSPI pins (QSPI_SS, QSPI_SCLK, QSPI_SD0-3); uses no GPIO0-29 pad.", evidence: [pico-ds-rel21#flash-part, pico-ds-rel21#schematic-flash, rp2040-ds-3184e62#qspi-bank], part: "Winbond W25Q16JV QSPI flash (U3)", uses_pad: [] }
 rails:
-  - max_current: { evidence: [pico-ds-rel21#3v3-max-load], note: "Recommended maximum external load on pin 36; the actual capability depends on RP2040 load and VSYS voltage.", status: single-source, unit: mA, value: 300 }
+  - max_current: { evidence: [pico-ds-rel21#3v3-max-load], note: "Recommended maximum external load on pin 36; the actual capability depends on RP2040 load and VSYS voltage.", reviewers: [hardware-researcher, hardware-fact-auditor], status: verified, unit: mA, value: 300 }
     name: "3V3"
     source: "RT6150B-33GQW buck-boost SMPS (U2), fed from VSYS"
-    voltage: { evidence: [pico-ds-rel21#3v3-desc, pico-ds-rel21#smps-part], status: single-source, unit: V, value: 3.3 }
+    voltage: { evidence: [pico-ds-rel21#3v3-desc, pico-ds-rel21#smps-part], reviewers: [hardware-researcher, hardware-fact-auditor], status: verified, unit: V, value: 3.3 }
   - max_current: { evidence: [], note: "No VBUS current rating in the Pico datasheet; it depends on the USB host or supply.", status: missing, unit: mA, value: null }
     name: VBUS
     source: "micro-USB connector VBUS (USB port pin 1)"
-    voltage: { evidence: [pico-ds-rel21#vbus-desc, pico-ds-rel21#operating-vbus], note: "Nominal 5 V, operating range 5 V +/- 10 %; 0 V when USB is not connected or not powered.", status: single-source, unit: V, value: 5 }
+    voltage: { evidence: [pico-ds-rel21#vbus-desc, pico-ds-rel21#operating-vbus], note: "Nominal 5 V, operating range 5 V +/- 10 %; 0 V when USB is not connected or not powered.", reviewers: [hardware-researcher, hardware-fact-auditor], status: verified, unit: V, value: 5 }
   - max_current: { evidence: [], note: "No VSYS current rating in the Pico datasheet; it depends on the source feeding VSYS.", status: missing, unit: mA, value: null }
     name: VSYS
     source: "VBUS through Schottky diode D1, or an external supply on pin 39"

@@ -9,5 +9,5 @@
 bonded_pads: [GPIO0, GPIO1, GPIO2, GPIO3, GPIO4, GPIO5, GPIO6, GPIO7, GPIO8, GPIO9, GPIO10, GPIO11, GPIO12, GPIO13, GPIO14, GPIO15, GPIO16, GPIO17, GPIO18, GPIO19, GPIO20, GPIO21, GPIO22, GPIO23, GPIO24, GPIO25, GPIO26, GPIO27, GPIO28, GPIO29]
 chip: rp2040
 consumed: {}
-flash_voltage: { evidence: [pico-ds-rel21#schematic-flash, pico-ds-rel21#flash-part], note: "W25Q16JVUXIQ VCC (pin 8) is on the 3V3 net in the Pico Rev3 schematic (Figure 19); read from the schematic image.", status: single-source, transcribed: true, unit: V, value: 3.3 }
+flash_voltage: { evidence: [pico-ds-rel21#schematic-flash, pico-ds-rel21#flash-part], note: "W25Q16JVUXIQ VCC (pin 8) is on the 3V3 net in the Pico Rev3 schematic (Figure 19); read from the schematic image.", reviewers: [hardware-researcher, hardware-fact-auditor], status: verified, transcribed: true, unit: V, value: 3.3 }
 id: raspberry-pi-pico-core

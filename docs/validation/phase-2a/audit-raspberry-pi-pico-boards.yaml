@@ -1,0 +1,2096 @@
+entities:
+- raspberry-pi-pico
+- raspberry-pi-pico-w
+auditor: hardware-fact-auditor
+date: '2026-10-22'
+documents:
+- id: pico-ds-rel21
+  sha256: 757ff485227493b9fcc0c2c96c4dea9de020e1d8b2b11e2aa4f9ee8b25aa89eb
+  verified: true
+  note: local sources/cache copy; pages are PDF page index, printed = pdf - 1
+- id: pico-w-ds-rel7
+  sha256: ba8649ba98437301b9f1621504569a27f1d2ba6111795b4df76783adb08de7c5
+  verified: true
+- id: rp2040-ds-3184e62
+  sha256: be56fbb75ba0ae9e26558a73c93ac3e75c2ad4e6878d3b6703de2a76d886ea8c
+  verified: true
+  note: only for cross-check of pad tolerance (pdf p.613-616)
+contaminated: []
+revision_as_printed:
+  raspberry-pi-pico: Rev3 (Raspberry Pi Pico Rev3 board; schematic Rev 3)
+  raspberry-pi-pico-w: Rev3 (Raspberry Pi Pico W Rev3 board; schematic Rev 3)
+disagreements:
+- topic: operating temp max
+  pico: 85 degC (pico-ds-rel21 pdf p.11)
+  pico_w: 70 degC (pico-w-ds-rel7 pdf p.12)
+- topic: unpowered-RP2040 voltage on GPIO0-25
+  pico: safe, no numeric limit (pdf p.20)
+  pico_w: safe up to 3.3 V (pdf p.14)
+- topic: SMPS part
+  pico: RT6150
+  pico_w: RT6154
+- topic: VBUS sense / SMPS PS / LED routing
+  pico: RP2040 GPIO24 / GPIO23 / GPIO25
+  pico_w: CYW43439 WL_GPIO2 / WL_GPIO1 / WL_GPIO0, no RP2040 pad
+- topic: pin 33 and 36 labels
+  note: 'Both docs: figure labels pin 36 3V3(OUT) and pin 33 GND(AGND row); text and schematic say 3V3 and AGND.'
+- topic: board doc vs chip doc
+  note: 'Board doc: ADC pads max IOVDD+~0.3 V. Chip doc (pdf p.615 Table 622) abs max for digital IO IOVDD+0.5 V; ADC input range 0..ADC_AVDD (Table 627). Chip pin table (pdf p.613-614) lists GPIO0-25 as
+    Digital IO (FT). Different numbers, not contradictory.'
+- topic: Pico W internal-function count
+  note: Pico W Section 1 says four RP2040 I/O used internally (carried from Pico) but lists GPIO23/24/25/29 as wireless and WL_GPIO0-2 as CYW43439 pins.
+facts:
+- board: raspberry-pi-pico
+  level: board
+  path: revision
+  value: Rev3
+  doc: pico-ds-rel21
+  locator: Figure 1 caption pdf p.4 (printed p.3); Fig 2-4 captions; schematic title block Rev 3
+  quote: The Raspberry Pi Pico Rev3 board.
+  transcribed: false
+  confidence: found
+- board: raspberry-pi-pico
+  level: board
+  path: connectors.0.id
+  value: J0 (40-pin main header, castellated/through-hole)
+  doc: pico-ds-rel21
+  locator: Schematic figure pdf p.26, symbol J0 CON_PICO_40W
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: Left edge pins 1-20 (top to bottom), right edge pins 21-40 (bottom to top) as drawn in the pinout figure.
+- board: raspberry-pi-pico
+  level: board
+  path: connectors.0.pins.0
+  value:
+    position: 1
+    label: GP0
+    kind: gpio
+    pad: GPIO0
+  doc: pico-ds-rel21
+  locator: Figure 2 pinout (pdf p.5, printed p.4); cross-checked with schematic J0 (pdf p.26)
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: Label as drawn in the datasheet pinout figure (GPn); the physical silkscreen is not separately verifiable from the PDF.
+- board: raspberry-pi-pico
+  level: board
+  path: connectors.0.pins.1
+  value:
+    position: 2
+    label: GP1
+    kind: gpio
+    pad: GPIO1
+  doc: pico-ds-rel21
+  locator: Figure 2 pinout (pdf p.5, printed p.4); cross-checked with schematic J0 (pdf p.26)
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: Label as drawn in the datasheet pinout figure (GPn); the physical silkscreen is not separately verifiable from the PDF.
+- board: raspberry-pi-pico
+  level: board
+  path: connectors.0.pins.2
+  value:
+    position: 3
+    label: GND
+    kind: ground
+  doc: pico-ds-rel21
+  locator: Figure 2 pinout (pdf p.5, printed p.4); cross-checked with schematic J0 (pdf p.26)
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: Label as drawn in the datasheet pinout figure (GPn); the physical silkscreen is not separately verifiable from the PDF.
+- board: raspberry-pi-pico
+  level: board
+  path: connectors.0.pins.3
+  value:
+    position: 4
+    label: GP2
+    kind: gpio
+    pad: GPIO2
+  doc: pico-ds-rel21
+  locator: Figure 2 pinout (pdf p.5, printed p.4); cross-checked with schematic J0 (pdf p.26)
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: Label as drawn in the datasheet pinout figure (GPn); the physical silkscreen is not separately verifiable from the PDF.
+- board: raspberry-pi-pico
+  level: board
+  path: connectors.0.pins.4
+  value:
+    position: 5
+    label: GP3
+    kind: gpio
+    pad: GPIO3
+  doc: pico-ds-rel21
+  locator: Figure 2 pinout (pdf p.5, printed p.4); cross-checked with schematic J0 (pdf p.26)
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: Label as drawn in the datasheet pinout figure (GPn); the physical silkscreen is not separately verifiable from the PDF.
+- board: raspberry-pi-pico
+  level: board
+  path: connectors.0.pins.5
+  value:
+    position: 6
+    label: GP4
+    kind: gpio
+    pad: GPIO4
+  doc: pico-ds-rel21
+  locator: Figure 2 pinout (pdf p.5, printed p.4); cross-checked with schematic J0 (pdf p.26)
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: Label as drawn in the datasheet pinout figure (GPn); the physical silkscreen is not separately verifiable from the PDF.
+- board: raspberry-pi-pico
+  level: board
+  path: connectors.0.pins.6
+  value:
+    position: 7
+    label: GP5
+    kind: gpio
+    pad: GPIO5
+  doc: pico-ds-rel21
+  locator: Figure 2 pinout (pdf p.5, printed p.4); cross-checked with schematic J0 (pdf p.26)
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: Label as drawn in the datasheet pinout figure (GPn); the physical silkscreen is not separately verifiable from the PDF.
+- board: raspberry-pi-pico
+  level: board
+  path: connectors.0.pins.7
+  value:
+    position: 8
+    label: GND
+    kind: ground
+  doc: pico-ds-rel21
+  locator: Figure 2 pinout (pdf p.5, printed p.4); cross-checked with schematic J0 (pdf p.26)
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: Label as drawn in the datasheet pinout figure (GPn); the physical silkscreen is not separately verifiable from the PDF.
+- board: raspberry-pi-pico
+  level: board
+  path: connectors.0.pins.8
+  value:
+    position: 9
+    label: GP6
+    kind: gpio
+    pad: GPIO6
+  doc: pico-ds-rel21
+  locator: Figure 2 pinout (pdf p.5, printed p.4); cross-checked with schematic J0 (pdf p.26)
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: Label as drawn in the datasheet pinout figure (GPn); the physical silkscreen is not separately verifiable from the PDF.
+- board: raspberry-pi-pico
+  level: board
+  path: connectors.0.pins.9
+  value:
+    position: 10
+    label: GP7
+    kind: gpio
+    pad: GPIO7
+  doc: pico-ds-rel21
+  locator: Figure 2 pinout (pdf p.5, printed p.4); cross-checked with schematic J0 (pdf p.26)
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: Label as drawn in the datasheet pinout figure (GPn); the physical silkscreen is not separately verifiable from the PDF.
+- board: raspberry-pi-pico
+  level: board
+  path: connectors.0.pins.10
+  value:
+    position: 11
+    label: GP8
+    kind: gpio
+    pad: GPIO8
+  doc: pico-ds-rel21
+  locator: Figure 2 pinout (pdf p.5, printed p.4); cross-checked with schematic J0 (pdf p.26)
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: Label as drawn in the datasheet pinout figure (GPn); the physical silkscreen is not separately verifiable from the PDF.
+- board: raspberry-pi-pico
+  level: board
+  path: connectors.0.pins.11
+  value:
+    position: 12
+    label: GP9
+    kind: gpio
+    pad: GPIO9
+  doc: pico-ds-rel21
+  locator: Figure 2 pinout (pdf p.5, printed p.4); cross-checked with schematic J0 (pdf p.26)
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: Label as drawn in the datasheet pinout figure (GPn); the physical silkscreen is not separately verifiable from the PDF.
+- board: raspberry-pi-pico
+  level: board
+  path: connectors.0.pins.12
+  value:
+    position: 13
+    label: GND
+    kind: ground
+  doc: pico-ds-rel21
+  locator: Figure 2 pinout (pdf p.5, printed p.4); cross-checked with schematic J0 (pdf p.26)
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: Label as drawn in the datasheet pinout figure (GPn); the physical silkscreen is not separately verifiable from the PDF.
+- board: raspberry-pi-pico
+  level: board
+  path: connectors.0.pins.13
+  value:
+    position: 14
+    label: GP10
+    kind: gpio
+    pad: GPIO10
+  doc: pico-ds-rel21
+  locator: Figure 2 pinout (pdf p.5, printed p.4); cross-checked with schematic J0 (pdf p.26)
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: Label as drawn in the datasheet pinout figure (GPn); the physical silkscreen is not separately verifiable from the PDF.
+- board: raspberry-pi-pico
+  level: board
+  path: connectors.0.pins.14
+  value:
+    position: 15
+    label: GP11
+    kind: gpio
+    pad: GPIO11
+  doc: pico-ds-rel21
+  locator: Figure 2 pinout (pdf p.5, printed p.4); cross-checked with schematic J0 (pdf p.26)
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: Label as drawn in the datasheet pinout figure (GPn); the physical silkscreen is not separately verifiable from the PDF.
+- board: raspberry-pi-pico
+  level: board
+  path: connectors.0.pins.15
+  value:
+    position: 16
+    label: GP12
+    kind: gpio
+    pad: GPIO12
+  doc: pico-ds-rel21
+  locator: Figure 2 pinout (pdf p.5, printed p.4); cross-checked with schematic J0 (pdf p.26)
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: Label as drawn in the datasheet pinout figure (GPn); the physical silkscreen is not separately verifiable from the PDF.
+- board: raspberry-pi-pico
+  level: board
+  path: connectors.0.pins.16
+  value:
+    position: 17
+    label: GP13
+    kind: gpio
+    pad: GPIO13
+  doc: pico-ds-rel21
+  locator: Figure 2 pinout (pdf p.5, printed p.4); cross-checked with schematic J0 (pdf p.26)
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: Label as drawn in the datasheet pinout figure (GPn); the physical silkscreen is not separately verifiable from the PDF.
+- board: raspberry-pi-pico
+  level: board
+  path: connectors.0.pins.17
+  value:
+    position: 18
+    label: GND
+    kind: ground
+  doc: pico-ds-rel21
+  locator: Figure 2 pinout (pdf p.5, printed p.4); cross-checked with schematic J0 (pdf p.26)
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: Label as drawn in the datasheet pinout figure (GPn); the physical silkscreen is not separately verifiable from the PDF.
+- board: raspberry-pi-pico
+  level: board
+  path: connectors.0.pins.18
+  value:
+    position: 19
+    label: GP14
+    kind: gpio
+    pad: GPIO14
+  doc: pico-ds-rel21
+  locator: Figure 2 pinout (pdf p.5, printed p.4); cross-checked with schematic J0 (pdf p.26)
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: Label as drawn in the datasheet pinout figure (GPn); the physical silkscreen is not separately verifiable from the PDF.
+- board: raspberry-pi-pico
+  level: board
+  path: connectors.0.pins.19
+  value:
+    position: 20
+    label: GP15
+    kind: gpio
+    pad: GPIO15
+  doc: pico-ds-rel21
+  locator: Figure 2 pinout (pdf p.5, printed p.4); cross-checked with schematic J0 (pdf p.26)
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: Label as drawn in the datasheet pinout figure (GPn); the physical silkscreen is not separately verifiable from the PDF.
+- board: raspberry-pi-pico
+  level: board
+  path: connectors.0.pins.20
+  value:
+    position: 21
+    label: GP16
+    kind: gpio
+    pad: GPIO16
+  doc: pico-ds-rel21
+  locator: Figure 2 pinout (pdf p.5, printed p.4); cross-checked with schematic J0 (pdf p.26)
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: Label as drawn in the datasheet pinout figure (GPn); the physical silkscreen is not separately verifiable from the PDF.
+- board: raspberry-pi-pico
+  level: board
+  path: connectors.0.pins.21
+  value:
+    position: 22
+    label: GP17
+    kind: gpio
+    pad: GPIO17
+  doc: pico-ds-rel21
+  locator: Figure 2 pinout (pdf p.5, printed p.4); cross-checked with schematic J0 (pdf p.26)
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: Label as drawn in the datasheet pinout figure (GPn); the physical silkscreen is not separately verifiable from the PDF.
+- board: raspberry-pi-pico
+  level: board
+  path: connectors.0.pins.22
+  value:
+    position: 23
+    label: GND
+    kind: ground
+  doc: pico-ds-rel21
+  locator: Figure 2 pinout (pdf p.5, printed p.4); cross-checked with schematic J0 (pdf p.26)
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: Label as drawn in the datasheet pinout figure (GPn); the physical silkscreen is not separately verifiable from the PDF.
+- board: raspberry-pi-pico
+  level: board
+  path: connectors.0.pins.23
+  value:
+    position: 24
+    label: GP18
+    kind: gpio
+    pad: GPIO18
+  doc: pico-ds-rel21
+  locator: Figure 2 pinout (pdf p.5, printed p.4); cross-checked with schematic J0 (pdf p.26)
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: Label as drawn in the datasheet pinout figure (GPn); the physical silkscreen is not separately verifiable from the PDF.
+- board: raspberry-pi-pico
+  level: board
+  path: connectors.0.pins.24
+  value:
+    position: 25
+    label: GP19
+    kind: gpio
+    pad: GPIO19
+  doc: pico-ds-rel21
+  locator: Figure 2 pinout (pdf p.5, printed p.4); cross-checked with schematic J0 (pdf p.26)
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: Label as drawn in the datasheet pinout figure (GPn); the physical silkscreen is not separately verifiable from the PDF.
+- board: raspberry-pi-pico
+  level: board
+  path: connectors.0.pins.25
+  value:
+    position: 26
+    label: GP20
+    kind: gpio
+    pad: GPIO20
+  doc: pico-ds-rel21
+  locator: Figure 2 pinout (pdf p.5, printed p.4); cross-checked with schematic J0 (pdf p.26)
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: Label as drawn in the datasheet pinout figure (GPn); the physical silkscreen is not separately verifiable from the PDF.
+- board: raspberry-pi-pico
+  level: board
+  path: connectors.0.pins.26
+  value:
+    position: 27
+    label: GP21
+    kind: gpio
+    pad: GPIO21
+  doc: pico-ds-rel21
+  locator: Figure 2 pinout (pdf p.5, printed p.4); cross-checked with schematic J0 (pdf p.26)
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: Label as drawn in the datasheet pinout figure (GPn); the physical silkscreen is not separately verifiable from the PDF.
+- board: raspberry-pi-pico
+  level: board
+  path: connectors.0.pins.27
+  value:
+    position: 28
+    label: GND
+    kind: ground
+  doc: pico-ds-rel21
+  locator: Figure 2 pinout (pdf p.5, printed p.4); cross-checked with schematic J0 (pdf p.26)
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: Label as drawn in the datasheet pinout figure (GPn); the physical silkscreen is not separately verifiable from the PDF.
+- board: raspberry-pi-pico
+  level: board
+  path: connectors.0.pins.28
+  value:
+    position: 29
+    label: GP22
+    kind: gpio
+    pad: GPIO22
+  doc: pico-ds-rel21
+  locator: Figure 2 pinout (pdf p.5, printed p.4); cross-checked with schematic J0 (pdf p.26)
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: Label as drawn in the datasheet pinout figure (GPn); the physical silkscreen is not separately verifiable from the PDF.
+- board: raspberry-pi-pico
+  level: board
+  path: connectors.0.pins.29
+  value:
+    position: 30
+    label: RUN
+    kind: reset
+    pad: RUN
+  doc: pico-ds-rel21
+  locator: Figure 2 pinout (pdf p.5, printed p.4); cross-checked with schematic J0 (pdf p.26)
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: Label as drawn in the datasheet pinout figure (GPn); the physical silkscreen is not separately verifiable from the PDF. RUN is the RP2040 RUN/enable pad, not a GPIO.
+- board: raspberry-pi-pico
+  level: board
+  path: connectors.0.pins.30
+  value:
+    position: 31
+    label: GP26
+    kind: gpio
+    pad: GPIO26
+  doc: pico-ds-rel21
+  locator: Figure 2 pinout (pdf p.5, printed p.4); cross-checked with schematic J0 (pdf p.26)
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: Label as drawn in the datasheet pinout figure (GPn); the physical silkscreen is not separately verifiable from the PDF.
+- board: raspberry-pi-pico
+  level: board
+  path: connectors.0.pins.31
+  value:
+    position: 32
+    label: GP27
+    kind: gpio
+    pad: GPIO27
+  doc: pico-ds-rel21
+  locator: Figure 2 pinout (pdf p.5, printed p.4); cross-checked with schematic J0 (pdf p.26)
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: Label as drawn in the datasheet pinout figure (GPn); the physical silkscreen is not separately verifiable from the PDF.
+- board: raspberry-pi-pico
+  level: board
+  path: connectors.0.pins.32
+  value:
+    position: 33
+    label: GND
+    kind: ground
+  doc: pico-ds-rel21
+  locator: Figure 2 pinout (pdf p.5, printed p.4); cross-checked with schematic J0 (pdf p.26)
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: 'Label as drawn in the datasheet pinout figure (GPn); the physical silkscreen is not separately verifiable from the PDF. Pin 33: figure labels it GND with an AGND function row; text calls it AGND
+    (analogue ground); schematic net AGND. kind=ground.'
+- board: raspberry-pi-pico
+  level: board
+  path: connectors.0.pins.33
+  value:
+    position: 34
+    label: GP28
+    kind: gpio
+    pad: GPIO28
+  doc: pico-ds-rel21
+  locator: Figure 2 pinout (pdf p.5, printed p.4); cross-checked with schematic J0 (pdf p.26)
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: Label as drawn in the datasheet pinout figure (GPn); the physical silkscreen is not separately verifiable from the PDF.
+- board: raspberry-pi-pico
+  level: board
+  path: connectors.0.pins.34
+  value:
+    position: 35
+    label: ADC_VREF
+    kind: analog-ref
+    rail: ADC_VREF
+  doc: pico-ds-rel21
+  locator: Figure 2 pinout (pdf p.5, printed p.4); cross-checked with schematic J0 (pdf p.26)
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: Label as drawn in the datasheet pinout figure (GPn); the physical silkscreen is not separately verifiable from the PDF.
+- board: raspberry-pi-pico
+  level: board
+  path: connectors.0.pins.35
+  value:
+    position: 36
+    label: 3V3(OUT)
+    kind: power
+    rail: 3V3
+  doc: pico-ds-rel21
+  locator: Figure 2 pinout (pdf p.5, printed p.4); cross-checked with schematic J0 (pdf p.26)
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: Label as drawn in the datasheet pinout figure (GPn); the physical silkscreen is not separately verifiable from the PDF. Pin 36 is labelled 3V3(OUT) in the figure and 3V3 in text and schematic.
+- board: raspberry-pi-pico
+  level: board
+  path: connectors.0.pins.36
+  value:
+    position: 37
+    label: 3V3_EN
+    kind: reset
+    rail: 3V3_EN
+  doc: pico-ds-rel21
+  locator: Figure 2 pinout (pdf p.5, printed p.4); cross-checked with schematic J0 (pdf p.26)
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: Label as drawn in the datasheet pinout figure (GPn); the physical silkscreen is not separately verifiable from the PDF. Pin 37 is the SMPS enable input, not an RP2040 pad.
+- board: raspberry-pi-pico
+  level: board
+  path: connectors.0.pins.37
+  value:
+    position: 38
+    label: GND
+    kind: ground
+  doc: pico-ds-rel21
+  locator: Figure 2 pinout (pdf p.5, printed p.4); cross-checked with schematic J0 (pdf p.26)
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: Label as drawn in the datasheet pinout figure (GPn); the physical silkscreen is not separately verifiable from the PDF.
+- board: raspberry-pi-pico
+  level: board
+  path: connectors.0.pins.38
+  value:
+    position: 39
+    label: VSYS
+    kind: power
+    rail: VSYS
+  doc: pico-ds-rel21
+  locator: Figure 2 pinout (pdf p.5, printed p.4); cross-checked with schematic J0 (pdf p.26)
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: Label as drawn in the datasheet pinout figure (GPn); the physical silkscreen is not separately verifiable from the PDF.
+- board: raspberry-pi-pico
+  level: board
+  path: connectors.0.pins.39
+  value:
+    position: 40
+    label: VBUS
+    kind: power
+    rail: VBUS
+  doc: pico-ds-rel21
+  locator: Figure 2 pinout (pdf p.5, printed p.4); cross-checked with schematic J0 (pdf p.26)
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: Label as drawn in the datasheet pinout figure (GPn); the physical silkscreen is not separately verifiable from the PDF.
+- board: raspberry-pi-pico
+  level: board
+  path: numbering
+  value:
+    primary: gpio
+    systems:
+    - GPIO number (figure label GPn = RP2040 GPIOn pad)
+    - physical pin 1-40 (Figure 4)
+    - function name (VBUS, VSYS, 3V3_EN, 3V3, ADC_VREF, AGND, RUN)
+  doc: pico-ds-rel21
+  locator: Figures 2 and 4 (pdf p.5 and p.8)
+  quote: The physical pin numbering is shown in Figure 4, for the pin allocation see Figure 2
+  transcribed: false
+  confidence: inferred
+  notes: Which system is primary is a catalogue design choice; the figure labels each pin GPn with the physical number beside it.
+- board: raspberry-pi-pico
+  level: board
+  path: logic_voltage
+  value: 3.3
+  unit: V
+  doc: pico-ds-rel21
+  locator: Section 1 pdf p.4
+  quote: NOTE Pico IO voltage is fixed at 3.3 V
+  transcribed: false
+  confidence: found
+- board: raspberry-pi-pico
+  level: board
+  path: logic_voltage
+  value: 3.3
+  unit: V
+  doc: pico-ds-rel21
+  locator: Section 4.2 pdf p.20
+  quote: is powered from the on-board 3.3 V rail and is therefore fixed at 3.3 V
+  transcribed: false
+  confidence: found
+  notes: Second locator for the same fact.
+- board: raspberry-pi-pico
+  level: board
+  path: logic_voltage_chip_range
+  value: 1.8-3.3
+  unit: V
+  doc: pico-ds-rel21
+  locator: Section 1 key features
+  quote: 1.8-3.3 V IO Voltage
+  transcribed: false
+  confidence: found
+  notes: RP2040 chip IO range quoted in the board document; the board itself is fixed at 3.3 V.
+- board: raspberry-pi-pico
+  level: board
+  path: rails.3V3.voltage
+  value: 3.3
+  unit: V
+  doc: pico-ds-rel21
+  locator: Section 4.4 pdf p.21
+  quote: which generates a fixed 3.3 V output for the RP2040 device and its
+  transcribed: false
+  confidence: found
+  notes: Header pin 36.
+- board: raspberry-pi-pico
+  level: board
+  path: rails.3V3.max_current
+  value: 300
+  unit: mA
+  doc: pico-ds-rel21
+  locator: Pin descriptions pdf p.9
+  quote: it is recommended to keep the load on this pin less than 300 mA
+  transcribed: false
+  confidence: found
+  notes: 'A recommendation, not an absolute maximum. Document: "maximum output current will depend on RP2040 load and VSYS voltage". No hard maximum stated.'
+- board: raspberry-pi-pico
+  level: board
+  path: rails.3V3.source
+  value: RT6150 buck-boost SMPS (U2)
+  doc: pico-ds-rel21
+  locator: Section 4.4 pdf p.21
+  quote: feeds the RT6150 buck-boost SMPS
+  transcribed: false
+  confidence: found
+  notes: Schematic figure (pdf p.26) shows RT6150B-33GQW.
+- board: raspberry-pi-pico
+  level: board
+  path: rails.VSYS.voltage
+  value:
+    min: 1.8
+    max: 5.5
+  unit: V
+  doc: pico-ds-rel21
+  locator: Section 2.3 Recommended operating conditions pdf p.11-12
+  quote: VSYS Min 1.8 V
+  transcribed: false
+  confidence: found
+  notes: 'VSYS Max 5.5 V in the same table. Pin description: "can vary in the allowed range 1.8 V to 5.5 V".'
+- board: raspberry-pi-pico
+  level: board
+  path: rails.VSYS.max_current
+  value: null
+  doc: pico-ds-rel21
+  locator: Section 2.3
+  quote: Note that VBUS and VSYS current will depend on use-case
+  transcribed: false
+  confidence: could-not-verify
+  notes: No VSYS maximum current figure stated.
+- board: raspberry-pi-pico
+  level: board
+  path: rails.VBUS.voltage
+  value: 5 V +/-10%
+  unit: V
+  doc: pico-ds-rel21
+  locator: Section 2.3 pdf p.11
+  quote: VBUS 5 V ± 10%.
+  transcribed: false
+  confidence: found
+  notes: Nominal 5 V from micro-USB pin 1, 0 V if absent. VBUS feeds VSYS through Schottky D1 (MBR120VLSFT1G in schematic).
+- board: raspberry-pi-pico
+  level: board
+  path: rails.VBUS.max_current
+  value: null
+  doc: pico-ds-rel21
+  locator: Section 2.3
+  quote: Note that VBUS and VSYS current will depend on use-case
+  transcribed: false
+  confidence: could-not-verify
+  notes: Not stated.
+- board: raspberry-pi-pico
+  level: board
+  path: rails.3V3_EN.behaviour
+  value: Pulled up to VSYS via 100 kohm; shorting pin 37 low disables the SMPS and de-powers the RP2040 (3V3 off)
+  doc: pico-ds-rel21
+  locator: Pin descriptions pdf p.9
+  quote: is pulled high (to VSYS) via a 100 kΩ resistor
+  transcribed: false
+  confidence: found
+- board: raspberry-pi-pico
+  level: board
+  path: rails.RUN.behaviour
+  value: RP2040 enable; internal pull-up ~50 kohm to 3.3 V; short low to reset
+  doc: pico-ds-rel21
+  locator: Pin descriptions pdf p.9
+  quote: has an internal (on-chip) pull-up resistor to 3.3 V of about ~50 kΩ.
+  transcribed: false
+  confidence: found
+- board: raspberry-pi-pico
+  level: board
+  path: rails.ADC_VREF.behaviour
+  value: ADC supply/reference generated by filtering 3.3 V (201 ohm into 2.2 uF); ADC qualified only at 3.0/3.3 V
+  doc: pico-ds-rel21
+  locator: Section 4.3 pdf p.20
+  quote: (201 Ω into 2.2 μF)
+  transcribed: false
+  confidence: found
+- board: raspberry-pi-pico
+  level: board
+  path: rails.AGND.behaviour
+  value: Analogue ground reference for GPIO26-29, separate plane ending at pin 33
+  doc: pico-ds-rel21
+  locator: Pin descriptions pdf p.9
+  quote: AGND is the ground reference for GPIO26-29
+  transcribed: false
+  confidence: found
+- board: raspberry-pi-pico
+  level: board
+  path: operating_conditions.temp_max
+  value: 85
+  unit: degC
+  doc: pico-ds-rel21
+  locator: Section 2.3 pdf p.11
+  quote: Operating Temp Max 85°C (including self-heating)
+  transcribed: false
+  confidence: found
+  notes: DISAGREEMENT between the two documents (85 vs 70 degC). Both state recommended max ambient 70 degC.
+- board: raspberry-pi-pico
+  level: board
+  path: power.second_source_via_schottky
+  value: ~2.3 V to 5.5 V (ORed through a Schottky diode)
+  unit: V
+  doc: pico-ds-rel21
+  locator: Section 4.5 pdf p.22
+  quote: any other fixed supply in the range ~2.3 V to 5.5 V
+  transcribed: false
+  confidence: found
+- board: raspberry-pi-pico
+  level: board
+  path: onboard.led
+  value:
+    part: User LED D2 (green) via R3 470R
+    uses_pad:
+    - GPIO25
+    effect: output; TP5 swings only 0 V to LED forward voltage
+  doc: pico-ds-rel21
+  locator: Section 2.1 pdf p.8; Fig 2 label LED (GP25); schematic pdf p.26
+  quote: GPIO25 OP Connected to user LED
+  transcribed: false
+  confidence: found
+- board: raspberry-pi-pico
+  level: board
+  path: onboard.smps_ps
+  value:
+    part: RT6150 PS pin
+    uses_pad:
+    - GPIO23
+    effect: low=PFM (default), high=PWM
+  doc: pico-ds-rel21
+  locator: Section 2.1 pdf p.8; Section 4.4 pdf p.21
+  quote: GPIO23 OP Controls the on-board SMPS Power Save pin
+  transcribed: false
+  confidence: found
+- board: raspberry-pi-pico
+  level: board
+  path: onboard.vbus_sense
+  value:
+    part: VBUS pull-down R10/R1
+    uses_pad:
+    - GPIO24
+    effect: input, high if VBUS present
+  doc: pico-ds-rel21
+  locator: Section 2.1 pdf p.8
+  quote: GPIO24 IP VBUS sense - high if VBUS is present, else low
+  transcribed: false
+  confidence: found
+  notes: 'Section 4.4: R10 and R1 pull VBUS down so it is 0 V if absent.'
+- board: raspberry-pi-pico
+  level: board
+  path: onboard.vsys_sense
+  value:
+    part: R5 200K / R6 100K divider (schematic), Q1 DMG1012T
+    uses_pad:
+    - GPIO29
+    effect: ADC3 measures VSYS/3
+  doc: pico-ds-rel21
+  locator: Section 2.1 pdf p.8; Section 4.4 pdf p.21
+  quote: GPIO29 IP Used in ADC mode (ADC3) to measure VSYS/3
+  transcribed: false
+  confidence: found
+  notes: Component values and Q1 FET (gate on 3V3, blocks ADC3 diode leakage when 3V3 is off) read from schematic figure pdf p.26 (transcribed).
+- board: raspberry-pi-pico
+  level: board
+  path: onboard.bootsel
+  value:
+    part: BOOTSEL button SW1 (TP6)
+    uses_pad:
+    - QSPI_SS
+    effect: low at power-up forces USB mass-storage boot; no GPIO used
+  doc: pico-ds-rel21
+  locator: Section 4.1 pdf p.20; schematic pdf p.26 "Disable Flash boot (forces USB boot)"
+  quote: hold the BOOTSEL button down during board power-up
+  transcribed: true
+  confidence: found
+  notes: QSPI_SS connection read from schematic figure (SW1 via R11 1K).
+- board: raspberry-pi-pico
+  level: board
+  path: onboard.flash
+  value:
+    part: Winbond W25Q16JV, 2 MB QSPI
+    uses_pad:
+    - QSPI_SS
+    - QSPI_SCLK
+    - QSPI_SD0
+    - QSPI_SD1
+    - QSPI_SD2
+    - QSPI_SD3
+    effect: boot flash
+  doc: pico-ds-rel21
+  locator: Section 1 pdf p.5; schematic pdf p.26
+  quote: flash (Winbond W25Q16JV)
+  transcribed: true
+  confidence: found
+  notes: QSPI pad names from schematic figure.
+- board: raspberry-pi-pico
+  level: board
+  path: onboard.crystal
+  value:
+    part: Abracon ABM8-272-T3 (12 MHz per schematic)
+    uses_pad:
+    - XIN
+    - XOUT
+    effect: clock
+  doc: pico-ds-rel21
+  locator: Section 1 pdf p.5; schematic
+  quote: crystal (Abracon
+  transcribed: true
+  confidence: found
+- board: raspberry-pi-pico
+  level: board
+  path: onboard.wireless
+  value: none
+  doc: pico-ds-rel21
+  locator: Section 1
+  quote: Raspberry Pi Pico is a microcontroller board based on the Raspberry Pi RP2040 microcontroller chip.
+  transcribed: false
+  confidence: inferred
+  notes: No wireless chip described.
+- board: raspberry-pi-pico
+  level: board
+  path: internal_gpio_not_on_header
+  value:
+  - GPIO23
+  - GPIO24
+  - GPIO25
+  - GPIO29
+  doc: pico-ds-rel21
+  locator: Section 2.1 pdf p.8; pinout figure shows only GPIO0-22, 26-28
+  quote: A few RP2040 GPIO pins are used for internal board functions
+  transcribed: false
+  confidence: found
+  notes: 23 SMPS PS, 24 VBUS sense, 25 LED, 29 VSYS/3 ADC3.
+- board: raspberry-pi-pico
+  level: board
+  path: header_gpio_exposed
+  value: GPIO0-GPIO22 and GPIO26-GPIO28 (26 GPIO); GPIO26-28 are ADC0-2
+  doc: pico-ds-rel21
+  locator: Section 4.2 pdf p.20
+  quote: exposes 26 of the 30 possible RP2040 GPIO pins
+  transcribed: false
+  confidence: found
+  notes: 'List derived from the pinout figure; text: GPIO0 to GPIO22 digital only, GPIO 26-28 digital or ADC.'
+- board: raspberry-pi-pico
+  level: board
+  path: restrictions.adc_pads_input_max
+  value: IOVDD + ~0.3 V; if RP2040 unpowered a voltage on the pad leaks via reverse diode into the 3V3 rail
+  unit: V
+  conditions:
+    pads: GPIO26, GPIO27, GPIO28 on header (GPIO29 internal)
+  doc: pico-ds-rel21
+  locator: Section 4.2 pdf p.20
+  quote: the input voltage must not exceed IOVDD plus about 300 mV
+  transcribed: false
+  confidence: found
+  notes: Doc says ADC-capable GPIO26-29. Consistent with chip doc, where GPIO26-29 are not fault-tolerant (GPIO0-25 are Digital IO (FT)).
+- board: raspberry-pi-pico
+  level: board
+  path: restrictions.digital_pads_unpowered
+  value: voltage can safely be applied to GPIO0-25 when RP2040 unpowered
+  conditions:
+    pads: GPIO0-GPIO22 on header (GPIO23-25 internal)
+  doc: pico-ds-rel21
+  locator: Section 4.2 pdf p.20
+  quote: therefore voltage can safely be applied to these pins when RP2040 is unpowered.
+  transcribed: false
+  confidence: found
+  notes: 'Pico gives no numeric limit, Pico W says up to 3.3 V. Chip doc: FT pins pass very little current below 3.63 V when IOVDD is 0 V.'
+- board: raspberry-pi-pico
+  level: board
+  path: restrictions.test_points
+  value: TP4 (SMPS PS) not to be used externally; TP5 (LED) not recommended
+  doc: pico-ds-rel21
+  locator: Section 2.1 pdf p.9
+  quote: TP4 is not intended to be used externally
+  transcribed: false
+  confidence: found
+- board: raspberry-pi-pico
+  level: board
+  path: restrictions.header_gpio_shared_with_sense
+  value: []
+  doc: pico-ds-rel21
+  locator: Section 2.1 pdf p.8
+  quote: A few RP2040 GPIO pins are used for internal board functions
+  transcribed: false
+  confidence: inferred
+  notes: All internal functions use GPIO23/24/25/29, none on the header; so no header GPIO is limited by a sense circuit. Inferred from figure and list.
+- board: raspberry-pi-pico
+  level: module
+  path: flash_voltage
+  value: 3.3
+  unit: V
+  doc: pico-ds-rel21
+  locator: 'Schematic figure pdf p.26: U3 W25Q16JVUXIQ VCC (pin 8) on net 3V3'
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: 'Text never states flash supply explicitly; read from schematic: U3 VCC tied to 3V3 net with C18/C15 decoupling. Net-label inference.'
+- board: raspberry-pi-pico
+  level: module
+  path: consumed.GPIO23
+  value: SMPS PS control
+  doc: pico-ds-rel21
+  locator: Section 2.1 pdf p.8
+  quote: GPIO23
+  transcribed: false
+  confidence: found
+  notes: Row of the internal-functions list; row text quoted in board-level onboard facts.
+- board: raspberry-pi-pico
+  level: module
+  path: consumed.GPIO24
+  value: VBUS sense input
+  doc: pico-ds-rel21
+  locator: Section 2.1 pdf p.8
+  quote: GPIO24
+  transcribed: false
+  confidence: found
+  notes: Row of the internal-functions list; row text quoted in board-level onboard facts.
+- board: raspberry-pi-pico
+  level: module
+  path: consumed.GPIO25
+  value: user LED
+  doc: pico-ds-rel21
+  locator: Section 2.1 pdf p.8
+  quote: GPIO25
+  transcribed: false
+  confidence: found
+  notes: Row of the internal-functions list; row text quoted in board-level onboard facts.
+- board: raspberry-pi-pico
+  level: module
+  path: consumed.GPIO29
+  value: ADC3 VSYS/3 sense
+  doc: pico-ds-rel21
+  locator: Section 2.1 pdf p.8
+  quote: GPIO29
+  transcribed: false
+  confidence: found
+  notes: Row of the internal-functions list; row text quoted in board-level onboard facts.
+- board: raspberry-pi-pico
+  level: module
+  path: consumed.QSPI
+  value: QSPI_SS, QSPI_SCLK, QSPI_SD0-3 used by the on-board flash (SS also BOOTSEL)
+  doc: pico-ds-rel21
+  locator: Schematic figure pdf p.26
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: Dedicated QSPI pads, not user GPIO.
+- board: raspberry-pi-pico
+  level: module
+  path: consumed.XIN_XOUT_USB_SWD
+  value: XIN/XOUT crystal; USB_DP/USB_DM micro-USB; SWCLK/SWDIO debug header
+  doc: pico-ds-rel21
+  locator: Schematic figure pdf p.26
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: Dedicated non-GPIO pads.
+- board: raspberry-pi-pico
+  level: module
+  path: header_pad_limited_by_board
+  value: No header GPIO limited by sense circuits; GPIO26-28 carry the ADC reverse-diode restriction
+  doc: pico-ds-rel21
+  locator: Section 4.2
+  quote: must not exceed IOVDD plus about 300 mV
+  transcribed: false
+  confidence: inferred
+- board: raspberry-pi-pico
+  level: module
+  path: flash_part
+  value: Winbond W25Q16JV 2 MB
+  doc: pico-ds-rel21
+  locator: Section 1 pdf p.5
+  quote: flash (Winbond W25Q16JV)
+  transcribed: false
+  confidence: found
+- board: raspberry-pi-pico-w
+  level: board
+  path: revision
+  value: Rev3
+  doc: pico-w-ds-rel7
+  locator: Figure 1 caption pdf p.4 (printed p.3); Fig 2-4 captions; schematic title block Rev 3
+  quote: The Raspberry Pi Pico W Rev3 board.
+  transcribed: false
+  confidence: found
+- board: raspberry-pi-pico-w
+  level: board
+  path: connectors.0.id
+  value: J0 (40-pin main header, castellated/through-hole)
+  doc: pico-w-ds-rel7
+  locator: Schematic figure pdf p.21, symbol J0 CON_PICO_40W
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: Left edge pins 1-20 (top to bottom), right edge pins 21-40 (bottom to top) as drawn in the pinout figure.
+- board: raspberry-pi-pico-w
+  level: board
+  path: connectors.0.pins.0
+  value:
+    position: 1
+    label: GP0
+    kind: gpio
+    pad: GPIO0
+  doc: pico-w-ds-rel7
+  locator: Figure 2 pinout (pdf p.5, printed p.4); cross-checked with schematic J0 (pdf p.21)
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: Label as drawn in the datasheet pinout figure (GPn); the physical silkscreen is not separately verifiable from the PDF.
+- board: raspberry-pi-pico-w
+  level: board
+  path: connectors.0.pins.1
+  value:
+    position: 2
+    label: GP1
+    kind: gpio
+    pad: GPIO1
+  doc: pico-w-ds-rel7
+  locator: Figure 2 pinout (pdf p.5, printed p.4); cross-checked with schematic J0 (pdf p.21)
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: Label as drawn in the datasheet pinout figure (GPn); the physical silkscreen is not separately verifiable from the PDF.
+- board: raspberry-pi-pico-w
+  level: board
+  path: connectors.0.pins.2
+  value:
+    position: 3
+    label: GND
+    kind: ground
+  doc: pico-w-ds-rel7
+  locator: Figure 2 pinout (pdf p.5, printed p.4); cross-checked with schematic J0 (pdf p.21)
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: Label as drawn in the datasheet pinout figure (GPn); the physical silkscreen is not separately verifiable from the PDF.
+- board: raspberry-pi-pico-w
+  level: board
+  path: connectors.0.pins.3
+  value:
+    position: 4
+    label: GP2
+    kind: gpio
+    pad: GPIO2
+  doc: pico-w-ds-rel7
+  locator: Figure 2 pinout (pdf p.5, printed p.4); cross-checked with schematic J0 (pdf p.21)
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: Label as drawn in the datasheet pinout figure (GPn); the physical silkscreen is not separately verifiable from the PDF.
+- board: raspberry-pi-pico-w
+  level: board
+  path: connectors.0.pins.4
+  value:
+    position: 5
+    label: GP3
+    kind: gpio
+    pad: GPIO3
+  doc: pico-w-ds-rel7
+  locator: Figure 2 pinout (pdf p.5, printed p.4); cross-checked with schematic J0 (pdf p.21)
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: Label as drawn in the datasheet pinout figure (GPn); the physical silkscreen is not separately verifiable from the PDF.
+- board: raspberry-pi-pico-w
+  level: board
+  path: connectors.0.pins.5
+  value:
+    position: 6
+    label: GP4
+    kind: gpio
+    pad: GPIO4
+  doc: pico-w-ds-rel7
+  locator: Figure 2 pinout (pdf p.5, printed p.4); cross-checked with schematic J0 (pdf p.21)
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: Label as drawn in the datasheet pinout figure (GPn); the physical silkscreen is not separately verifiable from the PDF.
+- board: raspberry-pi-pico-w
+  level: board
+  path: connectors.0.pins.6
+  value:
+    position: 7
+    label: GP5
+    kind: gpio
+    pad: GPIO5
+  doc: pico-w-ds-rel7
+  locator: Figure 2 pinout (pdf p.5, printed p.4); cross-checked with schematic J0 (pdf p.21)
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: Label as drawn in the datasheet pinout figure (GPn); the physical silkscreen is not separately verifiable from the PDF.
+- board: raspberry-pi-pico-w
+  level: board
+  path: connectors.0.pins.7
+  value:
+    position: 8
+    label: GND
+    kind: ground
+  doc: pico-w-ds-rel7
+  locator: Figure 2 pinout (pdf p.5, printed p.4); cross-checked with schematic J0 (pdf p.21)
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: Label as drawn in the datasheet pinout figure (GPn); the physical silkscreen is not separately verifiable from the PDF.
+- board: raspberry-pi-pico-w
+  level: board
+  path: connectors.0.pins.8
+  value:
+    position: 9
+    label: GP6
+    kind: gpio
+    pad: GPIO6
+  doc: pico-w-ds-rel7
+  locator: Figure 2 pinout (pdf p.5, printed p.4); cross-checked with schematic J0 (pdf p.21)
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: Label as drawn in the datasheet pinout figure (GPn); the physical silkscreen is not separately verifiable from the PDF.
+- board: raspberry-pi-pico-w
+  level: board
+  path: connectors.0.pins.9
+  value:
+    position: 10
+    label: GP7
+    kind: gpio
+    pad: GPIO7
+  doc: pico-w-ds-rel7
+  locator: Figure 2 pinout (pdf p.5, printed p.4); cross-checked with schematic J0 (pdf p.21)
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: Label as drawn in the datasheet pinout figure (GPn); the physical silkscreen is not separately verifiable from the PDF.
+- board: raspberry-pi-pico-w
+  level: board
+  path: connectors.0.pins.10
+  value:
+    position: 11
+    label: GP8
+    kind: gpio
+    pad: GPIO8
+  doc: pico-w-ds-rel7
+  locator: Figure 2 pinout (pdf p.5, printed p.4); cross-checked with schematic J0 (pdf p.21)
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: Label as drawn in the datasheet pinout figure (GPn); the physical silkscreen is not separately verifiable from the PDF.
+- board: raspberry-pi-pico-w
+  level: board
+  path: connectors.0.pins.11
+  value:
+    position: 12
+    label: GP9
+    kind: gpio
+    pad: GPIO9
+  doc: pico-w-ds-rel7
+  locator: Figure 2 pinout (pdf p.5, printed p.4); cross-checked with schematic J0 (pdf p.21)
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: Label as drawn in the datasheet pinout figure (GPn); the physical silkscreen is not separately verifiable from the PDF.
+- board: raspberry-pi-pico-w
+  level: board
+  path: connectors.0.pins.12
+  value:
+    position: 13
+    label: GND
+    kind: ground
+  doc: pico-w-ds-rel7
+  locator: Figure 2 pinout (pdf p.5, printed p.4); cross-checked with schematic J0 (pdf p.21)
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: Label as drawn in the datasheet pinout figure (GPn); the physical silkscreen is not separately verifiable from the PDF.
+- board: raspberry-pi-pico-w
+  level: board
+  path: connectors.0.pins.13
+  value:
+    position: 14
+    label: GP10
+    kind: gpio
+    pad: GPIO10
+  doc: pico-w-ds-rel7
+  locator: Figure 2 pinout (pdf p.5, printed p.4); cross-checked with schematic J0 (pdf p.21)
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: Label as drawn in the datasheet pinout figure (GPn); the physical silkscreen is not separately verifiable from the PDF.
+- board: raspberry-pi-pico-w
+  level: board
+  path: connectors.0.pins.14
+  value:
+    position: 15
+    label: GP11
+    kind: gpio
+    pad: GPIO11
+  doc: pico-w-ds-rel7
+  locator: Figure 2 pinout (pdf p.5, printed p.4); cross-checked with schematic J0 (pdf p.21)
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: Label as drawn in the datasheet pinout figure (GPn); the physical silkscreen is not separately verifiable from the PDF.
+- board: raspberry-pi-pico-w
+  level: board
+  path: connectors.0.pins.15
+  value:
+    position: 16
+    label: GP12
+    kind: gpio
+    pad: GPIO12
+  doc: pico-w-ds-rel7
+  locator: Figure 2 pinout (pdf p.5, printed p.4); cross-checked with schematic J0 (pdf p.21)
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: Label as drawn in the datasheet pinout figure (GPn); the physical silkscreen is not separately verifiable from the PDF.
+- board: raspberry-pi-pico-w
+  level: board
+  path: connectors.0.pins.16
+  value:
+    position: 17
+    label: GP13
+    kind: gpio
+    pad: GPIO13
+  doc: pico-w-ds-rel7
+  locator: Figure 2 pinout (pdf p.5, printed p.4); cross-checked with schematic J0 (pdf p.21)
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: Label as drawn in the datasheet pinout figure (GPn); the physical silkscreen is not separately verifiable from the PDF.
+- board: raspberry-pi-pico-w
+  level: board
+  path: connectors.0.pins.17
+  value:
+    position: 18
+    label: GND
+    kind: ground
+  doc: pico-w-ds-rel7
+  locator: Figure 2 pinout (pdf p.5, printed p.4); cross-checked with schematic J0 (pdf p.21)
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: Label as drawn in the datasheet pinout figure (GPn); the physical silkscreen is not separately verifiable from the PDF.
+- board: raspberry-pi-pico-w
+  level: board
+  path: connectors.0.pins.18
+  value:
+    position: 19
+    label: GP14
+    kind: gpio
+    pad: GPIO14
+  doc: pico-w-ds-rel7
+  locator: Figure 2 pinout (pdf p.5, printed p.4); cross-checked with schematic J0 (pdf p.21)
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: Label as drawn in the datasheet pinout figure (GPn); the physical silkscreen is not separately verifiable from the PDF.
+- board: raspberry-pi-pico-w
+  level: board
+  path: connectors.0.pins.19
+  value:
+    position: 20
+    label: GP15
+    kind: gpio
+    pad: GPIO15
+  doc: pico-w-ds-rel7
+  locator: Figure 2 pinout (pdf p.5, printed p.4); cross-checked with schematic J0 (pdf p.21)
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: Label as drawn in the datasheet pinout figure (GPn); the physical silkscreen is not separately verifiable from the PDF.
+- board: raspberry-pi-pico-w
+  level: board
+  path: connectors.0.pins.20
+  value:
+    position: 21
+    label: GP16
+    kind: gpio
+    pad: GPIO16
+  doc: pico-w-ds-rel7
+  locator: Figure 2 pinout (pdf p.5, printed p.4); cross-checked with schematic J0 (pdf p.21)
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: Label as drawn in the datasheet pinout figure (GPn); the physical silkscreen is not separately verifiable from the PDF.
+- board: raspberry-pi-pico-w
+  level: board
+  path: connectors.0.pins.21
+  value:
+    position: 22
+    label: GP17
+    kind: gpio
+    pad: GPIO17
+  doc: pico-w-ds-rel7
+  locator: Figure 2 pinout (pdf p.5, printed p.4); cross-checked with schematic J0 (pdf p.21)
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: Label as drawn in the datasheet pinout figure (GPn); the physical silkscreen is not separately verifiable from the PDF.
+- board: raspberry-pi-pico-w
+  level: board
+  path: connectors.0.pins.22
+  value:
+    position: 23
+    label: GND
+    kind: ground
+  doc: pico-w-ds-rel7
+  locator: Figure 2 pinout (pdf p.5, printed p.4); cross-checked with schematic J0 (pdf p.21)
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: Label as drawn in the datasheet pinout figure (GPn); the physical silkscreen is not separately verifiable from the PDF.
+- board: raspberry-pi-pico-w
+  level: board
+  path: connectors.0.pins.23
+  value:
+    position: 24
+    label: GP18
+    kind: gpio
+    pad: GPIO18
+  doc: pico-w-ds-rel7
+  locator: Figure 2 pinout (pdf p.5, printed p.4); cross-checked with schematic J0 (pdf p.21)
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: Label as drawn in the datasheet pinout figure (GPn); the physical silkscreen is not separately verifiable from the PDF.
+- board: raspberry-pi-pico-w
+  level: board
+  path: connectors.0.pins.24
+  value:
+    position: 25
+    label: GP19
+    kind: gpio
+    pad: GPIO19
+  doc: pico-w-ds-rel7
+  locator: Figure 2 pinout (pdf p.5, printed p.4); cross-checked with schematic J0 (pdf p.21)
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: Label as drawn in the datasheet pinout figure (GPn); the physical silkscreen is not separately verifiable from the PDF.
+- board: raspberry-pi-pico-w
+  level: board
+  path: connectors.0.pins.25
+  value:
+    position: 26
+    label: GP20
+    kind: gpio
+    pad: GPIO20
+  doc: pico-w-ds-rel7
+  locator: Figure 2 pinout (pdf p.5, printed p.4); cross-checked with schematic J0 (pdf p.21)
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: Label as drawn in the datasheet pinout figure (GPn); the physical silkscreen is not separately verifiable from the PDF.
+- board: raspberry-pi-pico-w
+  level: board
+  path: connectors.0.pins.26
+  value:
+    position: 27
+    label: GP21
+    kind: gpio
+    pad: GPIO21
+  doc: pico-w-ds-rel7
+  locator: Figure 2 pinout (pdf p.5, printed p.4); cross-checked with schematic J0 (pdf p.21)
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: Label as drawn in the datasheet pinout figure (GPn); the physical silkscreen is not separately verifiable from the PDF.
+- board: raspberry-pi-pico-w
+  level: board
+  path: connectors.0.pins.27
+  value:
+    position: 28
+    label: GND
+    kind: ground
+  doc: pico-w-ds-rel7
+  locator: Figure 2 pinout (pdf p.5, printed p.4); cross-checked with schematic J0 (pdf p.21)
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: Label as drawn in the datasheet pinout figure (GPn); the physical silkscreen is not separately verifiable from the PDF.
+- board: raspberry-pi-pico-w
+  level: board
+  path: connectors.0.pins.28
+  value:
+    position: 29
+    label: GP22
+    kind: gpio
+    pad: GPIO22
+  doc: pico-w-ds-rel7
+  locator: Figure 2 pinout (pdf p.5, printed p.4); cross-checked with schematic J0 (pdf p.21)
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: Label as drawn in the datasheet pinout figure (GPn); the physical silkscreen is not separately verifiable from the PDF.
+- board: raspberry-pi-pico-w
+  level: board
+  path: connectors.0.pins.29
+  value:
+    position: 30
+    label: RUN
+    kind: reset
+    pad: RUN
+  doc: pico-w-ds-rel7
+  locator: Figure 2 pinout (pdf p.5, printed p.4); cross-checked with schematic J0 (pdf p.21)
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: Label as drawn in the datasheet pinout figure (GPn); the physical silkscreen is not separately verifiable from the PDF. RUN is the RP2040 RUN/enable pad, not a GPIO.
+- board: raspberry-pi-pico-w
+  level: board
+  path: connectors.0.pins.30
+  value:
+    position: 31
+    label: GP26
+    kind: gpio
+    pad: GPIO26
+  doc: pico-w-ds-rel7
+  locator: Figure 2 pinout (pdf p.5, printed p.4); cross-checked with schematic J0 (pdf p.21)
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: Label as drawn in the datasheet pinout figure (GPn); the physical silkscreen is not separately verifiable from the PDF.
+- board: raspberry-pi-pico-w
+  level: board
+  path: connectors.0.pins.31
+  value:
+    position: 32
+    label: GP27
+    kind: gpio
+    pad: GPIO27
+  doc: pico-w-ds-rel7
+  locator: Figure 2 pinout (pdf p.5, printed p.4); cross-checked with schematic J0 (pdf p.21)
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: Label as drawn in the datasheet pinout figure (GPn); the physical silkscreen is not separately verifiable from the PDF.
+- board: raspberry-pi-pico-w
+  level: board
+  path: connectors.0.pins.32
+  value:
+    position: 33
+    label: GND
+    kind: ground
+  doc: pico-w-ds-rel7
+  locator: Figure 2 pinout (pdf p.5, printed p.4); cross-checked with schematic J0 (pdf p.21)
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: 'Label as drawn in the datasheet pinout figure (GPn); the physical silkscreen is not separately verifiable from the PDF. Pin 33: figure labels it GND with an AGND function row; text calls it AGND
+    (analogue ground); schematic net AGND. kind=ground.'
+- board: raspberry-pi-pico-w
+  level: board
+  path: connectors.0.pins.33
+  value:
+    position: 34
+    label: GP28
+    kind: gpio
+    pad: GPIO28
+  doc: pico-w-ds-rel7
+  locator: Figure 2 pinout (pdf p.5, printed p.4); cross-checked with schematic J0 (pdf p.21)
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: Label as drawn in the datasheet pinout figure (GPn); the physical silkscreen is not separately verifiable from the PDF.
+- board: raspberry-pi-pico-w
+  level: board
+  path: connectors.0.pins.34
+  value:
+    position: 35
+    label: ADC_VREF
+    kind: analog-ref
+    rail: ADC_VREF
+  doc: pico-w-ds-rel7
+  locator: Figure 2 pinout (pdf p.5, printed p.4); cross-checked with schematic J0 (pdf p.21)
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: Label as drawn in the datasheet pinout figure (GPn); the physical silkscreen is not separately verifiable from the PDF.
+- board: raspberry-pi-pico-w
+  level: board
+  path: connectors.0.pins.35
+  value:
+    position: 36
+    label: 3V3(OUT)
+    kind: power
+    rail: 3V3
+  doc: pico-w-ds-rel7
+  locator: Figure 2 pinout (pdf p.5, printed p.4); cross-checked with schematic J0 (pdf p.21)
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: Label as drawn in the datasheet pinout figure (GPn); the physical silkscreen is not separately verifiable from the PDF. Pin 36 is labelled 3V3(OUT) in the figure and 3V3 in text and schematic.
+- board: raspberry-pi-pico-w
+  level: board
+  path: connectors.0.pins.36
+  value:
+    position: 37
+    label: 3V3_EN
+    kind: reset
+    rail: 3V3_EN
+  doc: pico-w-ds-rel7
+  locator: Figure 2 pinout (pdf p.5, printed p.4); cross-checked with schematic J0 (pdf p.21)
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: Label as drawn in the datasheet pinout figure (GPn); the physical silkscreen is not separately verifiable from the PDF. Pin 37 is the SMPS enable input, not an RP2040 pad.
+- board: raspberry-pi-pico-w
+  level: board
+  path: connectors.0.pins.37
+  value:
+    position: 38
+    label: GND
+    kind: ground
+  doc: pico-w-ds-rel7
+  locator: Figure 2 pinout (pdf p.5, printed p.4); cross-checked with schematic J0 (pdf p.21)
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: Label as drawn in the datasheet pinout figure (GPn); the physical silkscreen is not separately verifiable from the PDF.
+- board: raspberry-pi-pico-w
+  level: board
+  path: connectors.0.pins.38
+  value:
+    position: 39
+    label: VSYS
+    kind: power
+    rail: VSYS
+  doc: pico-w-ds-rel7
+  locator: Figure 2 pinout (pdf p.5, printed p.4); cross-checked with schematic J0 (pdf p.21)
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: Label as drawn in the datasheet pinout figure (GPn); the physical silkscreen is not separately verifiable from the PDF.
+- board: raspberry-pi-pico-w
+  level: board
+  path: connectors.0.pins.39
+  value:
+    position: 40
+    label: VBUS
+    kind: power
+    rail: VBUS
+  doc: pico-w-ds-rel7
+  locator: Figure 2 pinout (pdf p.5, printed p.4); cross-checked with schematic J0 (pdf p.21)
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: Label as drawn in the datasheet pinout figure (GPn); the physical silkscreen is not separately verifiable from the PDF.
+- board: raspberry-pi-pico-w
+  level: board
+  path: numbering
+  value:
+    primary: gpio
+    systems:
+    - GPIO number (figure label GPn = RP2040 GPIOn pad)
+    - physical pin 1-40 (Figure 4)
+    - function name (VBUS, VSYS, 3V3_EN, 3V3, ADC_VREF, AGND, RUN)
+  doc: pico-w-ds-rel7
+  locator: Figures 2 and 4 (pdf p.5 and p.8)
+  quote: The physical pin numbering is shown in Figure 4. For pin allocation see Figure 2
+  transcribed: false
+  confidence: inferred
+  notes: Which system is primary is a catalogue design choice; the figure labels each pin GPn with the physical number beside it.
+- board: raspberry-pi-pico-w
+  level: board
+  path: logic_voltage
+  value: 3.3
+  unit: V
+  doc: pico-w-ds-rel7
+  locator: Section 1 Note pdf p.5
+  quote: Raspberry Pi Pico W I/O voltage is fixed at 3.3 V
+  transcribed: false
+  confidence: found
+- board: raspberry-pi-pico-w
+  level: board
+  path: logic_voltage
+  value: 3.3
+  unit: V
+  doc: pico-w-ds-rel7
+  locator: Section 3.2 pdf p.14
+  quote: is powered from the on-board 3.3 V rail, and is fixed at 3.3 V
+  transcribed: false
+  confidence: found
+  notes: Second locator for the same fact.
+- board: raspberry-pi-pico-w
+  level: board
+  path: logic_voltage_chip_range
+  value: 1.8-3.3
+  unit: V
+  doc: pico-w-ds-rel7
+  locator: Section 1 key features
+  quote: 1.8-3.3 V I/O voltage
+  transcribed: false
+  confidence: found
+  notes: RP2040 chip IO range quoted in the board document; the board itself is fixed at 3.3 V.
+- board: raspberry-pi-pico-w
+  level: board
+  path: rails.3V3.voltage
+  value: 3.3
+  unit: V
+  doc: pico-w-ds-rel7
+  locator: Section 3.4 pdf p.15
+  quote: which generates a fixed 3.3 V output for the RP2040 device and its
+  transcribed: false
+  confidence: found
+  notes: Header pin 36.
+- board: raspberry-pi-pico-w
+  level: board
+  path: rails.3V3.max_current
+  value: 300
+  unit: mA
+  doc: pico-w-ds-rel7
+  locator: Pin descriptions pdf p.9
+  quote: it is recommended to keep the load on this pin under 300 mA
+  transcribed: false
+  confidence: found
+  notes: 'A recommendation, not an absolute maximum. Document: "maximum output current will depend on RP2040 load and VSYS voltage". No hard maximum stated.'
+- board: raspberry-pi-pico-w
+  level: board
+  path: rails.3V3.source
+  value: RT6154 buck-boost SMPS (U2)
+  doc: pico-w-ds-rel7
+  locator: Section 3.4 pdf p.15
+  quote: feeds the RT6154 buck-boost SMPS
+  transcribed: false
+  confidence: found
+  notes: Powerchain figure text layer (pdf p.15) reads RT6154AGQW.
+- board: raspberry-pi-pico-w
+  level: board
+  path: rails.VSYS.voltage
+  value:
+    min: 1.8
+    max: 5.5
+  unit: V
+  doc: pico-w-ds-rel7
+  locator: Section 2.3 pdf p.13
+  quote: VSYS Min 1.8 V
+  transcribed: false
+  confidence: found
+  notes: 'VSYS Max 5.5 V in the same table. Pin description: "can vary in the allowed range 1.8 V to 5.5 V".'
+- board: raspberry-pi-pico-w
+  level: board
+  path: rails.VSYS.max_current
+  value: null
+  doc: pico-w-ds-rel7
+  locator: Section 2.3
+  quote: Note that VBUS and VSYS current will depend on use-case
+  transcribed: false
+  confidence: could-not-verify
+  notes: No VSYS maximum current figure stated.
+- board: raspberry-pi-pico-w
+  level: board
+  path: rails.VBUS.voltage
+  value: 5 V +/-10%
+  unit: V
+  doc: pico-w-ds-rel7
+  locator: Section 2.3 pdf p.13
+  quote: VBUS 5 V ± 10%.
+  transcribed: false
+  confidence: found
+  notes: Nominal 5 V from micro-USB pin 1, 0 V if absent. VBUS feeds VSYS through Schottky D1 (MBR120VLSFT1G in schematic).
+- board: raspberry-pi-pico-w
+  level: board
+  path: rails.VBUS.max_current
+  value: null
+  doc: pico-w-ds-rel7
+  locator: Section 2.3
+  quote: Note that VBUS and VSYS current will depend on use-case
+  transcribed: false
+  confidence: could-not-verify
+  notes: Not stated.
+- board: raspberry-pi-pico-w
+  level: board
+  path: rails.3V3_EN.behaviour
+  value: Pulled up to VSYS via 100 kohm; shorting pin 37 low disables the SMPS and de-powers the RP2040 (3V3 off)
+  doc: pico-w-ds-rel7
+  locator: Pin descriptions pdf p.9
+  quote: is pulled high (to VSYS) via a 100 kΩ resistor
+  transcribed: false
+  confidence: found
+- board: raspberry-pi-pico-w
+  level: board
+  path: rails.RUN.behaviour
+  value: RP2040 enable; internal pull-up ~50 kohm to 3.3 V; short low to reset
+  doc: pico-w-ds-rel7
+  locator: Pin descriptions pdf p.9
+  quote: has an internal (on-chip) pull-up resistor to 3.3 V of about ~50 kΩ.
+  transcribed: false
+  confidence: found
+- board: raspberry-pi-pico-w
+  level: board
+  path: rails.ADC_VREF.behaviour
+  value: ADC supply/reference generated by filtering 3.3 V (201 ohm into 2.2 uF); ADC qualified only at 3.0/3.3 V
+  doc: pico-w-ds-rel7
+  locator: Section 3.3 pdf p.14
+  quote: (201 Ω into 2.2 μF)
+  transcribed: false
+  confidence: found
+- board: raspberry-pi-pico-w
+  level: board
+  path: rails.AGND.behaviour
+  value: Analogue ground reference for GPIO26-29, separate plane ending at pin 33
+  doc: pico-w-ds-rel7
+  locator: Pin descriptions pdf p.9
+  quote: AGND is the ground reference for GPIO26-29
+  transcribed: false
+  confidence: found
+- board: raspberry-pi-pico-w
+  level: board
+  path: operating_conditions.temp_max
+  value: 70
+  unit: degC
+  doc: pico-w-ds-rel7
+  locator: Section 2.3 pdf p.12
+  quote: Operating Temp Max 70°C (including self-heating)
+  transcribed: false
+  confidence: found
+  notes: DISAGREEMENT between the two documents (85 vs 70 degC). Both state recommended max ambient 70 degC.
+- board: raspberry-pi-pico-w
+  level: board
+  path: power.second_source_via_schottky
+  value: ~2.3 V to 5.5 V (ORed through a Schottky diode)
+  unit: V
+  doc: pico-w-ds-rel7
+  locator: Section 3.5 pdf p.16
+  quote: any other fixed supply in the range ~2.3 V to 5.5 V
+  transcribed: false
+  confidence: found
+- board: raspberry-pi-pico-w
+  level: board
+  path: onboard.led
+  value:
+    part: User LED D2 (green) via R3 470R
+    uses_pad: []
+    effect: driven by CYW43439 WL_GPIO0, not an RP2040 pad
+  doc: pico-w-ds-rel7
+  locator: Section 2.1 pdf p.8; Fig 2 label LED (WL_GPIO0)
+  quote: WL_GPIO0 OP connected to user LED
+  transcribed: false
+  confidence: found
+- board: raspberry-pi-pico-w
+  level: board
+  path: onboard.smps_ps
+  value:
+    part: RT6154 PS/SYNC pin
+    uses_pad: []
+    effect: CYW43439 WL_GPIO1; low=PFM default, high=PWM
+  doc: pico-w-ds-rel7
+  locator: Section 2.1 pdf p.8; Section 3.4 pdf p.15
+  quote: WL_GPIO1 OP controls the on-board SMPS power save pin
+  transcribed: false
+  confidence: found
+- board: raspberry-pi-pico-w
+  level: board
+  path: onboard.vbus_sense
+  value:
+    part: R10/R1 pull-down
+    uses_pad: []
+    effect: CYW43439 WL_GPIO2 input, high if VBUS present
+  doc: pico-w-ds-rel7
+  locator: Section 2.1 pdf p.8
+  quote: WL_GPIO2 IP VBUS sense - high if VBUS is present, else low
+  transcribed: false
+  confidence: found
+- board: raspberry-pi-pico-w
+  level: board
+  path: onboard.vsys_sense
+  value:
+    part: R5/R6 divider, Q1 DMG1012T
+    uses_pad:
+    - GPIO29
+    effect: ADC3 measures VSYS/3; valid only when no wireless SPI transaction in progress
+  doc: pico-w-ds-rel7
+  locator: Section 3.8 pdf p.18
+  quote: The CLK is shared with VSYS monitor, so only when there isn’t an SPI transaction in progress can VSYS be read via the ADC.
+  transcribed: false
+  confidence: found
+- board: raspberry-pi-pico-w
+  level: board
+  path: onboard.vsys_sense_enable
+  value:
+    uses_pad:
+    - GPIO25
+    effect: GPIO25 (wireless CS) high also enables GPIO29 ADC pin to read VSYS
+  doc: pico-w-ds-rel7
+  locator: Section 2.1 pdf p.8
+  quote: wireless SPI CS - when high also enables GPIO29 ADC pin to read VSYS
+  transcribed: false
+  confidence: found
+- board: raspberry-pi-pico-w
+  level: board
+  path: onboard.wireless
+  value:
+    part: Infineon CYW43439 (2.4 GHz WiFi 4, Bluetooth 5.2), SPI to RP2040, typically 33 MHz
+    uses_pad:
+    - GPIO23
+    - GPIO24
+    - GPIO25
+    - GPIO29
+    effect: GPIO23=WL_ON power on; GPIO24=data/IRQ (DIN/DOUT/IRQ shared); GPIO25=CS; GPIO29=CLK (shared with VSYS ADC3)
+  doc: pico-w-ds-rel7
+  locator: Section 2.1 pdf p.8; Section 3.8 pdf p.18; schematic pdf p.21 net labels WL_ON/WL_D/WL_CS/WL_CLK (transcribed)
+  quote: The Infineon CYW43439 DIN/DOUT and IRQ all share one pin on the RP2040.
+  transcribed: true
+  confidence: found
+- board: raspberry-pi-pico-w
+  level: board
+  path: onboard.bootsel
+  value:
+    part: BOOTSEL button SW1 (TP6)
+    uses_pad:
+    - QSPI_SS
+    effect: low at power-up forces USB mass-storage boot; no GPIO used
+  doc: pico-w-ds-rel7
+  locator: Section 3.1 pdf p.14; schematic pdf p.21
+  quote: hold the BOOTSEL button down during board power-up
+  transcribed: true
+  confidence: found
+  notes: QSPI_SS connection from schematic figure.
+- board: raspberry-pi-pico-w
+  level: board
+  path: onboard.flash
+  value:
+    part: Winbond W25Q16JV, 2 MB QSPI
+    uses_pad:
+    - QSPI_SS
+    - QSPI_SCLK
+    - QSPI_SD0
+    - QSPI_SD1
+    - QSPI_SD2
+    - QSPI_SD3
+    effect: boot flash
+  doc: pico-w-ds-rel7
+  locator: Section 1 pdf p.5; schematic pdf p.21
+  quote: flash memory (Winbond W25Q16JV)
+  transcribed: true
+  confidence: found
+  notes: QSPI pad names from schematic figure.
+- board: raspberry-pi-pico-w
+  level: board
+  path: onboard.crystal
+  value:
+    part: Abracon ABM8-272-T3
+    uses_pad:
+    - XIN
+    - XOUT
+    effect: clock
+  doc: pico-w-ds-rel7
+  locator: Section 1 pdf p.5
+  quote: crystal (Abracon ABM8-272-T3)
+  transcribed: true
+  confidence: found
+- board: raspberry-pi-pico-w
+  level: board
+  path: internal_gpio_not_on_header
+  value:
+  - GPIO23
+  - GPIO24
+  - GPIO25
+  - GPIO29
+  doc: pico-w-ds-rel7
+  locator: Section 2.1 pdf p.8; pinout figure shows only GPIO0-22, 26-28
+  quote: A few RP2040 GPIO pins are used for internal board functions
+  transcribed: false
+  confidence: found
+  notes: '23 wireless power on, 24 wireless SPI data/IRQ, 25 wireless SPI CS, 29 wireless SPI CLK / VSYS ADC3. Section 1 still says "Four RP2040 I/O are used for internal functions: driving an LED, ...
+    SMPS ... sensing", wording carried from the Pico datasheet; on Pico W LED/SMPS/VBUS are CYW43439 WL_GPIO0-2.'
+- board: raspberry-pi-pico-w
+  level: board
+  path: header_gpio_exposed
+  value: GPIO0-GPIO22 and GPIO26-GPIO28 (26 GPIO); GPIO26-28 are ADC0-2
+  doc: pico-w-ds-rel7
+  locator: Section 3.2 pdf p.14
+  quote: exposes 26 of the 30 possible RP2040 GPIO pins
+  transcribed: false
+  confidence: found
+  notes: 'List derived from the pinout figure; text: GPIO0 to GPIO22 digital only, GPIO 26-28 digital or ADC.'
+- board: raspberry-pi-pico-w
+  level: board
+  path: restrictions.adc_pads_input_max
+  value: IOVDD + ~0.3 V; if RP2040 unpowered a voltage on the pad leaks via reverse diode into the 3V3 rail
+  unit: V
+  conditions:
+    pads: GPIO26, GPIO27, GPIO28 on header (GPIO29 internal)
+  doc: pico-w-ds-rel7
+  locator: Section 3.2 pdf p.14
+  quote: the input voltage must not exceed IOVDD plus about 300 mV
+  transcribed: false
+  confidence: found
+  notes: Doc says ADC-capable GPIO26-29. Consistent with chip doc, where GPIO26-29 are not fault-tolerant (GPIO0-25 are Digital IO (FT)).
+- board: raspberry-pi-pico-w
+  level: board
+  path: restrictions.digital_pads_unpowered
+  value: voltage can safely be applied to GPIO0-25 when RP2040 unpowered, up to 3.3 V
+  conditions:
+    pads: GPIO0-GPIO22 on header (GPIO23-25 internal)
+  doc: pico-w-ds-rel7
+  locator: Section 3.2 pdf p.14
+  quote: voltage can safely be applied to these pins when RP2040 is unpowered up to 3.3 V.
+  transcribed: false
+  confidence: found
+  notes: 'Pico gives no numeric limit, Pico W says up to 3.3 V. Chip doc: FT pins pass very little current below 3.63 V when IOVDD is 0 V.'
+- board: raspberry-pi-pico-w
+  level: board
+  path: restrictions.test_points
+  value: TP4 (SMPS PS) not to be used externally; TP5 (LED) not recommended
+  doc: pico-w-ds-rel7
+  locator: Section 2.1 pdf p.9
+  quote: TP4 is not intended to be used externally
+  transcribed: false
+  confidence: found
+- board: raspberry-pi-pico-w
+  level: board
+  path: restrictions.header_gpio_shared_with_sense
+  value: []
+  doc: pico-w-ds-rel7
+  locator: Section 2.1 pdf p.8
+  quote: A few RP2040 GPIO pins are used for internal board functions
+  transcribed: false
+  confidence: inferred
+  notes: All internal functions use GPIO23/24/25/29, none on the header; so no header GPIO is limited by a sense circuit. Inferred from figure and list.
+- board: raspberry-pi-pico-w
+  level: module
+  path: flash_voltage
+  value: 3.3
+  unit: V
+  doc: pico-w-ds-rel7
+  locator: 'Schematic figure pdf p.21: U3 W25Q16JVUXIQ VCC (pin 8) on net 3V3'
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: 'Text never states flash supply explicitly; read from schematic: U3 VCC tied to 3V3 net with C18/C15 decoupling. Net-label inference.'
+- board: raspberry-pi-pico-w
+  level: module
+  path: consumed.GPIO23
+  value: CYW43439 WL_ON power on
+  doc: pico-w-ds-rel7
+  locator: Section 2.1 pdf p.8
+  quote: GPIO23
+  transcribed: false
+  confidence: found
+  notes: Row of the internal-functions list; row text quoted in board-level onboard facts.
+- board: raspberry-pi-pico-w
+  level: module
+  path: consumed.GPIO24
+  value: CYW43439 SPI data and IRQ (shared)
+  doc: pico-w-ds-rel7
+  locator: Section 2.1 pdf p.8
+  quote: GPIO24
+  transcribed: false
+  confidence: found
+  notes: Row of the internal-functions list; row text quoted in board-level onboard facts.
+- board: raspberry-pi-pico-w
+  level: module
+  path: consumed.GPIO25
+  value: CYW43439 SPI CS; high also enables VSYS read
+  doc: pico-w-ds-rel7
+  locator: Section 2.1 pdf p.8
+  quote: GPIO25
+  transcribed: false
+  confidence: found
+  notes: Row of the internal-functions list; row text quoted in board-level onboard facts.
+- board: raspberry-pi-pico-w
+  level: module
+  path: consumed.GPIO29
+  value: CYW43439 SPI CLK, shared with ADC3 VSYS/3 sense
+  doc: pico-w-ds-rel7
+  locator: Section 2.1 pdf p.8
+  quote: GPIO29
+  transcribed: false
+  confidence: found
+  notes: Row of the internal-functions list; row text quoted in board-level onboard facts.
+- board: raspberry-pi-pico-w
+  level: module
+  path: consumed.QSPI
+  value: QSPI_SS, QSPI_SCLK, QSPI_SD0-3 used by the on-board flash (SS also BOOTSEL)
+  doc: pico-w-ds-rel7
+  locator: Schematic figure pdf p.21
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: Dedicated QSPI pads, not user GPIO.
+- board: raspberry-pi-pico-w
+  level: module
+  path: consumed.XIN_XOUT_USB_SWD
+  value: XIN/XOUT crystal; USB_DP/USB_DM micro-USB; SWCLK/SWDIO debug header
+  doc: pico-w-ds-rel7
+  locator: Schematic figure pdf p.21
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: Dedicated non-GPIO pads.
+- board: raspberry-pi-pico-w
+  level: module
+  path: header_pad_limited_by_board
+  value: No header GPIO limited by sense circuits; GPIO26-28 carry the ADC reverse-diode restriction
+  doc: pico-w-ds-rel7
+  locator: Section 3.2
+  quote: must not exceed IOVDD plus about 300 mV
+  transcribed: false
+  confidence: inferred
+- board: raspberry-pi-pico-w
+  level: module
+  path: flash_part
+  value: Winbond W25Q16JV 2 MB
+  doc: pico-w-ds-rel7
+  locator: Section 1 pdf p.5
+  quote: flash memory (Winbond W25Q16JV)
+  transcribed: false
+  confidence: found

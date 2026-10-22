@@ -132,6 +132,10 @@ claims:
     locator: "Appendix B, Figure 19 Pico Rev3 schematic, p. 25, flash section (transcribed)"
     quote: "3V3 8 VCC U3 W25Q16JVUXIQ QSPI_SS QSPI_SCLK QSPI_SD0 QSPI_SD1 QSPI_SD2 QSPI_SD3"
     supports: "Flash W25Q16JVUXIQ supplied from 3V3 (flash voltage 3.3 V) and wired only to the QSPI pins"
+  - id: pico-ds-rel21#io-voltage-note
+    locator: "§1 About Raspberry Pi Pico, note (pdf p. 4)"
+    quote: "Pico IO voltage is fixed at 3.3 V"
+    supports: "Pico logic voltage 3.3 V (independent locator found by the auditor)"
 doc_number: null
 id: pico-ds-rel21
 kind: board-guide
