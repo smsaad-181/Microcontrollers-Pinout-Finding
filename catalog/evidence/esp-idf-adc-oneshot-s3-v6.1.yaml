@@ -1,0 +1,19 @@
+# Evidence record: ESP-IDF Programming Guide v6.1 - ADC Oneshot Mode Driver (ESP32-S3) (read 2026-10-22).
+accessed: "2026-10-22"
+claims:
+  - id: "esp-idf-adc-oneshot-s3-v6.1#adc2-wifi"
+    locator: "ADC Oneshot Mode Driver - ESP32-S3, section Resource Allocation / ADC Conversion"
+    quote: "ADC2 is also used by Wi-Fi."
+    supports: "ADC2 is shared with Wi-Fi; only ADC2 is named"
+doc_number: null
+id: "esp-idf-adc-oneshot-s3-v6.1"
+kind: "api-doc"
+manual: false
+publisher: "Espressif Systems"
+revision: "v6.1"
+revision_date: null
+secondary: false
+sha256: null
+title: "ESP-IDF Programming Guide v6.1 - ADC Oneshot Mode Driver (ESP32-S3)"
+url: "https://docs.espressif.com/projects/esp-idf/en/stable/esp32s3/api-reference/peripherals/adc/adc_oneshot.html"
+url_original: null

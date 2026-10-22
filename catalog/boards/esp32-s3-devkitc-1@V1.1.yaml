@@ -1,0 +1,109 @@
+# Espressif ESP32-S3-DevKitC-1 revision V1.1 (variants N8 = ESP32-S3-WROOM-1-N8, N8R8 = ESP32-S3-WROOM-1-N8R8) - draft facts, single-source (hardware-researcher, tasks 2a.1/2a.2).
+# Sources: ESP32-S3-DevKitC-1 v1.1 User Guide (esp-dev-kits docs, Header Block tables J1/J3) and schematic SCH_ESP32-S3-DevKitC-1_V1.1_20221130 (Rev V1.1, sheet 2 dated 2022-11-30).
+# REVISION: the v1.1 guide (the latest) is catalogued. v1.0 (initial release) is also on the market and differs in the RGB LED pad: GPIO48 on v1.0, GPIO38 on v1.1 (v1.1 guide 'Hardware
+#   Revision Details'; v1.0 guide); the header pin tables are otherwise identical. A v1.0 board needs its own record (not created here).
+# Labels = the guide 'Name' column (the silkscreen image was not transcribed). Positions J1-1..22 / J3-1..22 are the schematic numbering (guide: 'The numbering is the same as in the Board Schematic').
+#   The schematic drawing agrees with the guide tables pin by pin (read from the rendered sheet).
+# J1-3 'RST' is EN/CHIP_PU and is modelled as kind reset without a pad (CHIP_PU is not a GPIO pad). J1-21 '5V' is the VCC_5V rail; J1-1/J1-2 '3V3' the 3V3 rail.
+# N8R8: GPIO35/GPIO36/GPIO37 (J3-13/J3-12/J3-11) are consumed by the Octal PSRAM (module record `consumed`; user guide note: 'not available for external use'). The pins stay on the header map
+#   because the schema has one connector map for all variants. The N8 variant (no PSRAM) has them as ordinary GPIOs. GPIO26-GPIO32 (flash) have no header pin.
+# GPIO19/GPIO20 (J3-20/J3-19) are the USB D-/D+ pads: wired to the native micro-USB connector J4 and also on the header.
+# rails max_current (3V3 and 5V) is missing: neither the guide nor the schematic states a current rating; the regulator part is U2 SGM2212-3.3XKC3G/TR (datasheet not opened).
+# `status` is the value the catalog CLI computes.
+connectors:
+  - id: "J1"
+    pins:
+      - {"kind": "power", "label": "3V3", "position": 1, "rail": "3V3"}
+      - {"kind": "power", "label": "3V3", "position": 2, "rail": "3V3"}
+      - {"kind": "reset", "label": "RST", "position": 3}
+      - {"kind": "gpio", "label": "4", "pad": "GPIO4", "position": 4}
+      - {"kind": "gpio", "label": "5", "pad": "GPIO5", "position": 5}
+      - {"kind": "gpio", "label": "6", "pad": "GPIO6", "position": 6}
+      - {"kind": "gpio", "label": "7", "pad": "GPIO7", "position": 7}
+      - {"kind": "gpio", "label": "15", "pad": "GPIO15", "position": 8}
+      - {"kind": "gpio", "label": "16", "pad": "GPIO16", "position": 9}
+      - {"kind": "gpio", "label": "17", "pad": "GPIO17", "position": 10}
+      - {"kind": "gpio", "label": "18", "pad": "GPIO18", "position": 11}
+      - {"kind": "gpio", "label": "8", "pad": "GPIO8", "position": 12}
+      - {"kind": "gpio", "label": "3", "pad": "GPIO3", "position": 13}
+      - {"kind": "gpio", "label": "46", "pad": "GPIO46", "position": 14}
+      - {"kind": "gpio", "label": "9", "pad": "GPIO9", "position": 15}
+      - {"kind": "gpio", "label": "10", "pad": "GPIO10", "position": 16}
+      - {"kind": "gpio", "label": "11", "pad": "GPIO11", "position": 17}
+      - {"kind": "gpio", "label": "12", "pad": "GPIO12", "position": 18}
+      - {"kind": "gpio", "label": "13", "pad": "GPIO13", "position": 19}
+      - {"kind": "gpio", "label": "14", "pad": "GPIO14", "position": 20}
+      - {"kind": "power", "label": "5V", "position": 21, "rail": "5V"}
+      - {"kind": "ground", "label": "G", "position": 22}
+  - id: "J3"
+    pins:
+      - {"kind": "ground", "label": "G", "position": 1}
+      - {"kind": "gpio", "label": "TX", "pad": "GPIO43", "position": 2}
+      - {"kind": "gpio", "label": "RX", "pad": "GPIO44", "position": 3}
+      - {"kind": "gpio", "label": "1", "pad": "GPIO1", "position": 4}
+      - {"kind": "gpio", "label": "2", "pad": "GPIO2", "position": 5}
+      - {"kind": "gpio", "label": "42", "pad": "GPIO42", "position": 6}
+      - {"kind": "gpio", "label": "41", "pad": "GPIO41", "position": 7}
+      - {"kind": "gpio", "label": "40", "pad": "GPIO40", "position": 8}
+      - {"kind": "gpio", "label": "39", "pad": "GPIO39", "position": 9}
+      - {"kind": "gpio", "label": "38", "pad": "GPIO38", "position": 10}
+      - {"kind": "gpio", "label": "37", "pad": "GPIO37", "position": 11}
+      - {"kind": "gpio", "label": "36", "pad": "GPIO36", "position": 12}
+      - {"kind": "gpio", "label": "35", "pad": "GPIO35", "position": 13}
+      - {"kind": "gpio", "label": "0", "pad": "GPIO0", "position": 14}
+      - {"kind": "gpio", "label": "45", "pad": "GPIO45", "position": 15}
+      - {"kind": "gpio", "label": "48", "pad": "GPIO48", "position": 16}
+      - {"kind": "gpio", "label": "47", "pad": "GPIO47", "position": 17}
+      - {"kind": "gpio", "label": "21", "pad": "GPIO21", "position": 18}
+      - {"kind": "gpio", "label": "20", "pad": "GPIO20", "position": 19}
+      - {"kind": "gpio", "label": "19", "pad": "GPIO19", "position": 20}
+      - {"kind": "ground", "label": "G", "position": 21}
+      - {"kind": "ground", "label": "G", "position": 22}
+id: "esp32-s3-devkitc-1"
+logic_voltage: {"evidence": ["esp32-s3-devkitc-1-ug-v1.1#ldo", "esp32-s3-devkitc-1-sch-v1.1#ldo-part"], "note": "Guide: 5 V to 3.3 V LDO; schematic: U2 SGM2212-3.3XKC3G/TR makes VCC_3V3, which feeds the module through the 0 ohm resistor R24 (ESP_3V3). The chip's I/O domains therefore run at 3.3 V.", "status": "single-source", "unit": "V", "value": 3.3}
+name: "ESP32-S3-DevKitC-1"
+numbering: {"primary": "gpio"}
+onboard:
+  - effect: "Single-wire data input DIN is driven from GPIO38 through 0 ohm R17 (net RGB_CTRL), supply VCC_3V3. v1.1 only: the v1.0 board uses GPIO48. GPIO38 is also on header J3-10, so a load or signal there disturbs the LED."
+    evidence: ["esp32-s3-devkitc-1-ug-v1.1#rgb-led", "esp32-s3-devkitc-1-ug-v1.1#revision-note", "esp32-s3-devkitc-1-ug-v1.1#j3-gpio38-rgb", "esp32-s3-devkitc-1-sch-v1.1#rgb-led-gpio38", "esp32-s3-devkitc-1-sch-v1.1#rgb-led-part"]
+    part: "D6 SK68XXMINI-HS addressable RGB LED"
+    uses_pad: ["GPIO38"]
+  - effect: "UART0: bridge RXD/TXD connect through 0 ohm R7/R9 to U0TXD (GPIO43) and U0RXD (GPIO44), used for flashing and the console; the same pads are on header J3-2 (TX) and J3-3 (RX)."
+    evidence: ["esp32-s3-devkitc-1-ug-v1.1#usb-uart-port", "esp32-s3-devkitc-1-ug-v1.1#usb-bridge", "esp32-s3-devkitc-1-ug-v1.1#j3-gnd-tx-rx", "esp32-s3-devkitc-1-sch-v1.1#bridge-part", "esp32-s3-devkitc-1-sch-v1.1#uart0-links"]
+    part: "U3 CP2102N-A02-GQFN28 USB-to-UART bridge (micro-USB J2 'USB to UART')"
+    uses_pad: ["GPIO43", "GPIO44"]
+  - effect: "Bridge DTR/RTS can pull CHIP_PU (EN) and GPIO0 low through Q1/Q2 and 0 ohm R8/R13 to enter download mode automatically (DTR RTS -> EN IO0 table on the schematic)."
+    evidence: ["esp32-s3-devkitc-1-sch-v1.1#auto-program"]
+    part: "Q1/Q2 L8050QLT1G auto-program circuit (bridge DTR/RTS)"
+    uses_pad: ["GPIO0"]
+  - effect: "Pressing connects GPIO0 to ground; hold Boot and press Reset to start Firmware Download mode (GPIO0 = 0 with GPIO46 default 0). C13 on GPIO0 is NC (not fitted)."
+    evidence: ["esp32-s3-devkitc-1-ug-v1.1#boot-button", "esp32-s3-devkitc-1-sch-v1.1#buttons", "esp32-s3-devkitc-1-ug-v1.1#j3-gpio0-45-48-47"]
+    part: "SW1 Boot button"
+    uses_pad: ["GPIO0"]
+  - effect: "Pressing pulls CHIP_PU (EN) to ground and restarts the system; EN is not a GPIO pad. The 10 kohm pull-up R5 to 3V3 and 1 uF C6 sit on the EN net."
+    evidence: ["esp32-s3-devkitc-1-ug-v1.1#reset-button", "esp32-s3-devkitc-1-sch-v1.1#buttons", "esp32-s3-devkitc-1-sch-v1.1#en-rc"]
+    part: "SW2 Reset button with R5 10 kohm pull-up and C6 1 uF on CHIP_PU (EN)"
+    uses_pad: []
+  - effect: "D- is wired to GPIO19 and D+ to GPIO20 (USB OTG / USB Serial/JTAG, JTAG debugging); VBUS reaches VCC_5V through D7 1N5819HW. The pads are connected to the USB Serial/JTAG controller by default and are also on header J3-20/J3-19."
+    evidence: ["esp32-s3-devkitc-1-ug-v1.1#usb-port", "esp32-s3-devkitc-1-ug-v1.1#j3-usb-pins", "esp32-s3-devkitc-1-sch-v1.1#esp-usb", "esp32-s3-ds-v2.2#usb-default-serial-jtag"]
+    part: "J4 micro-USB 'ESP USB' (native ESP32-S3 full-speed USB)"
+    uses_pad: ["GPIO19", "GPIO20"]
+  - effect: "Lights when 3V3 is present (guide: turns on when USB power is connected); no GPIO pad."
+    evidence: ["esp32-s3-devkitc-1-ug-v1.1#power-led", "esp32-s3-devkitc-1-sch-v1.1#power-led"]
+    part: "D5 red 3.3 V power-on LED with R11 5.1 kohm"
+    uses_pad: []
+rails:
+  - max_current: {"evidence": [], "note": "U2 SGM2212-3.3XKC3G/TR is the 3V3 LDO (schematic). Neither the user guide nor the schematic states a current rating; the regulator manufacturer datasheet was not opened.", "status": "missing", "unit": "mA", "value": null}
+    name: "3V3"
+    source: "U2 SGM2212-3.3XKC3G/TR LDO from VCC_5V (schematic)"
+    voltage: {"evidence": ["esp32-s3-devkitc-1-ug-v1.1#ldo", "esp32-s3-devkitc-1-sch-v1.1#ldo-part", "esp32-s3-devkitc-1-ug-v1.1#j1-power-rst"], "status": "single-source", "unit": "V", "value": 3.3}
+  - max_current: {"evidence": [], "note": "No current rating for the 5 V path is stated in the user guide or the schematic: VBUS of J2/J4 reaches VCC_5V through 1N5819HW-7-F diodes D1/D7; the 5V header pin J1-21 is the same net.", "status": "missing", "unit": "mA", "value": null}
+    name: "5V"
+    source: "Micro-USB VBUS (J2 USB to UART or J4 ESP USB) through diodes D1/D7 (VCC_5V), or the 5V header pin"
+    voltage: {"evidence": ["esp32-s3-devkitc-1-ug-v1.1#j1-5v-gnd", "esp32-s3-devkitc-1-sch-v1.1#vcc-5v-diode"], "status": "single-source", "unit": "V", "value": 5}
+revision: "V1.1"
+status: "partially-verified"
+variants:
+  - {"id": "esp32-s3-devkitc-1-n8", "module": "esp32-s3-wroom-1-n8"}
+  - {"id": "esp32-s3-devkitc-1-n8r8", "module": "esp32-s3-wroom-1-n8r8"}
+vendor: "Espressif Systems"
