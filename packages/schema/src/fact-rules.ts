@@ -83,6 +83,61 @@ export function collectClaimRefs(root: unknown): ClaimRef[] {
   return out;
 }
 
+/** Deep equality for fact values (numbers, booleans, strings, null, arrays, plain objects). */
+function deepEqual(a: unknown, b: unknown): boolean {
+  if (a === b) return true;
+  if (Array.isArray(a) || Array.isArray(b)) {
+    return (
+      Array.isArray(a) &&
+      Array.isArray(b) &&
+      a.length === b.length &&
+      a.every((x, i) => deepEqual(x, b[i]))
+    );
+  }
+  if (isObject(a) && isObject(b)) {
+    const ka = Object.keys(a);
+    return (
+      ka.length === Object.keys(b).length &&
+      ka.every((k) => Object.hasOwn(b, k) && deepEqual(a[k], b[k]))
+    );
+  }
+  return false;
+}
+
+/**
+ * Conflict facts (README decision 16): at least two readings, each with evidence; `active` is one of
+ * the readings' values; `value` equals `active` (the engine reads the active, most restrictive reading).
+ * Missing readings/active are reported by the caller's presence rule, so nothing is added for them here.
+ */
+function checkConflict(path: string, f: Obj, hasValue: boolean): FactRuleIssue[] {
+  const issues: FactRuleIssue[] = [];
+  const bad = (sub: string, message: string) => {
+    issues.push({ code: 'E_FACT_STATUS', path: join(path, sub), message });
+  };
+  if (!Array.isArray(f.readings)) return issues;
+  const readings: unknown[] = f.readings;
+  if (readings.length < 2) {
+    bad(
+      'readings',
+      `conflict fact has ${String(readings.length)} reading(s); a conflict needs at least 2 disagreeing readings`,
+    );
+  }
+  readings.forEach((r, i) => {
+    const ev = isObject(r) && Array.isArray(r.evidence) ? r.evidence : [];
+    if (ev.length === 0)
+      bad(`readings.${String(i)}.evidence`, 'every reading needs at least one evidence id');
+  });
+  if (readings.length === 0 || f.active === undefined) return issues;
+  const values = readings.map((r) => (isObject(r) ? r.value : undefined));
+  if (!values.some((v) => deepEqual(v, f.active))) {
+    bad('active', 'active must equal the value of one of the readings');
+  }
+  if (hasValue && !deepEqual(f.value, f.active)) {
+    bad('value', 'value must equal active (the engine reads the active, most restrictive reading)');
+  }
+  return issues;
+}
+
 function checkOne(path: string, f: Obj): FactRuleIssue[] {
   const issues: FactRuleIssue[] = [];
   const status = f.status;
@@ -118,6 +173,7 @@ function checkOne(path: string, f: Obj): FactRuleIssue[] {
         'fact has status "conflict" but lacks readings and/or active (most restrictive reading)',
     });
   }
+  if (status === 'conflict') issues.push(...checkConflict(path, f, hasValue));
   if (status === 'verified') {
     const reviewers = Array.isArray(f.reviewers) ? f.reviewers : [];
     // Identity = trim + lower-case; blank keys never count.

@@ -259,7 +259,8 @@ describe('identification by id, claim split and ordering (M3, M10, M16, M24)', (
   it('M24: every variant must have the pad in its chip, not just one of them', () => {
     const chip2 = textOf('chips/')
       .replace('id: demo-mcu-1', 'id: demo-mcu-2')
-      .replace('\n  GPIO2:\n', '\n  GPIO9:\n');
+      .replace('\n  GPIO2:\n', '\n  GPIO9:\n')
+      .replace('    gpio: 2\n', '    gpio: 9\n');
     const module2 = textOf('modules/')
       .replace('id: demo-module-1', 'id: demo-module-2')
       .replace('chip: demo-mcu-1', 'chip: demo-mcu-2')

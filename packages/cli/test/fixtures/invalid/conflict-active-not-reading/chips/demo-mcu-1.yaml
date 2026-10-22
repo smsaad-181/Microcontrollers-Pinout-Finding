@@ -1,0 +1,64 @@
+# FAKE chip for catalog-CLI tests only (fictional part DEMO-MCU-1 by "Demo Corp").
+# Contains one `interim` fact (electrical.internal_pull_ohm); every other fact is `verified`.
+electrical:
+  abs_max_vin: { evidence: [demo-datasheet-1#electrical-levels], reviewers: [hardware-researcher, hardware-fact-auditor], status: verified, unit: V, value: "VDDIO+0.3" }
+  cumulative_current_max: { evidence: [demo-datasheet-1#electrical-currents], reviewers: [hardware-researcher, hardware-fact-auditor], status: verified, unit: mA, value: 40 }
+  internal_pull_ohm: { evidence: [demo-datasheet-1#related-part-pulls], note: "Interim: taken from the related part DEMO-MCU-0; replace when a DEMO-MCU-1 value is cited.", status: interim, unit: ohm, value: { typ: 45000 } }
+  pin_current_max: { evidence: [demo-datasheet-1#electrical-currents], reviewers: [hardware-researcher, hardware-fact-auditor], status: verified, unit: mA, value: 10 }
+  vih_min: { evidence: [demo-datasheet-1#electrical-levels], reviewers: [hardware-researcher, hardware-fact-auditor], status: verified, unit: V, value: "VDDIO*0.75" }
+  vil_max: { evidence: [demo-datasheet-1#electrical-levels], reviewers: [hardware-researcher, hardware-fact-auditor], status: verified, unit: V, value: "VDDIO*0.25" }
+  voh_min: { evidence: [demo-datasheet-1#electrical-levels], reviewers: [hardware-researcher, hardware-fact-auditor], status: verified, unit: V, value: "VDDIO*0.8" }
+  vol_max: { evidence: [demo-datasheet-1#electrical-levels], reviewers: [hardware-researcher, hardware-fact-auditor], status: verified, unit: V, value: "VDDIO*0.1" }
+family: DEMO-MCU
+id: demo-mcu-1
+pads:
+  GPIO0:
+    errata: []
+    functions:
+      - { fn: GPIO, routing: matrix }
+      - { fn: I2C.SDA, routing: matrix }
+    gpio: 0
+    input_only: { evidence: [demo-datasheet-1#pad-table], reviewers: [hardware-researcher, hardware-fact-auditor], status: verified, value: false }
+    power_up_glitch: { evidence: [demo-datasheet-1#glitch-none], reviewers: [hardware-researcher, hardware-fact-auditor], status: verified, value: none }
+    reset_state: { evidence: [demo-datasheet-1#pad-table], reviewers: [hardware-researcher, hardware-fact-auditor], status: conflict, active: pulldown, readings: [{ value: pullup, evidence: [demo-datasheet-1#pad-table] }, { value: input, evidence: [demo-datasheet-1#pad-table] }], value: pullup }
+    strap: { evidence: [demo-datasheet-1#strap-gpio0], reviewers: [hardware-researcher, hardware-fact-auditor], status: verified, value: { default_pull: up, required_at_reset: high, role: boot-mode } }
+  GPIO1:
+    adc:
+      channel: 0
+      radio_conflict: { evidence: [demo-datasheet-1#adc], reviewers: [hardware-researcher, hardware-fact-auditor], status: verified, value: false }
+      unit: ADC1
+    errata: []
+    functions:
+      - { fn: GPIO, routing: matrix }
+      - { fn: ADC1_CH0, routing: fixed }
+      - { fn: I2C.SCL, routing: matrix }
+    gpio: 1
+    input_only: { evidence: [demo-datasheet-1#pad-table], reviewers: [hardware-researcher, hardware-fact-auditor], status: verified, value: false }
+    power_up_glitch: { evidence: [demo-datasheet-1#glitch-none], reviewers: [hardware-researcher, hardware-fact-auditor], status: verified, value: none }
+    reset_state: { evidence: [demo-datasheet-1#pad-table], reviewers: [hardware-researcher, hardware-fact-auditor], status: verified, value: input }
+    strap: { evidence: [demo-datasheet-1#strap-gpio0], reviewers: [hardware-researcher, hardware-fact-auditor], status: verified, value: none }
+  GPIO2:
+    errata: []
+    functions:
+      - { fn: GPIO, routing: matrix }
+    gpio: 2
+    input_only: { evidence: [demo-datasheet-1#pad-table], reviewers: [hardware-researcher, hardware-fact-auditor], status: verified, value: true }
+    power_up_glitch: { evidence: [demo-datasheet-1#glitch-none], reviewers: [hardware-researcher, hardware-fact-auditor], status: verified, value: none }
+    reset_state: { evidence: [demo-datasheet-1#pad-table], reviewers: [hardware-researcher, hardware-fact-auditor], status: verified, value: input }
+    strap: { evidence: [demo-datasheet-1#strap-gpio0], reviewers: [hardware-researcher, hardware-fact-auditor], status: verified, value: none }
+  GPIO3:
+    errata: []
+    functions:
+      - { fn: GPIO, routing: matrix }
+    gpio: 3
+    input_only: { evidence: [demo-datasheet-1#pad-table], reviewers: [hardware-researcher, hardware-fact-auditor], status: verified, value: false }
+    power_up_glitch: { evidence: [demo-datasheet-1#glitch-none], reviewers: [hardware-researcher, hardware-fact-auditor], status: verified, value: none }
+    reset_state: { evidence: [demo-datasheet-1#pad-table], reviewers: [hardware-researcher, hardware-fact-auditor], status: verified, value: disabled }
+    strap: { evidence: [demo-datasheet-1#strap-gpio0], reviewers: [hardware-researcher, hardware-fact-auditor], status: verified, value: none }
+peripherals:
+  ADC1: { kind: adc, matrix_routable: false }
+  I2C0: { kind: i2c, matrix_routable: true }
+revisions: ["v1"]
+series: DEMO-MCU-1
+vdd_io: { evidence: [demo-datasheet-1#electrical-levels], reviewers: [hardware-researcher, hardware-fact-auditor], status: verified, unit: V, value: 3.3 }
+vendor: Demo Corp

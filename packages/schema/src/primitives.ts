@@ -60,8 +60,17 @@ export type Expr = z.infer<typeof ExprSchema>;
 /** A string with at least one non-whitespace character. */
 export const NON_BLANK = /\S/;
 
+/** Reviewer key charset after trim + lower-case: rejects zero-width characters and Unicode look-alikes. */
+export const REVIEWER_KEY = /^[a-z0-9][a-z0-9._-]*$/;
+
 /** Reviewer key: non-blank. Identity is `normalizeReviewer` (trim + lower-case). */
-export const ReviewerSchema = z.string().regex(NON_BLANK, 'reviewer key must not be blank');
+export const ReviewerSchema = z
+  .string()
+  .regex(NON_BLANK, 'reviewer key must not be blank')
+  .refine(
+    (r) => !NON_BLANK.test(r) || REVIEWER_KEY.test(normalizeReviewer(r)),
+    'reviewer key must be plain ASCII letters, digits, ".", "_" or "-" (no spaces, zero-width or look-alike characters)',
+  );
 
 /** Canonical form of a reviewer key, used wherever reviewers are compared. */
 export function normalizeReviewer(reviewer: string): string {

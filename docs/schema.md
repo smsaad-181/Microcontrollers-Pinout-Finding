@@ -148,8 +148,8 @@ An evidence record: one source document and the claims quoted from it (catalog/e
 | Field | Type | Required | Description |
 | --- | --- | --- | --- |
 | `id` | string (pattern) | yes | Document id, e.g. `esp32-ds-v5.3`; the `<doc-id>` part of claim ids. |
-| `title` | string | yes | Document title as printed. |
-| `publisher` | string | yes | Publisher (vendor or standards body). |
+| `title` | string (pattern) | yes | Document title as printed. |
+| `publisher` | string (pattern) | yes | Publisher (vendor or standards body). |
 | `doc_number` | string \| null | yes | Publisher document number, or null. |
 | `revision` | string \| null | yes | Document revision as printed (quoted in YAML), or null. |
 | `revision_date` | string \| null | yes | Revision date only if printed in the document, or null. |

@@ -110,6 +110,17 @@ def reviewers(case: str, code: str, value: str, path: str = "logic_voltage") -> 
     return (case, code, BOARD, path, [("patch", BOARD, LV_OLD, new)])
 
 
+EV = "demo-datasheet-1#pad-table"
+RESET_OLD = "status: verified, value: pullup }"
+
+
+def conflict(case: str, path: str, value: str, active: str, readings: list[tuple[str, str]]):
+    """GPIO0.reset_state turned into a conflict fact; the arguments decide which sub-rule it breaks."""
+    rs = ", ".join(f"{{ value: {v}, evidence: [{e}] }}" for v, e in readings)
+    new = f"status: conflict, active: {active}, readings: [{rs}], value: {value} }}"
+    return (case, "E_FACT_STATUS", CHIP, "pads.GPIO0.reset_state." + path, [("patch", CHIP, RESET_OLD, new)])
+
+
 EXTRA_CASES: list[tuple[str, str, str, str, list[Op]]] = [
     # F2: duplicate ids (both files are reported; the case names the copy)
     ("duplicate-evidence-id", "E_DUPLICATE_ID", "evidence/demo-datasheet-1-copy.yaml", "id",
@@ -192,6 +203,71 @@ EXTRA_CASES: list[tuple[str, str, str, str, list[Op]]] = [
      [("copy", CHIP, "chips/demo-mcu-2.yml")]),
     ("file-extension-upper", "E_FILE_EXTENSION", "ics/demo-sensor-2.YAML", "",
      [("copy", "ics/demo-sensor-1.yaml", "ics/demo-sensor-2.YAML")]),
+    # Fix round 2 (N1a): chip pad identity
+    ("pad-key-gpio-mismatch", "E_PAD_KEY", CHIP, "pads.GPIO2.gpio",
+     [("patch", CHIP, "    gpio: 2\n", "    gpio: 7\n")]),
+    ("pad-gpio-duplicate", "E_PAD_KEY", CHIP, "pads.GPIO3.gpio",
+     [("patch", CHIP, "    gpio: 3\n", "    gpio: 2\n")]),
+    ("pad-key-gp-mismatch", "E_PAD_KEY", CHIP, "pads.GP2.gpio",
+     [("patch", CHIP, "\n  GPIO3:\n", "\n  GP2:\n"),
+      ("patch", MODULE, "bonded_pads: [GPIO0, GPIO1, GPIO2, GPIO3]", "bonded_pads: [GPIO0, GPIO1, GPIO2, GP2]"),
+      ("patch", MODULE, "\n  GPIO3: {", "\n  GP2: {")]),
+    # N1b: conflict facts (the patched fact is a VALID conflict until one sub-rule is broken)
+    conflict("conflict-one-reading", "readings", "pullup", "pullup", [("pullup", EV)]),
+    conflict("conflict-reading-no-evidence", "readings.1.evidence", "pullup", "pullup", [("pullup", EV), ("input", "")]),
+    conflict("conflict-active-not-reading", "active", "pullup", "pulldown", [("pullup", EV), ("input", EV)]),
+    conflict("conflict-value-not-active", "value", "input", "pullup", [("pullup", EV), ("input", EV)]),
+    # N1c: pad references must resolve to a pad of the chip
+    ("ref-onboard-pad", "E_REF_UNRESOLVED", BOARD, "onboard.0.uses_pad.1",
+     [("patch", BOARD, "uses_pad: [GPIO1]", "uses_pad: [GPIO1, GPIO99]")]),
+    ("ref-bonded-pad", "E_REF_UNRESOLVED", MODULE, "bonded_pads.4",
+     [("patch", MODULE, "bonded_pads: [GPIO0, GPIO1, GPIO2, GPIO3]", "bonded_pads: [GPIO0, GPIO1, GPIO2, GPIO3, GPIO99]")]),
+    ("ref-consumed-pad", "E_REF_UNRESOLVED", MODULE, "consumed.GPIO99",
+     [("patch", MODULE, "\n  GPIO3: {", "\n  GPIO99: {")]),
+    ("ref-iomux-pad", "E_REF_UNRESOLVED", CHIP, "peripherals.I2C0.iomux_pins.sda",
+     [("patch", CHIP, "I2C0: { kind: i2c, matrix_routable: true }",
+       "I2C0: { kind: i2c, iomux_pins: { sda: GPIO99 }, matrix_routable: true }")]),
+    ("ref-overlay-pad", "E_REF_UNRESOLVED", BOARD, "os_overlays.0.pads.led",
+     [("patch", BOARD, "numbering: { primary: gpio }\n",
+       "numbering: { primary: gpio }\nos_overlays:\n  - { evidence: [demo-datasheet-1#board-pinout], name: demo-overlay, pads: { led: GPIO99 } }\n")]),
+    # N1d: one pad on two connector pins
+    ("pin-duplicate-pad", "E_PIN_NUMBERING", BOARD, "connectors.0.pins.3.pad",
+     [("patch", BOARD, PAD1, '{ kind: gpio, label: "1", pad: GPIO0, position: 4 }')]),
+    ("pin-duplicate-pad-connectors", "E_PIN_NUMBERING", BOARD, "connectors.1.pins.0.pad",
+     [("patch", BOARD, "    side: left\n",
+       '    side: left\n  - id: J2\n    pins:\n      - { kind: gpio, label: "9", pad: GPIO0, position: 1 }\n')]),
+    # N4: duplicates inside a board, dangling rail, blank evidence text, claim prefix
+    ("duplicate-variant-id", "E_DUPLICATE_ID", BOARD, "variants.1.id",
+     [("patch", BOARD, "  - { id: demo-variant-a, module: demo-module-1 }\n",
+       "  - { id: demo-variant-a, module: demo-module-1 }\n  - { id: demo-variant-a, module: demo-module-1 }\n")]),
+    ("duplicate-connector-id", "E_DUPLICATE_ID", BOARD, "connectors.1.id",
+     [("patch", BOARD, "    side: left\n",
+       '    side: left\n  - id: J1\n    pins:\n      - { kind: ground, label: GND, position: 1 }\n')]),
+    ("duplicate-rail-name", "E_DUPLICATE_ID", BOARD, "rails.1.name",
+     [("patch", BOARD, "revision: r1\n",
+       '  - max_current: { evidence: [], status: missing, value: null }\n    name: "3V3"\n    source: DEMO-LDO-2\n'
+       f"    voltage: {{ evidence: [demo-datasheet-1#board-pinout], {R2}, status: verified, unit: V, value: 3.3 }}\nrevision: r1\n")]),
+    ("ref-power-pin-rail", "E_REF_UNRESOLVED", BOARD, "connectors.0.pins.0.rail",
+     [("patch", BOARD, 'position: 1, rail: "3V3" }', 'position: 1, rail: "5V" }')]),
+    ("evidence-empty-title", "E_SCHEMA", EVID, "title",
+     [("patch", EVID, "title: DEMO-MCU-1 Family Demo Datasheet\n", 'title: " "\n')]),
+    ("evidence-empty-publisher", "E_SCHEMA", EVID, "publisher",
+     [("patch", EVID, "publisher: Demo Corp\n", 'publisher: ""\n')]),
+    ("claim-id-prefix-mismatch", "E_SCHEMA", EVID, "claims.0.id",
+     [("patch", EVID, "  - id: demo-datasheet-1#pad-table\n", "  - id: other-doc#pad-table\n")]),
+    # N5: reviewer keys must be plain ASCII tokens (no zero-width or look-alike characters)
+    reviewers("reviewer-zero-width", "E_SCHEMA", '[hardware-researcher, "hardware-researcher\\u200b"]', "logic_voltage.reviewers.1"),
+    reviewers("reviewer-cyrillic", "E_SCHEMA", '[hardware-researcher, "h\\u0430rdware-researcher"]', "logic_voltage.reviewers.1"),
+    # N7: misspelled kind directory containing YAML
+    ("unknown-dir", "E_UNKNOWN_DIR", "chip/demo-mcu-1.yaml", "",
+     [("copy", CHIP, "chip/demo-mcu-1.yaml")]),
+    # N8: evidence URLs
+    ("url-userinfo", "E_SCHEMA", EVID, "url",
+     [("patch", EVID, "url: https://example.com/demo-datasheet-1.pdf\n", 'url: "https://user:pass@example.com/demo-datasheet-1.pdf"\n')]),
+    ("url-leading-space", "E_SCHEMA", EVID, "url",
+     [("patch", EVID, "url: https://example.com/demo-datasheet-1.pdf\n", 'url: " https://example.com/demo-datasheet-1.pdf"\n')]),
+    ("url-inner-space", "E_SCHEMA", EVID, "url",
+     [("patch", EVID, "url: https://example.com/demo-datasheet-1.pdf\n", 'url: "https://example.com/demo datasheet.pdf"\n')]),
 ]
 
 CASES_HEADER = """\
@@ -238,6 +314,7 @@ def main() -> int:
         shutil.copytree(VALID, dest)
         for op in ops:
             if op[0] == "copy":
+                (dest / op[2]).parent.mkdir(parents=True, exist_ok=True)
                 shutil.copyfile(dest / op[1], dest / op[2])
             elif not patch(case, dest, op[1], op[2], op[3]):
                 return 1

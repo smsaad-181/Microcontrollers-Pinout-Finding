@@ -1,5 +1,5 @@
 // Pure catalog validation: SourceFile[] in, diagnostics + typed entities + coverage out.
-// Error codes and interpretation follow packages/cli/test/fixtures/README.md (decisions 1-11).
+// Error codes and interpretation follow packages/cli/test/fixtures/README.md (decisions 1-18).
 import {
   BoardSchema,
   BreakoutSchema,
@@ -23,6 +23,7 @@ import {
 } from '@pinout/schema';
 import { isAlias, isMap, isNode, isScalar, isSeq, parseDocument, type Document } from 'yaml';
 import type { z } from 'zod';
+import { checkChipPads } from './integrity.js';
 import { loadCatalogSources } from './load.js';
 import { byCodeUnit, compareDiagnostics } from './order.js';
 import {
@@ -322,6 +323,12 @@ export function validateCatalog(sources: readonly SourceFile[]): ValidationResul
     }
   }
 
+  // 4b. Chip pad identity (decision 16): GPIO-style keys equal `gpio`; `gpio` numbers are unique.
+  for (const p of ok('chips')) {
+    for (const issue of checkChipPads(p.entity as Chip))
+      error('E_PAD_KEY', p)(issue.path, issue.message);
+  }
+
   // 5. Evidence resolution (decision 4): doc = text before the first '#', claim = the full id.
   const claimsByDoc = new Map<string, Set<string>>();
   for (const [id, ev] of uniqueByKey<Evidence>('evidence')) {
@@ -379,11 +386,74 @@ export function validateCatalog(sources: readonly SourceFile[]): ValidationResul
       resolved.push({ variant: v.id, module: mod, chip });
     });
 
+    // Errors that make the pad / status checks of this board incomplete: no status is computed.
     let pinErrors = 0;
     const bad = (path: string, message: string) => {
       pinErrors++;
       fail(path, message);
     };
+    const badRef = (path: string, message: string) => {
+      pinErrors++;
+      error('E_REF_UNRESOLVED', p)(path, message);
+    };
+    const duplicate = (path: string, message: string) => {
+      pinErrors++;
+      error('E_DUPLICATE_ID', p)(path, message);
+    };
+    // Decision 17: ids repeated inside one board.
+    const firstOf = (
+      items: readonly string[],
+      field: string,
+      what: string,
+      key: (s: string) => string = (s) => s,
+    ) => {
+      const seen = new Map<string, number>();
+      items.forEach((raw, i) => {
+        const id = key(raw);
+        const first = seen.get(id);
+        if (first === undefined) seen.set(id, i);
+        else
+          duplicate(
+            `${field}.${String(i)}.${what === 'rail' ? 'name' : 'id'}`,
+            `${what} "${raw}" is already defined at ${field}.${String(first)}`,
+          );
+      });
+    };
+    firstOf(
+      board.variants.map((v) => v.id),
+      'variants',
+      'variant',
+    );
+    firstOf(
+      board.connectors.map((c) => c.id),
+      'connectors',
+      'connector',
+    );
+    firstOf(
+      board.rails.map((r) => r.name),
+      'rails',
+      'rail',
+    );
+    // Decision 18: pad references of the board must exist on the chip of every variant.
+    const padRef = (path: string, pad: string) => {
+      const missing = resolved.filter((r) => !Object.hasOwn(r.chip.pads, pad));
+      if (missing.length > 0) {
+        const list = missing.map((r) => `${r.chip.id} (variant ${r.variant})`).join(', ');
+        badRef(path, `pad "${pad}" is not a pad of chip ${list}`);
+      }
+    };
+    board.onboard.forEach((o, i) => {
+      o.uses_pad.forEach((pad, j) => {
+        padRef(`onboard.${String(i)}.uses_pad.${String(j)}`, pad);
+      });
+    });
+    (board.os_overlays ?? []).forEach((o, i) => {
+      for (const [role, pad] of Object.entries(o.pads)) {
+        padRef(`os_overlays.${String(i)}.pads.${role}`, pad);
+      }
+    });
+    const railNames = new Set(board.rails.map((r) => r.name));
+    const padUsers = new Map<string, string>();
     board.connectors.forEach((conn, ci) => {
       const positions = new Map<number, number>();
       const gpioLabels = new Map<string, number>();
@@ -400,6 +470,18 @@ export function validateCatalog(sources: readonly SourceFile[]): ValidationResul
         const label = pin.label.trim();
         if (label === '' && LABELLED_KINDS.has(pin.kind)) {
           bad(`${at}.label`, `${where} has an empty silkscreen label`);
+        }
+        if (pin.kind === 'power' && pin.rail !== undefined && !railNames.has(pin.rail)) {
+          badRef(`${at}.rail`, `${where}: rail "${pin.rail}" is not a rail of this board`);
+        }
+        if (pin.pad !== undefined) {
+          const first = padUsers.get(pin.pad);
+          if (first === undefined) padUsers.set(pin.pad, `${conn.id}-${String(pin.position)}`);
+          else
+            bad(
+              `${at}.pad`,
+              `${where}: pad "${pin.pad}" is already on pin ${first}; one pad has one connector position`,
+            );
         }
         if (pin.kind !== 'gpio') return;
         // GND/3V3 labels legitimately repeat; gpio silkscreen labels identify a pin, so they must not.
@@ -455,6 +537,39 @@ export function validateCatalog(sources: readonly SourceFile[]): ValidationResul
     const m = p.entity as Module;
     if (!chipsById.has(m.chip) && !targetMayBeBroken(brokenChips, m.chip))
       unresolved(p, 'chip', 'chip', m.chip);
+  }
+  // Decision 18: pad references inside modules and chips resolve to a pad of the chip.
+  for (const p of ok('modules')) {
+    const m = p.entity as Module;
+    const chip = chipsById.get(m.chip);
+    if (!chip) continue; // unresolved or broken chip: reported / skipped above
+    const missing = (pad: string) => !Object.hasOwn(chip.pads, pad);
+    m.bonded_pads.forEach((pad, i) => {
+      if (missing(pad))
+        error('E_REF_UNRESOLVED', p)(
+          `bonded_pads.${String(i)}`,
+          `pad "${pad}" is not a pad of chip ${chip.id}`,
+        );
+    });
+    for (const pad of Object.keys(m.consumed)) {
+      if (missing(pad))
+        error('E_REF_UNRESOLVED', p)(
+          `consumed.${pad}`,
+          `pad "${pad}" is not a pad of chip ${chip.id}`,
+        );
+    }
+  }
+  for (const p of ok('chips')) {
+    const chip = p.entity as Chip;
+    for (const [name, per] of Object.entries(chip.peripherals)) {
+      for (const [role, pad] of Object.entries(per.iomux_pins ?? {})) {
+        if (!Object.hasOwn(chip.pads, pad))
+          error('E_REF_UNRESOLVED', p)(
+            `peripherals.${name}.iomux_pins.${role}`,
+            `pad "${pad}" is not a pad of chip ${chip.id}`,
+          );
+      }
+    }
   }
   const icsById = uniqueByKey<IC>('ics');
   const brokenIcs = brokenIds('ics');

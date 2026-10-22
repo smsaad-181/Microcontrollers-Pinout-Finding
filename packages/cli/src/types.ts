@@ -55,7 +55,9 @@ export type ErrorCode =
   | 'E_BOARD_STATUS'
   | 'E_DUPLICATE_ID'
   | 'E_REF_UNRESOLVED'
-  | 'E_FILE_EXTENSION';
+  | 'E_FILE_EXTENSION'
+  | 'E_PAD_KEY'
+  | 'E_UNKNOWN_DIR';
 export type WarningCode = 'W_IGNORED_FILE';
 
 export type Diagnostic =

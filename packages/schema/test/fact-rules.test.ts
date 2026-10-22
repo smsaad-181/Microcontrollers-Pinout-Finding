@@ -90,7 +90,10 @@ describe('checkFactRules', () => {
 
   it('E_FACT_STATUS: conflict needs both readings and active', () => {
     const base = { value: 'input', evidence: ['d#1'], status: 'conflict' };
-    const readings = [{ value: 'input', evidence: ['d#1'] }];
+    const readings = [
+      { value: 'input', evidence: ['d#1'] },
+      { value: 'pullup', evidence: ['d#1'] },
+    ];
     expect(checkFactRules({ f: base }).map((i) => [i.code, i.path])).toEqual([
       ['E_FACT_STATUS', 'f.readings'],
     ]);

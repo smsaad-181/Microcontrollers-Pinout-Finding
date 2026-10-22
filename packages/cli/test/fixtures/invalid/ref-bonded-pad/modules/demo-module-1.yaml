@@ -1,0 +1,7 @@
+# FAKE module for catalog-CLI tests only (fictional part DEMO-MODULE-1 by "Demo Corp").
+bonded_pads: [GPIO0, GPIO1, GPIO2, GPIO3, GPIO99]
+chip: demo-mcu-1
+consumed:
+  GPIO3: { evidence: [demo-datasheet-1#module-pads], reviewers: [hardware-researcher, hardware-fact-auditor], status: verified, value: flash }
+flash_voltage: { evidence: [demo-datasheet-1#module-pads], reviewers: [hardware-researcher, hardware-fact-auditor], status: verified, unit: V, value: 3.3 }
+id: demo-module-1

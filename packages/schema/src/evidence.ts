@@ -5,7 +5,17 @@ export const MAX_QUOTE_WORDS = 25;
 export const MAX_QUOTE_CHARS = 400;
 const nonBlank = z.string().regex(NON_BLANK, 'must not be blank');
 /** Evidence links must be web links: `javascript:`, `data:`, `file:` and friends are rejected. */
-const webUrl = z.url({ protocol: /^https?$/ });
+const webUrl = z
+  .string()
+  // Plain string checks (not `z.url()`: Zod normalises a URL before later checks run, which would hide
+  // leading/trailing whitespace). The `^https?://` pattern is also emitted into the JSON Schema.
+  .regex(/^\S+$/, { error: 'URL must not contain whitespace', abort: true })
+  .regex(/^https?:\/\//, {
+    error: 'URL must start with http:// or https:// (lower-case scheme)',
+    abort: true,
+  })
+  .refine((u) => !/^https?:\/\/[^/?#]*@/.test(u), 'URL must not contain credentials (user:pass@)')
+  .refine((u) => URL.canParse(u), 'Invalid URL');
 
 export const EvidenceKindSchema = z
   .enum([
@@ -44,8 +54,8 @@ export const EvidenceSchema = z
     id: EntityIdSchema.describe(
       'Document id, e.g. `esp32-ds-v5.3`; the `<doc-id>` part of claim ids.',
     ),
-    title: z.string().describe('Document title as printed.'),
-    publisher: z.string().describe('Publisher (vendor or standards body).'),
+    title: nonBlank.describe('Document title as printed.'),
+    publisher: nonBlank.describe('Publisher (vendor or standards body).'),
     doc_number: z.string().nullable().describe('Publisher document number, or null.'),
     revision: z
       .string()
@@ -70,6 +80,17 @@ export const EvidenceSchema = z
     secondary: z.boolean().describe('True for a reputable secondary source (flagged to users).'),
     manual: z.boolean().describe('True when the human supplied the file in sources/manual/.'),
     claims: z.array(ClaimSchema).describe('Quoted claims that catalog facts cite.'),
+  })
+  .superRefine((ev, ctx) => {
+    ev.claims.forEach((c, i) => {
+      if (!c.id.startsWith(`${ev.id}#`)) {
+        ctx.addIssue({
+          code: 'custom',
+          path: ['claims', i, 'id'],
+          message: `claim id must start with the evidence id "${ev.id}#"`,
+        });
+      }
+    });
   })
   .describe(
     'An evidence record: one source document and the claims quoted from it (catalog/evidence/).',

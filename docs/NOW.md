@@ -1,7 +1,7 @@
-Doing: A helper is making the data checker stricter, so it can no longer accept wrong board or pin data.
-Why: The independent reviewers found holes. For example, the checker accepted a pin whose name said "GPIO2" but whose number said 7. A wrong pin number could burn out a board later.
-Folder: D:\Development\pinout-finder-kit\pinout-finder\packages\cli and packages\schema
-Who: One helper agent (writing the tests first, then the fixes). I check its work myself afterwards.
-Next: I re-run the three reviewers. If they all say PASS, Phase 1 is finished and I give you the push commands for GitHub.
+Doing: The checker fixes are finished. Now the independent reviewers check the whole foundation again, one at a time, starting with the main reviewer.
+Why: A phase only counts as finished when independent reviewers, who did not build it, all say PASS after running everything themselves.
+Folder: D:\Development\pinout-finder-kit\pinout-finder\docsalidation\phase-1 (the reviewers write their reports here)
+Who: One reviewer agent at a time. The first one is the main phase reviewer.
+Next: Then the code reviewer and the workflow reviewer. If all three pass, Phase 1 is finished and I give you the push commands for GitHub.
 Needs you: Nothing right now.
-Where: Phase 1 of 6 (foundation) - second fix round
+Where: Phase 1 of 6 (foundation) - checking the second round of fixes

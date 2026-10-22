@@ -76,6 +76,32 @@ file for them, and one violation (one or two patches, or one added file) for the
 | `yaml-anchor` / `yaml-alias` | `E_YAML` | the chip | (root) | YAML anchor `&x` / alias `*x` |
 | `file-extension-yml` / `-upper` | `E_FILE_EXTENSION` | `chips/demo-mcu-2.yml` / `ics/demo-sensor-2.YAML` | (root) | wrong extension inside a kind directory |
 
+### Added in fix round 2 (new codes `E_PAD_KEY`, `E_UNKNOWN_DIR`; extended `E_FACT_STATUS`, `E_REF_UNRESOLVED`, `E_PIN_NUMBERING`, `E_DUPLICATE_ID`, `E_SCHEMA`)
+
+| case | code | file | path_contains | violation |
+| --- | --- | --- | --- | --- |
+| `pad-key-gpio-mismatch` | `E_PAD_KEY` | the chip | `pads.GPIO2.gpio` | key `GPIO2` with `gpio: 7` |
+| `pad-gpio-duplicate` | `E_PAD_KEY` | the chip | `pads.GPIO3.gpio` | pad GPIO3 given `gpio: 2`, already used by GPIO2 (also a key mismatch; same code) |
+| `pad-key-gp-mismatch` | `E_PAD_KEY` | the chip | `pads.GP2.gpio` | key `GP2` with `gpio: 3` (module patched to keep bonding the renamed pad) |
+| `conflict-one-reading` | `E_FACT_STATUS` | the chip | `pads.GPIO0.reset_state.readings` | conflict with a single reading |
+| `conflict-reading-no-evidence` | `E_FACT_STATUS` | the chip | `...reset_state.readings.1.evidence` | a reading with `evidence: []` |
+| `conflict-active-not-reading` | `E_FACT_STATUS` | the chip | `...reset_state.active` | `active: pulldown`, not the value of any reading |
+| `conflict-value-not-active` | `E_FACT_STATUS` | the chip | `...reset_state.value` | `value: input` while `active: pullup` |
+| `ref-onboard-pad` | `E_REF_UNRESOLVED` | the board | `onboard.0.uses_pad.1` | `uses_pad: [GPIO1, GPIO99]` |
+| `ref-bonded-pad` | `E_REF_UNRESOLVED` | the module | `bonded_pads.4` | `bonded_pads` lists `GPIO99` |
+| `ref-consumed-pad` | `E_REF_UNRESOLVED` | the module | `consumed.GPIO99` | `consumed` key `GPIO99` |
+| `ref-iomux-pad` | `E_REF_UNRESOLVED` | the chip | `peripherals.I2C0.iomux_pins.sda` | `iomux_pins: { sda: GPIO99 }` |
+| `ref-overlay-pad` | `E_REF_UNRESOLVED` | the board | `os_overlays.0.pads.led` | overlay role `led` -> `GPIO99` |
+| `ref-power-pin-rail` | `E_REF_UNRESOLVED` | the board | `connectors.0.pins.0.rail` | `power` pin with `rail: "5V"`, but the only rail is `3V3` |
+| `pin-duplicate-pad` | `E_PIN_NUMBERING` | the board | `connectors.0.pins.3.pad` | pins J1-3 and J1-4 both on `GPIO0` |
+| `pin-duplicate-pad-connectors` | `E_PIN_NUMBERING` | the board | `connectors.1.pins.0.pad` | a second connector J2 with a pin on `GPIO0` |
+| `duplicate-variant-id` / `-connector-id` / `-rail-name` | `E_DUPLICATE_ID` | the board | `variants.1.id` / `connectors.1.id` / `rails.1.name` | repeated inside one board |
+| `evidence-empty-title` / `-publisher` | `E_SCHEMA` | the evidence | `title` / `publisher` | blank text |
+| `claim-id-prefix-mismatch` | `E_SCHEMA` | the evidence | `claims.0.id` | claim id `other-doc#pad-table` in record `demo-datasheet-1` |
+| `reviewer-zero-width` / `-cyrillic` | `E_SCHEMA` | the board | `logic_voltage.reviewers.1` | `hardware-researcher` + U+200B / Cyrillic `a` |
+| `unknown-dir` | `E_UNKNOWN_DIR` | `chip/demo-mcu-1.yaml` | (root) | a YAML file in the misspelled directory `chip/` |
+| `url-userinfo` / `-leading-space` / `-inner-space` | `E_SCHEMA` | the evidence | `url` | `https://user:pass@...`, a leading space, a space inside the URL |
+
 ## Expected coverage of `valid/` (informative)
 
 A *fact* is any mapping that has both a `status` key and an `evidence` key. There are 41 facts:
@@ -102,11 +128,13 @@ choices below.
    fact rules have their own codes even if they are written as Zod refinements; the CLI must map them:
    - `E_EVIDENCE_MISSING`: status other than `missing` with `evidence: []`.
    - `E_FACT_STATUS`: `value` not null while `missing`, `value` null while not `missing`, and
-     `conflict` without both `readings` and `active`.
+     `conflict` without both `readings` and `active`, and (fix round 2, decision 16) inconsistent conflicts.
    - `E_VERIFIED_REVIEWERS`: `verified` with fewer than 2 **distinct** reviewers. Reviewer identity is the
      key after trim + lower-case (`Hardware-Researcher` equals `hardware-researcher`). A reviewer key must
      not be blank: an empty or whitespace-only key is a shape error (`E_SCHEMA`, path `...reviewers.N`) on
-     any fact, so the entity is then skipped (decision 8).
+     any fact, so the entity is then skipped (decision 8). After trim + lower-case a key must match
+     `^[a-z0-9][a-z0-9._-]*$` (fix round 2): zero-width characters and look-alike letters are a shape error
+     (`E_SCHEMA`, path `...reviewers.N`) too, so `hardware-researcher` + U+200B is never a second reviewer.
 3. **What counts as a fact**: any mapping with both `status` and `evidence`. `onboard[].evidence`
    and `Fixture.evidence` are plain `ClaimId[]`, not facts. Their ids must still resolve
    (`E_EVIDENCE_UNKNOWN`), but they are not counted in coverage and do not need to be non-empty.
@@ -125,8 +153,8 @@ choices below.
    and the valid board does not expose GPIO3. Also `E_PIN_NUMBERING` (fix round 1): a gpio, power or
    ground pin with a blank `label`; two pins of one connector with the same `position`; two **gpio** pins
    of one connector with the same `label` (power/ground labels such as `GND` legitimately repeat); and a
-   gpio pad that the module of any variant does not list in `bonded_pads`. The reference defines no
-   relation between a pad key and its `gpio` number, so that is not checked.
+   gpio pad that the module of any variant does not list in `bonded_pads`. The relation between a pad key and its
+   `gpio` number is checked on the chip (decision 16), not on the board.
 7. **Board status**: the reference does not list which fields are "critical", so the CLI computes:
    - `datasheet-required` when no connector has a `gpio` pin;
    - `fully-verified` when every fact is `verified`;
@@ -167,6 +195,52 @@ choices below.
     and none of that file's facts are counted in coverage.
 15. **Evidence text and links.** Each claim's `quote`, `locator` and `supports` must be non-blank;
     `quote` has at most 25 words and 400 characters. `url` / `url_original` must be `http:` or `https:`.
+
+16. **Chip pad identity and conflict facts (`E_PAD_KEY`, `E_FACT_STATUS`).** Pad names are not `GPIO<n>` on every
+    chip family (`GP2` on RP2040, `BCM2` on Raspberry Pi, `PA5` on AVR/STM32), so no naming scheme is
+    required. Two universal rules, path `pads.<key>.gpio`, reported on the chip: (1) `gpio` is unique within
+    one chip (the later pad is reported and the message names the first); (2) a key that matches
+    `^(GPIO|GP|IO|BCM)(\d+)$` (case-insensitive; the digits are compared as a number, so `GPIO02` equals 2)
+    must have `gpio` equal to that number. Keys like `PA5`, `D13`, `P0.13`, `GPIO2_A` are exempt from rule 2.
+    This is the weakest rule that still stops a wrong GPIO number on a board pin map. A `conflict` fact
+    (`E_FACT_STATUS`) needs at least 2 `readings` (path `readings`), every reading with at least one evidence id
+    (`readings.N.evidence`), `active` equal to the value of one reading (`active`) and `value` equal to `active`
+    (`value`). Values are compared with deep equality (numbers, booleans, strings, arrays, objects; object key order is
+    irrelevant). The engine reads the active reading, so it must be a real, cited one.
+17. **Duplicate ids inside one board (`E_DUPLICATE_ID`).** Repeated `variants[].id`, `connectors[].id` or
+    `rails[].name` in one board: error at the later occurrence (`variants.N.id`, `connectors.N.id`,
+    `rails.N.name`). A board with such an error gets no computed status (as for decision 11).
+18. **Pad references resolve (`E_REF_UNRESOLVED`).** A pad name must be a key of `chip.pads` in: `Board.onboard[].uses_pad`
+    (path `onboard.I.uses_pad.J`) and `Board.os_overlays[].pads` values (`os_overlays.I.pads.<role>`), both checked
+    against the chip of **every** variant (variant -> module -> chip) and reported on the board; `Module.bonded_pads`
+    (`bonded_pads.I`) and `Module.consumed` keys (`consumed.<pad>`), reported on the module; `Chip.peripherals.*.iomux_pins`
+    values (`peripherals.<name>.iomux_pins.<role>`), reported on the chip. A `power`-kind connector pin whose `rail` is not
+    a `rails[].name` of the board is also `E_REF_UNRESOLVED` (`connectors.I.pins.J.rail`). A reference whose module or
+    chip is unresolved, duplicated or broken is not checked and not reported again (decisions 8, 11, 12). Board pad
+    references need not be bonded out (only gpio header pins are held to `bonded_pads`, decision 6). A board with an
+    unresolved reference gets no computed status.
+19. **One pad on two connector pins (`E_PIN_NUMBERING`).** Across all connectors of one board, every pin that carries a
+    `pad` (any kind) is compared; the second occurrence is reported at `connectors.I.pins.J.pad` and the message names
+    the first (`J1-3`). Power, ground, `nc` and `reset` pins carry no `pad`, so they never clash. This is an error, not a
+    warning: neither the schema reference, the catalog-schema skill nor the plan describes a board that routes one pad to
+    two header positions. **Hardware-realism caveat:** some real boards do (the Arduino Uno R3 repeats A4/A5 as the SDA/SCL
+    header pins). If such a board is catalogued, downgrade this check to a warning (`W_DUPLICATE_PAD`) in a later round
+    rather than inventing a second pad.
+20. **Unknown directories (`E_UNKNOWN_DIR`), evidence text and reviewer keys.** Any directory directly under the catalog
+    root that is not one of the seven kind directories and contains a `.yaml` / `.yml` file (any case, any depth) is an
+    error per such file (`chip/demo-mcu-1.yaml`, path empty); the file is not loaded. Directories without YAML, directories
+    whose name starts with `.` and `node_modules` are ignored. Evidence `title` and `publisher` must be non-blank
+    (`E_SCHEMA`). A claim id must start with `<evidence id>#`, otherwise `E_SCHEMA` at `claims.N.id` (the simplest consistent
+    code: the record is then broken and its claims are not used, so citing facts add no second error). `url` /
+    `url_original` must match `^https?://` (lower-case scheme), contain no whitespace anywhere and no credentials
+    (`user:pass@`, `user@`), and parse as a URL (`E_SCHEMA`). The emitted JSON Schema carries the patterns, so editors flag
+    `javascript:`.
+
+### Deferred (not implemented; engine inputs, Phase 2b)
+
+Breakout `pullups[].line` / `pins[].maps_to` against the IC's signals, `interfaces_exposed` against the IC's interfaces, and
+fixture duplicate `instance` / unknown `locked[].pad` checks. Reason: engine inputs, Phase 2b. Also not checked: a gpio pin
+on a module-`consumed` pad (decision 6, deliberate) and blank `reset`-pin labels.
 
 ## Notes for contributors
 

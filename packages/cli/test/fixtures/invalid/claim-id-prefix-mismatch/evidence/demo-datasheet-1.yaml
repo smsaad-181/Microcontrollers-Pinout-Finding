@@ -1,0 +1,65 @@
+# FAKE evidence record for catalog-CLI tests only. "Demo Corp" and every DEMO-* part are fictional;
+# the URL is a placeholder and the sha256 is not the hash of any real file. Nothing here describes
+# real hardware.
+accessed: "2026-10-22"
+claims:
+  - id: other-doc#pad-table
+    locator: "§2, Table 2-1"
+    quote: "DEMO-MCU-1 has four pads, GPIO0 to GPIO3. GPIO2 is input-only. Reset: GPIO0 pull-up, GPIO1 and GPIO2 input, GPIO3 disabled."
+    supports: "DEMO-MCU-1 pad list, pad functions, input-only flags and reset states"
+  - id: demo-datasheet-1#strap-gpio0
+    locator: "§2.3, Table 2-3"
+    quote: "GPIO0 selects the boot mode at reset and must be high for normal boot; internal pull-up."
+    supports: "GPIO0 is a boot-mode strap, required high at reset, default pull-up; other pads are not straps"
+  - id: demo-datasheet-1#glitch-none
+    locator: "§2.4"
+    quote: "No DEMO-MCU-1 pad shows a glitch at power-up."
+    supports: "power_up_glitch is none for every DEMO-MCU-1 pad"
+  - id: demo-datasheet-1#adc
+    locator: "§3, Table 3-1"
+    quote: "ADC1 channel 0 is on GPIO1 and remains usable while the radio is on."
+    supports: "GPIO1 is ADC1 channel 0 with no radio conflict"
+  - id: demo-datasheet-1#electrical-levels
+    locator: "§5.1, Table 5-1"
+    quote: "VDDIO 3.3 V. VIH min 0.75 VDDIO, VIL max 0.25 VDDIO, VOH min 0.8 VDDIO, VOL max 0.1 VDDIO, VIN max VDDIO + 0.3 V."
+    supports: "DEMO-MCU-1 I/O supply and logic thresholds"
+  - id: demo-datasheet-1#electrical-currents
+    locator: "§5.2, Table 5-2"
+    quote: "Per-pin current 10 mA maximum; total for all pads 40 mA maximum."
+    supports: "DEMO-MCU-1 per-pin and cumulative current limits"
+  - id: demo-datasheet-1#related-part-pulls
+    locator: "Appendix A"
+    quote: "DEMO-MCU-0 internal pull resistors: 45 kOhm typical."
+    supports: "Internal pull resistance of the related part DEMO-MCU-0, used as an interim value for DEMO-MCU-1"
+  - id: demo-datasheet-1#module-pads
+    locator: "§6, Table 6-1"
+    quote: "DEMO-MODULE-1 bonds GPIO0 to GPIO3. GPIO3 drives the internal flash. Flash supply 3.3 V."
+    supports: "DEMO-MODULE-1 bonded pads, GPIO3 consumed by flash, flash voltage 3.3 V"
+  - id: demo-datasheet-1#board-pinout
+    locator: "§7, Figure 7-1"
+    quote: "DEMO-BOARD-1 header J1: 1 3V3, 2 GND, 3 GPIO0, 4 GPIO1, 5 GPIO2, 6 EN. Logic 3.3 V. LED on GPIO1."
+    supports: "DEMO-BOARD-1 header J1 pin map, 3.3 V logic and 3V3 rail, user LED on GPIO1"
+  - id: demo-datasheet-1#sensor-interface
+    locator: "§8.1"
+    quote: "DEMO-SENSOR-1 I2C interface, standard and fast mode up to 400 kHz, address 0x40 with ADDR tied to GND."
+    supports: "DEMO-SENSOR-1 I2C modes, maximum clock and address"
+  - id: demo-datasheet-1#sensor-supply
+    locator: "§8.2, Table 8-1"
+    quote: "VDD and VDDIO 1.8 V to 3.6 V. Input maximum VDDIO + 0.3 V. Supply current 0.2 mA typical, 0.5 mA maximum."
+    supports: "DEMO-SENSOR-1 supply ranges, input absolute maximum and supply current"
+  - id: demo-datasheet-1#breakout-pins
+    locator: "§9, Figure 9-1"
+    quote: "DEMO-BREAKOUT-1 pins VCC, GND, SDA, SCL. 10 kOhm pull-ups on SDA and SCL. ADDR tied to GND. No regulator, no level shifter."
+    supports: "DEMO-BREAKOUT-1 pin labels, pull-ups, hardwired address strap, no regulator, no level shifter"
+doc_number: DEMO-DS-0001
+id: demo-datasheet-1
+kind: datasheet
+manual: false
+publisher: Demo Corp
+revision: "1.0"
+revision_date: null
+secondary: false
+sha256: "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+title: DEMO-MCU-1 Family Demo Datasheet
+url: https://example.com/demo-datasheet-1.pdf
+url_original: null
