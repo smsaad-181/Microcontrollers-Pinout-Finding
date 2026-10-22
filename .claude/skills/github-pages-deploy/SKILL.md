@@ -101,7 +101,7 @@ decides who must review, while `required_approving_review_count` is repo-wide.
 
 ## Web app essentials
 
-- `vite.config.ts`: `base: process.env.PAGES_BASE ?? '/pinout-finder/'`.
+- `vite.config.ts`: `base: process.env.PAGES_BASE ?? '/Microcontrollers-Pinout-Finding/'` (the repo name; CI and deploy set `PAGES_BASE: /${{ github.event.repository.name }}/`).
 - Router: hash-based (`createHashRouter`).
 - `index.html` CSP: `default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline';
   img-src 'self' data:; connect-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'`.
