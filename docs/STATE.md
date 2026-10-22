@@ -20,10 +20,8 @@ Status values: NOT STARTED · IN PROGRESS · VALIDATING · FIXING (round n/3) ·
 
 ## Current task
 
-Phase 1 FIXING (round 1/3), local only (user does GitHub later). Validators: phase-validator FAIL (5 major), code-reviewer FAIL (2 major), github-actions-expert PASS (0 major).
-Running now: **engine-developer fix agent** — checker/schema majors F2 F3 F4 F5 + CR1 CR2 and cheap minors (tests first).
-Me: workflow fixes (deploy `configure-pages`, Node pin, duplicate CI runs).
-Then: re-run all three validators.
+Phase 1 FIXING (round 1/3): all fixes done and re-checked by the orchestrator (typecheck, lint, format, 301 tests, 48/48 invalid fixtures rejected, valid + empty catalog exit 0).
+Next: re-run the three validators on the fixed code (waiting for the user's go).
 
 ## Task checklist
 
@@ -147,6 +145,8 @@ None of these block Phase 0. Re-check all three when a session is started inside
 - 2026-10-22 · `apps/web/public/catalog/` is generated at deploy time and git-ignored. Phase 3/5 must decide how old `<version>.json` files stay available for share links (PLAN: previous versions remain in `dist/`).
 - 2026-10-22 · Open for later: duplicate entity ids have no error code yet; CI uses a shallow checkout so the manifest `date` may differ from a local build (content/version are unaffected).
 
+- 2026-10-22 · Fix round 1 changed the error-code contract (fixtures README decisions 2, 6, 11–15): new `E_DUPLICATE_ID`, `E_REF_UNRESOLVED` (replaces the `W_DANGLING_REF` warning), `E_FILE_EXTENSION`; reviewer identity = trim + lower-case; evidence claims need non-blank quote/locator/supports, quote ≤ 25 words and 400 chars; evidence URLs http(s) only; `Board.variants` needs at least one; YAML anchors/aliases/merge keys and `__proto__`-style keys are rejected. CI: Node pinned via `.nvmrc` (24), `configure-pages` removed, CI runs once per PR, deploy only from `main`.
+
 ## Decisions needed
 
 - 2026-10-22 · **GitHub deferred by user ("I will update later in github… continue").** Work continues locally
@@ -160,6 +160,7 @@ None of these block Phase 0. Re-check all three when a session is started inside
 
 | Date | Phase | Event |
 | --- | --- | --- |
+| 2026-10-22 | 1 | Fix round 1 (engine-developer + orchestrator): all 5 Majors addressed; tests schema 83 / cli 171 / web 46 (was 62/61/35); 48 invalid fixtures (was 12) each exit 1 with exactly its code; mutants M3 M5 M6 M10 M16 M18 M24 now killed; workflows: Node 24 pinned, configure-pages removed, single CI run per PR, deploy guarded to main. Re-validation pending. |
 | 2026-10-22 | 1 | Validator 3/3 github-actions-expert: **PASS** — 0 Critical/Major, 6 Minor; clean-clone CI simulation (install, lint, typecheck, test, validate, compile, build) exit 0 on Node 22 and 24; branch-protection commands for 1.8 recorded in its report. |
 | 2026-10-22 | 1 | Validator 2/3 code-reviewer: **FAIL** — 2 Major: CR1 board with `variants: []`/unknown module passes as fully-verified (exit 0); CR2 surviving mutants (no positive `fully-verified` test, no content→version test). 7 Minor (e.g. `__proto__` pad silently dropped, alias-bomb stack trace). pnpm audit clean. |
 | 2026-10-22 | 1 | Validator 1/3 phase-validator: **FAIL** — all local gate commands pass (161 tests, 12/12 invalid fixtures rejected, compile deterministic, SHA pins OK); 5 Major findings in checker strictness + deploy.yml. Remote-only gate items not verifiable (no GitHub). |

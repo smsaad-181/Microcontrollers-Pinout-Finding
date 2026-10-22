@@ -5,6 +5,7 @@ import { parse } from 'yaml';
 export const REPO_ROOT = fileURLToPath(new URL('../../../', import.meta.url));
 export const FIXTURES = fileURLToPath(new URL('./fixtures/', import.meta.url));
 export const VALID_ROOT = fileURLToPath(new URL('./fixtures/valid/', import.meta.url));
+export const INVALID_DIR = fileURLToPath(new URL('./fixtures/invalid/', import.meta.url));
 export const REAL_CATALOG = fileURLToPath(new URL('../../../catalog/', import.meta.url));
 
 export interface InvalidCase {

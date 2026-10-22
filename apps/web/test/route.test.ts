@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { CONTENT_SECURITY_POLICY } from '../src/csp';
 import { hrefFor, parseHashRoute } from '../src/route';
@@ -14,6 +15,24 @@ describe('parseHashRoute', () => {
     ['#/a?b=c', '/a'],
   ])('maps %j to not-found %j', (hash, path) => {
     expect(parseHashRoute(hash)).toEqual({ name: 'not-found', path });
+  });
+});
+
+describe('in-page anchors', () => {
+  it('does not turn #main (the <main> id) into a not-found page', () => {
+    expect(parseHashRoute('#main')).toEqual({ name: 'home' });
+  });
+
+  it('still shows not-found for other unknown hashes', () => {
+    expect(parseHashRoute('#mainx')).toEqual({ name: 'not-found', path: '/mainx' });
+    expect(parseHashRoute('#/main')).toEqual({ name: 'not-found', path: '/main' });
+  });
+});
+
+describe('styles', () => {
+  it('wraps long unbroken text such as a long hash in <code>', () => {
+    const css = readFileSync(new URL('../src/styles.css', import.meta.url), 'utf8');
+    expect(css).toMatch(/code\s*\{[^}]*overflow-wrap:\s*anywhere/);
   });
 });
 

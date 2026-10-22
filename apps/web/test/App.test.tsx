@@ -23,7 +23,12 @@ describe('CatalogStatus', () => {
       <CatalogStatus
         state={{
           status: 'ready',
-          manifest: { version: '2026.10.22-1', date: '2026-10-22', sha256: 'ab', counts: { boards: 3 } },
+          manifest: {
+            version: '2026.10.22-1',
+            date: '2026-10-22',
+            sha256: 'ab',
+            counts: { boards: 3 },
+          },
         }}
       />,
     );

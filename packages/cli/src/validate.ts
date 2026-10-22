@@ -21,9 +21,10 @@ import {
   type Module,
   type Status,
 } from '@pinout/schema';
-import { parseDocument } from 'yaml';
+import { isAlias, isMap, isNode, isScalar, isSeq, parseDocument, type Document } from 'yaml';
 import type { z } from 'zod';
 import { loadCatalogSources } from './load.js';
+import { byCodeUnit, compareDiagnostics } from './order.js';
 import {
   KINDS,
   STATUSES,
@@ -54,7 +55,9 @@ interface Parsed {
   entity?: unknown;
 }
 
-const byCodeUnit = (a: string, b: string) => (a < b ? -1 : a > b ? 1 : 0);
+/** Keys that would reach `Object.prototype` machinery; rejected anywhere in a catalog file. */
+const FORBIDDEN_KEYS: ReadonlySet<string> = new Set(['__proto__', 'constructor', 'prototype']);
+
 const zeroCounts = (): StatusCounts => ({
   verified: 0,
   'single-source': 0,
@@ -77,28 +80,92 @@ function zodPath(path: readonly PropertyKey[]): string {
   return path.map(String).join('.');
 }
 
+const lineOf = (text: string, offset: number) => text.slice(0, offset).split('\n').length;
+
+interface AstScan {
+  /** First anchor / alias / merge key found (catalog files must be plain data). */
+  yamlProblem?: string;
+  /** Dot paths of forbidden record keys. */
+  forbiddenKeys: string[];
+}
+
+/**
+ * Walks the YAML AST (before any expansion). Anchors, aliases and merge keys are refused outright:
+ * they let a tiny file expand into a huge one (alias bomb) and hide values from review. Keys such as
+ * `__proto__` are collected so they can be rejected instead of being silently dropped later.
+ */
+function scanAst(doc: Document, text: string): AstScan {
+  const scan: AstScan = { forbiddenKeys: [] };
+  const problem = (node: unknown, what: string) => {
+    if (scan.yamlProblem !== undefined) return;
+    const range = isNode(node) ? node.range : undefined;
+    const at = range ? `line ${String(lineOf(text, range[0]))}: ` : '';
+    scan.yamlProblem = `${at}${what} are not allowed in catalog files; write the value out in full`;
+  };
+  const walk = (node: unknown, path: string): void => {
+    if (isAlias(node)) {
+      problem(node, 'YAML aliases (*name)');
+      return;
+    }
+    if (isNode(node) && 'anchor' in node && node.anchor) problem(node, 'YAML anchors (&name)');
+    if (isMap(node)) {
+      for (const pair of node.items) {
+        const key = isScalar(pair.key) ? String(pair.key.value) : undefined;
+        if (key === undefined) {
+          if (isAlias(pair.key)) problem(pair.key, 'YAML aliases (*name)');
+          continue;
+        }
+        const here = path === '' ? key : `${path}.${key}`;
+        if (key === '<<') problem(pair.key, 'YAML merge keys (<<)');
+        if (FORBIDDEN_KEYS.has(key)) scan.forbiddenKeys.push(here);
+        walk(pair.value, here);
+      }
+    } else if (isSeq(node)) {
+      node.items.forEach((item, i) => {
+        walk(item, path === '' ? String(i) : `${path}.${String(i)}`);
+      });
+    }
+  };
+  walk(doc.contents, '');
+  return scan;
+}
+
 function parseYaml(
   source: SourceFile,
   out: Diagnostic[],
 ): { ok: true; value: unknown } | { ok: false } {
-  const doc = parseDocument(source.text, {
-    version: '1.2',
-    schema: 'core',
-    uniqueKeys: true,
-    prettyErrors: true,
-  });
-  const first = doc.errors[0];
-  if (first) {
-    out.push({
-      severity: 'error',
-      code: 'E_YAML',
-      file: source.file,
-      path: '',
-      message: first.message.split('\n')[0] ?? first.message,
-    });
+  const yamlError = (message: string): { ok: false } => {
+    out.push({ severity: 'error', code: 'E_YAML', file: source.file, path: '', message });
     return { ok: false };
+  };
+  try {
+    const doc = parseDocument(source.text, {
+      version: '1.2',
+      schema: 'core',
+      uniqueKeys: true,
+      prettyErrors: true,
+    });
+    const first = doc.errors[0];
+    if (first) return yamlError(first.message.split('\n')[0] ?? first.message);
+    const scan = scanAst(doc, source.text);
+    if (scan.yamlProblem !== undefined) return yamlError(scan.yamlProblem);
+    if (scan.forbiddenKeys.length > 0) {
+      for (const path of scan.forbiddenKeys) {
+        out.push({
+          severity: 'error',
+          code: 'E_SCHEMA',
+          file: source.file,
+          path,
+          message: `key "${path.split('.').at(-1) ?? ''}" is not allowed (reserved JavaScript object key)`,
+        });
+      }
+      return { ok: false };
+    }
+    return { ok: true, value: doc.toJS({ maxAliasCount: 0 }) as unknown };
+  } catch (e) {
+    // e.g. nesting deep enough to overflow the parser's recursion: one diagnostic, never a crash.
+    return yamlError(e instanceof Error ? e.message : String(e));
   }
-  return { ok: true, value: doc.toJS({ maxAliasCount: 100 }) as unknown };
 }
 
 /** True when the last key of `path` is absent from its (existing) parent object in `raw`. */
@@ -144,8 +211,31 @@ function computeBoardStatus(board: Board, modules: Module[], chips: Chip[]): Boa
   return facts.every((f) => f.fact.status === 'verified') ? 'fully-verified' : 'partially-verified';
 }
 
+/** Pin kinds whose silkscreen label must be non-empty (README decision 6, extended to rails). */
+const LABELLED_KINDS: ReadonlySet<string> = new Set(['gpio', 'power', 'ground']);
+
+/**
+ * Validates a whole catalog given as in-memory sources (pure: no file system).
+ *
+ * Pipeline: YAML (E_YAML) -> shape (E_SCHEMA) -> duplicate ids (E_DUPLICATE_ID) -> fact rules
+ * -> evidence resolution (E_EVIDENCE_UNKNOWN) -> boards (E_REF_UNRESOLVED, E_PIN_NUMBERING,
+ * E_BOARD_STATUS) -> other references (E_REF_UNRESOLVED) -> coverage. An entity that fails an
+ * earlier stage is skipped by later checks that depend on it (README decision 8). Never throws on
+ * bad catalog content: every problem becomes a diagnostic.
+ */
 export function validateCatalog(sources: readonly SourceFile[]): ValidationResult {
   const diagnostics: Diagnostic[] = [];
+  const error =
+    (code: Extract<Diagnostic, { severity: 'error' }>['code'], p: Parsed | string) =>
+    (path: string, message: string) => {
+      diagnostics.push({
+        severity: 'error',
+        code,
+        file: typeof p === 'string' ? p : p.source.file,
+        path,
+        message,
+      });
+    };
   const parsed: Parsed[] = [...sources]
     .sort((a, b) => byCodeUnit(a.file, b.file))
     .map((source) => ({ source }));
@@ -159,15 +249,66 @@ export function validateCatalog(sources: readonly SourceFile[]): ValidationResul
   }
 
   const ok = (kind: Kind) => parsed.filter((p) => p.source.kind === kind && p.entity !== undefined);
-  /** Ids of entities of `kind` that exist but are broken; `null` = a broken file whose id is unknown. */
+  const keyOf = (kind: Kind, p: Parsed): string =>
+    kind === 'boards' ? boardRef(p.entity as Board) : (p.entity as { id: string }).id;
+
+  // 3. Duplicate ids (E_DUPLICATE_ID): every file in a clash is reported; the clashing id is then
+  // treated like a broken entity so nothing silently merges or picks a winner.
+  const duplicated = Object.fromEntries(KINDS.map((k) => [k, new Set<string>()])) as Record<
+    Kind,
+    Set<string>
+  >;
+  for (const kind of KINDS) {
+    const groups = new Map<string, Parsed[]>();
+    for (const p of ok(kind)) {
+      const key = keyOf(kind, p);
+      groups.set(key, [...(groups.get(key) ?? []), p]);
+    }
+    for (const [key, members] of groups) {
+      if (members.length < 2) continue;
+      duplicated[kind].add(key);
+      for (const p of members) {
+        const others = members.filter((m) => m !== p).map((m) => m.source.file);
+        error('E_DUPLICATE_ID', p)(
+          'id',
+          `${kind} id "${key}" is defined more than once (also in ${others.join(', ')})`,
+        );
+      }
+    }
+  }
+  for (const p of ok('evidence')) {
+    const seen = new Map<string, number>();
+    (p.entity as Evidence).claims.forEach((c, i) => {
+      const first = seen.get(c.id);
+      if (first === undefined) seen.set(c.id, i);
+      else
+        error('E_DUPLICATE_ID', p)(
+          `claims.${String(i)}.id`,
+          `claim id "${c.id}" is already defined at claims.${String(first)}`,
+        );
+    });
+  }
+
+  /** Ids of `kind` that exist but cannot be relied on: failed the shape check, or duplicated. `null` = unknown id. */
   const brokenIds = (kind: Kind) =>
-    new Set(
-      parsed
+    new Set<string | null>([
+      ...parsed
         .filter((p) => p.source.kind === kind && p.entity === undefined)
         .map((p) => rawId(p.raw) ?? null),
+      ...duplicated[kind],
+    ]);
+  /** Entities of `kind` keyed by id, without any duplicated id. */
+  const uniqueByKey = <T>(kind: Kind): Map<string, T> =>
+    new Map(
+      ok(kind)
+        .filter((p) => !duplicated[kind].has(keyOf(kind, p)))
+        .map((p) => [keyOf(kind, p), p.entity as T]),
     );
+  /** A missing reference is only the author's mistake when the target is not a broken file. */
+  const targetMayBeBroken = (broken: Set<string | null>, id: string) =>
+    broken.has(id) || broken.has(null);
 
-  // 3. Cross-field fact rules on every non-evidence entity that passed the shape check.
+  // 4. Cross-field fact rules on every non-evidence entity that passed the shape check.
   for (const p of parsed) {
     if (p.entity === undefined || p.source.kind === 'evidence') continue;
     for (const issue of checkFactRules(p.entity)) {
@@ -181,13 +322,10 @@ export function validateCatalog(sources: readonly SourceFile[]): ValidationResul
     }
   }
 
-  // 4. Evidence resolution (decision 4): doc = text before the first '#', claim = the full id.
+  // 5. Evidence resolution (decision 4): doc = text before the first '#', claim = the full id.
   const claimsByDoc = new Map<string, Set<string>>();
-  for (const p of ok('evidence')) {
-    const ev = p.entity as z.infer<typeof EvidenceSchema>;
-    const set = claimsByDoc.get(ev.id) ?? new Set<string>();
-    for (const c of ev.claims) set.add(c.id);
-    claimsByDoc.set(ev.id, set);
+  for (const [id, ev] of uniqueByKey<Evidence>('evidence')) {
+    claimsByDoc.set(id, new Set(ev.claims.map((c) => c.id)));
   }
   const brokenDocs = brokenIds('evidence');
   for (const p of parsed) {
@@ -197,97 +335,99 @@ export function validateCatalog(sources: readonly SourceFile[]): ValidationResul
       if (brokenDocs.has(doc)) continue; // that evidence file has its own error (decision 8)
       const claims = claimsByDoc.get(doc);
       if (!claims?.has(ref.claim)) {
-        diagnostics.push({
-          severity: 'error',
-          code: 'E_EVIDENCE_UNKNOWN',
-          file: p.source.file,
-          path: ref.path,
-          message: claims
+        error('E_EVIDENCE_UNKNOWN', p)(
+          ref.path,
+          claims
             ? `unknown claim "${ref.claim}" in evidence document "${doc}"`
             : `unknown evidence document "${doc}" (cited as "${ref.claim}")`,
-        });
+        );
       }
     }
   }
 
-  // 5. Boards: pin numbering (decision 6) and status (decision 7), with dependency skipping (decision 8).
-  const modulesById = new Map(
-    ok('modules').map((p) => [(p.entity as Module).id, p.entity as Module]),
-  );
-  const chipsById = new Map(ok('chips').map((p) => [(p.entity as Chip).id, p.entity as Chip]));
+  // 6. Boards: references, pin numbering (decision 6) and status (decision 7), with dependency skipping.
+  const modulesById = uniqueByKey<Module>('modules');
+  const chipsById = uniqueByKey<Chip>('chips');
   const brokenModules = brokenIds('modules');
   const brokenChips = brokenIds('chips');
   const boardStatuses: Coverage['boards'] = [];
-  const warnDangling = (file: string, path: string, what: string, id: string) => {
-    diagnostics.push({
-      severity: 'warning',
-      code: 'W_DANGLING_REF',
-      file,
-      path,
-      message: `${what} "${id}" is not in the catalog`,
-    });
-  };
 
   for (const p of ok('boards')) {
     const board = p.entity as Board;
-    const file = p.source.file;
-    // Resolve each variant to (module, chip); `blocked` = a dependency is itself broken.
+    const fail = error('E_PIN_NUMBERING', p);
+    // Resolve each variant to (module, chip). `blocked` = some reference is unresolved or broken, so
+    // the pad checks are incomplete and NO status may be computed (never a bogus pass).
     let blocked = brokenModules.has(null) || brokenChips.has(null);
     const resolved: { variant: string; module: Module; chip: Chip }[] = [];
     board.variants.forEach((v, i) => {
       const mod = modulesById.get(v.module);
       if (!mod) {
-        if (brokenModules.has(v.module)) blocked = true;
-        else warnDangling(file, `variants.${String(i)}.module`, 'module', v.module);
+        blocked = true;
+        if (!targetMayBeBroken(brokenModules, v.module)) {
+          error('E_REF_UNRESOLVED', p)(
+            `variants.${String(i)}.module`,
+            `module "${v.module}" is not in the catalog`,
+          );
+        }
         return;
       }
       const chip = chipsById.get(mod.chip);
       if (!chip) {
-        if (brokenChips.has(mod.chip)) blocked = true;
-        return; // a dangling module.chip is reported on the module file
+        blocked = true; // reported on the module file (E_REF_UNRESOLVED) or the chip is broken
+        return;
       }
       resolved.push({ variant: v.id, module: mod, chip });
     });
 
     let pinErrors = 0;
+    const bad = (path: string, message: string) => {
+      pinErrors++;
+      fail(path, message);
+    };
     board.connectors.forEach((conn, ci) => {
+      const positions = new Map<number, number>();
+      const gpioLabels = new Map<string, number>();
       conn.pins.forEach((pin, pi) => {
-        if (pin.kind !== 'gpio') return;
         const at = `connectors.${String(ci)}.pins.${String(pi)}`;
-        const where = `gpio pin ${conn.id}-${String(pin.position)}`;
-        if (pin.label.trim() === '') {
-          pinErrors++;
-          diagnostics.push({
-            severity: 'error',
-            code: 'E_PIN_NUMBERING',
-            file,
-            path: `${at}.label`,
-            message: `${where} has an empty silkscreen label`,
-          });
+        const where = `${pin.kind} pin ${conn.id}-${String(pin.position)}`;
+        const firstPosition = positions.get(pin.position);
+        if (firstPosition === undefined) positions.set(pin.position, pi);
+        else
+          bad(
+            `${at}.position`,
+            `${where}: position ${String(pin.position)} is already used by pin ${String(firstPosition)} of connector ${conn.id}`,
+          );
+        const label = pin.label.trim();
+        if (label === '' && LABELLED_KINDS.has(pin.kind)) {
+          bad(`${at}.label`, `${where} has an empty silkscreen label`);
+        }
+        if (pin.kind !== 'gpio') return;
+        // GND/3V3 labels legitimately repeat; gpio silkscreen labels identify a pin, so they must not.
+        const firstLabel = gpioLabels.get(label);
+        if (label !== '' && firstLabel !== undefined) {
+          bad(
+            `${at}.label`,
+            `${where}: label "${label}" is already used by pin ${String(firstLabel)} of connector ${conn.id}`,
+          );
+        } else if (label !== '') {
+          gpioLabels.set(label, pi);
         }
         if (pin.pad === undefined) {
-          pinErrors++;
-          diagnostics.push({
-            severity: 'error',
-            code: 'E_PIN_NUMBERING',
-            file,
-            path: `${at}.pad`,
-            message: `${where} has no pad, so no chip GPIO number`,
-          });
+          bad(`${at}.pad`, `${where} has no pad, so no chip GPIO number`);
           return;
         }
         const pad = pin.pad;
         const missingIn = resolved.filter((r) => !Object.hasOwn(r.chip.pads, pad));
         if (missingIn.length > 0) {
-          pinErrors++;
           const list = missingIn.map((r) => `${r.chip.id} (variant ${r.variant})`).join(', ');
-          diagnostics.push({
-            severity: 'error',
-            code: 'E_PIN_NUMBERING',
-            file,
-            path: `${at}.pad`,
-            message: `${where}: pad "${pad}" is not a pad of chip ${list}`,
-          });
+          bad(`${at}.pad`, `${where}: pad "${pad}" is not a pad of chip ${list}`);
+        }
+        const notBonded = resolved.filter(
+          (r) => Object.hasOwn(r.chip.pads, pad) && !r.module.bonded_pads.includes(pad),
+        );
+        if (notBonded.length > 0) {
+          const list = notBonded.map((r) => `${r.module.id} (variant ${r.variant})`).join(', ');
+          bad(`${at}.pad`, `${where}: pad "${pad}" is not bonded out by module ${list}`);
         }
       });
     });
@@ -298,57 +438,56 @@ export function validateCatalog(sources: readonly SourceFile[]): ValidationResul
       const chips = [...new Map(resolved.map((r) => [r.chip.id, r.chip])).values()];
       computed = computeBoardStatus(board, mods, chips);
       if (computed !== board.status) {
-        diagnostics.push({
-          severity: 'error',
-          code: 'E_BOARD_STATUS',
-          file,
-          path: 'status',
-          message: `board status is "${board.status}" but its facts (board + variant modules + chips) give "${computed}"`,
-        });
+        error('E_BOARD_STATUS', p)(
+          'status',
+          `board status is "${board.status}" but its facts (board + variant modules + chips) give "${computed}"`,
+        );
       }
     }
     boardStatuses.push({ ref: boardRef(board), declared: board.status, computed });
   }
 
-  // 6. Dangling references: warnings only (no Phase 1 error code, README decision 11).
+  // 7. Other references (E_REF_UNRESOLVED): module -> chip, breakout -> ic, fixture -> board/variant/breakout.
+  const unresolved = (p: Parsed, path: string, what: string, id: string) => {
+    error('E_REF_UNRESOLVED', p)(path, `${what} "${id}" is not in the catalog`);
+  };
   for (const p of ok('modules')) {
     const m = p.entity as Module;
-    if (!chipsById.has(m.chip) && !brokenChips.has(m.chip))
-      warnDangling(p.source.file, 'chip', 'chip', m.chip);
+    if (!chipsById.has(m.chip) && !targetMayBeBroken(brokenChips, m.chip))
+      unresolved(p, 'chip', 'chip', m.chip);
   }
-  const icIds = new Set(ok('ics').map((p) => (p.entity as { id: string }).id));
+  const icsById = uniqueByKey<IC>('ics');
   const brokenIcs = brokenIds('ics');
   for (const p of ok('breakouts')) {
-    const b = p.entity as z.infer<typeof BreakoutSchema>;
-    if (!icIds.has(b.ic) && !brokenIcs.has(b.ic)) warnDangling(p.source.file, 'ic', 'IC', b.ic);
+    const b = p.entity as Breakout;
+    if (!icsById.has(b.ic) && !targetMayBeBroken(brokenIcs, b.ic)) unresolved(p, 'ic', 'IC', b.ic);
   }
-  const boardsByRef = new Map(
-    ok('boards').map((p) => [boardRef(p.entity as Board), p.entity as Board]),
-  );
-  const breakoutIds = new Set(ok('breakouts').map((p) => (p.entity as { id: string }).id));
-  const boardsBroken = brokenIds('boards').size > 0;
-  const breakoutsBroken = brokenIds('breakouts').size > 0;
+  const boardsByRef = uniqueByKey<Board>('boards');
+  const breakoutsById = uniqueByKey<Breakout>('breakouts');
+  const brokenBoards = brokenIds('boards');
+  const brokenBreakouts = brokenIds('breakouts');
+  const anyBoardBroken = brokenBoards.size > 0; // refs are `id@rev`; a broken board's ref is unknown
   for (const p of ok('fixtures')) {
-    const f = p.entity as z.infer<typeof FixtureSchema>;
-    const board = boardsByRef.get(f.board);
-    if (!board) {
-      if (!boardsBroken) warnDangling(p.source.file, 'board', 'board', f.board);
-    } else if (!board.variants.some((v) => v.id === f.variant)) {
-      warnDangling(p.source.file, 'variant', `variant of ${f.board}`, f.variant);
-    }
+    const f = p.entity as Fixture;
+    const checkBoard = (boardPath: string, variantPath: string, ref: string, variant: string) => {
+      const board = boardsByRef.get(ref);
+      if (!board) {
+        if (!anyBoardBroken) unresolved(p, boardPath, 'board', ref);
+      } else if (!board.variants.some((v) => v.id === variant)) {
+        unresolved(p, variantPath, `variant of ${ref}`, variant);
+      }
+    };
+    checkBoard('board', 'variant', f.board, f.variant);
+    if (f.project.board !== f.board || f.project.variant !== f.variant)
+      checkBoard('project.board', 'project.variant', f.project.board, f.project.variant);
     f.project.modules.forEach((m, i) => {
-      if (!breakoutIds.has(m.breakout) && !breakoutsBroken) {
-        warnDangling(
-          p.source.file,
-          `project.modules.${String(i)}.breakout`,
-          'breakout',
-          m.breakout,
-        );
+      if (!breakoutsById.has(m.breakout) && !targetMayBeBroken(brokenBreakouts, m.breakout)) {
+        unresolved(p, `project.modules.${String(i)}.breakout`, 'breakout', m.breakout);
       }
     });
   }
 
-  // 7. Coverage (facts counted on every parsed file; a fact = mapping with status + evidence).
+  // 8. Coverage (facts counted on every parsed file; a fact = mapping with status + evidence).
   const entities = Object.fromEntries(KINDS.map((k) => [k, 0])) as Record<Kind, number>;
   const factsByKind = Object.fromEntries(KINDS.map((k) => [k, zeroCounts()])) as Record<
     Kind,
@@ -367,26 +506,22 @@ export function validateCatalog(sources: readonly SourceFile[]): ValidationResul
     }
   }
 
-  // Entities sorted by id for a stable compile order.
-  const sortedEntities = <T>(kind: Kind, key: (e: T) => string): T[] =>
-    ok(kind)
-      .map((p) => p.entity as T)
-      .sort((a, b) => byCodeUnit(key(a), key(b)));
-  const id = (e: { id: string }) => e.id;
+  // Entities sorted by id (boards by `<id>@<revision>`) so compile order never depends on file order.
+  const sortedEntities = <T>(kind: Kind): T[] =>
+    [...ok(kind)]
+      .sort((a, b) => byCodeUnit(keyOf(kind, a), keyOf(kind, b)))
+      .map((p) => p.entity as T);
   const catalog: CatalogEntities = {
-    evidence: sortedEntities<Evidence>('evidence', id),
-    chips: sortedEntities<Chip>('chips', id),
-    modules: sortedEntities<Module>('modules', id),
-    boards: sortedEntities<Board>('boards', boardRef),
-    ics: sortedEntities<IC>('ics', id),
-    breakouts: sortedEntities<Breakout>('breakouts', id),
-    fixtures: sortedEntities<Fixture>('fixtures', id),
+    evidence: sortedEntities<Evidence>('evidence'),
+    chips: sortedEntities<Chip>('chips'),
+    modules: sortedEntities<Module>('modules'),
+    boards: sortedEntities<Board>('boards'),
+    ics: sortedEntities<IC>('ics'),
+    breakouts: sortedEntities<Breakout>('breakouts'),
+    fixtures: sortedEntities<Fixture>('fixtures'),
   };
 
-  diagnostics.sort(
-    (a, b) =>
-      byCodeUnit(a.file, b.file) || byCodeUnit(a.path, b.path) || byCodeUnit(a.code, b.code),
-  );
+  diagnostics.sort(compareDiagnostics);
   boardStatuses.sort((a, b) => byCodeUnit(a.ref, b.ref));
   return {
     diagnostics,
@@ -398,14 +533,16 @@ export function validateCatalog(sources: readonly SourceFile[]): ValidationResul
   };
 }
 
-/** Load + validate a catalog root (the loader's own warnings are merged in). */
+/** Load + validate a catalog root: the loader's diagnostics (ignored / wrongly named files) are merged in. */
 export function validateRoot(root: string): ValidationResult {
   const { sources, diagnostics } = loadCatalogSources(root);
   const result = validateCatalog(sources);
   if (diagnostics.length === 0) return result;
-  const all = [...diagnostics, ...result.diagnostics].sort(
-    (a, b) =>
-      byCodeUnit(a.file, b.file) || byCodeUnit(a.path, b.path) || byCodeUnit(a.code, b.code),
-  );
-  return { ...result, diagnostics: all, warningCount: result.warningCount + diagnostics.length };
+  const all = [...diagnostics, ...result.diagnostics].sort(compareDiagnostics);
+  return {
+    ...result,
+    diagnostics: all,
+    errorCount: all.filter((d) => d.severity === 'error').length,
+    warningCount: all.filter((d) => d.severity === 'warning').length,
+  };
 }

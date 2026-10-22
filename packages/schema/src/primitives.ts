@@ -38,17 +38,35 @@ export const EntityIdSchema = z
   .describe('Entity id, lower-case kebab-case (dots allowed).');
 
 export const ExprSchema = z
-  .union([
-    z.number(),
-    z.templateLiteral(['VDD*', z.number()]),
-    z.templateLiteral(['VDDIO+', z.number()]),
-    z.templateLiteral(['VDDIO*', z.number()]),
-  ])
+  .union(
+    [
+      z.number(),
+      z.templateLiteral(['VDD*', z.number()]),
+      z.templateLiteral(['VDDIO+', z.number()]),
+      z.templateLiteral(['VDDIO*', z.number()]),
+    ],
+    {
+      error:
+        'expected a number, or an expression of the form VDD*<k>, VDDIO+<v> or VDDIO*<k> ' +
+        '(e.g. "VDDIO*0.75", "VDDIO+0.3"; <k> and <v> are plain numbers)',
+    },
+  )
   .describe(
     'A voltage threshold: an absolute number (in the fact unit) or an expression relative to a supply: ' +
       '`VDD*<k>`, `VDDIO+<v>` or `VDDIO*<k>`.',
   );
 export type Expr = z.infer<typeof ExprSchema>;
+
+/** A string with at least one non-whitespace character. */
+export const NON_BLANK = /\S/;
+
+/** Reviewer key: non-blank. Identity is `normalizeReviewer` (trim + lower-case). */
+export const ReviewerSchema = z.string().regex(NON_BLANK, 'reviewer key must not be blank');
+
+/** Canonical form of a reviewer key, used wherever reviewers are compared. */
+export function normalizeReviewer(reviewer: string): string {
+  return reviewer.trim().toLowerCase();
+}
 
 /**
  * Generic Fact<T> factory: wraps a value schema in the evidence envelope. Shape only; the cross-field
@@ -71,9 +89,11 @@ export function fact<T extends z.ZodType>(value: T) {
         .describe('Claim ids supporting the value; at least one unless status is missing.'),
       status: StatusSchema,
       reviewers: z
-        .array(z.string())
+        .array(ReviewerSchema)
         .exactOptional()
-        .describe('Reviewer keys; at least two distinct when status is verified.'),
+        .describe(
+          'Reviewer keys (non-blank); at least two distinct after trim + lower-casing when status is verified.',
+        ),
       readings: z
         .array(z.strictObject({ value, evidence: z.array(ClaimIdSchema) }))
         .exactOptional()

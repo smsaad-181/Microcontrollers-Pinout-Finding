@@ -1,5 +1,6 @@
 // Thin CLI layer: argument parsing, file output and exit codes. Testable in-process via `runCli`.
-//   exit 0 = ok, 1 = validation errors (compile refuses to emit), 2 = usage / root not found.
+//   exit 0 = ok, 1 = validation errors (compile refuses to emit), 2 = usage error, root not found,
+//   or an unexpected internal error (one `error: ...` line, never a stack trace).
 import { execFileSync } from 'node:child_process';
 import { existsSync, mkdirSync, statSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
@@ -51,9 +52,18 @@ function parseArgs(argv: readonly string[]): Args | string {
 
 const DATE = /^\d{4}-\d{2}-\d{2}$/;
 
+/** A problem with how the CLI was invoked or configured (exit 2), as opposed to a catalog error. */
+export class UsageError extends Error {
+  override readonly name = 'UsageError';
+}
+
+/** Latest accepted SOURCE_DATE_EPOCH, so the manifest date always matches YYYY-MM-DD. */
+const MAX_EPOCH_SECONDS = 253_402_300_799; // 9999-12-31T23:59:59Z, the last 4-digit-year date
+
 /**
  * Deterministic "as of" date for the manifest, never the wall clock:
- *   1. SOURCE_DATE_EPOCH (reproducible-builds convention), as a UTC date;
+ *   1. SOURCE_DATE_EPOCH (reproducible-builds convention), as a UTC date; an invalid value throws
+ *      `UsageError` instead of being ignored;
  *   2. committer date of the last git commit touching the catalog root (`git log -1 --format=%cs`);
  *   3. the latest evidence `accessed` date; 4. 1970-01-01.
  */
@@ -63,9 +73,16 @@ export function resolveCatalogDate(
   result: ValidationResult,
 ): { date: string; source: string } {
   const epoch = env.SOURCE_DATE_EPOCH;
-  if (epoch !== undefined && /^\d+$/.test(epoch)) {
+  if (epoch !== undefined && epoch !== '') {
+    const seconds = Number(epoch);
+    if (!/^\d+$/.test(epoch) || !Number.isSafeInteger(seconds) || seconds > MAX_EPOCH_SECONDS) {
+      throw new UsageError(
+        'SOURCE_DATE_EPOCH must be a non-negative integer number of seconds since 1970-01-01 ' +
+          `(at most ${String(MAX_EPOCH_SECONDS)}), got "${epoch}"`,
+      );
+    }
     return {
-      date: new Date(Number(epoch) * 1000).toISOString().slice(0, 10),
+      date: new Date(seconds * 1000).toISOString().slice(0, 10),
       source: 'SOURCE_DATE_EPOCH',
     };
   }
@@ -102,7 +119,24 @@ function validateAndReport(
   return { result, root };
 }
 
+/**
+ * Runs the CLI in-process and returns the exit code (0 ok, 1 validation errors, 2 usage error or
+ * unexpected internal error). Output goes through `io`; it never throws.
+ */
 export function runCli(argv: readonly string[], io: CliIo): number {
+  try {
+    return runCommand(argv, io);
+  } catch (e) {
+    if (e instanceof UsageError) {
+      io.stderr(`catalog: ${e.message}\n${USAGE}`);
+    } else {
+      io.stderr(`error: ${e instanceof Error ? e.message : String(e)}`);
+    }
+    return 2;
+  }
+}
+
+function runCommand(argv: readonly string[], io: CliIo): number {
   const args = parseArgs(argv);
   if (typeof args === 'string') {
     io.stderr(`catalog: ${args}\n${USAGE}`);

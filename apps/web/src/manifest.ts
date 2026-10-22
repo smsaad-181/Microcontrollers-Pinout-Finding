@@ -75,7 +75,9 @@ export async function loadManifest(
   let data: unknown;
   try {
     data = JSON.parse(await response.text()) as unknown;
-  } catch {
+  } catch (err) {
+    // An abort while the body streams is not a bad manifest: surface it like a fetch abort.
+    if (signal?.aborted) throw err;
     return { status: 'invalid', reason: 'The catalog manifest is not valid JSON.' };
   }
   if (!isCatalogManifest(data)) {

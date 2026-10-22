@@ -1,5 +1,6 @@
 // Cross-field fact rules, kept OUT of the Zod shapes so they keep distinct error codes
 // (fixtures README, decision 2). Pure functions over already-parsed data (plain objects/arrays).
+import { normalizeReviewer } from './primitives.js';
 
 export type FactRuleCode = 'E_EVIDENCE_MISSING' | 'E_FACT_STATUS' | 'E_VERIFIED_REVIEWERS';
 
@@ -119,7 +120,13 @@ function checkOne(path: string, f: Obj): FactRuleIssue[] {
   }
   if (status === 'verified') {
     const reviewers = Array.isArray(f.reviewers) ? f.reviewers : [];
-    const distinct = new Set(reviewers.filter((r): r is string => typeof r === 'string'));
+    // Identity = trim + lower-case; blank keys never count.
+    const distinct = new Set(
+      reviewers
+        .filter((r): r is string => typeof r === 'string')
+        .map(normalizeReviewer)
+        .filter((r) => r !== ''),
+    );
     if (distinct.size < 2) {
       issues.push({
         code: 'E_VERIFIED_REVIEWERS',
@@ -131,7 +138,11 @@ function checkOne(path: string, f: Obj): FactRuleIssue[] {
   return issues;
 }
 
-/** Applies the cross-field fact rules to every fact in an entity. */
+/**
+ * Applies the cross-field fact rules to every fact in an entity: evidence present, value/status
+ * agreement, conflict readings, and two distinct reviewers (trim + lower-case) for `verified`.
+ * Returns issues in document order; an empty array means the entity passes.
+ */
 export function checkFactRules(root: unknown): FactRuleIssue[] {
   return collectFacts(root).flatMap(({ path, fact }) => checkOne(path, fact));
 }

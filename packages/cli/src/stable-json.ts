@@ -1,5 +1,6 @@
 // Canonical JSON: object keys sorted by UTF-16 code unit at every depth (including integer-like keys,
 // which JSON.stringify would emit first), arrays kept in order, undefined object values skipped.
+import { byCodeUnit } from './order.js';
 
 function ser(value: unknown, indent: number, depth: number): string | undefined {
   if (value === null || typeof value !== 'object') {
@@ -14,7 +15,7 @@ function ser(value: unknown, indent: number, depth: number): string | undefined 
     return `[${nl}${items.join(`,${nl}`)}${end}]`;
   }
   const obj = value as Record<string, unknown>;
-  const keys = Object.keys(obj).sort((a, b) => (a < b ? -1 : a > b ? 1 : 0));
+  const keys = Object.keys(obj).sort(byCodeUnit);
   const parts: string[] = [];
   for (const k of keys) {
     const v = ser(obj[k], indent, depth + 1);

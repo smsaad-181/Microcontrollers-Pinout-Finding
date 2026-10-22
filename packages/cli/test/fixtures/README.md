@@ -15,7 +15,8 @@ valid/                      one tiny, complete catalog: `catalog validate --root
   ics/demo-sensor-1.yaml                I2C sensor
   breakouts/demo-breakout-1.yaml        breakout of demo-sensor-1
   fixtures/demo-board-1-demo-breakout-1.yaml   golden fixture (Fixture schema)
-invalid/<case>/             a full copy of valid/ with exactly ONE violation (generated)
+invalid/<case>/             a full copy of valid/ with exactly ONE violation (generated; a violation may need
+                            two patches or an extra copied file, see make-invalid.py)
 invalid/cases.yaml          contract for the tests: { case, code, file, path_contains } (generated)
 make-invalid.py             regenerates invalid/ from valid/
 ```
@@ -44,8 +45,36 @@ fact/field path that contains `path_contains`.
 | `conflict-without-readings` | `E_FACT_STATUS` | `chips/demo-mcu-1.yaml` | `pads.GPIO0.reset_state` | `status: conflict` with no `readings`/`active` |
 | `bad-fixture` | `E_SCHEMA` | `fixtures/demo-board-1-demo-breakout-1.yaml` | `expect.status` | golden fixture without `expect.status` |
 
-Each case is designed so that **only** its listed error applies. Running `diff -r valid invalid/<case>`
-shows exactly one changed line in one file for every case.
+Each case is designed so that **only** its listed code is reported (decision 8). The first 12 cases are the
+original contract and must never change. `diff -r valid invalid/<case>` shows one changed line in one
+file for them, and one violation (one or two patches, or one added file) for the cases below.
+
+### Added in fix round 1 (new codes `E_DUPLICATE_ID`, `E_REF_UNRESOLVED`, `E_FILE_EXTENSION`)
+
+`file` is the file the CLI reports for the case; for duplicates every clashing file is reported.
+
+| case | code | file | path_contains | violation |
+| --- | --- | --- | --- | --- |
+| `duplicate-evidence-id` / `-chip-id` / `-module-id` / `-board-id` / `-ic-id` / `-breakout-id` | `E_DUPLICATE_ID` | the `*-copy.yaml` file (the original is reported too) | `id` | a copy of the file under a new name, same `id` (boards: same `id@revision`) |
+| `duplicate-claim-id` | `E_DUPLICATE_ID` | `evidence/demo-datasheet-1.yaml` | `claims.1.id` | the same claim id twice in one evidence record |
+| `ref-variant-module` | `E_REF_UNRESOLVED` | `boards/demo-board-1@r1.yaml` | `variants.0.module` | `module: nope` |
+| `ref-module-chip` | `E_REF_UNRESOLVED` | `modules/demo-module-1.yaml` | `chip` | `chip: nope` |
+| `ref-breakout-ic` | `E_REF_UNRESOLVED` | `breakouts/demo-breakout-1.yaml` | `ic` | `ic: nope` |
+| `ref-fixture-board` / `-variant` / `-breakout` | `E_REF_UNRESOLVED` | the fixture | `board` / `variant` / `project.modules.0.breakout` | unknown board `nope@r9`, variant, breakout |
+| `board-no-variants` | `E_SCHEMA` | the board | `variants` | `variants: []` (needs at least one) |
+| `verified-case-reviewer` | `E_VERIFIED_REVIEWERS` | the board | `logic_voltage` | `[hardware-researcher, Hardware-Researcher]` is one reviewer |
+| `verified-trim-reviewer` | `E_VERIFIED_REVIEWERS` | the board | `logic_voltage` | `["a ", a]` is one reviewer |
+| `verified-blank-reviewer` | `E_SCHEMA` | the board | `logic_voltage.reviewers.1` | a blank reviewer key |
+| `claim-empty-quote` / `-empty-locator` / `-empty-supports` | `E_SCHEMA` | the evidence | `claims.0.quote` / `.locator` / `.supports` | blank text |
+| `claim-quote-too-many-words` / `-too-long` | `E_SCHEMA` | the evidence | `claims.0.quote` | 26 words / 401 characters (limits: 25 words, 400 characters) |
+| `url-javascript` / `url-original-file` | `E_SCHEMA` | the evidence | `url` / `url_original` | scheme other than http(s) |
+| `pin-empty-label` / `-power` / `-ground` | `E_PIN_NUMBERING` | the board | `connectors.0.pins.N.label` | blank label on a gpio / power / ground pin |
+| `pin-duplicate-position` | `E_PIN_NUMBERING` | the board | `connectors.0.pins.3.position` | two pins at position 3 |
+| `pin-duplicate-label` | `E_PIN_NUMBERING` | the board | `connectors.0.pins.3.label` | two gpio pins labelled "0" |
+| `pin-pad-not-bonded` | `E_PIN_NUMBERING` | the board | `connectors.0.pins.4.pad` | pad GPIO2 exists on the chip but the module does not bond it out |
+| `yaml-proto-key` / `yaml-constructor-key` | `E_SCHEMA` | the chip | `peripherals.__proto__` / `.constructor` | reserved JavaScript object key |
+| `yaml-anchor` / `yaml-alias` | `E_YAML` | the chip | (root) | YAML anchor `&x` / alias `*x` |
+| `file-extension-yml` / `-upper` | `E_FILE_EXTENSION` | `chips/demo-mcu-2.yml` / `ics/demo-sensor-2.YAML` | (root) | wrong extension inside a kind directory |
 
 ## Expected coverage of `valid/` (informative)
 
@@ -74,7 +103,10 @@ choices below.
    - `E_EVIDENCE_MISSING`: status other than `missing` with `evidence: []`.
    - `E_FACT_STATUS`: `value` not null while `missing`, `value` null while not `missing`, and
      `conflict` without both `readings` and `active`.
-   - `E_VERIFIED_REVIEWERS`: `verified` with fewer than 2 **distinct** reviewers.
+   - `E_VERIFIED_REVIEWERS`: `verified` with fewer than 2 **distinct** reviewers. Reviewer identity is the
+     key after trim + lower-case (`Hardware-Researcher` equals `hardware-researcher`). A reviewer key must
+     not be blank: an empty or whitespace-only key is a shape error (`E_SCHEMA`, path `...reviewers.N`) on
+     any fact, so the entity is then skipped (decision 8).
 3. **What counts as a fact**: any mapping with both `status` and `evidence`. `onboard[].evidence`
    and `Fixture.evidence` are plain `ClaimId[]`, not facts. Their ids must still resolve
    (`E_EVIDENCE_UNKNOWN`), but they are not counted in coverage and do not need to be non-empty.
@@ -90,7 +122,11 @@ choices below.
    **every** variant (`variant.module` -> `module.chip`). `GPIO99` is also outside the module's
    `bonded_pads`, so the case fails whether or not the CLI checks `bonded_pads`. Pins of other kinds
    need no `pad`. A gpio pin on a pad that the module consumes (GPIO3 here) is **not** a Phase 1 error,
-   and the valid board does not expose GPIO3.
+   and the valid board does not expose GPIO3. Also `E_PIN_NUMBERING` (fix round 1): a gpio, power or
+   ground pin with a blank `label`; two pins of one connector with the same `position`; two **gpio** pins
+   of one connector with the same `label` (power/ground labels such as `GND` legitimately repeat); and a
+   gpio pad that the module of any variant does not list in `bonded_pads`. The reference defines no
+   relation between a pad key and its `gpio` number, so that is not checked.
 7. **Board status**: the reference does not list which fields are "critical", so the CLI computes:
    - `datasheet-required` when no connector has a `gpio` pin;
    - `fully-verified` when every fact is `verified`;
@@ -112,6 +148,31 @@ choices below.
     `select_strap: null`). `docs/templates/ic-breakout.yaml` writes `select_strap: null` and
     `value: [null, null]` for missing facts. Neither matches the TypeScript reference
     (`select_strap?`, and `value: null` when `missing`), so the templates should be fixed to match.
-11. **Dangling references** (an unknown `module.chip`, a variant module, `breakout.ic`, or a fixture's
-    board, variant or breakout) are valid in `valid/` but have no error code in the Phase 1 contract,
-    and no invalid case covers them. If the CLI adds that check, agree on a new code first.
+11. **Unresolved references are errors (`E_REF_UNRESOLVED`).** A `variants[].module` that is not a module,
+    a `module.chip` that is not a chip, a `breakout.ic` that is not an IC, and a fixture's `board`
+    (`<id>@<revision>`), `variant` or `project.modules[].breakout` that do not exist are errors, reported
+    on the file holding the reference (path = the field). A board with an unresolved reference gets **no**
+    computed status (`computed: null`, no `E_BOARD_STATUS`) and the run exits non-zero. A reference to a
+    file that is itself broken (E_YAML, E_SCHEMA, duplicate id) is not reported again (decision 8).
+    `Board.variants` must have at least one entry (`E_SCHEMA`).
+12. **Duplicate ids (`E_DUPLICATE_ID`).** Two entities of one kind with the same `id` (boards: the same
+    `id@revision`) are an error in **every** involved file, path `id`. The same claim id twice inside one
+    evidence record is an error at `claims.N.id` (N = the later occurrence). Evidence claim sets are never
+    merged; the clashing id is treated like a broken entity, so dependants add no second error.
+13. **Wrong extension (`E_FILE_EXTENSION`).** Inside a kind directory only lower-case `.yaml` is loaded.
+    `.yml`, `.YAML`, `.Yml` ... are errors (they would otherwise be skipped silently). A YAML file directly in
+    the catalog root is still only a `W_IGNORED_FILE` warning.
+14. **YAML is plain data.** Anchors, aliases and merge keys are `E_YAML` (no alias bombs, nothing hidden
+    from review). The keys `__proto__`, `constructor` and `prototype` are `E_SCHEMA` anywhere in a file,
+    and none of that file's facts are counted in coverage.
+15. **Evidence text and links.** Each claim's `quote`, `locator` and `supports` must be non-blank;
+    `quote` has at most 25 words and 400 characters. `url` / `url_original` must be `http:` or `https:`.
+
+## Notes for contributors
+
+- **Manifest `date` is not a pure function of the catalog.** The catalog file name and `version` are
+  content-addressed and reproducible. The manifest `date` comes from `SOURCE_DATE_EPOCH`, else the last git
+  commit touching the catalog root, so it depends on git history depth (and is the latest evidence
+  `accessed` date when git is unavailable). An invalid `SOURCE_DATE_EPOCH` is a usage error (exit 2),
+  never ignored.
+- Exit codes: 0 ok, 1 validation errors, 2 usage error or unexpected internal error (one `error: ...` line).

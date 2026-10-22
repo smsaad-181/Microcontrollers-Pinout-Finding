@@ -7,6 +7,7 @@ export function formatDiagnostic(d: Diagnostic): string {
 
 const plural = (n: number, word: string) => `${String(n)} ${word}${n === 1 ? '' : 's'}`;
 
+/** One-line summary: error / warning / file counts and the catalog root. */
 export function formatSummary(r: ValidationResult, root: string): string {
   return `catalog validate: ${plural(r.errorCount, 'error')}, ${plural(r.warningCount, 'warning')} in ${plural(r.fileCount, 'file')} (root: ${root})`;
 }

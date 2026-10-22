@@ -1,3 +1,4 @@
+import { readdirSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import {
   loadCatalogSources,
@@ -5,7 +6,7 @@ import {
   validateRoot,
   type SourceFile,
 } from '../src/index.js';
-import { REAL_CATALOG, VALID_ROOT, invalidCases, invalidRoot } from './helpers.js';
+import { INVALID_DIR, REAL_CATALOG, VALID_ROOT, invalidCases, invalidRoot } from './helpers.js';
 
 const errorsOf = (r: ReturnType<typeof validateCatalog>) =>
   r.diagnostics.filter((d) => d.severity === 'error');
@@ -69,7 +70,9 @@ describe('invalid fixture roots (contract: invalid/cases.yaml)', () => {
   const cases = invalidCases();
 
   it('covers every case directory', () => {
-    expect(cases.length).toBe(12);
+    const dirs = readdirSync(INVALID_DIR, { withFileTypes: true }).filter((e) => e.isDirectory());
+    expect(cases.map((c) => c.case).sort()).toEqual(dirs.map((d) => d.name).sort());
+    expect(cases.length).toBeGreaterThanOrEqual(12);
   });
 
   it.each(cases.map((c) => [c.case, c] as const))('%s', (_name, c) => {
@@ -158,17 +161,17 @@ describe('loader and YAML details', () => {
     expect(loadCatalogSources(REAL_CATALOG).sources).toEqual([]);
   });
 
-  it('warns (does not fail) on dangling references, which have no Phase 1 error code', () => {
+  it('errors (E_REF_UNRESOLVED) on a dangling reference', () => {
     const sources = loadCatalogSources(VALID_ROOT).sources.map((s) =>
       s.file.startsWith('breakouts/')
         ? { ...s, text: s.text.replace('ic: demo-sensor-1', 'ic: nope') }
         : s,
     );
     const r = validateCatalog(sources);
-    expect(errorsOf(r)).toEqual([]);
     expect(r.diagnostics.map((d) => [d.severity, d.code, d.file, d.path])).toEqual([
-      ['warning', 'W_DANGLING_REF', 'breakouts/demo-breakout-1.yaml', 'ic'],
+      ['error', 'E_REF_UNRESOLVED', 'breakouts/demo-breakout-1.yaml', 'ic'],
     ]);
+    expect(r.errorCount).toBe(1);
   });
 
   it('computes datasheet-required for a board without gpio pins', () => {

@@ -76,6 +76,29 @@ describe('loadManifest', () => {
     expect((await loadManifest(url, fakeFetch('{"version":1}'))).status).toBe('invalid');
   });
 
+  it('rethrows an abort that happens while the body is being read (no "invalid" flash)', async () => {
+    const controller = new AbortController();
+    const response = new Response('{}', { headers: { 'content-type': 'application/json' } });
+    response.text = () => {
+      controller.abort();
+      return Promise.reject(new DOMException('aborted', 'AbortError'));
+    };
+    await expect(
+      loadManifest(url, () => Promise.resolve(response), controller.signal),
+    ).rejects.toThrow();
+  });
+
+  it('still reports a body read failure as invalid when not aborted', async () => {
+    const response = new Response('{}');
+    response.text = () => Promise.reject(new TypeError('stream broke'));
+    const result = await loadManifest(
+      url,
+      () => Promise.resolve(response),
+      new AbortController().signal,
+    );
+    expect(result.status).toBe('invalid');
+  });
+
   it('returns error for other HTTP failures and network errors', async () => {
     expect((await loadManifest(url, fakeFetch('', { status: 500 }))).status).toBe('error');
     const failing: FetchLike = () => Promise.reject(new TypeError('offline'));

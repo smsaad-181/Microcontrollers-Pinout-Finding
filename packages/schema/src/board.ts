@@ -50,7 +50,8 @@ export const BoardSchema = z
           module: z.string().describe('Module id.'),
         }),
       )
-      .describe('Module variants of this board revision.'),
+      .min(1)
+      .describe('Module variants of this board revision (at least one).'),
     logic_voltage: fact(z.number()).describe('Logic voltage of the headers.'),
     rails: z
       .array(

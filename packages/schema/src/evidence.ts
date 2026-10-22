@@ -1,5 +1,11 @@
 import { z } from 'zod';
-import { ClaimIdSchema, EntityIdSchema } from './primitives.js';
+import { ClaimIdSchema, EntityIdSchema, NON_BLANK } from './primitives.js';
+
+export const MAX_QUOTE_WORDS = 25;
+export const MAX_QUOTE_CHARS = 400;
+const nonBlank = z.string().regex(NON_BLANK, 'must not be blank');
+/** Evidence links must be web links: `javascript:`, `data:`, `file:` and friends are rejected. */
+const webUrl = z.url({ protocol: /^https?$/ });
 
 export const EvidenceKindSchema = z
   .enum([
@@ -19,9 +25,17 @@ export const EvidenceKindSchema = z
 export const ClaimSchema = z
   .strictObject({
     id: ClaimIdSchema.describe('Full claim id `<doc-id>#<slug>`; facts cite this exact string.'),
-    locator: z.string().describe('Section, table, figure or page where the claim is found.'),
-    quote: z.string().describe('Verbatim quote from the source (25 words or fewer).'),
-    supports: z.string().describe('Which catalog fact(s) the quote supports.'),
+    locator: nonBlank.describe('Section, table, figure or page where the claim is found.'),
+    quote: nonBlank
+      .max(MAX_QUOTE_CHARS, `quote must be at most ${String(MAX_QUOTE_CHARS)} characters`)
+      .refine(
+        (q) => q.trim().split(/\s+/).length <= MAX_QUOTE_WORDS,
+        `quote must be at most ${String(MAX_QUOTE_WORDS)} words`,
+      )
+      .describe(
+        `Verbatim quote from the source (${String(MAX_QUOTE_WORDS)} words or fewer, at most ${String(MAX_QUOTE_CHARS)} characters).`,
+      ),
+    supports: nonBlank.describe('Which catalog fact(s) the quote supports.'),
   })
   .describe('One quoted claim inside an evidence record.');
 
@@ -41,8 +55,8 @@ export const EvidenceSchema = z
       .string()
       .nullable()
       .describe('Revision date only if printed in the document, or null.'),
-    url: z.url().describe('Final URL the document was read from.'),
-    url_original: z.url().nullable().describe('Original URL before redirects, or null.'),
+    url: webUrl.describe('Final URL the document was read from.'),
+    url_original: webUrl.nullable().describe('Original URL before redirects, or null.'),
     accessed: z
       .string()
       .regex(/^\d{4}-\d{2}-\d{2}$/, 'accessed must be a YYYY-MM-DD string')

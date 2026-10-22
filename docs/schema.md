@@ -33,7 +33,7 @@ A board revision: connectors, labels, rails, onboard parts (catalog/boards/<id>@
 | `vendor` | string | yes | Board vendor. |
 | `name` | string | yes | Board name. |
 | `revision` | string | yes | Board revision. |
-| `variants` | object[] | yes | Module variants of this board revision. |
+| `variants` | object[] | yes | Module variants of this board revision (at least one). |
 | `variants[].id` | string | yes | Variant id. |
 | `variants[].module` | string | yes | Module id. |
 | `logic_voltage` | Fact<number> | yes | Logic voltage of the headers. |
@@ -162,9 +162,9 @@ An evidence record: one source document and the claims quoted from it (catalog/e
 | `manual` | boolean | yes | True when the human supplied the file in sources/manual/. |
 | `claims` | object[] | yes | Quoted claims that catalog facts cite. |
 | `claims[].id` | string (pattern) | yes | Full claim id `<doc-id>#<slug>`; facts cite this exact string. |
-| `claims[].locator` | string | yes | Section, table, figure or page where the claim is found. |
-| `claims[].quote` | string | yes | Verbatim quote from the source (25 words or fewer). |
-| `claims[].supports` | string | yes | Which catalog fact(s) the quote supports. |
+| `claims[].locator` | string (pattern) | yes | Section, table, figure or page where the claim is found. |
+| `claims[].quote` | string (pattern) | yes | Verbatim quote from the source (25 words or fewer, at most 400 characters). |
+| `claims[].supports` | string (pattern) | yes | Which catalog fact(s) the quote supports. |
 
 ## fixture
 

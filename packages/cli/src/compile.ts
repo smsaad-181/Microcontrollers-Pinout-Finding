@@ -30,6 +30,10 @@ export interface CompiledCatalog {
 
 const sha256 = (text: string) => createHash('sha256').update(text, 'utf8').digest('hex');
 
+/**
+ * Compiles a clean validation result into the deterministic catalog JSON + manifest text. The
+ * `version` is content-addressed (see the file header). Throws if the result has any error.
+ */
 export function compileCatalog(result: ValidationResult, options: CompileOptions): CompiledCatalog {
   if (result.errorCount > 0) {
     throw new Error(

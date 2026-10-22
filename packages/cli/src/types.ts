@@ -4,6 +4,7 @@ import type {
   Breakout,
   Chip,
   Evidence,
+  FactRuleCode,
   Fixture,
   IC,
   Module,
@@ -44,16 +45,18 @@ export interface SourceFile {
   text: string;
 }
 
+/** Codes of the cross-field fact rules come from the schema package, so the two cannot drift. */
 export type ErrorCode =
+  | FactRuleCode
   | 'E_YAML'
   | 'E_SCHEMA'
-  | 'E_EVIDENCE_MISSING'
   | 'E_EVIDENCE_UNKNOWN'
-  | 'E_FACT_STATUS'
-  | 'E_VERIFIED_REVIEWERS'
   | 'E_PIN_NUMBERING'
-  | 'E_BOARD_STATUS';
-export type WarningCode = 'W_DANGLING_REF' | 'W_IGNORED_FILE';
+  | 'E_BOARD_STATUS'
+  | 'E_DUPLICATE_ID'
+  | 'E_REF_UNRESOLVED'
+  | 'E_FILE_EXTENSION';
+export type WarningCode = 'W_IGNORED_FILE';
 
 export type Diagnostic =
   | { severity: 'error'; code: ErrorCode; file: string; path: string; message: string }

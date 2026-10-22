@@ -1,0 +1,18 @@
+# FAKE sensor IC for catalog-CLI tests only (fictional part DEMO-SENSOR-1 by "Demo Corp").
+id: demo-sensor-1
+input_abs_max: { evidence: [demo-datasheet-1#sensor-supply], reviewers: [hardware-researcher, hardware-fact-auditor], status: verified, unit: V, value: "VDDIO+0.3" }
+interfaces:
+  - kind: i2c
+    limits:
+      addresses:
+        - { strap: "ADDR=GND", value: 64 } # 0x40
+      i2c_modes: [sm, fm]
+      max_hz: { evidence: [demo-datasheet-1#sensor-interface], reviewers: [hardware-researcher, hardware-fact-auditor], status: verified, unit: Hz, value: 400000 }
+    signals:
+      - { dir: io, drive: open-drain, role: SDA, shareable: true }
+      - { dir: in, drive: open-drain, role: SCL, shareable: true }
+part: DEMO-SENSOR-1
+supply_current: { evidence: [demo-datasheet-1#sensor-supply], reviewers: [hardware-researcher, hardware-fact-auditor], status: verified, unit: mA, value: { max: 0.5, typ: 0.2 } }
+vdd_range: { evidence: [demo-datasheet-1#sensor-supply], reviewers: [hardware-researcher, hardware-fact-auditor], status: verified, unit: V, value: [1.8, 3.6] }
+vendor: Demo Corp
+vio_range: { evidence: [demo-datasheet-1#sensor-supply], reviewers: [hardware-researcher, hardware-fact-auditor], status: verified, unit: V, value: [1.8, 3.6] }

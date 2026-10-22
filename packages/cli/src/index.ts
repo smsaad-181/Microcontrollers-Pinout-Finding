@@ -3,7 +3,8 @@
 export const PACKAGE_NAME = '@pinout/cli';
 
 export * from './types.js';
-export { loadCatalogSources, type LoadedSources } from './load.js';
+export { loadCatalogSources, toPosix, type LoadedSources } from './load.js';
+export { byCodeUnit, compareDiagnostics } from './order.js';
 export { validateCatalog, validateRoot } from './validate.js';
 export { formatCoverage, formatDiagnostic, formatSummary } from './report.js';
 export { stableStringify } from './stable-json.js';
@@ -14,4 +15,11 @@ export {
   type CompileOptions,
   type CompiledCatalog,
 } from './compile.js';
-export { DEFAULT_OUT, DEFAULT_ROOT, resolveCatalogDate, runCli, type CliIo } from './cli.js';
+export {
+  DEFAULT_OUT,
+  DEFAULT_ROOT,
+  UsageError,
+  resolveCatalogDate,
+  runCli,
+  type CliIo,
+} from './cli.js';

@@ -1,6 +1,7 @@
 // The only part of validate that touches the file system: read `<root>/<kind>/**/*.yaml`.
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
+import { byCodeUnit } from './order.js';
 import { KINDS, type Diagnostic, type SourceFile } from './types.js';
 
 export interface LoadedSources {
@@ -8,13 +9,19 @@ export interface LoadedSources {
   diagnostics: Diagnostic[];
 }
 
-const toPosix = (p: string) => p.replaceAll('\\', '/');
-const byCodeUnit = (a: string, b: string) => (a < b ? -1 : a > b ? 1 : 0);
+/** Root-relative paths use forward slashes on every platform (`readdir` returns `\` on Windows). */
+export const toPosix = (p: string): string => p.replaceAll('\\', '/');
+
+/** A YAML-looking name (`.yaml` or `.yml`, any case) that is not exactly `.yaml`. */
+export const hasWrongYamlExtension = (name: string): boolean =>
+  /\.ya?ml$/i.test(name) && !name.endsWith('.yaml');
 
 /**
- * Reads every `*.yaml` under the seven kind directories (recursively), sorted by path. `.yml` files
- * and YAML files directly in the root are reported as ignored (warning), so a misplaced file is never
- * silently skipped. Missing kind directories are treated as empty.
+ * Reads every `*.yaml` under the seven kind directories (recursively), sorted by path.
+ * - A YAML file directly in the root is ignored with a warning (`W_IGNORED_FILE`).
+ * - A `.yml` / `.YAML` / `.Yaml` file inside a kind directory is an error (`E_FILE_EXTENSION`):
+ *   it would otherwise be skipped silently and never validated or compiled.
+ * Missing kind directories are treated as empty.
  */
 export function loadCatalogSources(root: string): LoadedSources {
   const sources: SourceFile[] = [];
@@ -40,19 +47,19 @@ export function loadCatalogSources(root: string): LoadedSources {
       .sort(byCodeUnit);
     for (const name of names) {
       const file = `${kind}/${name}`;
-      if (name.endsWith('.yml')) {
+      const full = join(dir, name);
+      const isYamlName = name.endsWith('.yaml') || hasWrongYamlExtension(name);
+      if (!isYamlName || !statSync(full).isFile()) continue;
+      if (hasWrongYamlExtension(name)) {
         diagnostics.push({
-          severity: 'warning',
-          code: 'W_IGNORED_FILE',
+          severity: 'error',
+          code: 'E_FILE_EXTENSION',
           file,
           path: '',
-          message: 'ignored: catalog files must use the .yaml extension',
+          message: 'catalog files must use the lower-case .yaml extension; this file is not loaded',
         });
         continue;
       }
-      if (!name.endsWith('.yaml')) continue;
-      const full = join(dir, name);
-      if (!statSync(full).isFile()) continue;
       sources.push({ file, kind, text: readFileSync(full, 'utf8') });
     }
   }

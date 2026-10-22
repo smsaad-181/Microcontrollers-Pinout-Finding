@@ -9,7 +9,11 @@ const dist = join(here, '..', 'dist');
 const out = process.argv[2] ?? join(here, '..', '..', '..', 'docs', 'schema.md');
 
 const isFact = (s) =>
-  s?.type === 'object' && s.properties && 'status' in s.properties && 'evidence' in s.properties && 'value' in s.properties;
+  s?.type === 'object' &&
+  s.properties &&
+  'status' in s.properties &&
+  'evidence' in s.properties &&
+  'value' in s.properties;
 
 function typeOf(s) {
   if (!s) return 'any';
@@ -22,34 +26,51 @@ function typeOf(s) {
   if (s.type === 'array') return `${typeOf(s.items)}[]`;
   if (s.type === 'object') {
     if (s.properties) return 'object';
-    if (s.additionalProperties && typeof s.additionalProperties === 'object') return `Record<string, ${typeOf(s.additionalProperties)}>`;
+    if (s.additionalProperties && typeof s.additionalProperties === 'object')
+      return `Record<string, ${typeOf(s.additionalProperties)}>`;
     return 'object';
   }
   if (s.pattern && s.type === 'string') return 'string (pattern)';
   return s.type ?? 'any';
 }
 
-const clean = (t) => (t ?? '').replace(/\|/g, '\\|').replace(/\s*\n\s*/g, ' ').trim();
+const clean = (t) =>
+  (t ?? '')
+    .replace(/\|/g, '\\|')
+    .replace(/\s*\n\s*/g, ' ')
+    .trim();
 
 function rows(schema, prefix, req, list) {
   for (const [key, sub] of Object.entries(schema.properties ?? {})) {
     const path = prefix ? `${prefix}.${key}` : key;
-    list.push({ path, type: typeOf(sub), required: req.has(key), description: sub.description ?? '' });
+    list.push({
+      path,
+      type: typeOf(sub),
+      required: req.has(key),
+      description: sub.description ?? '',
+    });
     if (isFact(sub)) continue;
     let node = sub;
     let p = path;
     if (node.type === 'array' && node.items) {
       node = node.items;
       p = `${path}[]`;
-    } else if (node.type === 'object' && !node.properties && typeof node.additionalProperties === 'object') {
+    } else if (
+      node.type === 'object' &&
+      !node.properties &&
+      typeof node.additionalProperties === 'object'
+    ) {
       node = node.additionalProperties;
       p = `${path}.*`;
     }
-    if (node.type === 'object' && node.properties && !isFact(node)) rows(node, p, new Set(node.required ?? []), list);
+    if (node.type === 'object' && node.properties && !isFact(node))
+      rows(node, p, new Set(node.required ?? []), list);
   }
 }
 
-const files = readdirSync(dist).filter((f) => f.endsWith('.schema.json')).sort();
+const files = readdirSync(dist)
+  .filter((f) => f.endsWith('.schema.json'))
+  .sort();
 const lines = [
   '# Catalog schema reference',
   '',
@@ -76,7 +97,10 @@ for (const f of files) {
   const list = [];
   rows(schema, '', new Set(schema.required ?? []), list);
   lines.push('| Field | Type | Required | Description |', '| --- | --- | --- | --- |');
-  for (const r of list) lines.push(`| \`${r.path}\` | ${clean(r.type)} | ${r.required ? 'yes' : 'no'} | ${clean(r.description)} |`);
+  for (const r of list)
+    lines.push(
+      `| \`${r.path}\` | ${clean(r.type)} | ${r.required ? 'yes' : 'no'} | ${clean(r.description)} |`,
+    );
   lines.push('');
 }
 

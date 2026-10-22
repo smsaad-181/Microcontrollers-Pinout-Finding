@@ -8,7 +8,12 @@
   --border: #8a8f98;
   --link: #0b57d0;
   --focus: #0b57d0;
-  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  font-family:
+    system-ui,
+    -apple-system,
+    'Segoe UI',
+    Roboto,
+    sans-serif;
   line-height: 1.5;
 }
 
@@ -116,6 +121,7 @@ h2 {
 
 code {
   font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  overflow-wrap: anywhere;
 }
 
 @media (prefers-reduced-motion: reduce) {
