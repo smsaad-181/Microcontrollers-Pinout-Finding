@@ -51,7 +51,7 @@ claims:
   - id: ra4m1-ds-rev1.10#abs-max-5v-tol
     locator: "§2.1 Table 2.1 and note 1, p. 28"
     quote: "Ports P205, P206, P400 to P404, P407, P408 are 5 V tolerant."
-    supports: "Only these ports accept up to 6.5 V; none of them is on a UNO R4 header"
+    supports: "Only these ports accept up to 6.5 V (7 of them are bonded on the 64-pin package: P205, P206, P400, P401, P402, P407, P408)"
   - id: ra4m1-ds-rev1.10#vcc-range
     locator: "§2.3 Table 2.2, p. 29"
     quote: "When USBFS is not used 1.6 - 5.5 V"
@@ -63,7 +63,7 @@ claims:
   - id: ra4m1-ds-rev1.10#vih-vil-schmitt
     locator: "§2.2.2 Table 2.4, p. 30"
     quote: "IIC*1 (except for SMBus) VIH VCC × 0.7 - 5.8 VIL - - VCC × 0.3"
-    supports: "IIC pins (P100, P101) use Schmitt thresholds 0.7 x VCC / 0.3 x VCC"
+    supports: "IIC (except SMBus) pads P205, P206, P400, P401, P407, P408 use Schmitt thresholds 0.7 x VCC / 0.3 x VCC"
   - id: ra4m1-ds-rev1.10#voh-vol-5v
     locator: "§2.2.4 Table 2.7, p. 34"
     quote: "Other output pins*4 Low drive VOH VCC - 0.8 - - IOH = -2.0 mA VOL - - 0.8 IOL = 2.0 mA"
@@ -104,3 +104,39 @@ claims:
     locator: "§1.2 Table 1.7 (USB), p. 6"
     quote: "Because the MCU can be powered at 5 V, the USB LDO regulator provides the internal USB transceiver power supply at 3.3 V."
     supports: "USB LDO output is 3.3 V"
+  - id: ra4m1-ds-rev1.10#ioh-iol-other-pins
+    locator: "§2.2.3 Table 2.6 (1 of 2), p. 32"
+    quote: "Other output pin*3 Low drive*1 IOH -4.0 mA IOL 4.0 mA Middle drive*2 IOH -8.0 mA IOL 8.0 mA"
+    supports: "Pads outside the 41-pin group (P000-P015, P205, P206, P400-P402, P407, P410, P411): 4 mA low drive, 8 mA source and sink at middle drive"
+  - id: ra4m1-ds-rev1.10#ioh-iol-p212-p213
+    locator: "§2.2.3 Table 2.6 (1 of 2), p. 32"
+    quote: "Ports P212, P213 IOH -4.0 mA IOL 4.0 mA"
+    supports: "P212 and P213 have a fixed 4 mA per-pin limit (no drive switching)"
+  - id: ra4m1-ds-rev1.10#ioh-iol-p914-p915
+    locator: "§2.2.3 Table 2.6 (1 of 2), p. 32"
+    quote: "Ports P914, P915 IOH -4.0 mA IOL 4.0 mA"
+    supports: "P914 and P915 (USB pads) have a fixed 4 mA per-pin limit"
+  - id: ra4m1-ds-rev1.10#ioh-iol-p408-p409
+    locator: "§2.2.3 Table 2.6 (1 of 2), p. 32"
+    quote: "Middle drive*2 VCC = 3.0 to 5.5 V IOH -20.0 mA IOL 20.0 mA"
+    supports: "P408 and P409 allow 20 mA at middle drive (VCC 3.0-5.5 V); low drive is 4 mA; P408 IIC fast-mode middle drive 8 mA"
+  - id: ra4m1-ds-rev1.10#ioh-iol-max-per-pin
+    locator: "§2.2.3 Table 2.6 (2 of 2), p. 33"
+    quote: "Permissible output current (Max value per pin)"
+    supports: "Table 2.6 gives the same per-pin currents as an average and as a maximum value per pin"
+  - id: ra4m1-ds-rev1.10#ioh-total-p914-p915
+    locator: "§2.2.3 Table 2.6 (2 of 2), p. 33"
+    quote: "Ports P914, P915 ΣIOH (max) -2.0 mA ΣIOL (min) 2.0 mA"
+    supports: "Total current of P914 and P915 is limited to 2 mA (row label prints ΣIOL (min), apparently a typo for max)"
+  - id: ra4m1-ds-rev1.10#iic-schmitt-pads
+    locator: "§2.2.2 Table 2.4 note 1, p. 30"
+    quote: "P205, P206, P400, P401, P407, P408 (total 6 pins)."
+    supports: "The IIC (except SMBus) Schmitt thresholds 0.7 x VCC / 0.3 x VCC apply to these six pads"
+  - id: ra4m1-ds-rev1.10#vih-vil-smbus
+    locator: "§2.2.2 Table 2.4, p. 30"
+    quote: "IIC (SMBus)*2 VIH 2.2 VCC = 3.6 to 5.5 V"
+    supports: "SMBus-mode IIC pads (P100, P101, P204-P206, P400, P401, P407, P408) have VIH min 2.2 V (2.0 V at 2.7-3.6 V) and VIL max 0.8 V"
+  - id: ra4m1-ds-rev1.10#table-2-4-conditions
+    locator: "§2.2.2 Table 2.4, p. 30"
+    quote: "Conditions: VCC = AVCC0 = VCC_USB = VCC_USB_LDO = 2.7 to 5.5V"
+    supports: "Table 2.4 has a single VCC 2.7-5.5 V column for input levels (no separate 4.0-5.5 V column)"
