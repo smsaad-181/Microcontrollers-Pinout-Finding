@@ -23,7 +23,7 @@ Status values: NOT STARTED · IN PROGRESS · VALIDATING · FIXING (round n/3) ·
 Phase 1 FIXING (round 2/3) on branch `phase-1-fix-1`. Re-validation by phase-validator: **FAIL** (0 critical, 3 major, 5 minor; every local gate passes, all round-1 fixes confirmed).
 - **N2 base path — done** (`d461402`): site base is `/Microcontrollers-Pinout-Finding/`; CI/deploy derive it from the repo name and assert it.
 - **N1 checker gaps — fix agent running** (pad key vs gpio, conflict facts, pad references, same pad on two pins) + minors N4, N5, N7, N8.
-- **N3 Pages not enabled — user action**: Settings → Pages → Source = GitHub Actions.
+- **N3 Pages not enabled — deferred by user to the final release** (no action now).
 Then re-run code-reviewer and github-actions-expert (and the phase-validator again), open a PR `phase-1-fix-1` → `main`, merge, deploy.
 Web dev server: http://localhost:5173/Microcontrollers-Pinout-Finding/
 
@@ -150,6 +150,8 @@ None of these block Phase 0. Re-check all three when a session is started inside
 - 2026-10-22 · Open for later: duplicate entity ids have no error code yet; CI uses a shallow checkout so the manifest `date` may differ from a local build (content/version are unaffected).
 
 - 2026-10-22 · Fix round 1 changed the error-code contract (fixtures README decisions 2, 6, 11–15): new `E_DUPLICATE_ID`, `E_REF_UNRESOLVED` (replaces the `W_DANGLING_REF` warning), `E_FILE_EXTENSION`; reviewer identity = trim + lower-case; evidence claims need non-blank quote/locator/supports, quote ≤ 25 words and 400 chars; evidence URLs http(s) only; `Board.variants` needs at least one; YAML anchors/aliases/merge keys and `__proto__`-style keys are rejected. CI: Node pinned via `.nvmrc` (24), `configure-pages` removed, CI runs once per PR, deploy only from `main`.
+
+- 2026-10-22 · **User workflow:** complete the project locally and review it on localhost; push to GitHub once at the end of each phase (the user pushes, or confirms first); enable Pages / publish only at the final release. Until then remote-only gate items (CI on a PR, branch protection, deploy run, live Pages URL, `gh api` checks) are DEFERRED TO FINAL RELEASE, not failures; validators list them as not-verifiable-yet. Pages is intentionally off for now (the first deploy 404 is expected).
 
 ## Decisions needed
 
