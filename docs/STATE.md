@@ -9,7 +9,7 @@ Catalog version: none yet · Rule-set version: none yet · Last updated: 2026-10
 | Phase | Name | Status | Branch | Validation | Notes |
 | --- | --- | --- | --- | --- | --- |
 | 0 | Bootstrap: tools, repo, Pages enabled | IN PROGRESS (remote deferred) | main | — | 0.1, 0.2, 0.5, 0.6 done; 0.3/0.4 deferred by user (GitHub later) |
-| 1 | Foundation: monorepo, schema, evidence model, CI/CD, placeholder on Pages | DONE (local) — remote items deferred to final release | phase-1-fix-1 | phase-validator FAIL · code-reviewer FAIL · github-actions-expert PASS | local-only; 1.8 + CI/deploy gate items wait for GitHub |
+| 1 | Foundation: monorepo, schema, evidence model, CI/CD, placeholder on Pages | DONE (local) — remote items deferred to final release | main (55df47b) | phase-validator FAIL · code-reviewer FAIL · github-actions-expert PASS | local-only; 1.8 + CI/deploy gate items wait for GitHub |
 | 2a | Catalog: MVP boards and modules, two-key verified | IN PROGRESS (parallel with Phase 1 final check) | phase-2a (worktree ../pinout-finder-2a) | — | ESP32-DevKitC + Pico first; Uno R3 / ST7735S need manual PDFs |
 | 2b | Engine: interface selection, CSP solver, rules R1–R8, explanations | NOT STARTED | phase-2b | — | |
 | 3 | Web app: UI, Web Worker, projects, sharing, export, offline | NOT STARTED | phase-3 | — | |
