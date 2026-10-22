@@ -9,7 +9,7 @@ Catalog version: none yet · Rule-set version: none yet · Last updated: 2026-10
 | Phase | Name | Status | Branch | Validation | Notes |
 | --- | --- | --- | --- | --- | --- |
 | 0 | Bootstrap: tools, repo, Pages enabled | IN PROGRESS (remote deferred) | main | — | 0.1, 0.2, 0.5, 0.6 done; 0.3/0.4 deferred by user (GitHub later) |
-| 1 | Foundation: monorepo, schema, evidence model, CI/CD, placeholder on Pages | RE-VALIDATING (fix round 1/3; already merged to main by user) | phase-1-fix-1 | phase-validator FAIL · code-reviewer FAIL · github-actions-expert PASS | local-only; 1.8 + CI/deploy gate items wait for GitHub |
+| 1 | Foundation: monorepo, schema, evidence model, CI/CD, placeholder on Pages | FIXING (round 2/3; already merged to main by user) | phase-1-fix-1 | phase-validator FAIL · code-reviewer FAIL · github-actions-expert PASS | local-only; 1.8 + CI/deploy gate items wait for GitHub |
 | 2a | Catalog: MVP boards and modules, two-key verified | NOT STARTED | phase-2a | — | needs manual PDFs |
 | 2b | Engine: interface selection, CSP solver, rules R1–R8, explanations | NOT STARTED | phase-2b | — | |
 | 3 | Web app: UI, Web Worker, projects, sharing, export, offline | NOT STARTED | phase-3 | — | |
@@ -20,10 +20,12 @@ Status values: NOT STARTED · IN PROGRESS · VALIDATING · FIXING (round n/3) ·
 
 ## Current task
 
-Phase 1 RE-VALIDATING (fix round 1/3). The user pushed and **merged PR #1 (phase-1 → main, merge commit 44d62b0) before the validators passed**; fixes now go on branch `phase-1-fix-1` (CLAUDE.md post-merge rule). One validator at a time:
-- **phase-validator** — running (re-checks gates, F1–F15, CR1–CR9, probes new code).
-- code-reviewer — next; github-actions-expert — last.
-Then the base-path rename (`/pinout-finder/` → `/Microcontrollers-Pinout-Finding/`) and the first Pages deploy.
+Phase 1 FIXING (round 2/3) on branch `phase-1-fix-1`. Re-validation by phase-validator: **FAIL** (0 critical, 3 major, 5 minor; every local gate passes, all round-1 fixes confirmed).
+- **N2 base path — done** (`d461402`): site base is `/Microcontrollers-Pinout-Finding/`; CI/deploy derive it from the repo name and assert it.
+- **N1 checker gaps — fix agent running** (pad key vs gpio, conflict facts, pad references, same pad on two pins) + minors N4, N5, N7, N8.
+- **N3 Pages not enabled — user action**: Settings → Pages → Source = GitHub Actions.
+Then re-run code-reviewer and github-actions-expert (and the phase-validator again), open a PR `phase-1-fix-1` → `main`, merge, deploy.
+Web dev server: http://localhost:5173/Microcontrollers-Pinout-Finding/
 
 ## Task checklist
 
@@ -165,6 +167,7 @@ None of these block Phase 0. Re-check all three when a session is started inside
 
 | Date | Phase | Event |
 | --- | --- | --- |
+| 2026-10-22 | 1 | Re-validation 1 (phase-validator): **FAIL** — 0 Critical, 3 Major (N1 checker still accepts pad-key/gpio mismatch, bad conflict facts, unresolved pad refs, same pad on two pins; N2 base path vs repo name; N3 Pages disabled), 5 Minor. All local gates pass (303 tests, 48/48 invalid fixtures, deterministic compile, 21/21 SHA pins); all round-1 fixes confirmed; 8/8 mutants killed; real CI on PR #1 = 7/7. Fix round 2 started: N2 done (`d461402`), N1 + minors with fix agent. |
 | 2026-10-22 | 1 | GitHub: user pushed `main` + `phase-1`; PR #1 merged to main before validators passed. Real CI on the PR: 7/7 jobs green. Deploy: build green, publish step 404 because Pages is not enabled. |
 | 2026-10-22 | 1 | Fix round 1 (engine-developer + orchestrator): all 5 Majors addressed; tests schema 83 / cli 171 / web 46 (was 62/61/35); 48 invalid fixtures (was 12) each exit 1 with exactly its code; mutants M3 M5 M6 M10 M16 M18 M24 now killed; workflows: Node 24 pinned, configure-pages removed, single CI run per PR, deploy guarded to main. Re-validation pending. |
 | 2026-10-22 | 1 | Validator 3/3 github-actions-expert: **PASS** — 0 Critical/Major, 6 Minor; clean-clone CI simulation (install, lint, typecheck, test, validate, compile, build) exit 0 on Node 22 and 24; branch-protection commands for 1.8 recorded in its report. |
