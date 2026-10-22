@@ -9,7 +9,7 @@ Catalog version: none yet · Rule-set version: none yet · Last updated: 2026-10
 | Phase | Name | Status | Branch | Validation | Notes |
 | --- | --- | --- | --- | --- | --- |
 | 0 | Bootstrap: tools, repo, Pages enabled | IN PROGRESS (remote deferred) | main | — | 0.1, 0.2, 0.5, 0.6 done; 0.3/0.4 deferred by user (GitHub later) |
-| 1 | Foundation: monorepo, schema, evidence model, CI/CD, placeholder on Pages | FIXING (round 2/3; already merged to main by user) | phase-1-fix-1 | phase-validator FAIL · code-reviewer FAIL · github-actions-expert PASS | local-only; 1.8 + CI/deploy gate items wait for GitHub |
+| 1 | Foundation: monorepo, schema, evidence model, CI/CD, placeholder on Pages | FIXING (round 3/3 = LAST; already merged to main by user) | phase-1-fix-1 | phase-validator FAIL · code-reviewer FAIL · github-actions-expert PASS | local-only; 1.8 + CI/deploy gate items wait for GitHub |
 | 2a | Catalog: MVP boards and modules, two-key verified | NOT STARTED | phase-2a | — | needs manual PDFs |
 | 2b | Engine: interface selection, CSP solver, rules R1–R8, explanations | NOT STARTED | phase-2b | — | |
 | 3 | Web app: UI, Web Worker, projects, sharing, export, offline | NOT STARTED | phase-3 | — | |
@@ -20,12 +20,9 @@ Status values: NOT STARTED · IN PROGRESS · VALIDATING · FIXING (round n/3) ·
 
 ## Current task
 
-Phase 1 FIXING (round 2/3) on branch `phase-1-fix-1`. Re-validation by phase-validator: **FAIL** (0 critical, 3 major, 5 minor; every local gate passes, all round-1 fixes confirmed).
-- **N2 base path — done** (`d461402`): site base is `/Microcontrollers-Pinout-Finding/`; CI/deploy derive it from the repo name and assert it.
-- **N1 checker gaps — fix agent running** (pad key vs gpio, conflict facts, pad references, same pad on two pins) + minors N4, N5, N7, N8.
-- **N3 Pages not enabled — deferred by user to the final release** (no action now).
-Then re-run code-reviewer and github-actions-expert (and the phase-validator again), open a PR `phase-1-fix-1` → `main`, merge, deploy.
-Web dev server: http://localhost:5173/Microcontrollers-Pinout-Finding/
+Phase 1 FIXING (round 3/3 = the LAST allowed round) on branch `phase-1-fix-1`. Validators on the round-2 code: phase-validator **PASS** (0 critical/major); code-reviewer **FAIL** (0 critical, 2 major, 10 minor — 107 mutations, 21 survived: missing tests, code is correct); github-actions-expert not re-run yet.
+Running: fix agent adds tests that kill all 21 surviving mutants (majors CR1-R2 board status ignoring module facts, CR2-R2 id regex / strap enum / consumed enum) and fixes small checker gaps (empty/wrong `--root`, symlink warning, JSON Schema gaps).
+Then: re-run all three validators. **If any still FAILs, stop and ask the user** (3-round limit).
 
 ## Task checklist
 
@@ -172,6 +169,7 @@ None of these block Phase 0. Re-check all three when a session is started inside
 
 | Date | Phase | Event |
 | --- | --- | --- |
+| 2026-10-22 | 1 | Re-validation 2: phase-validator **PASS** (0 critical/major, 3 minor); code-reviewer **FAIL** (0 critical, 2 major = missing tests, 10 minor; 107 mutations, 86 killed, 21 survived). Fix round 3 (last) started. |
 | 2026-10-22 | 1 | Fix round 2 done (engine-developer): N1(a–d), N4, N5, N7, N8 implemented; orchestrator re-run: typecheck/lint/format 0, tests schema 115 / cli 247 / web 46, 75/75 invalid roots exit 1 with their code, valid + empty catalog exit 0, compile twice identical. Re-validation next. |
 | 2026-10-22 | 1 | Re-validation 1 (phase-validator): **FAIL** — 0 Critical, 3 Major (N1 checker still accepts pad-key/gpio mismatch, bad conflict facts, unresolved pad refs, same pad on two pins; N2 base path vs repo name; N3 Pages disabled), 5 Minor. All local gates pass (303 tests, 48/48 invalid fixtures, deterministic compile, 21/21 SHA pins); all round-1 fixes confirmed; 8/8 mutants killed; real CI on PR #1 = 7/7. Fix round 2 started: N2 done (`d461402`), N1 + minors with fix agent. |
 | 2026-10-22 | 1 | GitHub: user pushed `main` + `phase-1`; PR #1 merged to main before validators passed. Real CI on the PR: 7/7 jobs green. Deploy: build green, publish step 404 because Pages is not enabled. |

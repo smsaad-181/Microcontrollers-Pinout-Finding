@@ -1,7 +1,7 @@
-Doing: The main reviewer said PASS. Now the code reviewer checks the foundation code again, one of three reviewers.
-Why: The code reviewer tries to break the tests on purpose. If a test still passes when the code is broken, that test is too weak, and a wrong pin fact could slip through later.
-Folder: D:\Development\pinout-finder-kit\pinout-finder\docs\validation\phase-1 (the report goes here)
-Who: One reviewer agent. It temporarily edits code to break it and then restores every file.
-Next: After it, the workflow reviewer (GitHub automation security). If all three pass, Phase 1 is finished and I give you the push commands.
+Doing: A helper is adding the missing safety tests the code reviewer asked for, and fixing a few small checker weaknesses.
+Why: The code reviewer broke the code on purpose in 107 ways. 21 of those breaks went unnoticed by the tests, 4 of them on hardware-critical rules. The code is correct today, but without tests a later change could silently break it.
+Folder: D:\Development\pinout-finder-kit\pinout-finder\packages\schema, packages\cli and apps\web\test
+Who: One helper agent, writing tests that must fail when the code is broken. I check them myself afterwards.
+Next: Then I run all three reviewers once more. This is the last allowed fix round, so if a reviewer fails the phase again I stop and ask you what to do.
 Needs you: Nothing right now.
-Where: Phase 1 of 6 (foundation) - reviewer 1 of 3 passed
+Where: Phase 1 of 6 (foundation) - fix round 3 of 3 (the last)
