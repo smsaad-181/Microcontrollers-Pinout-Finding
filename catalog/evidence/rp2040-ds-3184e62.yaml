@@ -47,6 +47,10 @@ claims:
     locator: "§2.19.4 Pads, p. 240"
     quote: "Output drive strength can be set to 2mA, 4mA, 8mA or 12mA"
     supports: "Per-pin drive-strength settings 2/4/8/12 mA (pin_current_max = highest setting, 12 mA)"
+  - id: rp2040-ds-3184e62#iovdd-supply-section
+    locator: "§2.9.1 Digital IO Supply (IOVDD), p. 151"
+    quote: "IOVDD supplies the chip’s digital IO, and should be powered at a nominal voltage between 1.8V and 3.3V."
+    supports: "vdd_io: IOVDD nominal 1.8 V to 3.3 V (independent re-read by the blind auditor, who also cites Table 634 typ 1.8 / 3.3 V)"
   - id: rp2040-ds-3184e62#input-thresholds-default
     locator: "§2.19.4 Pads, p. 240"
     quote: "By default the pad input thresholds are valid for an IOVDD voltage between 2.5V and 3.3V."
