@@ -21,9 +21,9 @@ Status values: NOT STARTED · IN PROGRESS · VALIDATING · FIXING (round n/3) ·
 ## Current task
 
 Phase 1 (local, branch `phase-1`). Running in parallel:
-- **1.9** docs: CONTRIBUTING.md done; `docs/schema.md` (generated from the Zod descriptions) next — _main_
+- (all Phase 1 build tasks done locally except 1.8; validators next)
 Web app dev server: http://localhost:5173/pinout-finder/
-Next: finish 1.9, then Phase 1 validators (phase-validator, code-reviewer, github-actions-expert).
+Next: Phase 1 validators, one at a time (phase-validator, code-reviewer, github-actions-expert).
 
 ## Task checklist
 
@@ -46,7 +46,7 @@ Legend: `[x]` done · `[~]` in progress · `[-]` deferred (needs GitHub) · `[ ]
 - [x] 1.6 · apps/web · _ui-developer_
 - [x] 1.7 · Workflows · _ci-pages-engineer_
 - [-] 1.8 · Branch protection on main · _ci-pages-engineer_
-- [~] 1.9 · Docs: docs/schema.md (generated from Zod descriptions), CONTRIBUTING.md skeleton. · _ci-pages-engineer_
+- [x] 1.9 · Docs: docs/schema.md (generated from Zod descriptions), CONTRIBUTING.md skeleton. · _ci-pages-engineer_
 
 **Phase 2a**
 - [ ] 2a.1 · For each chip/module/board · _hardware-researcher_
@@ -160,6 +160,7 @@ None of these block Phase 0. Re-check all three when a session is started inside
 
 | Date | Phase | Event |
 | --- | --- | --- |
+| 2026-10-22 | 1 | 1.9 done: CONTRIBUTING.md; `docs/schema.md` generated from the Zod descriptions (`pnpm docs:schema`, 11 schemas). |
 | 2026-10-22 | 1 | 1.2–1.4 done (TDD): Zod schemas match the skill reference (type-level equality tests, 24 types), `catalog validate` (every invalid fixture → its contracted code, valid + empty real catalog → 0), `catalog compile` (twice → byte-identical; version = first 12 hex of content sha256). Orchestrator re-run: typecheck/lint 0; schema 62, cli 61, web 35 tests pass. |
 | 2026-10-22 | 1 | 1.6 done: placeholder page (hash router, build-time CSP meta, manifest version card); web typecheck/lint 0, 35 tests pass, build OK, no inline script/style in dist, "Pinout Finder" in static HTML. Open for Phase 3: `worker-src` CSP for the Web Worker. |
 | 2026-10-22 | 1 | 1.1 done: pnpm workspace (schema, rules, engine, codegen, cli, web); frozen install, typecheck, lint, 6/6 test projects, web build (assets under `/pinout-finder/`) all exit 0 in orchestrator re-run. |

@@ -15,7 +15,8 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "catalog:validate": "tsx --conditions=@pinout/source --tsconfig packages/cli/tsconfig.json packages/cli/src/main.ts validate",
-    "catalog:compile": "tsx --conditions=@pinout/source --tsconfig packages/cli/tsconfig.json packages/cli/src/main.ts compile"
+    "catalog:compile": "tsx --conditions=@pinout/source --tsconfig packages/cli/tsconfig.json packages/cli/src/main.ts compile",
+    "docs:schema": "pnpm --filter @pinout/schema build && pnpm --filter @pinout/schema docs"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",

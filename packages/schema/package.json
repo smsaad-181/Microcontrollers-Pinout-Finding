@@ -18,7 +18,8 @@
     "build": "tsc -p tsconfig.build.json && node scripts/emit-json-schema.mjs",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "lint": "eslint .",
-    "test": "vitest run"
+    "test": "vitest run",
+    "docs": "node scripts/emit-docs.mjs"
   },
   "dependencies": {
     "zod": "4.6.7"
