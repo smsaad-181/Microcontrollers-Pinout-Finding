@@ -1,16 +1,29 @@
-# Espressif ESP32-DevKitC V4 - draft, single-source (hardware-researcher).
+# Espressif ESP32-DevKitC V4 - reconciled against the blind audit (task 2a.4); see docs/validation/phase-2a/reconcile-esp32-modules-board.md.
 # Sources: ESP32-DevKitC V4 User Guide (esp-dev-kits, commit 4ffc5bd) Header Block tables J2/J3; schematic
 # ESP32_DevKitc_V4 Rev V4 (2020-02-25). Labels are the user guide "Name" column (silkscreen image not transcribed).
 # Positions J2-1..19 / J3-1..19 per guide; pad = GPIO from the guide "Function" column.
+# Facts: logic_voltage and rail voltages are verified (researcher + blind auditor); rail max_current (3V3, 5V) is missing:
+#   no document states a current (both keys searched).
 #
-# CONFLICT (cannot be stored as a fact - connector pins carry no evidence/status in the schema):
-#   J2-16 D2, J2-17 D3, J2-18 CMD, J3-17 D1, J3-18 D0, J3-19 CLK: the user guide lists them as GPIO9, GPIO10, GPIO11,
-#   GPIO8, GPIO7, GPIO6 (flash pins, "avoid"), and the schematic wires them to module pins SD2/SD3/CMD/SD1/SD0/CLK.
-#   Both fitted modules (WROOM-32E datasheet v2.1, WROVER-E datasheet v2.4, Table 3 note 2) leave those module pins NC:
-#   "Pins GPIO6 to GPIO11 ... are not led out". Most restrictive reading used: kind nc (no pad).
-# J3-11 IO17 / J3-12 IO16: usable on ESP32-DevKitC-32E (WROOM-32E); on ESP32-DevKitC-VE (WROVER-E) GPIO16/17 are
-#   consumed by PSRAM (module record), so the engine must not assign them for that variant.
-# `status` is the value the catalog CLI computes (single-source and missing facts present).
+# DISAGREEMENT DIS-1 (kept as a comment: connector pins are plain fields, they carry no evidence/status/conflict):
+#   J2-16 D2, J2-17 D3, J2-18 CMD, J3-17 D1, J3-18 D0, J3-19 CLK. Three readings:
+#   - user guide: GPIO9, GPIO10, GPIO11, GPIO8, GPIO7, GPIO6 "used internally for communication between ESP32 and SPI flash",
+#     "avoid using these pins";
+#   - schematic: wired to module pins 17-22 (nets SD2/SD3/CMD/SD1/SD0/CLK);
+#   - WROOM-32E v2.1 and WROVER-E v2.4 datasheets (Table 3, note 2): module pins 17-22 are NC, GPIO6-GPIO11 are connected to the
+#     in-module flash "and are not led out".
+#   The blind auditor modelled the six pins as kind gpio with pad GPIO6..11; the researcher as kind nc without a pad.
+#   Kept: kind nc, no pad. This is the most restrictive and the faithful reading of the module datasheets (those header pins
+#   reach no ESP32 pad at all); the engine can never assign a signal to a pin without a pad. Labels keep the user-guide names.
+# DIS-2 (J3-11 IO17 / J3-12 IO16): usable on ESP32-DevKitC-32E (WROOM-32E, PSRAM-less parts sold on this board; user guide
+#   footnote [3]); on ESP32-DevKitC-VE (WROVER-E) GPIO16/GPIO17 are consumed by PSRAM (module record) and the module leaves its
+#   pins 27/28 NC. The pins stay gpio with pads because the schema has one connector map for all variants; the engine takes
+#   the restriction from the module `consumed` facts. See the header of modules/esp32-wrover-e.yaml (bonded_pads gap).
+# DIS-3 (names only: VP/VN/TX/RX/5V vs SENSOR_VP/SENSOR_VN/TXD0/RXD0/EXT_5V) and DIS-4 (schematic symbol says ESP-WROOM-32,
+#   no -E suffix) are not electrical disagreements. DIS-5 (flash voltage statement) is handled in the module records.
+# J2-2 EN: auditor lists pad CHIP_PU; the catalog models it as kind reset without a pad (CHIP_PU is not a GPIO pad).
+# C15 (0.1 uF on GPIO0): NC in schematic V4, fitted on earlier V4 boards (user guide note); kept as an onboard part.
+# `status` is the value the catalog CLI computes.
 connectors:
   - id: "J2"
     pins:
@@ -55,7 +68,7 @@ connectors:
       - {"kind": "nc", "label": "D0", "position": 18}
       - {"kind": "nc", "label": "CLK", "position": 19}
 id: "esp32-devkitc-v4"
-logic_voltage: {"evidence": ["esp32-devkitc-v4-ug#j2-1-4", "esp32-devkitc-v4-sch-v4#ldo-3v3"], "status": "single-source", "unit": "V", "value": 3.3}
+logic_voltage: {"evidence": ["esp32-devkitc-v4-ug#j2-1-4", "esp32-devkitc-v4-sch-v4#ldo-3v3"], "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "unit": "V", "value": 3.3}
 name: "ESP32-DevKitC V4"
 numbering: {"primary": "gpio"}
 onboard:
@@ -76,14 +89,14 @@ onboard:
     part: "C15 0.1 uF on GPIO0 (NC in schematic V4; fitted on earlier V4 boards)"
     uses_pad: ["GPIO0"]
 rails:
-  - max_current: {"evidence": [], "note": "Regulator is AMS1117-3.3 (schematic U2); neither the user guide nor the schematic states a current rating, and the regulator manufacturer's datasheet was not opened.", "status": "missing", "unit": "mA", "value": null}
+  - max_current: {"evidence": [], "note": "Regulator is AMS1117-3.3 (schematic U2). Neither the user guide nor the schematic states a 3V3 current rating (researcher and blind auditor both searched; auditor: could-not-verify); the regulator manufacturer datasheet was not opened.", "status": "missing", "unit": "mA", "value": null}
     name: "3V3"
     source: "U2 AMS1117-3.3 LDO from EXT_5V (schematic)"
-    voltage: {"evidence": ["esp32-devkitc-v4-ug#j2-1-4", "esp32-devkitc-v4-sch-v4#ldo-3v3", "esp32-devkitc-v4-sch-v4#j2-power-pins"], "status": "single-source", "unit": "V", "value": 3.3}
-  - max_current: {"evidence": [], "note": "No current rating for the USB 5V path (diode D3 BAT760-7) is stated in the user guide or schematic.", "status": "missing", "unit": "mA", "value": null}
+    voltage: {"evidence": ["esp32-devkitc-v4-ug#j2-1-4", "esp32-devkitc-v4-sch-v4#ldo-3v3", "esp32-devkitc-v4-sch-v4#j2-power-pins"], "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "unit": "V", "value": 3.3}
+  - max_current: {"evidence": [], "note": "No current rating for the USB 5V path (diode D3 BAT760-7) is stated in the user guide or schematic (researcher and blind auditor both searched; auditor: could-not-verify).", "status": "missing", "unit": "mA", "value": null}
     name: "5V"
     source: "Micro-USB VBUS through D3 BAT760-7 (EXT_5V), or the 5V header pin"
-    voltage: {"evidence": ["esp32-devkitc-v4-ug#j2-17-19", "esp32-devkitc-v4-sch-v4#usb-5v", "esp32-devkitc-v4-sch-v4#j2-power-pins"], "status": "single-source", "unit": "V", "value": 5}
+    voltage: {"evidence": ["esp32-devkitc-v4-ug#j2-17-19", "esp32-devkitc-v4-sch-v4#usb-5v", "esp32-devkitc-v4-sch-v4#j2-power-pins"], "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "unit": "V", "value": 5}
 revision: "V4"
 status: "partially-verified"
 variants:

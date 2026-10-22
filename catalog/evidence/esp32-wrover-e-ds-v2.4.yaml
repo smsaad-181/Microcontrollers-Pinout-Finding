@@ -57,6 +57,10 @@ claims:
     locator: "§9 Peripheral Schematics, Figure annotation, PDF p.40"
     quote: "IO12 should be kept low when the module is powered on."
     supports: "Module requires GPIO12/MTDI low at power-on (3.3 V flash)"
+  - id: "esp32-wrover-e-ds-v2.4#pin-table-27-28-nc"
+    locator: "§3.2, Table 3 Pin Definitions, PDF p.13"
+    quote: "NC 27 - - NC 28 - - IO5 29"
+    supports: "Module pins 27 and 28 (IO16/IO17 on the WROOM-32E) are NC on the WROVER-E: GPIO16/GPIO17 are not led out"
 doc_number: null
 id: "esp32-wrover-e-ds-v2.4"
 kind: "datasheet"

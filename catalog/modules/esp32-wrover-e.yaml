@@ -1,10 +1,12 @@
-# ESP32-WROVER-E module (N4R8/N8R8/N16R8) - draft, single-source.
+# ESP32-WROVER-E module (N4R8/N8R8/N16R8) - reconciled (task 2a.4), see docs/validation/phase-2a/reconcile-esp32-modules-board.md.
 # Source: ESP32-WROVER-E & ESP32-WROVER-IE Datasheet v2.4 (+ ESP32 Datasheet v5.3 §2.6 notes, DevKitC V4 guide).
-# SCHEMA LIMITATION (reported to the orchestrator): the datasheet leads out only 24 GPIOs - module pins 27/28
-# (IO16/IO17) are NC and GPIO16/GPIO17 are wired inside the module to the PSRAM. GPIO16 and GPIO17 are nevertheless
-# listed in bonded_pads, because the catalog validator requires every gpio header pin of the shared DevKitC V4
-# connector (J3-11/J3-12) to be in bonded_pads of every variant's module, and the schema has no per-variant pin map.
-# The facts that matter to the engine are in `consumed` (GPIO16/GPIO17 = psram), which removes them from use.
+# SCHEMA GAP / KNOWN DISCREPANCY (blind auditor: 24 bonded pads, researcher: 26): the datasheet leads out only 24 GPIOs ("Up to 24 GPIOs";
+# Table 3 pins 27/28 are NC) - GPIO16 and GPIO17 are wired inside the module to the PSRAM (CS# / SCLK, Figure 9). GPIO16 and GPIO17 are
+# nevertheless listed in bonded_pads, which is NOT faithful to the datasheet, only because the catalog validator (E_PIN_NUMBERING,
+# "pad ... is not bonded out by module") requires every gpio header pin of the shared DevKitC V4 connector (J3-11 IO17 / J3-12 IO16,
+# usable on the WROOM-32E variant) to be in bonded_pads of EVERY variant's module, and the schema has no per-variant pin map.
+# The facts that matter to the engine are in `consumed` (GPIO16/GPIO17 = psram, verified), which removes them from use. Do not read
+# bonded_pads of this record as "pins led out".
 bonded_pads:
   - "GPIO0"
   - "GPIO1"
@@ -34,14 +36,14 @@ bonded_pads:
   - "GPIO39"
 chip: "esp32"
 consumed:
-  GPIO10: {"evidence": ["esp32-wrover-e-ds-v2.4#gpio6-11-flash"], "status": "single-source", "value": "flash"}
-  GPIO11: {"evidence": ["esp32-wrover-e-ds-v2.4#gpio6-11-flash"], "status": "single-source", "value": "flash"}
-  GPIO16: {"evidence": ["esp32-wrover-e-ds-v2.4#sch-gpio16-psram-cs", "esp32-ds-v5.3#psram-gpio16-ce", "esp32-devkitc-v4-ug#note-gpio16-17-wrover", "esp32-wrover-e-ds-v2.4#pin-layout-26-37"], "note": "PSRAM CS#; module pin 27 is NC (not led out).", "status": "single-source", "value": "psram"}
-  GPIO17: {"evidence": ["esp32-wrover-e-ds-v2.4#sch-gpio17-sram-clk", "esp32-ds-v5.3#psram-gpio17-sclk", "esp32-devkitc-v4-ug#note-gpio16-17-wrover", "esp32-wrover-e-ds-v2.4#pin-layout-26-37"], "note": "PSRAM SCLK via R13 (0 ohm); module pin 28 is NC (not led out).", "status": "single-source", "value": "psram"}
-  GPIO6: {"evidence": ["esp32-wrover-e-ds-v2.4#gpio6-11-flash"], "status": "single-source", "value": "flash"}
-  GPIO7: {"evidence": ["esp32-wrover-e-ds-v2.4#gpio6-11-flash"], "status": "single-source", "value": "flash"}
-  GPIO8: {"evidence": ["esp32-wrover-e-ds-v2.4#gpio6-11-flash"], "status": "single-source", "value": "flash"}
-  GPIO9: {"evidence": ["esp32-wrover-e-ds-v2.4#gpio6-11-flash"], "status": "single-source", "value": "flash"}
-flash_voltage: {"evidence": ["esp32-wrover-e-ds-v2.4#series-vdd-sdio", "esp32-wrover-e-ds-v2.4#vdd-sdio-mtdi0", "esp32-wrover-e-ds-v2.4#io12-kept-low"], "status": "single-source", "unit": "V", "value": 3.3}
+  GPIO10: {"evidence": ["esp32-wrover-e-ds-v2.4#gpio6-11-flash"], "note": "Auditor (Figure 9 image, transcribed): in the N*R8 parts this line is also the PSRAM U4 data line (shared SPI bus); Fact<T> holds one value, flash, and either way the pad is unusable.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "flash"}
+  GPIO11: {"evidence": ["esp32-wrover-e-ds-v2.4#gpio6-11-flash"], "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "flash"}
+  GPIO16: {"evidence": ["esp32-ds-v5.3#psram-gpio16-ce", "esp32-wrover-e-ds-v2.4#sch-gpio16-psram-cs","esp32-devkitc-v4-ug#note-gpio16-17-wrover", "esp32-wrover-e-ds-v2.4#pin-layout-26-37", "esp32-wrover-e-ds-v2.4#pin-table-27-28-nc"], "note": "PSRAM CS#; module pin 27 is NC (not led out).", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "transcribed": true, "value": "psram"}
+  GPIO17: {"evidence": ["esp32-ds-v5.3#psram-gpio17-sclk", "esp32-wrover-e-ds-v2.4#sch-gpio17-sram-clk","esp32-devkitc-v4-ug#note-gpio16-17-wrover", "esp32-wrover-e-ds-v2.4#pin-layout-26-37", "esp32-wrover-e-ds-v2.4#pin-table-27-28-nc"], "note": "PSRAM SCLK via R13 (0 ohm); module pin 28 is NC (not led out).", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "transcribed": true, "value": "psram"}
+  GPIO6: {"evidence": ["esp32-wrover-e-ds-v2.4#gpio6-11-flash"], "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "flash"}
+  GPIO7: {"evidence": ["esp32-wrover-e-ds-v2.4#gpio6-11-flash"], "note": "Auditor (Figure 9 image, transcribed): in the N*R8 parts this line is also the PSRAM U4 data line (shared SPI bus); Fact<T> holds one value, flash, and either way the pad is unusable.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "flash"}
+  GPIO8: {"evidence": ["esp32-wrover-e-ds-v2.4#gpio6-11-flash"], "note": "Auditor (Figure 9 image, transcribed): in the N*R8 parts this line is also the PSRAM U4 data line (shared SPI bus); Fact<T> holds one value, flash, and either way the pad is unusable.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "flash"}
+  GPIO9: {"evidence": ["esp32-wrover-e-ds-v2.4#gpio6-11-flash"], "note": "Auditor (Figure 9 image, transcribed): in the N*R8 parts this line is also the PSRAM U4 data line (shared SPI bus); Fact<T> holds one value, flash, and either way the pad is unusable.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "flash"}
+flash_voltage: {"evidence": ["esp32-wrover-e-ds-v2.4#series-vdd-sdio", "esp32-wrover-e-ds-v2.4#vdd-sdio-mtdi0", "esp32-wrover-e-ds-v2.4#io12-kept-low"], "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "unit": "V", "value": 3.3}
 id: "esp32-wrover-e"
-psram: {"conditions": {"part_number": "ESP32-WROVER-E-N4R8/N8R8/N16R8"}, "evidence": ["esp32-wrover-e-ds-v2.4#series-n8r8", "esp32-devkitc-v4-ug#ordering-ve"], "note": "EOL ...R2 part numbers carry 2 MB in-package PSRAM instead (U4 not fitted).", "status": "single-source", "value": "8 MB Quad SPI"}
+psram: {"conditions": {"part_number": "ESP32-WROVER-E-N4R8/N8R8/N16R8"}, "evidence": ["esp32-wrover-e-ds-v2.4#series-n8r8", "esp32-devkitc-v4-ug#ordering-ve"], "note": "EOL ...R2 part numbers carry 2 MB in-package PSRAM instead (U4 not fitted).", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "8 MB Quad SPI"}
