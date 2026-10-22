@@ -1,0 +1,15 @@
+# HC-SR04 ultrasonic ranging module. The module is the part: no separate IC datasheet exists.
+# drive: the datasheet does not state the ECHO output driver type; push-pull is a structural placeholder (see hand-off).
+id: hc-sr04
+input_abs_max: { evidence: [], status: missing, value: null }
+interfaces:
+  - kind: digital
+    limits: {}
+    signals:
+      - { dir: in, drive: push-pull, role: TRIG, shareable: false }
+      - { dir: out, drive: push-pull, role: ECHO, shareable: false }
+part: HC-SR04
+supply_current: { evidence: [hc-sr04-elecfreaks-ds#working-current], note: "Datasheet label is 'Working Current 15mA' only; it does not say typical or maximum. Entered as typ.", status: single-source, unit: mA, value: { typ: 15 } }
+vdd_range: { evidence: [hc-sr04-elecfreaks-ds#working-voltage], note: "Datasheet gives a single value 'Working Voltage DC 5 V' with no tolerance; entered as the point range [5, 5].", status: single-source, unit: V, value: [5, 5] }
+vendor: Elecfreaks
+vio_range: { evidence: [], status: missing, value: null }
