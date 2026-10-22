@@ -1,0 +1,1248 @@
+# Blind second-key audit: ESP8266EX / D1 mini V4.0.0 core / LOLIN D1 mini V4.0.0
+# Derived only from the official documents listed below; no catalog / research / prior-validation file was opened.
+entities: [esp8266ex, lolin-d1-mini-v4.0.0-core, lolin-d1-mini]
+auditor: hardware-fact-auditor
+date: "2026-10-22"
+contaminated: []
+documents:
+  ds:
+    title: ESP8266EX Datasheet v7.1 (2025.11, NRND cover note)
+    url: https://documentation.espressif.com/0a-esp8266ex_datasheet_en.pdf
+    cache: sources/cache/esp8266ex-ds.pdf
+    sha256: 3a038e2fd3040ad06d95d41b16afc8292090339e9f8e728ce46a83db439cecf1
+    sha256_verified: true
+    pdf_pages: 31
+    page_offset: "printed page = PDF page - 5"
+  hdg:
+    title: ESP8266 Hardware Design Guidelines v2.8 (2024.10)
+    url: https://documentation.espressif.com/esp8266_hardware_design_guidelines_en.pdf
+    cache: sources/cache/esp8266-hdg.pdf
+    sha256: ff98aeeed7fd07e2fac43cdeca9b0170e03de395b0c79d28a35a40408a16638c
+    sha256_verified: true
+    pdf_pages: 37
+    page_offset: "printed page = PDF page - 5"
+  trm:
+    title: ESP8266 Technical Reference v1.7 (page footers say 2020.10)
+    url: https://documentation.espressif.com/esp8266-technical_reference_en.pdf
+    cache: sources/cache/esp8266-trm.pdf
+    sha256: 25f08aa786724a9c82ad503fda6b4339b154d59efedc5c9dfff9544aca756211
+    sha256_verified: true
+    pdf_pages: 111
+    page_offset: "printed page = PDF page - 8 (chapter pages 1..98)"
+  sch:
+    title: LOLIN/WEMOS D1 mini V4.0.0 schematic (single A4 sheet, KiCad export)
+    url: https://www.wemos.cc/en/latest/_static/files/sch_d1_mini_v4.0.0.pdf
+    cache: sources/cache/wemos-sch_d1_mini_v4.0.0.pdf
+    sha256: 831c53db151995272787cae8bd8e01532b626314627920df88541be44e2364b4
+    sha256_verified: true
+    pdf_pages: 1
+    note: "Read as rendered image (4x tiles) plus extracted label text; every schematic fact is transcribed: true. Live re-download hash identical."
+  wemos-page:
+    title: LOLIN D1 mini documentation page (V4.0.0 current)
+    url: https://www.wemos.cc/en/latest/d1/d1_mini.html
+    cache: sources/cache/wemos-d1mini.html
+    sha256: 45169cd34bbbcae3cff65084f04cb0adf6cdc16e0c5ca56c233e09da227cc005
+    sha256_verified: "cache hash recorded; live curl fetched 2026-10-22 gave identical sha256"
+    pin_map_image: sources/cache/wemos-d1_mini_v4.0.0_5_16x9.png (sha256 6891e979804e941a357a0f8ccb3b6ac2856eeface12375884f789394f263cf99, live copy identical)
+newer_or_more_authoritative_sources:
+  - name: ESP8266 Pin List (xls; sheets Digital Die Pin List, Buffer Sheet, Register List, Strapping List)
+    status: "LISTED but NOT OPENED. DS Appendix A (PDF p28) links it; espressif.com technical-documents listing shows 'ESP8266 Pin List' dated 2018.12.13 at https://www.espressif.com/sites/default/files/documentation/ESP8266_Pin_List_0.xls . Every download attempt (that URL, documentation.espressif.com variants) returned the 15 KB documentation-portal HTML shell, not the xls. Manual download needed (sources/manual/README.md request). It is the document that would state reset states / strapping levels / pad drive; those facts are therefore could-not-verify here."
+  - name: ESP8266 errata
+    status: "None found: the espressif.com technical-documents search for 'ESP8266 errata' lists only ESP8266 Pin List, no errata document. DS/HDG/TRM contain no errata section."
+  - name: ESP8266 Hardware Matching Guide
+    status: "Linked from DS Appendix B (PDF p29); not opened, not needed for these facts."
+  - name: ME6211 regulator datasheet / CH340C datasheet / flash datasheet
+    status: "Third-party component datasheets are not among the supplied sources; regulator max current and flash part number are could-not-verify from the supplied documents."
+disagreements:
+  - id: D-VDDPST
+    what: "VDDPST (digital/IO supply) upper bound"
+    a: {doc: ds, locator: "PDF p10 / printed p5, Table 2-1 pins 11 and 17", value: "1.8 V ~ 3.6 V"}
+    b: {doc: hdg, locator: "PDF p9 / printed p4, Table 1-2 pins 11 and 17; also PDF p11 / printed p6 sec 1.4.1.1", value: "1.8 V ~ 3.3 V"}
+    note: "DS release note v5.6 (PDF p2) says VDDPST was updated from 1.8-3.3 to 1.8-3.6; HDG v2.8 not updated. Use DS (newer, chip document). D1 mini runs it at 3.3 V so no impact."
+  - id: D-SDIO-D2-SERIES-R
+    what: "Series resistor value for SD_D2 / GPIO9 pin"
+    a: {doc: ds, locator: "PDF p10 / printed p5, Table 2-1 pin 18", value: "20 ohm"}
+    b: {doc: hdg, locator: "PDF p9 / printed p4, Table 1-2 pin 18", value: "200 ohm (same as all other SDIO pins)"}
+    note: "Probably a DS typo; irrelevant to pin choice."
+  - id: D-WORKING-V
+    what: "Working supply voltage lower bound inside the datasheet"
+    a: {doc: ds, locator: "PDF p24 / printed p19, Table 5-1 and Table 1-1", value: "2.5 V min"}
+    b: {doc: ds, locator: "PDF p22 / printed p17, sec 4.9 table (vdd33_const)", value: "working power voltage range between 1.8 V and 3.6 V"}
+    note: "Internal to DS. Use 2.5-3.6 V from Table 5-1 (conservative)."
+  - id: D-GPIO-COUNT
+    what: "Number of GPIOs"
+    a: {doc: ds, locator: "PDF p18 / printed p13 sec 4.1", value: "17 GPIO pins (GPIO0-GPIO16)"}
+    b: {doc: trm, locator: "PDF p13 / printed p5 sec 2.1 and Table 2-1", value: "16 general IOs (GPIO0-GPIO15); GPIO16 documented separately as RTC pad, PDF p15 sec 2.2.5"}
+    note: "Not a real conflict: GPIO16 is on the RTC block."
+  - id: D-SPI-COUNT
+    what: "Number of SPI controllers"
+    a: {doc: ds, locator: "PDF p18 / printed p13 sec 4.3", value: "two SPIs (SPI, HSPI)"}
+    b: {doc: trm, locator: "PDF p9 / printed p1 sec 1.3", value: "3 SPIs (SPI, SDIO/SPI slave, HSPI)"}
+    note: "Counting difference (SDIO slave)."
+  - id: D-PWM
+    what: "PWM channel count / resolution"
+    a: {doc: ds, locator: "PDF p21 / printed p16 sec 4.7", value: "four PWM outputs; duty ratio 1/22727 at 1 kHz"}
+    b: {doc: hdg, locator: "PDF p27 / printed p22 sec 1.7.3", value: "three PWM interfaces (R,G,B); minimal PWM duty ratio 1/214"}
+    note: "HDG is an application example; use DS."
+  - id: D-STRAP-WORDING
+    what: "What the strapping pins select"
+    a: {doc: ds, locator: "PDF p11 / printed p6 note under Table 2-1", value: "booting mode and the SDIO mode"}
+    b: {doc: hdg, locator: "PDF p10 / printed p5 note under Table 1-2", value: "3-bit strapping register that determines the booting mode and the SDIO timing mode"}
+    note: "Wording differs; neither gives a level-to-mode table."
+  - id: D-BOARD-VS-CHIP-A0
+    what: "A0 input range vs TOUT range"
+    a: {doc: wemos-page, locator: "Features / Technical specs", value: "1 analog input (3.2V max input)"}
+    b: {doc: ds, locator: "PDF p22 / printed p17 sec 4.9", value: "0 to 1.0 V at TOUT"}
+    note: "Consistent, not a conflict: schematic divider R12 220k / R13 100k gives 3.2 V * 100/320 = 1.0 V at TOUT."
+  - id: D-D-LABELS
+    what: "Dn labels"
+    a: {doc: wemos-page, locator: "Features bullet", value: "mentions 'D0' only in '(except D0)'; no table or image maps D0..D8 to GPIOs"}
+    b: {doc: sch, locator: "J2/J3 net labels", value: "uses IOn net names and RST/A0/TX/RX only; no Dn"}
+    note: "No supplied document states any Dn-to-GPIO mapping."
+summary_could_not_verify:
+  - "reset_state of every pad (no document states it)"
+  - "strap level for GPIO2; chip-level strap table (only the unopened Pin List has it)"
+  - "power_up_glitch for every pad (no document mentions a glitch)"
+  - "abs_max_vin: DS has NO absolute-maximum table"
+  - "cumulative_current_max, internal pull-up/pull-down resistance"
+  - "3V3 regulator maximum current; VBUS numeric voltage/current"
+  - "any Dn label mapping"
+facts:
+# ---------------------------------------------------------------- CHIP: pads
+  - entity: esp8266ex
+    level: chip
+    path: pads.set
+    value: [GPIO0, GPIO1, GPIO2, GPIO3, GPIO4, GPIO5, GPIO6, GPIO7, GPIO8, GPIO9, GPIO10, GPIO11, GPIO12, GPIO13, GPIO14, GPIO15, GPIO16]
+    unit: null
+    conditions: "QFN32 package; names per Table 2-1 pins: GPIO0=pin15, GPIO1=U0TXD pin26, GPIO2=pin14, GPIO3=U0RXD pin25, GPIO4=pin16, GPIO5=pin24, GPIO6=SD_CLK pin21, GPIO7=SD_DATA_0 pin22, GPIO8=SD_DATA_1 pin23, GPIO9=SD_DATA_2 pin18, GPIO10=SD_DATA_3 pin19, GPIO11=SD_CMD pin20, GPIO12=MTDI pin10, GPIO13=MTCK pin12, GPIO14=MTMS pin9, GPIO15=MTDO pin13, GPIO16=XPD_DCDC pin8"
+    doc: ds
+    locator: "PDF p18 / printed p13, sec 4.1; pin map PDF p10 / printed p5 Table 2-1"
+    quote: "ESP8266EX has 17 GPIO pins which can be assigned to various functions by programming the appropriate registers."
+    transcribed: false
+    confidence: found
+    notes: "TRM sec 2.1 PDF p13 lists GPIO0-GPIO15 only (16) and treats GPIO16 as RTC pad (see disagreement D-GPIO-COUNT). GPIO-to-pin numbers cross-checked in TRM Table 2-1 (rendered)."
+  - entity: esp8266ex
+    level: chip
+    path: pads.*.functions.routing
+    value: iomux
+    unit: null
+    conditions: "all pads: per-pad function-select register (IO_MUX), fixed list of functions per pad; no GPIO matrix documented"
+    doc: ds
+    locator: "PDF p28 / printed p23, Appendix A notes (second bullets)"
+    quote: "PIN_FUNC_SELECT(PERIPHS_IO_MUX_MTDI_U,FUNC_GPIO12)"
+    transcribed: false
+    confidence: found
+    notes: "Corroborated by TRM PDF p14 / printed p6 sec 2.2.1: 'Function selection register PERIPHS_IO_MUX_MTDI_U (this register differs for different GPIOs)'. Function numbers 1-5 = FUNCTION 0-4 in SDK. The detailed per-pad function-number table is in the unopened Pin List."
+  - entity: esp8266ex
+    level: chip
+    path: pads.GPIO0.functions
+    value: [GPIO0, SPICS2]
+    unit: null
+    conditions: "pin 15"
+    doc: ds
+    locator: "PDF p10 / printed p5, Table 2-1 pin 15; Table 4-2 PDF p19 / printed p14"
+    quote: "GPIO0 I/O GPIO0; SPI_CS2"
+    transcribed: false
+    confidence: found
+    notes: "Also a boot-mode strap pad (see straps)."
+  - entity: esp8266ex
+    level: chip
+    path: pads.GPIO1.functions
+    value: [U0TXD, GPIO1, SPICS1]
+    unit: null
+    conditions: "pin 26 (U0TXD). UART0 TX; UART download/programming TX"
+    doc: ds
+    locator: "PDF p10 / printed p5, Table 2-1 pin 26; Table 4-6 PDF p20 / printed p15"
+    quote: "UART Tx during flash programming; GPIO1; SPI_CS1"
+    transcribed: false
+    confidence: found
+    notes: "DS note PDF p11 / printed p6: U0TXD should not be pulled externally low during power-up (see notes_pad_limits)."
+  - entity: esp8266ex
+    level: chip
+    path: pads.GPIO2.functions
+    value: [GPIO2, U1TXD, I2C_SDA(software), I2SO_WS]
+    unit: null
+    conditions: "pin 14"
+    doc: ds
+    locator: "PDF p10 / printed p5, Table 2-1 pin 14; Tables 4-4 (PDF p19), 4-5 and 4-6 (PDF p20)"
+    quote: "GPIO2 I/O UART TX during flash programming; GPIO2"
+    transcribed: false
+    confidence: found
+    notes: "Boot-mode strap pad. UART1 has TX only."
+  - entity: esp8266ex
+    level: chip
+    path: pads.GPIO3.functions
+    value: [U0RXD, GPIO3, I2SO_DATA]
+    unit: null
+    conditions: "pin 25 (U0RXD)"
+    doc: ds
+    locator: "PDF p10 / printed p5, Table 2-1 pin 25; Tables 4-5, 4-6 PDF p20 / printed p15"
+    quote: "U0RXD I/O UART Rx during flash programming; GPIO3"
+    transcribed: false
+    confidence: found
+    notes: ""
+  - entity: esp8266ex
+    level: chip
+    path: pads.GPIO4.functions
+    value: [GPIO4, PWM3]
+    unit: null
+    conditions: "pin 16"
+    doc: ds
+    locator: "PDF p10 / printed p5, Table 2-1 pin 16; Table 4-7 PDF p21 / printed p16"
+    quote: "GPIO4 I/O GPIO4"
+    transcribed: false
+    confidence: found
+    notes: ""
+  - entity: esp8266ex
+    level: chip
+    path: pads.GPIO5.functions
+    value: [GPIO5, IR_Rx]
+    unit: null
+    conditions: "pin 24"
+    doc: ds
+    locator: "PDF p10 / printed p5, Table 2-1 pin 24; Table 4-8 PDF p21 / printed p16"
+    quote: "GPIO5 I/O GPIO5"
+    transcribed: false
+    confidence: found
+    notes: ""
+  - entity: esp8266ex
+    level: chip
+    path: pads.GPIO6.functions
+    value: [SDIO_CLK, SPICLK, GPIO6]
+    unit: null
+    conditions: "pin 21 (SD_CLK); used as flash CLK in the standard SPI-flash wiring"
+    doc: ds
+    locator: "PDF p10 / printed p5, Table 2-1 pin 21; Tables 4-1 and 4-2 PDF p18-19"
+    quote: "SDIO_CLK I/O Connect to SD_CLK (Series R: 200 Ω); SPI_CLK; GPIO6"
+    transcribed: false
+    confidence: found
+    notes: ""
+  - entity: esp8266ex
+    level: chip
+    path: pads.GPIO7.functions
+    value: [SDIO_DATA0, SPIQ_MISO, GPIO7]
+    unit: null
+    conditions: "pin 22 (SD_DATA_0)"
+    doc: ds
+    locator: "PDF p10 / printed p5, Table 2-1 pin 22; Table 4-2 PDF p19"
+    quote: "SDIO_DATA_0 I/O Connect to SD_D0 (Series R: 200 Ω); SPI_MISO; GPIO7"
+    transcribed: false
+    confidence: found
+    notes: ""
+  - entity: esp8266ex
+    level: chip
+    path: pads.GPIO8.functions
+    value: [SDIO_DATA1, SPID_MOSI, U1RXD, GPIO8]
+    unit: null
+    conditions: "pin 23 (SD_DATA_1)"
+    doc: ds
+    locator: "PDF p10 / printed p5, Table 2-1 pin 23; Table 4-2 PDF p19; Table 4-6 PDF p20"
+    quote: "SDIO_DATA_1 I/O Connect to SD_D1 (Series R: 200 Ω); SPI_MOSI; GPIO8"
+    transcribed: false
+    confidence: found
+    notes: ""
+  - entity: esp8266ex
+    level: chip
+    path: pads.GPIO9.functions
+    value: [SDIO_DATA2, SPIHD, HSPIHD, GPIO9]
+    unit: null
+    conditions: "pin 18 (SD_DATA_2)"
+    doc: ds
+    locator: "PDF p10 / printed p5, Table 2-1 pin 18; Table 4-2 PDF p19"
+    quote: "Connect to SD_D2 (Series R: 20 Ω); SPIHD; HSPIHD; GPIO9"
+    transcribed: false
+    confidence: found
+    notes: "DS says series R 20 ohm, HDG says 200 ohm (D-SDIO-D2-SERIES-R)."
+  - entity: esp8266ex
+    level: chip
+    path: pads.GPIO10.functions
+    value: [SDIO_DATA3, SPIWP, HSPIWP, GPIO10]
+    unit: null
+    conditions: "pin 19 (SD_DATA_3)"
+    doc: ds
+    locator: "PDF p10 / printed p5, Table 2-1 pin 19; Table 4-2 PDF p19"
+    quote: "Connect to SD_D3 (Series R: 200 Ω); SPIWP; HSPIWP; GPIO10"
+    transcribed: false
+    confidence: found
+    notes: ""
+  - entity: esp8266ex
+    level: chip
+    path: pads.GPIO11.functions
+    value: [SDIO_CMD, SPICS0, GPIO11]
+    unit: null
+    conditions: "pin 20 (SD_CMD)"
+    doc: ds
+    locator: "PDF p10 / printed p5, Table 2-1 pin 20; Table 4-2 PDF p19"
+    quote: "Connect to SD_CMD (Series R: 200 Ω); SPI_CS0; GPIO11"
+    transcribed: false
+    confidence: found
+    notes: ""
+  - entity: esp8266ex
+    level: chip
+    path: pads.GPIO12.functions
+    value: [GPIO12, HSPIQ_MISO, I2SI_DATA, PWM0]
+    unit: null
+    conditions: "pin 10 (MTDI)"
+    doc: ds
+    locator: "PDF p10 / printed p5, Table 2-1 pin 10; Tables 4-3, 4-5, 4-7 PDF p19-21"
+    quote: "MTDI I/O GPIO 12; HSPI_MISO"
+    transcribed: false
+    confidence: found
+    notes: ""
+  - entity: esp8266ex
+    level: chip
+    path: pads.GPIO13.functions
+    value: [GPIO13, HSPID_MOSI, UART0_CTS, I2SI_BCK]
+    unit: null
+    conditions: "pin 12 (MTCK)"
+    doc: ds
+    locator: "PDF p10 / printed p5, Table 2-1 pin 12; Tables 4-3, 4-5, 4-6 PDF p19-20"
+    quote: "MTCK I/O GPIO 13; HSPI_MOSI; UART0_CTS"
+    transcribed: false
+    confidence: found
+    notes: ""
+  - entity: esp8266ex
+    level: chip
+    path: pads.GPIO14.functions
+    value: [GPIO14, HSPICLK, I2C_SCL(software), I2SI_WS, PWM2, IR_Tx]
+    unit: null
+    conditions: "pin 9 (MTMS)"
+    doc: ds
+    locator: "PDF p10 / printed p5, Table 2-1 pin 9; Tables 4-3, 4-4, 4-5, 4-7, 4-8 PDF p19-21"
+    quote: "MTMS I/O GPIO 14; HSPI_CLK"
+    transcribed: false
+    confidence: found
+    notes: ""
+  - entity: esp8266ex
+    level: chip
+    path: pads.GPIO15.functions
+    value: [GPIO15, HSPICS, UART0_RTS, PWM1, I2SO_BCK]
+    unit: null
+    conditions: "pin 13 (MTDO)"
+    doc: ds
+    locator: "PDF p10 / printed p5, Table 2-1 pin 13; Tables 4-3, 4-5, 4-6, 4-7 PDF p19-21"
+    quote: "MTDO I/O GPIO 15; HSPI_CS; UART0_RTS"
+    transcribed: false
+    confidence: found
+    notes: "Boot-mode strap pad."
+  - entity: esp8266ex
+    level: chip
+    path: pads.GPIO16.functions
+    value: [GPIO16, deep-sleep-wakeup]
+    unit: null
+    conditions: "pin 8 (XPD_DCDC)"
+    doc: ds
+    locator: "PDF p10 / printed p5, Table 2-1 pin 8"
+    quote: "XPD_DCDC I/O Deep-sleep wakeup (need to be connected to EXT_RSTB); GPIO16"
+    transcribed: false
+    confidence: found
+    notes: "No PWM/I2C/SPI/UART/I2S function is listed for this pad in DS Tables 4-x."
+# ---------------------------------------------------------------- CHIP: pad limits
+  - entity: esp8266ex
+    level: chip
+    path: pads.GPIO16.input_only
+    value: false
+    unit: null
+    conditions: "GPIO16 is an RTC-module pad: input or output allowed, but it cannot trigger a GPIO interrupt"
+    doc: trm
+    locator: "PDF p15 / printed p7, sec 2.2.5"
+    quote: "it can be configured to input or output mode; but it cannot trigger the IO interrupt."
+    transcribed: false
+    confidence: found
+    notes: "No pad in DS/HDG/TRM is documented as input-only. Same TRM passage: GPIO16 can wake chip from deep-sleep."
+  - entity: esp8266ex
+    level: chip
+    path: pads.GPIO16.pull_limits
+    value: "internal pull-down only (no internal pull-up)"
+    unit: null
+    conditions: ""
+    doc: ds
+    locator: "PDF p18 / printed p13, sec 4.1"
+    quote: "XPD_DCDC can only be configured with internal pull-down, other GPIO PAD can only be configured with internal pull-up"
+    transcribed: false
+    confidence: found
+    notes: "Every other GPIO: internal pull-up only (or high-impedance). Resistor values are not given in DS/HDG/TRM."
+  - entity: esp8266ex
+    level: chip
+    path: pads.GPIO1.notes_pad_limits
+    value: "U0TXD must not be pulled externally to a low level during power-up"
+    unit: null
+    conditions: "during power-up"
+    doc: ds
+    locator: "PDF p11 / printed p6, note under Table 2-1"
+    quote: "U0TXD should not be pulled externally to a low logic level during the powering-up."
+    transcribed: false
+    confidence: found
+    notes: "Also: UART0 prints boot info on U0TXD by default."
+  - entity: esp8266ex
+    level: chip
+    path: pads.GPIO6-GPIO11.notes_pad_limits
+    value: "In QUAD flash mode six IO (GPIO6-GPIO11) are used for flash communication; DUAL flash mode uses four"
+    unit: null
+    conditions: "SPI flash on the SD_* pads; which six are not enumerated in the TRM sentence (pins named by the D1 mini schematic: GPIO6,7,8,9,10,11)"
+    doc: trm
+    locator: "PDF p13 / printed p5, sec 2.1"
+    quote: "In the QUAD mode flash, 6 IO interfaces are used for flash communication."
+    transcribed: false
+    confidence: found
+    notes: "TRM also: 'In the DUAL mode flash, 4 IO interfaces are used for flash communication.' DS Notice PDF p13 / printed p8: SPI mode supported: Standard, Dual, Quad. The pad names GPIO6-GPIO11 as the flash pads are the DS Table 4-2 SPI pins (SPICLK GPIO6, SPIQ GPIO7, SPID GPIO8, SPIHD GPIO9, SPIWP GPIO10, SPICS0 GPIO11)."
+  - entity: esp8266ex
+    level: chip
+    path: pads.*.reset_state
+    value: null
+    unit: null
+    conditions: "all pads"
+    doc: ds
+    locator: "searched DS full text, HDG full text, TRM chapters 1-2 and register chapter: no statement of pad state at/after reset"
+    quote: figure
+    transcribed: false
+    confidence: could-not-verify
+    notes: "Only 'The GPIO input detection function is enabled by default' (TRM PDF p15 / printed p7, note) and EXT_RSTB 'contains an internal pull-up resistor' (HDG PDF p13 / printed p8, sec 1.4.2.2). Reset state per pad is presumably in the unopened Pin List / Buffer Sheet."
+  - entity: esp8266ex
+    level: chip
+    path: pads.*.power_up_glitch
+    value: null
+    unit: null
+    conditions: "all pads"
+    doc: ds
+    locator: "Searched for glitch/spurious/power-on state/high-z/floating in DS, HDG, TRM (only unrelated hits: TRM UART register 'glitch_filt'; TOUT must be floating; CHIP_EN cannot be left floating)"
+    quote: figure
+    transcribed: false
+    confidence: could-not-verify
+    notes: "No document documents a power-up glitch, nor states 'none'. Do not record 'none' on this basis."
+  - entity: esp8266ex
+    level: chip
+    path: pads.*.errata
+    value: []
+    unit: null
+    conditions: ""
+    doc: ds
+    locator: "No errata document exists in the Espressif listing; DS/HDG/TRM have no errata section"
+    quote: figure
+    transcribed: false
+    confidence: could-not-verify
+    notes: "Absence of errata is not proven; searched espressif.com technical documents for 'ESP8266 errata' - only the Pin List appears."
+# ---------------------------------------------------------------- CHIP: straps
+  - entity: esp8266ex
+    level: chip
+    path: pads.{GPIO0,GPIO2,GPIO15}.strap.role
+    value: "boot-mode and SDIO-mode selection (3-bit strapping register: GPIO0, GPIO2, MTDO=GPIO15)"
+    unit: null
+    conditions: ""
+    doc: ds
+    locator: "PDF p11 / printed p6, note under Table 2-1"
+    quote: "GPIO2, GPIO0, and MTDO are used to select booting mode and the SDIO mode"
+    transcribed: false
+    confidence: found
+    notes: "HDG PDF p10 / printed p5 note: 'configurable on PCB as the 3-bit strapping register that determines the booting mode and the SDIO timing mode'. TRM register list (PDF p107, Appendix GPIO_IN register) has GPIO_STRAPPING [31:16] 'The values of the strapping pins.' No level-to-mode table anywhere in DS/HDG/TRM; the Strapping List is in the unopened Pin List. All other pads: strap none (inferred from the note naming only these three)."
+  - entity: esp8266ex
+    level: chip
+    path: pads.GPIO15.strap.required_at_reset
+    value: low
+    unit: null
+    conditions: "at power-on, for normal flash-boot operation (HDG: a high level makes the system 'mistakenly entering boot mode')"
+    doc: hdg
+    locator: "PDF p16 / printed p11, sec 1.4.7 (UART SWAP)"
+    quote: "GPIO15, the strapping pin of ESP8266EX, needs to be at low-voltage level when the chip is powered on."
+    transcribed: false
+    confidence: found
+    notes: "Corroborated by ESP-LAUNCHER board text (PDF p31 / printed p26): pull-down R29 on MTDO/IO15 exists. The target mode of 'low' is implied as normal flash boot; the HDG states the SDIO boot mode is entered with J1 open (PDF p19 / printed p14)."
+  - entity: esp8266ex
+    level: chip
+    path: pads.GPIO0.strap.required_at_reset
+    value: "low = UART download mode; high = flash boot (board-level statement for ESP-LAUNCHER switch)"
+    unit: null
+    conditions: "stated for the ESP-LAUNCHER dev board GPIO0 switch, not as a chip-level strapping table"
+    doc: hdg
+    locator: "PDF p29 / printed p24, Table 2-1 'Slide switch' and 'GPIO0 Control' bullets"
+    quote: "Toggle to the inner side, the UART download mode is enabled and users can download firmware with ESP Flash Download Tool;"
+    transcribed: false
+    confidence: found
+    notes: "Same row: 'When the switches are toggled to the outer side, the voltage level is high, while when toggled to the inner side, the voltage level is low.' and outer side = 'the Flash boot mode is enabled'. Chip-level confirmation not in DS/TRM; chip-level strap table would be in unopened Pin List. Mark as found-by-board-doc."
+  - entity: esp8266ex
+    level: chip
+    path: pads.GPIO2.strap.required_at_reset
+    value: null
+    unit: null
+    conditions: ""
+    doc: ds
+    locator: "DS/HDG/TRM searched: GPIO2 named as a strap pad but no required level stated"
+    quote: figure
+    transcribed: false
+    confidence: could-not-verify
+    notes: "Only statement: GPIO2 is one of the three strap pads. Do not assume 'high'."
+  - entity: esp8266ex
+    level: chip
+    path: pads.{GPIO0,GPIO2,GPIO15}.strap.default_pull
+    value: null
+    unit: null
+    conditions: ""
+    doc: ds
+    locator: "no statement of internal default pull on strap pads in DS/HDG/TRM"
+    quote: figure
+    transcribed: false
+    confidence: could-not-verify
+    notes: ""
+# ---------------------------------------------------------------- CHIP: ADC
+  - entity: esp8266ex
+    level: chip
+    path: pads.TOUT.adc.range
+    value: [0, 1.0]
+    unit: V
+    conditions: "TOUT (pin 6) connected to an external circuit; RF init byte vdd33_const must be set to the real supply voltage; use system_adc_read"
+    doc: ds
+    locator: "PDF p22 / printed p17, sec 4.9 (second bullet table, row Hardware Design)"
+    quote: "The input voltage range is 0 to 1.0 V when TOUT is connected to external circuit."
+    transcribed: true
+    confidence: found
+    notes: "Table rendered to confirm row mapping. 10-bit SAR ADC (sec 4.9 text). TOUT is not a GPIO and has no digital function."
+  - entity: esp8266ex
+    level: chip
+    path: pads.TOUT.adc.mutual_exclusion
+    value: "TOUT can measure either VDD3P3 (pins 3,4) or the external TOUT input, never both at once; when measuring VDD3P3 TOUT must be floating (vdd33_const=0xFF, use system_get_vdd33)"
+    unit: null
+    conditions: ""
+    doc: ds
+    locator: "PDF p22 / printed p17, sec 4.9"
+    quote: "The following two measurements can be implemented using ADC (Pin6). However, they cannot be implemented at the same time."
+    transcribed: true
+    confidence: found
+    notes: "radio_conflict: the documents do not say the ADC conflicts with Wi-Fi; they do say the two ADC modes are exclusive. radio_conflict flag = could-not-verify."
+  - entity: esp8266ex
+    level: chip
+    path: pads.TOUT.adc.resolution
+    value: 10
+    unit: bits
+    conditions: ""
+    doc: ds
+    locator: "PDF p22 / printed p17, sec 4.9"
+    quote: "ESP8266EX is embedded with a 10-bit precision SAR ADC."
+    transcribed: false
+    confidence: found
+    notes: ""
+# ---------------------------------------------------------------- CHIP: electrical
+  - entity: esp8266ex
+    level: chip
+    path: electrical.vdd_io
+    value: [1.8, 3.6]
+    unit: V
+    conditions: "VDDPST pins 11 and 17, digital/IO supply. Table 5-1 working voltage 2.5 / 3.3 typ / 3.6 V for the chip overall."
+    doc: ds
+    locator: "PDF p10 / printed p5, Table 2-1 pins 11 and 17; PDF p24 / printed p19 Table 5-1 'Working Voltage Value'"
+    quote: "VDDPST P Digital/IO Power Supply (1.8 V ~ 3.6 V)"
+    transcribed: true
+    confidence: found
+    notes: "HDG says 1.8-3.3 V (D-VDDPST); DS release note v5.6 documents the change to 3.6 V. Table 5-1 row read from rendered image: min 2.5, typ 3.3, max 3.6 V."
+  - entity: esp8266ex
+    level: chip
+    path: electrical.vil_max
+    value: "0.25*VIO"
+    unit: V
+    conditions: "VIL min -0.3 V; VIO = I/O supply (VDDPST)"
+    doc: ds
+    locator: "PDF p24 / printed p19, Table 5-1 row I/O VIL"
+    quote: figure
+    transcribed: true
+    confidence: found
+    notes: "Table scrambled in text extraction; read from rendered image."
+  - entity: esp8266ex
+    level: chip
+    path: electrical.vih_min
+    value: "0.75*VIO"
+    unit: V
+    conditions: "VIH max listed as 3.6 V (a table cell in the Max column, not stated as an absolute maximum)"
+    doc: ds
+    locator: "PDF p24 / printed p19, Table 5-1 row I/O VIH"
+    quote: figure
+    transcribed: true
+    confidence: found
+    notes: ""
+  - entity: esp8266ex
+    level: chip
+    path: electrical.vol_max
+    value: "0.1*VIO"
+    unit: V
+    conditions: "no test current stated"
+    doc: ds
+    locator: "PDF p24 / printed p19, Table 5-1 row I/O VOL"
+    quote: figure
+    transcribed: true
+    confidence: found
+    notes: ""
+  - entity: esp8266ex
+    level: chip
+    path: electrical.voh_min
+    value: "0.8*VIO"
+    unit: V
+    conditions: "no test current stated"
+    doc: ds
+    locator: "PDF p24 / printed p19, Table 5-1 row I/O VOH"
+    quote: figure
+    transcribed: true
+    confidence: found
+    notes: ""
+  - entity: esp8266ex
+    level: chip
+    path: electrical.pin_current_max
+    value: 12
+    unit: mA
+    conditions: "Table 5-1 row 'IMAX' under I/O; conditions column '-'; the table does not say per-pin vs per-port, nor whether it is an operating or absolute value"
+    doc: ds
+    locator: "PDF p24 / printed p19, Table 5-1 row I/O IMAX"
+    quote: figure
+    transcribed: true
+    confidence: found
+    notes: "Treat as the only documented I/O current figure. Confidence on its meaning (per pin) is inferred."
+  - entity: esp8266ex
+    level: chip
+    path: electrical.abs_max_vin
+    value: null
+    unit: V
+    conditions: ""
+    doc: ds
+    locator: "DS has no 'absolute maximum ratings' table (sections 5.1-5.3 only: Table 5-1 Electrical Characteristics, 5-2 timing, 5-3 power, 5-4 radio)"
+    quote: figure
+    transcribed: false
+    confidence: could-not-verify
+    notes: "Table 5-1 VIH max 3.6 V and working voltage max 3.6 V are operating characteristics, NOT absolute-maximum ratings; do not record them as abs_max_vin. HDG PDF p16 / printed p11 says only 'The IO of the ESP8266EX is a 3.3 V logic level' and shows a level-shifter for 5 V systems."
+  - entity: esp8266ex
+    level: chip
+    path: electrical.cumulative_current_max
+    value: null
+    unit: mA
+    conditions: ""
+    doc: ds
+    locator: "no total/cumulative I/O current statement in DS, HDG, TRM"
+    quote: figure
+    transcribed: false
+    confidence: could-not-verify
+    notes: ""
+  - entity: esp8266ex
+    level: chip
+    path: electrical.internal_pull_ohm
+    value: null
+    unit: ohm
+    conditions: ""
+    doc: ds
+    locator: "internal pull-up/pull-down existence stated (DS PDF p18 sec 4.1; TRM PDF p71 sec 9.1) but no resistance value anywhere"
+    quote: figure
+    transcribed: false
+    confidence: could-not-verify
+    notes: ""
+  - entity: esp8266ex
+    level: chip
+    path: electrical.esd
+    value: {HBM_kV: 2, CDM_kV: 0.5}
+    unit: kV
+    conditions: "TAMB = 25 C"
+    doc: ds
+    locator: "PDF p24 / printed p19, Table 5-1"
+    quote: figure
+    transcribed: true
+    confidence: found
+    notes: "Informational."
+  - entity: esp8266ex
+    level: chip
+    path: electrical.reset_pins
+    value: "CHIP_EN: low = off; reboots if CHIP_EN input below 0.6 V for at least 200 us; CHIP_EN cannot be left floating. EXT_RSTB: active low, internal pull-up, may float; HDG recommends CHIP_EN for reset"
+    unit: null
+    conditions: ""
+    doc: hdg
+    locator: "PDF p13 / printed p8, sec 1.4.2.2"
+    quote: "ESP8266EX reboots when the input level of this pin is below 0.6 V and lasts for at least 200 μs."
+    transcribed: false
+    confidence: found
+    notes: "DS Table 2-1 pin 7/32: CHIP_EN 'High: On ... Low: Off'; EXT_RSTB 'External reset signal (Low voltage level: active)'."
+# ---------------------------------------------------------------- CHIP: peripherals
+  - entity: esp8266ex
+    level: chip
+    path: peripherals.UART0
+    value: {TX: GPIO1, RX: GPIO3, RTS: GPIO15, CTS: GPIO13, max_baud: 4500000}
+    unit: null
+    conditions: "hardware UART; flow control supported; default boot log on UART0; swapping (U0TXD,U0RXD) to (MTDO,MTCK)=GPIO15/GPIO13 documented"
+    doc: ds
+    locator: "PDF p20 / printed p15, Table 4-6 and sec 4.6; swap note PDF p21 / printed p16"
+    quote: "The data transmission speed via UART interfaces reaches 115200 x 40 (4.5 Mbps)."
+    transcribed: false
+    confidence: found
+    notes: "Boot log baud: 115200 with 40 MHz crystal, 74880 with 26 MHz crystal (same note). TRM Table 1-6 identical."
+  - entity: esp8266ex
+    level: chip
+    path: peripherals.UART1
+    value: {TX: GPIO2, RX: GPIO8}
+    unit: null
+    conditions: "UART1 has only TX in practice; usually used for logging"
+    doc: ds
+    locator: "PDF p21 / printed p16, sec 4.6 (Table 4-6 on PDF p20 / printed p15)"
+    quote: "Since UART1 features only data transmit signal (TX), it is usually used for printing log."
+    transcribed: false
+    confidence: found
+    notes: "Table 4-6 lists U1RXD on SD_D1 (GPIO8), which is a flash pad on flash-equipped designs."
+  - entity: esp8266ex
+    level: chip
+    path: peripherals.SPI
+    value: {SPICLK: GPIO6, SPIQ_MISO: GPIO7, SPID_MOSI: GPIO8, SPIHD: GPIO9, SPIWP: GPIO10, SPICS0: GPIO11, SPICS1: GPIO1, SPICS2: GPIO0, master_max_hz: 80000000, slave_max_hz: 20000000}
+    unit: Hz
+    conditions: "general SPI (these pads are the flash bus)"
+    doc: ds
+    locator: "PDF p19 / printed p14, Table 4-2 and note"
+    quote: "The clock frequency is 80 MHz at maximum when working as a master, 20 MHz at maximum when working as a slave."
+    transcribed: false
+    confidence: found
+    notes: "TRM PDF p10 / printed p2 gives '80 MHz at maximum' only."
+  - entity: esp8266ex
+    level: chip
+    path: peripherals.HSPI
+    value: {HSPICLK: GPIO14, HSPIQ_MISO: GPIO12, HSPID_MOSI: GPIO13, HSPICS: GPIO15, HSPIHD: GPIO9, HSPIWP: GPIO10, max_hz: 20000000}
+    unit: Hz
+    conditions: "master or slave"
+    doc: ds
+    locator: "PDF p19 / printed p14, Table 4-3 and note"
+    quote: "SPI mode can be implemented via software programming. The clock frequency is 20 MHz at maximum."
+    transcribed: false
+    confidence: found
+    notes: "Table 4-3 text spells 'HPSICS' for the CS function. HSPIHD/HSPIWP on GPIO9/10 per Table 2-1."
+  - entity: esp8266ex
+    level: chip
+    path: peripherals.I2C
+    value: {SCL: GPIO14, SDA: GPIO2, max_hz: 100000, software_implemented: true}
+    unit: Hz
+    conditions: "master and slave supported; software bit-banged, SCL/SDA pad choice per Table 4-4 (GPIO14/GPIO2); TRM says all GPIOs can be open-drain and internal pull-ups exist"
+    doc: ds
+    locator: "PDF p20 / printed p15, sec 4.4 text; Table 4-4 PDF p19 / printed p14"
+    quote: "I2C interface functionality can be realized via software programming, and the clock frequency is 100 kHz at maximum."
+    transcribed: false
+    confidence: found
+    notes: "TRM PDF p71 sec 9.1: 'All GPIO pins can be configured with open-drain mode, thus easily enabling GPIO interface for I2C data or clock functionalities.' (so other pins are possible in software; DS lists GPIO14/GPIO2 as the example pins)."
+  - entity: esp8266ex
+    level: chip
+    path: peripherals.I2S
+    value: {I2SI_DATA: GPIO12, I2SI_BCK: GPIO13, I2SI_WS: GPIO14, I2SO_BCK: GPIO15, I2SO_DATA: GPIO3, I2SO_WS: GPIO2}
+    unit: null
+    conditions: "one input, one output, linked-list DMA"
+    doc: ds
+    locator: "PDF p20 / printed p15, Table 4-5"
+    quote: "ESP8266EX has one I2S data input interface and one I2S data output interface"
+    transcribed: false
+    confidence: found
+    notes: ""
+  - entity: esp8266ex
+    level: chip
+    path: peripherals.PWM
+    value: {PWM0: GPIO12, PWM1: GPIO15, PWM2: GPIO14, PWM3: GPIO4, freq_range_hz: [100, 1000], software_implemented: true}
+    unit: Hz
+    conditions: "implemented in software (timer interrupt), minimum resolution 44 ns; frequency adjustable 1000 us to 10000 us"
+    doc: ds
+    locator: "PDF p21 / printed p16, sec 4.7 and Table 4-7"
+    quote: "PWM frequency range is adjustable from 1000 μs to 10000 μs, i.e., between 100 Hz and 1 kHz."
+    transcribed: false
+    confidence: found
+    notes: "HDG says three channels / 1/214 (D-PWM)."
+  - entity: esp8266ex
+    level: chip
+    path: peripherals.IR
+    value: {IR_Tx: GPIO14, IR_Rx: GPIO5, carrier_hz: 38000}
+    unit: Hz
+    conditions: "software implemented, NEC"
+    doc: ds
+    locator: "PDF p21 / printed p16, sec 4.8 and Table 4-8"
+    quote: "The frequency of modulated carrier signal is 38 kHz, while the duty ratio of the square wave is 1/3."
+    transcribed: false
+    confidence: found
+    notes: ""
+  - entity: esp8266ex
+    level: chip
+    path: peripherals.SDIO_slave
+    value: {pads: [GPIO6, GPIO7, GPIO8, GPIO9, GPIO10, GPIO11], max_hz_v1_1: 25000000, max_hz_v2_0: 50000000}
+    unit: Hz
+    conditions: "one slave SDIO; 1-bit/4-bit SD mode and SPI mode"
+    doc: ds
+    locator: "PDF p18 / printed p13, sec 4.2 and Table 4-1"
+    quote: "which supports 25 MHz SDIO v1.1 and 50 MHz SDIO v2.0"
+    transcribed: false
+    confidence: found
+    notes: "Same pads as the flash bus."
+  - entity: esp8266ex
+    level: chip
+    path: peripherals.external_flash
+    value: "external SPI flash required (no programmable ROM); supports up to 16 MB theoretically; min 512 kB (OTA off) / 1 MB (OTA on); Standard/Dual/Quad SPI; flash pads GPIO6-GPIO11 (CLK=GPIO6/pin21, CS0=GPIO11/pin20, D0..D3 = GPIO7/8/9/10)"
+    unit: null
+    conditions: ""
+    doc: ds
+    locator: "PDF p13 / printed p8, sec 3.1.3; Notice on SPI modes same page"
+    quote: "ESP8266EX uses external SPI flash to store user programs, and supports up to 16 MB memory capacity theoretically."
+    transcribed: false
+    confidence: found
+    notes: "HDG PDF p13 / printed p8 sec 1.4.3: 'Pin21 SD_CLK is connected to the flash CLK pin together with a 0402 resistor in serial connection ... initial resistance ... 200 Ω'."
+# ---------------------------------------------------------------- MODULE (discrete core on D1 mini)
+  - entity: lolin-d1-mini-v4.0.0-core
+    level: module
+    path: module.kind
+    value: "No pre-made module: bare ESP8266 QFN32 chip (U1, symbol 'ESP8266', pins 1-32 + EP) with discrete SPI flash U3 ('25Q-150MIL'), 26 MHz crystal Y1, PCB antenna ANT1 (ANT_PCB_2.4G_15.2MM_F), pi network L1/C15/C16"
+    unit: null
+    conditions: "V4.0.0"
+    doc: sch
+    locator: "Schematic sheet 1/1, U1, U3, Y1, ANT1 (rendered image)"
+    quote: figure
+    transcribed: true
+    confidence: found
+    notes: "Board page: 'A mini wifi board with 4MB flash based on ESP-8266EX.' (wemos-page, intro). Flash part number is not printed in the schematic beyond the symbol name '25Q-150MIL'."
+  - entity: lolin-d1-mini-v4.0.0-core
+    level: module
+    path: module.bonded_pads
+    value: [GPIO0, GPIO1, GPIO2, GPIO3, GPIO4, GPIO5, GPIO6, GPIO7, GPIO8, GPIO9, GPIO10, GPIO11, GPIO12, GPIO13, GPIO14, GPIO15, GPIO16, TOUT]
+    unit: null
+    conditions: "all 17 GPIO pads and TOUT pin 6 are wired on the PCB; GPIO6-11 only to the flash; VDD_RTC pin 5 is no-connect (X flag)"
+    doc: sch
+    locator: "Schematic sheet 1/1, U1 pin nets"
+    quote: figure
+    transcribed: true
+    confidence: found
+    notes: "Net labels at U1: pin15 IO0, 14 IO2, 16 IO4, 24 IO5, 10 IO12, 12 IO13, 9 IO14, 13 IO15, 8 IO16, 25 RX, 26 TX (via R8 470), 20 CS, 21 CLK (via R6 200), 22 DO, 23 DI, 18 HD, 19 WP, 6 TOUT/ADC, 7 CHIP_EN, 32 EXT_RSTB (net RST), 31 RES12K (R3 12k to GND)."
+  - entity: lolin-d1-mini-v4.0.0-core
+    level: module
+    path: module.consumed
+    value: {GPIO6: flash, GPIO7: flash, GPIO8: flash, GPIO9: flash, GPIO10: flash, GPIO11: flash}
+    unit: null
+    conditions: "U3 pins: CS(1)=GPIO11/pin20; DO(IO1)(2)=GPIO7/pin22; WP(IO2)(3)=GPIO10/pin19; GND(4); DI(IO0)(5)=GPIO8/pin23; CLK(6)=GPIO6/pin21 via R6 200 ohm; HOLD(IO3)(7)=GPIO9/pin18; VCC(8)=+3V3. All six quad-SPI lines wired."
+    doc: sch
+    locator: "Schematic sheet 1/1, U3 and U1 pins 18-23"
+    quote: figure
+    transcribed: true
+    confidence: found
+    notes: "Matches TRM sec 2.1 (QUAD flash uses 6 IO)."
+  - entity: lolin-d1-mini-v4.0.0-core
+    level: module
+    path: module.flash_voltage
+    value: 3.3
+    unit: V
+    conditions: "U3 VCC (pin 8) on net +3V3 from U2 ME6211C33; VDDPST pins 11 and 17 also on +3V3"
+    doc: sch
+    locator: "Schematic sheet 1/1, U3 pin 8, U1 pins 11/17, U2 VOUT"
+    quote: figure
+    transcribed: true
+    confidence: found
+    notes: "Flash size 4 MB per wemos-page 'Flash 4M Bytes' (Technical specs)."
+  - entity: lolin-d1-mini-v4.0.0-core
+    level: module
+    path: module.flash_size
+    value: 4
+    unit: MB
+    conditions: ""
+    doc: wemos-page
+    locator: "Technical specs table 'Flash 4M Bytes'; intro 'with 4MB flash'"
+    quote: "A mini wifi board with 4MB flash based on ESP-8266EX."
+    transcribed: false
+    confidence: found
+    notes: "Not in the schematic."
+  - entity: lolin-d1-mini-v4.0.0-core
+    level: module
+    path: module.crystal
+    value: "26 MHz (Y1, C12/C13 10 pF)"
+    unit: MHz
+    conditions: ""
+    doc: sch
+    locator: "Schematic sheet 1/1, Y1 '26Mhz'"
+    quote: figure
+    transcribed: true
+    confidence: found
+    notes: "Consequence per DS note (PDF p21 / printed p16): with a 26 MHz crystal the boot-log baud rate is 74880."
+# ---------------------------------------------------------------- BOARD
+  - entity: lolin-d1-mini
+    level: board
+    path: logic_voltage
+    value: 3.3
+    unit: V
+    conditions: "all I/O pins"
+    doc: wemos-page
+    locator: "Pin section Note, and Technical specs 'Operating Voltage 3.3V'"
+    quote: "All of the IO pins run at 3.3V."
+    transcribed: false
+    confidence: found
+    notes: "Schematic: VDDPST pins on +3V3."
+  - entity: lolin-d1-mini
+    level: board
+    path: rails.3V3
+    value: {part: ME6211C33, voltage: 3.3, max_current: null, source: "U2 VIN=VBUS (pin 1), CE tied to VIN (always on), VOUT pin 5 to +3V3 with C18 10uF; C17 10uF on input"}
+    unit: V
+    conditions: ""
+    doc: sch
+    locator: "Schematic sheet 1/1, U2 ME6211C33, C17, C18"
+    quote: figure
+    transcribed: true
+    confidence: found
+    notes: "Regulator part is a schematic fact. Maximum output current is NOT stated in the schematic or the board page, and the ME6211 datasheet was not among supplied sources: max_current = could-not-verify. HDG PDF p12 / printed p7 gives 'When using a single power supply, the recommended output current is 500 mA' for the chip's supply (not a D1 mini rating)."
+  - entity: lolin-d1-mini
+    level: board
+    path: rails.3V3.max_current
+    value: null
+    unit: mA
+    conditions: ""
+    doc: sch
+    locator: "Schematic and board page searched"
+    quote: figure
+    transcribed: false
+    confidence: could-not-verify
+    notes: "Not stated."
+  - entity: lolin-d1-mini
+    level: board
+    path: rails.VBUS
+    value: {voltage: null, max_current: null, source: "USB Type-C J1 VBUS (A4B9) to VBUS net, header J3 pin 8; CC1/CC2 each 5.1k to GND (R1, R2)"}
+    unit: V
+    conditions: ""
+    doc: sch
+    locator: "Schematic sheet 1/1, J1, R1, R2, J3 pin 8"
+    quote: figure
+    transcribed: true
+    confidence: could-not-verify
+    notes: "Neither schematic nor board page states a numeric VBUS voltage or current. 5 V is a USB convention (CC 5.1k pull-downs identify a sink) but that is inference outside the supplied docs. Header pin is labelled 'VBUS' (not '5V') on pin map and schematic. Page: 'Type-C USB Port'."
+  - entity: lolin-d1-mini
+    level: board
+    path: numbering.primary
+    value: gpio
+    unit: null
+    conditions: "pin-map image labels pins with GPIO numbers (16,14,12,13,15,5,4,0,2) plus function names; there are no Dn labels"
+    doc: wemos-page
+    locator: "Pin section image d1_mini_v4.0.0_5_16x9.png"
+    quote: figure
+    transcribed: true
+    confidence: found
+    notes: "No document states any D0..D8 label. Features bullet says '11 digital IO, interrupt/pwm/I2C/one-wire supported(except D0)' which mentions D0 without mapping it. By inference GPIO16 is the pin without interrupt/PWM/I2C (matches TRM sec 2.2.5), but no document says D0 = GPIO16."
+  - entity: lolin-d1-mini
+    level: board
+    path: connectors.dn_labels
+    value: null
+    unit: null
+    conditions: ""
+    doc: wemos-page
+    locator: "page text, pin-map image, schematic searched for D0..D8"
+    quote: figure
+    transcribed: true
+    confidence: could-not-verify
+    notes: "None of the supplied documents maps Dn labels to GPIOs."
+  # --- J2 (left header on pin-map image, antenna end = pin 1)
+  - entity: lolin-d1-mini
+    level: board
+    path: connectors.J2.pins.1
+    value: {position: 1, label: RST, kind: reset, pad: EXT_RSTB, net: RST}
+    unit: null
+    conditions: "left side of pin map (inferred by matching sequence with the pin map)"
+    doc: sch
+    locator: "Schematic J2 P_01x08-0.9 pin 1; pin map top-left"
+    quote: figure
+    transcribed: true
+    confidence: found
+    notes: "RST net = chip pin 32 EXT_RSTB (R7 12k pull-up, SW1 + C14 100nF), not CHIP_EN. Side assignment left/right is inferred from the pin map image."
+  - entity: lolin-d1-mini
+    level: board
+    path: connectors.J2.pins.2
+    value: {position: 2, label: A0, kind: analog-ref, pad: TOUT, net: A0}
+    unit: null
+    conditions: "through divider R12 220k (A0 to TOUT node) and R13 100k (TOUT node to GND)"
+    doc: sch
+    locator: "Schematic J2 pin 2; R12, R13; U1 pin 6"
+    quote: figure
+    transcribed: true
+    confidence: found
+    notes: "Kind in the schema enum is analog-ref; it is really an analog input."
+  - entity: lolin-d1-mini
+    level: board
+    path: connectors.J2.pins.3
+    value: {position: 3, label: "16", kind: gpio, pad: GPIO16}
+    unit: null
+    conditions: "schematic net IO16 to chip pin 8 XPD_DCDC; optional JP1 (R14 470) can join it to RST"
+    doc: sch
+    locator: "Schematic J2 pin 3; pin map '16'"
+    quote: figure
+    transcribed: true
+    confidence: found
+    notes: ""
+  - entity: lolin-d1-mini
+    level: board
+    path: connectors.J2.pins.4
+    value: {position: 4, label: "14", alt_label: SCK, kind: gpio, pad: GPIO14}
+    unit: null
+    conditions: ""
+    doc: sch
+    locator: "Schematic J2 pin 4 (blue 'SCK' text); pin map '14' with 'SCK' tag"
+    quote: figure
+    transcribed: true
+    confidence: found
+    notes: ""
+  - entity: lolin-d1-mini
+    level: board
+    path: connectors.J2.pins.5
+    value: {position: 5, label: "12", alt_label: MISO, kind: gpio, pad: GPIO12}
+    unit: null
+    conditions: ""
+    doc: sch
+    locator: "Schematic J2 pin 5; pin map '12' with 'MISO' tag"
+    quote: figure
+    transcribed: true
+    confidence: found
+    notes: ""
+  - entity: lolin-d1-mini
+    level: board
+    path: connectors.J2.pins.6
+    value: {position: 6, label: "13", alt_label: MOSI, kind: gpio, pad: GPIO13}
+    unit: null
+    conditions: ""
+    doc: sch
+    locator: "Schematic J2 pin 6; pin map '13' with 'MOSI' tag"
+    quote: figure
+    transcribed: true
+    confidence: found
+    notes: ""
+  - entity: lolin-d1-mini
+    level: board
+    path: connectors.J2.pins.7
+    value: {position: 7, label: "15", kind: gpio, pad: GPIO15}
+    unit: null
+    conditions: "R11 12k pull-down to GND on this net (strap)"
+    doc: sch
+    locator: "Schematic J2 pin 7; R11; pin map '15'"
+    quote: figure
+    transcribed: true
+    confidence: found
+    notes: ""
+  - entity: lolin-d1-mini
+    level: board
+    path: connectors.J2.pins.8
+    value: {position: 8, label: "3.3V", kind: power, rail: "3V3"}
+    unit: null
+    conditions: ""
+    doc: sch
+    locator: "Schematic J2 pin 8 (+3V3); pin map '3.3V'"
+    quote: figure
+    transcribed: true
+    confidence: found
+    notes: "Direct connection to the +3V3 rail (output of U2)."
+  # --- J3 (right header)
+  - entity: lolin-d1-mini
+    level: board
+    path: connectors.J3.pins.1
+    value: {position: 1, label: TX, kind: gpio, pad: GPIO1, net: TX}
+    unit: null
+    conditions: "U0TXD pin 26 through R8 470 ohm; the same net feeds CH340C RXD (pin 3)"
+    doc: sch
+    locator: "Schematic J3 pin 1; R8; U4 pin 3; pin map 'TX'"
+    quote: figure
+    transcribed: true
+    confidence: found
+    notes: "Shared with the USB-serial chip."
+  - entity: lolin-d1-mini
+    level: board
+    path: connectors.J3.pins.2
+    value: {position: 2, label: RX, kind: gpio, pad: GPIO3, net: RX}
+    unit: null
+    conditions: "U0RXD pin 25 directly; the same net is CH340C TXD (pin 2)"
+    doc: sch
+    locator: "Schematic J3 pin 2; U4 pin 2; pin map 'RX'"
+    quote: figure
+    transcribed: true
+    confidence: found
+    notes: "Shared with the USB-serial chip."
+  - entity: lolin-d1-mini
+    level: board
+    path: connectors.J3.pins.3
+    value: {position: 3, label: "5", alt_label: SCL, kind: gpio, pad: GPIO5}
+    unit: null
+    conditions: "same net also on I2C connector P1 pin 3"
+    doc: sch
+    locator: "Schematic J3 pin 3 (blue 'SCL' text); pin map '5' with 'SCL' tag"
+    quote: figure
+    transcribed: true
+    confidence: found
+    notes: "SCL here is the board's convention; DS I2C pins example is GPIO14/GPIO2 but software I2C can use any GPIO."
+  - entity: lolin-d1-mini
+    level: board
+    path: connectors.J3.pins.4
+    value: {position: 4, label: "4", alt_label: SDA, kind: gpio, pad: GPIO4}
+    unit: null
+    conditions: "same net also on I2C connector P1 pin 2"
+    doc: sch
+    locator: "Schematic J3 pin 4 (blue 'SDA' text); pin map '4' with 'SDA' tag"
+    quote: figure
+    transcribed: true
+    confidence: found
+    notes: ""
+  - entity: lolin-d1-mini
+    level: board
+    path: connectors.J3.pins.5
+    value: {position: 5, label: "0", kind: gpio, pad: GPIO0}
+    unit: null
+    conditions: "R9 12k pull-up to +3V3; also driven by the auto-reset transistor pair U5 pin 3"
+    doc: sch
+    locator: "Schematic J3 pin 5; R9; U5 pin 3; pin map '0'"
+    quote: figure
+    transcribed: true
+    confidence: found
+    notes: "Strap pad."
+  - entity: lolin-d1-mini
+    level: board
+    path: connectors.J3.pins.6
+    value: {position: 6, label: "2", alt_label: LED, kind: gpio, pad: GPIO2}
+    unit: null
+    conditions: "R10 12k pull-up to +3V3; onboard LED1 (with R5 2k) is on this net"
+    doc: sch
+    locator: "Schematic J3 pin 6; R10; LED1; pin map '2' with 'LED' tag"
+    quote: figure
+    transcribed: true
+    confidence: found
+    notes: "Strap pad."
+  - entity: lolin-d1-mini
+    level: board
+    path: connectors.J3.pins.7
+    value: {position: 7, label: GND, kind: ground}
+    unit: null
+    conditions: ""
+    doc: sch
+    locator: "Schematic J3 pin 7; pin map 'GND'"
+    quote: figure
+    transcribed: true
+    confidence: found
+    notes: ""
+  - entity: lolin-d1-mini
+    level: board
+    path: connectors.J3.pins.8
+    value: {position: 8, label: VBUS, kind: power, rail: VBUS}
+    unit: null
+    conditions: "USB Type-C VBUS net, upstream of the 3V3 regulator"
+    doc: sch
+    locator: "Schematic J3 pin 8; pin map 'VBUS'"
+    quote: figure
+    transcribed: true
+    confidence: found
+    notes: "Numeric voltage not stated (see rails.VBUS)."
+  - entity: lolin-d1-mini
+    level: board
+    path: connectors.P1_I2C
+    value: {type: "SH1.0 4-pin (LOLIN I2C port)", pins: {1: GND, 2: "SDA=GPIO4", 3: "SCL=GPIO5", 4: "+3V3"}}
+    unit: null
+    conditions: "bottom right of board; pin-map shows 'GND, 4, 5, 3.3V' with I2C tag"
+    doc: sch
+    locator: "Schematic P1 SH1.0_4P(I2C); pin map lower right"
+    quote: figure
+    transcribed: true
+    confidence: found
+    notes: "Same nets as J3 pins 4/5; not extra GPIOs. Page: 'LOLIN I2C Port'."
+  - entity: lolin-d1-mini
+    level: board
+    path: onboard.LED1
+    value: {part: LED_0603_B, uses_pad: [GPIO2], polarity: "active low: +3V3 -> R5 2k -> LED1 -> GPIO2 (cathode on GPIO2); lit when GPIO2 is low"}
+    unit: null
+    conditions: ""
+    doc: sch
+    locator: "Schematic sheet 1/1, R5 2k, LED1, net IO2"
+    quote: figure
+    transcribed: true
+    confidence: found
+    notes: "Anode/cathode orientation read from the drawn diode symbol (anode on the R5 side). GPIO2 also has R10 12k pull-up."
+  - entity: lolin-d1-mini
+    level: board
+    path: onboard.USB_serial
+    value: {part: CH340C (U4), uses_pad: [GPIO1, GPIO3], nets: "U4 pin2 TXD -> RX (GPIO3); pin3 RXD -> TX (GPIO1 via R8 470); pin13 DTR; pin14 RTS; V3(4) and VCC(16) on +3V3; UD+/UD- to USB D+/D-; R232, DCD, RI, DSR, CTS, OUT, NC unconnected (X)"}
+    unit: null
+    conditions: ""
+    doc: sch
+    locator: "Schematic sheet 1/1, U4 CH340C, U1 pins 25/26, R8"
+    quote: figure
+    transcribed: true
+    confidence: found
+    notes: "CH340C powered from 3.3 V so serial levels are 3.3 V. Header TX/RX are shared with the USB-serial chip."
+  - entity: lolin-d1-mini
+    level: board
+    path: onboard.auto_reset
+    value: {part: UMH3N dual digital transistor (U5), uses_pad: [GPIO0, EXT_RSTB], pins: "1 RTS, 2 DTR, 3 IO0, 4 DTR, 5 RTS, 6 RST"}
+    unit: null
+    conditions: "DTR/RTS from CH340C are cross-coupled to RST and IO0 (standard esptool auto-reset/auto-program circuit)"
+    doc: sch
+    locator: "Schematic sheet 1/1, U5 UMH3N, U4 pins 13/14"
+    quote: figure
+    transcribed: true
+    confidence: inferred
+    notes: "Pin-to-net map is read from the schematic; the function name 'auto-reset' is inferred from the topology (schematic does not label it)."
+  - entity: lolin-d1-mini
+    level: board
+    path: onboard.reset_button
+    value: {part: SW1 SW_2x4x3.5, uses_pad: [EXT_RSTB], nets: "RST net to GND via SW1; C14 100nF RST-GND; R7 12k RST to +3V3; R4 12k CHIP_EN to +3V3"}
+    unit: null
+    conditions: "SW1 drives chip pin 32 EXT_RSTB (active low); CHIP_EN (pin 7) is only pulled up and is not routed to the button or any header pin"
+    doc: sch
+    locator: "Schematic sheet 1/1, SW1, C14, R4, R7"
+    quote: figure
+    transcribed: true
+    confidence: found
+    notes: "HDG recommends CHIP_EN rather than EXT_RSTB for reset (PDF p13 / printed p8) but EXT_RSTB is documented as a valid active-low reset pin."
+  - entity: lolin-d1-mini
+    level: board
+    path: onboard.JP1
+    value: {part: "JP1 JUMP_2_NO (R14 470 in series)", uses_pad: [GPIO16, EXT_RSTB], effect: "optional solder jumper joining GPIO16 to RST for deep-sleep wake-up"}
+    unit: null
+    conditions: "symbol name JUMP_2_NO = normally open; not bridged by default is inferred from the name"
+    doc: sch
+    locator: "Schematic sheet 1/1, JP1, R14 470, nets RST and IO16"
+    quote: figure
+    transcribed: true
+    confidence: inferred
+    notes: "DS: GPIO16 'Deep-sleep wakeup (need to be connected to EXT_RSTB)' (Table 2-1 pin 8). The pin-map/page do not describe JP1."
+  - entity: lolin-d1-mini
+    level: board
+    path: onboard.boot_straps
+    value: {GPIO0: "R9 12k pull-up to +3V3", GPIO2: "R10 12k pull-up to +3V3", GPIO15: "R11 12k pull-down to GND"}
+    unit: ohm
+    conditions: "resting level at boot: GPIO0 high, GPIO2 high, GPIO15 low (when nothing external loads them); R3 12k on RES12K to GND"
+    doc: sch
+    locator: "Schematic sheet 1/1, R9, R10, R11"
+    quote: figure
+    transcribed: true
+    confidence: found
+    notes: "GPIO15 low matches the HDG requirement (low at power-on). GPIO0 high = flash boot per the HDG board-level statement. GPIO2 required level is not documented (could-not-verify)."
+  - entity: lolin-d1-mini
+    level: board
+    path: onboard.series_resistors
+    value: {U0TXD: "R8 470 ohm", flash_CLK: "R6 200 ohm", RST_to_GPIO16_jumper: "R14 470 ohm"}
+    unit: ohm
+    conditions: ""
+    doc: sch
+    locator: "Schematic sheet 1/1, R6, R8, R14"
+    quote: figure
+    transcribed: true
+    confidence: found
+    notes: "HDG PDF p15 / printed p10 sec 1.4.7 recommends 499 ohm on U0TXD for harmonics; HDG sec 1.4.3 200 ohm on SD_CLK."
+  - entity: lolin-d1-mini
+    level: board
+    path: a0_path.divider
+    value: {R12_top_ohm: 220000, R13_bottom_ohm: 100000, ratio: 0.3125, tout_node: "chip pin 6 TOUT/ADC"}
+    unit: ohm
+    conditions: "A0 header pin -> R12 220k -> TOUT node -> R13 100k -> GND. V(TOUT) = V(A0) * 100k/(220k+100k)"
+    doc: sch
+    locator: "Schematic sheet 1/1, R12, R13, U1 pin 6, J2 pin 2"
+    quote: figure
+    transcribed: true
+    confidence: found
+    notes: "Derived: A0 = 3.2 V gives TOUT = 1.0 V, exactly the chip's maximum 0-1.0 V."
+  - entity: lolin-d1-mini
+    level: board
+    path: a0_path.range_at_A0
+    value: [0, 3.2]
+    unit: V
+    conditions: "board page; consistent with the schematic divider; ADC input impedance (not documented) will alter the ratio slightly"
+    doc: wemos-page
+    locator: "Features bullet and Technical specs 'Analog Input Pins 1(3.2V Max)'"
+    quote: "1 analog input(3.2V max input)"
+    transcribed: false
+    confidence: found
+    notes: "Lower bound 0 V is inferred; page states only the maximum. At the chip's TOUT the DS states 0 to 1.0 V (PDF p22 / printed p17)."
+  - entity: lolin-d1-mini
+    level: board
+    path: board.other_specs
+    value: {digital_io: 11, analog_in: 1, flash_MB: 4, clock_MHz: [80, 160], size_mm: "34.2*25.6", usb: "Type-C", io_note: "interrupt/pwm/I2C/one-wire supported (except D0)"}
+    unit: null
+    conditions: ""
+    doc: wemos-page
+    locator: "Features and Technical specs"
+    quote: "11 digital IO, interrupt/pwm/I2C/one-wire supported(except D0)"
+    transcribed: false
+    confidence: found
+    notes: "Clock 80/160 MHz consistent with DS sec 3.1.1 (max 160 MHz)."

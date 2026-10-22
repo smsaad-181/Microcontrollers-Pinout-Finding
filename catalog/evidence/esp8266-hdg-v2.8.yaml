@@ -5,6 +5,7 @@ claims:
   - {"id": "esp8266-hdg-v2.8#strap-register", "locator": "Chapter 1, note after the pin table, printed p.5", "quote": "GPIO2, GPIO0, and MTDO are configurable on PCB as the 3-bit strapping register that determines the booting mode and the SDIO timing mode.", "supports": "GPIO0, GPIO2 and MTDO (GPIO15) are the three strapping pins (boot mode and SDIO timing mode); no other pad is named"}
   - {"id": "esp8266-hdg-v2.8#gpio15-low", "locator": "§1.4.7, printed p.11", "quote": "GPIO15, the strapping pin of ESP8266EX, needs to be at low-voltage level when the chip is powered on.", "supports": "GPIO15 must be low at power-on"}
   - {"id": "esp8266-hdg-v2.8#io-3v3", "locator": "§1.4.7, printed p.11", "quote": "The IO of the ESP8266EX is a 3.3 V logic level.", "supports": "ESP8266EX I/O is 3.3 V logic"}
+  - {"id": "esp8266-hdg-v2.8#vddpst-3v3", "locator": "Table 1-2 pins 11 and 17 (VDDPST), printed p.4", "quote": "VDDPST P Digital/IO Power Supply (1.8 V ~ 3.3 V)", "supports": "HDG v2.8 prints 1.8 V to 3.3 V for the digital/IO supply VDDPST (datasheet v7.1 prints 1.8 V ~ 3.6 V); 3.3 V is inside both"}
 doc_number: null
 id: "esp8266-hdg-v2.8"
 kind: "design-guide"

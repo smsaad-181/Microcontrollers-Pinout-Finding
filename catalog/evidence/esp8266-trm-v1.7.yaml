@@ -5,6 +5,7 @@ claims:
   - {"id": "esp8266-trm-v1.7#gpio16-rtc-no-irq", "locator": "§2.2.5 GPIO16 Related APIs, printed p.7", "quote": "it can be configured to input or output mode; but it cannot trigger the IO interrupt.", "supports": "GPIO16 (XPD_DCDC) cannot trigger the IO interrupt"}
   - {"id": "esp8266-trm-v1.7#gpio16-rtc-module", "locator": "§2.2.5 GPIO16 Related APIs, printed p.7", "quote": "GPIO16(XPD_DCDC) belongs to the RTC module instead of the general GPIO module.", "supports": "GPIO16 belongs to the RTC module, not the general GPIO module; it can wake the chip from deep sleep"}
   - {"id": "esp8266-trm-v1.7#mtdo-not-pulled-up", "locator": "§11.6 Abandon Serial Output During Booting, printed p.83", "quote": "pin13 (mtdo) can not be pulled up by external in ESP8266 is booting.", "supports": "In the swapped-UART case, GPIO15 (MTDO) must not be pulled up externally while booting"}
+  - {"id": "esp8266-trm-v1.7#quad-flash-6io", "locator": "§2.1 GPIO Overview, printed p.5", "quote": "In the QUAD mode flash, 6 IO interfaces are used for flash communication.", "supports": "Six IO lines carry quad-mode SPI flash; datasheet Table 4-2 puts the six flash lines on IO6-IO11"}
 doc_number: null
 id: "esp8266-trm-v1.7"
 kind: "trm"
