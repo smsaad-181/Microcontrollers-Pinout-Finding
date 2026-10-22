@@ -241,6 +241,10 @@ claims:
     locator: "Chapter 6, §6.12, Table 6.12-1 IO MUX Pin Functions, PDF p.493-494, row GPIO48"
     quote: "48 SPICLK_N SPICLK_N_DIFF GPIO48 SUBSPICLK_N_DIFF - - 2 1 -"
     supports: "GPIO48: DRV 2, RST 1 = IE = 1 (input enabled) after reset (RST column = default configuration after reset)"
+  - id: "esp32-s3-trm-v1.8#gpio-all-in-out"
+    locator: "Chapter 6 IO MUX and GPIO Matrix, §6.1 Overview, PDF p.472"
+    quote: "All these pins can be configured either as input or output."
+    supports: "All 45 GPIO pins (GPIO0-GPIO21, GPIO26-GPIO48) can be configured as input or output; the TRM names no input-only pad"
 doc_number: null
 id: "esp32-s3-trm-v1.8"
 kind: "trm"
