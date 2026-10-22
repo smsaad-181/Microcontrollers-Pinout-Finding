@@ -35,7 +35,9 @@ describe('isCatalogManifest', () => {
 
 describe('manifestUrl', () => {
   it('is relative to the base path', () => {
-    expect(manifestUrl('/pinout-finder/')).toBe('/pinout-finder/catalog/catalog-manifest.json');
+    expect(manifestUrl('/Microcontrollers-Pinout-Finding/')).toBe(
+      '/Microcontrollers-Pinout-Finding/catalog/catalog-manifest.json',
+    );
     expect(manifestUrl('/x')).toBe('/x/catalog/catalog-manifest.json');
     expect(manifestUrl('./')).toBe('./catalog/catalog-manifest.json');
   });
@@ -46,7 +48,7 @@ function fakeFetch(body: string, init: ResponseInit = {}): FetchLike {
 }
 
 describe('loadManifest', () => {
-  const url = '/pinout-finder/catalog/catalog-manifest.json';
+  const url = '/Microcontrollers-Pinout-Finding/catalog/catalog-manifest.json';
 
   it('returns ready for a valid manifest', async () => {
     const result = await loadManifest(

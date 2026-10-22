@@ -7,8 +7,9 @@ import { cspMeta } from './src/cspMeta.ts';
 const sourceCondition = '@pinout/source';
 
 export default defineConfig({
-  // GitHub Pages project site: https://<user>.github.io/pinout-finder/
-  base: process.env.PAGES_BASE ?? '/pinout-finder/',
+  // GitHub Pages project site: https://<user>.github.io/<repository-name>/
+  // CI and deploy set PAGES_BASE from the repository name; the default matches the current repo.
+  base: process.env.PAGES_BASE ?? '/Microcontrollers-Pinout-Finding/',
   plugins: [react(), cspMeta()],
   resolve: { conditions: [sourceCondition, 'module', 'browser', 'development|production'] },
   ssr: { resolve: { conditions: [sourceCondition, 'module', 'node', 'development|production'] } },

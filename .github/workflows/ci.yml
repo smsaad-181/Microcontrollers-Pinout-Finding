@@ -109,6 +109,9 @@ jobs:
     name: build
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    env:
+      # Pages project sites are served from /<repository-name>/ (kept in sync with the repo, never hard-coded).
+      PAGES_BASE: /${{ github.event.repository.name }}/
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -123,7 +126,7 @@ jobs:
       - run: pnpm catalog:compile
       - run: pnpm -r build
       - name: dist/index.html references assets under the Pages base path
-        run: grep -q '/pinout-finder/assets/' apps/web/dist/index.html
+        run: grep -qF "${PAGES_BASE}assets/" apps/web/dist/index.html
 
   # Branch protection requires this check name. It fails unless every job above succeeded
   # (a skipped or cancelled job counts as a failure).

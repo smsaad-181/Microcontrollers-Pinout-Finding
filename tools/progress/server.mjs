@@ -113,7 +113,7 @@ async function state() {
       .map((m) => ({ st: m[1], path: m[2] }))
       .slice(0, 40),
     reports: validationReports(),
-    webDev: await probe('http://localhost:5173/pinout-finder/'),
+    webDev: await probe('http://localhost:5173/Microcontrollers-Pinout-Finding/'),
     phaseOrder: PHASES,
   };
 }

@@ -150,7 +150,7 @@
         <ul class="tasks">${tasks}</ul></div>`;
     }).join('');
     document.getElementById('web').innerHTML = s.webDev
-      ? `<p>● Running: <a href="http://localhost:5173/pinout-finder/" target="_blank" rel="noopener">http://localhost:5173/pinout-finder/</a></p>`
+      ? `<p>● Running: <a href="http://localhost:5173/Microcontrollers-Pinout-Finding/" target="_blank" rel="noopener">http://localhost:5173/Microcontrollers-Pinout-Finding/</a></p>`
       : `<p class="dim">Web app dev server not running yet (starts once the workspace exists).</p>`;
     const stName = { M: 'changed', A: 'added', D: 'deleted', '??': 'new' };
     document.getElementById('working').innerHTML = (s.working || []).map((w) =>

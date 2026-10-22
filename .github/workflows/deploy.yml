@@ -18,6 +18,9 @@ jobs:
     name: build
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    env:
+      # Pages project sites are served from /<repository-name>/ (kept in sync with the repo, never hard-coded).
+      PAGES_BASE: /${{ github.event.repository.name }}/
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -32,6 +35,8 @@ jobs:
       - run: pnpm -r test
       - run: pnpm catalog:compile
       - run: pnpm --filter web build
+      - name: dist/index.html references assets under the Pages base path
+        run: grep -qF "${PAGES_BASE}assets/" apps/web/dist/index.html
       - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
         with:
           path: apps/web/dist
