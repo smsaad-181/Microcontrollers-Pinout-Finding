@@ -1,0 +1,59 @@
+id: srd-05vdc-sl-c
+input_abs_max:
+  active: VDD*1.2
+  evidence:
+  - songle-srd-ds-circuitbasics#coil-l-percentages
+  - songle-srd-t73-v1#coil-overdrive
+  note: Maximum allowable coil (overdrive) voltage as a multiple of the nominal 5 V coil voltage, NOT a logic-pin rating. Songle T73 sheet V1 prints 130 % for both coil types; the older Songle-branded sheet (secondary host) prints 120 % for the 0.36 W type (110 % for 0.45 W). Most restrictive reading kept active (120 % = 6.0 V).
+  readings:
+  - evidence:
+    - songle-srd-ds-circuitbasics#coil-l-percentages
+    value: VDD*1.2
+  - evidence:
+    - songle-srd-t73-v1#coil-overdrive
+    value: VDD*1.3
+  status: conflict
+  transcribed: true
+  unit: V
+  value: VDD*1.2
+interfaces:
+- kind: digital
+  limits: {}
+  signals:
+  - acts_on_level: true
+    dir: in
+    drive: push-pull
+    role: COIL
+    shareable: false
+part: SRD-05VDC-SL-C
+supply_current:
+  conditions:
+    meaning: nominal coil current, 0.36 W (L) type, 5 V coil
+    temperature_C: 20
+  evidence:
+  - songle-srd-ds-circuitbasics#coil-5v-l-current
+  note: 'Value from the older Songle-branded sheet on a third-party host (secondary), which prints nominal current 71.4 mA at 20 C (coil 70 ohm). The current Songle T73 catalogue sheet states NO current: it gives 0.36 W and 69.4 ohm +/-10 % at 23 C (songle-srd-t73-v1#coil-5v-l); V/R = 72 mA is a derived number, not a rating. The 0.45 W (D) type is documented at 89.3 mA / 55 ohm (songle-srd-ds-circuitbasics#coil-5v-d-current) and 55 ohm (songle-srd-t73-v1#coil-5v-d); board vendors do not state which type they fit, so a worst case of the D type should be used when unknown. No maximum is stated (coil resistance tolerance is +/-10 %).'
+  status: interim
+  unit: mA
+  value:
+    typ: 71.4
+vdd_range:
+  conditions:
+    meaning: nominal coil voltage
+  evidence:
+  - songle-srd-t73-v1#coil-5v-l
+  - songle-srd-ds-circuitbasics#coil-5v-l-current
+  note: 'Nominal coil voltage of the 5 VDC type, not a tolerance band. Pick-up max 75 % and drop-out min 10 % of nominal (songle-srd-t73-v1#coil-pickup; songle-srd-ds-circuitbasics#coil-l-percentages) - percentages as printed, no volt values stored. Contact ratings (not representable in the IC schema): resistive load 7A/10A/15A 250VAC/28VDC and 10A 125VAC per the Songle T73 sheet (#contact-rating, #max-switching); 7 A 28 VDC, 10 A 125 VAC, 7 A 240 VAC for FORM C per the older sheet (songle-srd-ds-circuitbasics#contact-rating).'
+  status: single-source
+  transcribed: true
+  unit: V
+  value:
+  - 5.0
+  - 5.0
+vendor: Songle Relay
+vio_range:
+  evidence: []
+  note: 'Not applicable: a relay coil has no separate I/O supply.'
+  status: missing
+  unit: V
+  value: null

@@ -1,0 +1,42 @@
+id: push-button
+input_abs_max:
+  evidence: []
+  note: No absolute-maximum rating is stated for the contact in the representative datasheet (only the 3-24 VDC / 1-50 mA operating rating).
+  status: missing
+  unit: V
+  value: null
+interfaces:
+- kind: digital
+  limits: {}
+  signals:
+  - dir: out
+    drive: open-drain
+    resting_level: float
+    role: SW
+    shareable: false
+part: Momentary tactile push button, SPST-NO
+supply_current:
+  evidence: []
+  note: 'Not applicable: a passive contact draws no supply current. Rated switching current 1-50 mA (B3F) is a load rating.'
+  status: missing
+  unit: mA
+  value: null
+vdd_range:
+  conditions:
+    meaning: rated switching voltage of the contact, resistive load
+    part: Omron B3F (representative; other buttons differ)
+  evidence:
+  - omron-b3f-ds-a070-e1-08#rating
+  note: 'This is a contact rating, not a supply range: B3F 1-50 mA at 3-24 VDC (B3F-G 100 uA-50 mA); minimum applicable load 10 uA at 1 VDC (omron-b3f-ds-a070-e1-08#min-load); contact form SPST-NO (#contact-form); contact resistance 100 mohm max (#contact-res); bounce time 5 ms max (#bounce) - no schema field exists for bounce time, so it is only stated here.'
+  status: single-source
+  unit: V
+  value:
+  - 3.0
+  - 24.0
+vendor: 'generic (representative datasheet: Omron B3F)'
+vio_range:
+  evidence: []
+  note: 'Not applicable: a passive contact has no I/O supply.'
+  status: missing
+  unit: V
+  value: null

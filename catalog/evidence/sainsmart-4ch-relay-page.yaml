@@ -1,0 +1,26 @@
+accessed: '2026-10-23'
+claims:
+- id: sainsmart-4ch-relay-page#spec-driver-current
+  locator: Specifications
+  quote: 5V 4-Channel Relay interface board, each channel requires 15-20mA driver current.
+  supports: Vendor states 15-20 mA driver current per channel
+- id: sainsmart-4ch-relay-page#spec-active-low
+  locator: Specifications
+  quote: TTL logic active low
+  supports: Vendor lists the inputs as active low
+- id: sainsmart-4ch-relay-page#spec-opto
+  locator: Specifications
+  quote: Opto-isolated inputs for enhanced safety.
+  supports: Inputs are opto-isolated
+doc_number: null
+id: sainsmart-4ch-relay-page
+kind: board-guide
+manual: false
+publisher: SainSmart
+revision: page as accessed 2026-10-23
+revision_date: null
+secondary: false
+sha256: null
+title: SainSmart 4-Channel 5V Relay Module product page (specifications)
+url: https://www.sainsmart.com/products/4-channel-5v-relay-module
+url_original: null

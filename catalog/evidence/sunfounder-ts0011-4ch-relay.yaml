@@ -1,0 +1,54 @@
+accessed: '2026-10-23'
+claims:
+- id: sunfounder-ts0011-4ch-relay#intro-low-level
+  locator: PDF p.1, intro
+  quote: This is a LOW Level 5V 4-channel relay interface board, and each channel needs a 15-20mA driver current.
+  supports: Vendor describes a low-level-trigger 5 V 4-channel board and states 15-20 mA 'driver current' per channel (wording does not say whether this is input-LED or coil current)
+- id: sunfounder-ts0011-4ch-relay#features-supply
+  locator: PDF p.1, Features
+  quote: 'Power Supply Voltage: 5VDC, 12VDC'
+  supports: Feature list gives supply 5 VDC or 12 VDC
+- id: sunfounder-ts0011-4ch-relay#features-current
+  locator: PDF p.1, Features
+  quote: 'Current: Greater than 100mA'
+  supports: 'Feature list gives ''Current: greater than 100 mA'' (not defined as per-channel, total or input-side)'
+- id: sunfounder-ts0011-4ch-relay#features-opto
+  locator: PDF p.1, Features
+  quote: Optocoupler isolation, good anti-interference capability
+  supports: Inputs are optocoupler isolated
+- id: sunfounder-ts0011-4ch-relay#features-low-off
+  locator: PDF p.1, Features
+  quote: When input is at low level, the relay is off, and the indicator light is on.
+  supports: Vendor feature text says low input = relay OFF with LED on; this contradicts the pinout text of p.2 (low input = NO connected to COM) and the Arduino sketch (LOW activates the relay)
+- id: sunfounder-ts0011-4ch-relay#pinout-in-low
+  locator: PDF p.2, Pinout
+  quote: When a low-level signal is input, the Normally Open (NO) contact of the relay connects with the Common (COM) terminal.
+  supports: 'IN1..IN4: a low level closes NO-COM, i.e. the input is active-low'
+- id: sunfounder-ts0011-4ch-relay#pinout-jdvcc
+  locator: PDF p.2, Pinout
+  quote: Connecting JD-VCC and VCC with a jumper cap indicates that the relay is powered by the main control board's power supply.
+  supports: JD-VCC is the relay supply pin; a jumper cap between JD-VCC and VCC powers the relay from VCC
+- id: sunfounder-ts0011-4ch-relay#schematic-jdvcc
+  locator: PDF p.3, Schematic
+  quote: you can take the jumper cap off and connect an extra power to JD-VCC to supply the relay
+  supports: Removing the jumper allows a separate relay supply on JD-VCC while VCC supplies the input stage
+- id: sunfounder-ts0011-4ch-relay#sketch-low-active
+  locator: PDF p.7, example sketch comment
+  quote: Activate current relay (LOW for low-level trigger)
+  supports: Vendor example sketch drives the input LOW to activate the relay (active-low) and HIGH to release it
+- id: sunfounder-ts0011-4ch-relay#sch-channel
+  locator: PDF p.3, Schematic figure, channel 1 (identical channels 2-4 with R2-R4, R6-R8, D2-D4, Q2-Q4) (read by eye from a rendered page image; transcribed)
+  quote: R1 1K IN1 817C R5 1K Q1 J3Y D1 Relay
+  supports: 'Per channel: VCC -> R1 (1K) -> opto LED (817C, with indicator LED in series) -> IN; opto output from JD_VCC through R5 (1K) to the base of Q1 (marked J3Y); Q1 emitter to GND, collector to relay coil low side; D1 across the coil'
+doc_number: TS0011
+id: sunfounder-ts0011-4ch-relay
+kind: board-guide
+manual: false
+publisher: SunFounder
+revision: undated, no revision printed
+revision_date: null
+secondary: false
+sha256: 58fbef9cd91b2a290371b717bbf5084d68520f24deb5259129396df274178a96
+title: 4 Channel 5V Relay Module (SunFounder document TS0011, hosted by DigiKey)
+url: https://mm.digikey.com/Volume0/opasdata/d220001/medias/docus/5727/TS0011.pdf
+url_original: https://mm.digikey.com/Volume0/opasdata/d220001/medias/docus/5727/TS0011.pdf

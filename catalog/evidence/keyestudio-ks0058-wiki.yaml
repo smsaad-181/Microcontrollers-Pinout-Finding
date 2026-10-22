@@ -1,0 +1,26 @@
+accessed: '2026-10-23'
+claims:
+- id: keyestudio-ks0058-wiki#active-high
+  locator: Specification
+  quote: 'Control signal: TTL voltage Active at HIGH level'
+  supports: Inputs are active-high with TTL-level control signal
+- id: keyestudio-ks0058-wiki#pin-definition
+  locator: Specification, Definition of module pins
+  quote: Pin 1- Pin 4----Controlling end ii) Power supply (VCC) iii) Ground (GND)
+  supports: 'Module pins: four control inputs (Pin 1..Pin 4), VCC, GND'
+- id: keyestudio-ks0058-wiki#ratings
+  locator: Specification
+  quote: 'Rated load: 10A 250VAC 10A 125VAC 10A 30DC 10A 28VDC'
+  supports: Contact ratings 10 A at 250/125 VAC and 30/28 VDC
+doc_number: null
+id: keyestudio-ks0058-wiki
+kind: board-guide
+manual: false
+publisher: Keyestudio (Shenzhen Keyestudio Technology Co., Ltd.)
+revision: wiki page last edited 8 January 2021
+revision_date: '2021-01-08'
+secondary: false
+sha256: null
+title: Ks0058 keyestudio 4-channel Relay Module (Keyestudio Wiki)
+url: https://wiki.keyestudio.com/Ks0058_keyestudio_4-channel_Relay_Module
+url_original: null

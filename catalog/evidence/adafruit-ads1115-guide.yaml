@@ -1,0 +1,54 @@
+accessed: '2026-10-23'
+claims:
+- id: adafruit-ads1115-guide#power-vin
+  locator: Pinouts > Power Pins
+  quote: VIN - this is the power pin. Acceptable voltages are 2V to 5V.
+  supports: Breakout power pin VIN accepts 2 V to 5 V (the IC supply range; no regulator mentioned)
+- id: adafruit-ads1115-guide#logic-level
+  locator: Pinouts > Power Pins
+  quote: To power the board, give it the same power as the logic level of your microcontroller
+  supports: 'No level shifter: the board is powered at the MCU logic level'
+- id: adafruit-ads1115-guide#scl-pullup
+  locator: Pinouts > I2C Logic Pins
+  quote: SCL - I2C clock pin, connect to your microcontroller's I2C clock line. This pin has a 10K pullup to VIN
+  supports: SCL has a 10 kohm pull-up to VIN
+- id: adafruit-ads1115-guide#sda-pullup
+  locator: Pinouts > I2C Logic Pins
+  quote: SDA -I2C data pin, connect to your microcontroller's I2C data line. This pin has a 10K pullup to VIN.
+  supports: SDA has a 10 kohm pull-up to VIN
+- id: adafruit-ads1115-guide#default-address
+  locator: Pinouts, first line
+  quote: The default I2C address is 0x48 .
+  supports: Default I2C address 0x48 (ADDR low)
+- id: adafruit-ads1115-guide#addr-pin
+  locator: Pinouts > Address Pin
+  quote: ADDR - I2C address selection pin.
+  supports: Pin labelled ADDR selects the I2C address
+- id: adafruit-ads1115-guide#alrt-pin
+  locator: Pinouts > Other Pins
+  quote: ALRT - Digital comparator output or conversion ready, can be set up and used for interrupt / asynchronous read.
+  supports: Pin labelled ALRT is the ADS1115 ALERT/RDY output
+- id: adafruit-ads1115-guide#a0-a3-pins
+  locator: Pinouts > Other Pins
+  quote: A0, A1, A2, A3 - ADC input pins for each channel.
+  supports: Pins labelled A0..A3 are the ADC inputs
+- id: adafruit-ads1115-guide#aplus-aminus
+  locator: Pinouts > Other Pins
+  quote: A+ and A- - ADC power supply (VIN through a ferrite) and ADC ground (digital GND through a ferrite) these are OUTPUTs not inputs!
+  supports: Pins A+ and A- are filtered supply/ground outputs, not inputs
+- id: adafruit-ads1115-guide#gnd-pin
+  locator: Pinouts > Power Pins
+  quote: GND - common ground for power and logic
+  supports: Pin labelled GND is power and logic ground
+doc_number: null
+id: adafruit-ads1115-guide
+kind: board-guide
+manual: false
+publisher: Adafruit Industries
+revision: Pinouts page last edited March 08, 2024 (guide last edited August 19, 2026)
+revision_date: '2024-03-08'
+secondary: false
+sha256: null
+title: Adafruit 4-Channel ADC Breakouts - Pinouts
+url: https://learn.adafruit.com/adafruit-4-channel-adc-breakouts/pinouts
+url_original: null

@@ -1,0 +1,42 @@
+accessed: '2026-10-23'
+claims:
+- id: songle-srd-t73-v1#ordering-code
+  locator: PDF p.1, ORDERING INFORMATION (read by eye from a rendered page image; transcribed)
+  quote: SRD-12VDC-S L-C ... L 0.36W / D 0.45W ... S Sealed / F Flux proofed
+  supports: In SRD-xxVDC-SL-C the L means the 0.36 W coil (D = 0.45 W), S = sealed, C = contact arrangement C (changeover); so SRD-05VDC-SL-C is the 0.36 W type
+- id: songle-srd-t73-v1#contact-rating
+  locator: PDF p.1, CONTACT PARAMETERS (read by eye from a rendered page image; transcribed)
+  quote: Contact rating(Res. load) 7A/10A/15A 250VAC/28VDC, 10A 125VAC
+  supports: 'Contact rating, resistive load: 7A/10A/15A at 250 VAC or 28 VDC, 10 A at 125 VAC (ordering variant dependent)'
+- id: songle-srd-t73-v1#max-switching
+  locator: PDF p.1, CONTACT PARAMETERS (read by eye from a rendered page image; transcribed)
+  quote: Max switching voltage 277VAC/30VDC Max switching current 15A
+  supports: Maximum switching voltage 277 VAC / 30 VDC; maximum switching current 15 A
+- id: songle-srd-t73-v1#coil-5v-l
+  locator: PDF p.2, COIL PARAMETERS (At 23 C), 0.36W(L) block (read by eye from a rendered page image; transcribed)
+  quote: 0.36W(L) Nominal voltage(VDC) 3 5 6 9 12 18 24 36 48 Coil resistance(Ω±10%) 25 69.4 100 225 400 900 1600 3600 6400
+  supports: '0.36 W (L) type: nominal coil voltage 5 VDC, coil resistance 69.4 ohm +/-10 % at 23 C'
+- id: songle-srd-t73-v1#coil-5v-d
+  locator: PDF p.2, COIL PARAMETERS (At 23 C), 0.45W(D) block (read by eye from a rendered page image; transcribed)
+  quote: 0.45W(D) Nominal voltage(VDC) 3 5 6 9 12 18 24 36 48 Coil resistance(Ω±10%) 20 55 80 180 320 720 1280 2880 5120
+  supports: '0.45 W (D) type: nominal coil voltage 5 VDC, coil resistance 55 ohm +/-10 % at 23 C'
+- id: songle-srd-t73-v1#coil-pickup
+  locator: PDF p.2, COIL PARAMETERS (read by eye from a rendered page image; transcribed)
+  quote: Pick-up voltage(Max) 75% (Nominal voltage) Drop-out voltage(Min) 10% (Nominal voltage)
+  supports: Pick-up voltage max 75 % and drop-out voltage min 10 % of nominal coil voltage
+- id: songle-srd-t73-v1#coil-overdrive
+  locator: PDF p.2, COIL PARAMETERS (read by eye from a rendered page image; transcribed)
+  quote: Max allowable overdrive voltage(VDC) 130% (Nominal voltage)
+  supports: Maximum allowable overdrive coil voltage 130 % of nominal (both 0.36 W and 0.45 W types in this sheet)
+doc_number: null
+id: songle-srd-t73-v1
+kind: datasheet
+manual: false
+publisher: Songle Relay (Zhejiang Songle Relay Co.)
+revision: 'Version Number: V1'
+revision_date: null
+secondary: false
+sha256: 239c43809674f185b9fde2786361545a37398585ec14767d8e3d5633b62ee9b0
+title: SRD(T73) Series - Subminiature High Power Relay (Songle Relay catalogue sheet, pp.30-31)
+url: https://www.songlerelay.com/upload/8670/srd-t73-relay-290486.pdf
+url_original: https://www.songlerelay.com/upload/8670/srd-t73-relay-290486.pdf

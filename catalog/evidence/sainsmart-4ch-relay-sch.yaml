@@ -1,0 +1,18 @@
+accessed: '2026-10-23'
+claims:
+- id: sainsmart-4ch-relay-sch#channel-topology
+  locator: Single sheet, channel 1 (IN1/U1/Q1/D1/K1); channels 2-4 identical; topology read from the drawing (read by eye from a rendered page image; transcribed)
+  quote: D1 R2 1 2 4 3 U1 R1 VCC IN1
+  supports: 'Per channel: optocoupler U1 LED between VCC (via R1) and IN1; opto output from JD-VCC via R2 to the base of NPN Q1 (emitter GND); D1 across relay coil K1 on JD-VCC. A VCC/JD-VCC 2-pin jumper header is drawn. No component values or part numbers are printed on the sheet'
+doc_number: null
+id: sainsmart-4ch-relay-sch
+kind: schematic
+manual: false
+publisher: SainSmart
+revision: schematic dated 5-May-2011 (archive 4+Relay+Module.rar sha256 a36a9ba07497d297850c1669031eb2652e91877b6ad8f86046a5b9b32d78470c)
+revision_date: null
+secondary: false
+sha256: 035e521f3cc48e371d0e49560a8b47a75a01e24f4ea115ab530bab7e4e0830cd
+title: 4 channel relay schematic (4 Relay Module/4 channel relay.pdf from SainSmart download 4+Relay+Module.rar)
+url: http://s3.amazonaws.com/s3.image.smart/download/101-70-101/4%2BRelay%2BModule.rar
+url_original: http://s3.amazonaws.com/s3.image.smart/download/101-70-101/4%2BRelay%2BModule.rar

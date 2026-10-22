@@ -1,0 +1,43 @@
+id: potentiometer-10k
+input_abs_max:
+  conditions:
+    part: Bourns 3386 trimmer (representative; panel potentiometers differ)
+  evidence:
+  - bourns-3386-ds-rev-12-24#power-max-v
+  note: The Bourns 3386 sheet states 'Power Rating (300 volts max.)', the maximum voltage across the element, with power 0.5 W at 85 C (bourns-3386-ds-rev-12-24#power-85c). Standard resistance 10 ohm to 2 Mohm (#res-range), 10 kohm is a standard value (#res-10k), tolerance +/-10 % (#res-tol). The sheet states no wiper-current rating. Resistance is a user choice; this record is named 10k only because the request asked for a 10 kohm part.
+  status: single-source
+  unit: V
+  value: 300.0
+interfaces:
+- kind: analog
+  limits:
+    analog_range_v:
+      evidence: []
+      note: The wiper swings between the two end-terminal potentials, i.e. between GND and the supply it is wired to; there is no fixed range. See breakout notes.
+      status: missing
+      value: null
+  signals:
+  - dir: out
+    drive: push-pull
+    role: WIPER
+    shareable: false
+part: 10 kohm linear potentiometer (three-terminal voltage divider)
+supply_current:
+  evidence: []
+  note: 'Passive part: current is set by the applied voltage and the element resistance; the 3386 sheet gives no wiper or element current rating.'
+  status: missing
+  unit: mA
+  value: null
+vdd_range:
+  evidence: []
+  note: 'Passive part: the voltage across the end terminals is chosen by the user. No supply range exists.'
+  status: missing
+  unit: V
+  value: null
+vendor: 'generic (representative datasheet: Bourns 3386)'
+vio_range:
+  evidence: []
+  note: 'Not applicable: passive part.'
+  status: missing
+  unit: V
+  value: null
