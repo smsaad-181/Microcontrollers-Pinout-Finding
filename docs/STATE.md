@@ -9,7 +9,7 @@ Catalog version: none yet · Rule-set version: none yet · Last updated: 2026-10
 | Phase | Name | Status | Branch | Validation | Notes |
 | --- | --- | --- | --- | --- | --- |
 | 0 | Bootstrap: tools, repo, Pages enabled | IN PROGRESS (remote deferred) | main | — | 0.1, 0.2, 0.5, 0.6 done; 0.3/0.4 deferred by user (GitHub later) |
-| 1 | Foundation: monorepo, schema, evidence model, CI/CD, placeholder on Pages | VALIDATING | phase-1 | — | local-only; 1.8 + CI/deploy gate items wait for GitHub |
+| 1 | Foundation: monorepo, schema, evidence model, CI/CD, placeholder on Pages | VALIDATING (fix round 1/3 pending) | phase-1 | phase-validator FAIL (0 critical, 5 major) | local-only; 1.8 + CI/deploy gate items wait for GitHub |
 | 2a | Catalog: MVP boards and modules, two-key verified | NOT STARTED | phase-2a | — | needs manual PDFs |
 | 2b | Engine: interface selection, CSP solver, rules R1–R8, explanations | NOT STARTED | phase-2b | — | |
 | 3 | Web app: UI, Web Worker, projects, sharing, export, offline | NOT STARTED | phase-3 | — | |
@@ -20,9 +20,9 @@ Status values: NOT STARTED · IN PROGRESS · VALIDATING · FIXING (round n/3) ·
 
 ## Current task
 
-Phase 1 is VALIDATING (local; no GitHub remote yet). Validator 1 of 3 running:
-- **phase-validator** — runs every local gate item fresh, probes the checker for gaps, writes `docs/validation/phase-1/phase-validator.md`.
-Then: code-reviewer, then github-actions-expert (one at a time).
+Phase 1 VALIDATING. phase-validator: **FAIL** (0 critical, 5 major, 8 minor) — report `docs/validation/phase-1/phase-validator.md`.
+Majors: F7 deploy `configure-pages` permissions · F2 duplicate entity ids accepted · F3 dangling refs only warnings · F4 reviewer names not normalised (two-key bypass) · F5 empty/over-long evidence quotes.
+Next: run code-reviewer, then github-actions-expert (one at a time) so all findings are fixed together in fix round 1, then re-validate.
 
 ## Task checklist
 
@@ -159,6 +159,7 @@ None of these block Phase 0. Re-check all three when a session is started inside
 
 | Date | Phase | Event |
 | --- | --- | --- |
+| 2026-10-22 | 1 | Validator 1/3 phase-validator: **FAIL** — all local gate commands pass (161 tests, 12/12 invalid fixtures rejected, compile deterministic, SHA pins OK); 5 Major findings in checker strictness + deploy.yml. Remote-only gate items not verifiable (no GitHub). |
 | 2026-10-22 | 1 | 1.9 done: CONTRIBUTING.md; `docs/schema.md` generated from the Zod descriptions (`pnpm docs:schema`, 11 schemas). |
 | 2026-10-22 | 1 | 1.2–1.4 done (TDD): Zod schemas match the skill reference (type-level equality tests, 24 types), `catalog validate` (every invalid fixture → its contracted code, valid + empty real catalog → 0), `catalog compile` (twice → byte-identical; version = first 12 hex of content sha256). Orchestrator re-run: typecheck/lint 0; schema 62, cli 61, web 35 tests pass. |
 | 2026-10-22 | 1 | 1.6 done: placeholder page (hash router, build-time CSP meta, manifest version card); web typecheck/lint 0, 35 tests pass, build OK, no inline script/style in dist, "Pinout Finder" in static HTML. Open for Phase 3: `worker-src` CSP for the Web Worker. |
