@@ -1,0 +1,13 @@
+# Thin "board core" module for the Arduino UNO R4 Minima (ABX00080, schematic V1.2). Arduino sells no separate RA4M1 module: the R7FA4M1AB3CFM#AA0 sits directly on the board PCB
+# (abx00080-um-rev6#mcu-part). The schema requires board -> variant -> module -> chip, so this record stands for the RA4M1 core of the UNO R4 Minima PCB and nothing else.
+# - bonded_pads: all 52 pads of the 64-pin LQFP package (the chip record models only those). Several are not connected on the PCB (crossed-out pins in the schematic, e.g. P400-P402, P003, P004, P011, P015)
+#   or go to board circuitry; which pads reach a header is recorded in boards/arduino-uno-r4-minima@V1.2.yaml.
+# - consumed: P914/P915 are the USB D+/D- pads wired to the USB-C connector through ESD diodes (abx00080-pinout-20231127#usb-pads). Nothing else is consumed: there is no external flash (the 256 kB
+#   code flash is inside the RA4M1) and the 16 MHz crystal Y1 is drawn crossed out in the schematic (sch#crystal-not-fitted), so P212/P213 are free pads without external connection.
+bonded_pads: ["P000", "P001", "P002", "P003", "P004", "P010", "P011", "P012", "P013", "P014", "P015", "P100", "P101", "P102", "P103", "P104", "P105", "P106", "P107", "P108", "P109", "P110", "P111", "P112", "P113", "P200", "P201", "P204", "P205", "P206", "P212", "P213", "P214", "P215", "P300", "P301", "P302", "P303", "P304", "P400", "P401", "P402", "P407", "P408", "P409", "P410", "P411", "P500", "P501", "P502", "P914", "P915"]
+chip: renesas-ra4m1
+consumed:
+  P914: { evidence: ["abx00080-pinout-20231127#usb-pads", "abx00080-um-rev6#usb-connector"], note: "USB D+ pad wired to the USB-C connector J3 through ESD protection D4.", status: "single-source", value: "usb" }
+  P915: { evidence: ["abx00080-pinout-20231127#usb-pads", "abx00080-um-rev6#usb-connector"], note: "USB D- pad wired to the USB-C connector J3 through ESD protection D4.", status: "single-source", value: "usb" }
+flash_voltage: { evidence: ["abx00080-um-rev6#mcu-5v-fixed", "abx00080-um-rev6#mcu-part"], note: "The only flash is the RA4M1 on-chip code/data flash, powered from the RA4M1 VCC, fixed at 5 V on this board (about 4.7 V on USB power). No separate flash chip exists; value follows the board supply.", status: "single-source", unit: "V", value: 5 }
+id: renesas-ra4m1-uno-r4-core

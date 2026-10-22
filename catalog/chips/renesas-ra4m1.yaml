@@ -1,0 +1,1014 @@
+# Renesas RA4M1 chip record (R7FA4M1AB3CFM, 64-pin LQFP, PLQP0064KB-C), task 2a.1/2a.2 draft for the Arduino UNO R4 Minima.
+# Sources: RA4M1 Group Datasheet R01DS0355EJ0110 Rev.1.10 (ra4m1-ds-rev1.10), RA4M1 Group User's Manual: Hardware R01UH0887EJ0110 Rev.1.10 (ra4m1-um-rev1.10),
+# plus the Arduino UNO R4 Minima documents for the 5 V supply and the board-level 8 mA statement.
+# Pads: only the 52 pads bonded on the 64-pin package (49 I/O + P200, P214, P215 input ports, datasheet Table 1.14 "I/O pins 49, Input pins 3"). Pad key = port name; `gpio` = port*100 + pin (P000=0 ... P915=915),
+# an invented unique number (the RA4M1 has no GPIO numbering); the datasheet only names the pads P<port><nn>.
+# Routing: every digital function is selected per pad by PmnPFS.PSEL from a fixed per-pad list (pin list, datasheet 1.7), so there is no matrix: digital functions are `iomux`; analog/system/debug/USB
+# pins are `fixed`. `GPIO` is the PMR = 0 general-purpose function. Function names follow the datasheet pin list (signal names as printed; a cell such as TXD2/MOSI2/SDA2 is split into its three names).
+# Pin-list function lists are TRANSCRIBED from table images (rendered pages 23-26); the extracted PDF text has no row structure. IRQn/KRn, SEG/COM (LCD) and TS (CTSU) names are included as printed.
+# Electrical values are the VCC = 4.0-5.5 V / 2.7-5.5 V columns that apply to the UNO R4 Minima, which runs the RA4M1 at 5 V (abx00080-um-rev6#mcu-5v-fixed). Expressions use VDDIO = VCC.
+# pin_current_max is a CONFLICT (Arduino 8 mA vs RA4M1 low-drive 4 mA, reset default); see the fact note. Revision of silicon is not stated in the datasheet, so `revisions` names the document revision.
+electrical:
+  abs_max_vin: { evidence: ["ra4m1-ds-rev1.10#abs-max-others", "ra4m1-ds-rev1.10#abs-max-p0", "ra4m1-ds-rev1.10#abs-max-5v-tol"], note: "Table 2.1: Vin max VCC + 0.3 V for ordinary pins and AVCC0 + 0.3 V for P000-P008, P010-P015 (equal on the UNO R4 where AVCC0 = VCC = 5 V). 5 V-tolerant ports (P205, P206, P400-P404, P407, P408) allow up to 6.5 V, but none of them is on a UNO R4 header (ds#abs-max-5v-tol). Not a rating of the board headers.", status: "single-source", unit: "V", value: "VDDIO+0.3" }
+  cumulative_current_max: { evidence: ["ra4m1-ds-rev1.10#ioh-total-all", "abx00080-pinout-20231127#max-overall-60ma"], note: "RA4M1 Table 2.6: total of all output pins 60 mA (source) and 60 mA (sink), separate budgets; the Arduino pinout states \"current overall 60mA\". Both documents agree.", status: "single-source", unit: "mA", value: 60 }
+  internal_pull_ohm: { evidence: ["ra4m1-ds-rev1.10#pull-up-ru"], note: "Pull-up only (RU, Table 2.10, VIN = 0 V, VCC 1.6-5.5 V); there is no internal pull-down. Excludes P200, P214, P215, P914, P915.", status: "single-source", unit: "ohm", value: { max: 50000, min: 10000, typ: 20000 } }
+  pin_current_max: { active: 4, conditions: { drive: "low drive (reset default, PmnPFS.DSCR = 0) vs middle drive" }, evidence: ["ra4m1-ds-rev1.10#ioh-iol-low", "ra4m1-ds-rev1.10#ioh-iol-mid", "ra4m1-ds-rev1.10#ioh-iol-caution", "ra4m1-um-rev1.10#pfs-dscr", "ra4m1-um-rev1.10#pfs-initial-rule", "abx00080-um-rev6#gpio-8ma", "abx00080-pinout-20231127#max-pin-8ma"], note: "CONFLICT, most restrictive active. Arduino (abx00080-um-rev6 s9.3 and the full pinout) states 8 mA per GPIO without naming a drive setting. RA4M1 Table 2.6 gives the permissible per-pin output current as 4.0 mA with low drive and 8.0 mA with middle drive (sink; source printed -4.0 mA in the middle-drive row), selected by PmnPFS.DSCR, whose reset value is 0 = low drive (UM s19.2.5). The 8 mA reading therefore holds only if the Arduino core sets middle drive on the pad, which no document read here states. The datasheet Caution says the Table 2.6 values should not be exceeded. Pads P408/P409 (not on UNO R4 headers) allow 20 mA at middle drive, VCC 3.0-5.5 V. Chip-wide figure: the most restrictive group.", readings: [{ evidence: ["abx00080-um-rev6#gpio-8ma", "abx00080-pinout-20231127#max-pin-8ma", "ra4m1-ds-rev1.10#ioh-iol-mid"], value: 8 }, { evidence: ["ra4m1-ds-rev1.10#ioh-iol-low", "ra4m1-um-rev1.10#pfs-dscr", "ra4m1-um-rev1.10#pfs-initial-rule", "ra4m1-ds-rev1.10#ioh-iol-caution"], value: 4 }], status: "conflict", unit: "mA", value: 4 }
+  port_current_max: { evidence: ["ra4m1-ds-rev1.10#ioh-total-p0"], note: "RA4M1 Table 2.6: total of ports P000-P008, P010-P015 (the analog group A0-A3 and P012/P013) is limited to 30 mA source and 30 mA sink. Not a per-port figure for the other ports; the datasheet gives no other group totals except all pins (60 mA).", status: "single-source", unit: "mA", value: 30 }
+  vih_min: { conditions: { VCC: "2.7 to 5.5 V" }, evidence: ["ra4m1-ds-rev1.10#vih-vil-5v", "ra4m1-ds-rev1.10#vih-vil-schmitt"], note: "Table 2.4, input pins other than P000-P015/P914/P915: 0.8 x VCC (P000-P015: 0.8 x AVCC0). IIC pins (P100, P101) use Schmitt thresholds 0.7 x VCC (VIH) and 0.3 x VCC (VIL), Table 2.4.", status: "single-source", unit: "V", value: "VDDIO*0.8" }
+  vil_max: { conditions: { VCC: "2.7 to 5.5 V" }, evidence: ["ra4m1-ds-rev1.10#vih-vil-5v", "ra4m1-ds-rev1.10#vih-vil-schmitt"], note: "Table 2.4, 0.2 x VCC for ordinary pins; IIC pins 0.3 x VCC (less restrictive).", status: "single-source", unit: "V", value: "VDDIO*0.2" }
+  voh_min: { conditions: { IOH: "-2.0 mA low drive / -4.0 mA middle drive", VCC: "4.0 to 5.5 V" }, evidence: ["ra4m1-ds-rev1.10#voh-vol-5v", "ra4m1-ds-rev1.10#voh-vol-5v-mid"], note: "Table 2.7: VOH min = VCC - 0.8 V (expression written VDDIO+-0.8). VOH is guaranteed only at the stated currents, so it says nothing at 8 mA.", status: "single-source", unit: "V", value: "VDDIO+-0.8" }
+  vol_max: { conditions: { IOL: "2.0 mA low drive / 4.0 mA middle drive", VCC: "4.0 to 5.5 V" }, evidence: ["ra4m1-ds-rev1.10#voh-vol-5v", "ra4m1-ds-rev1.10#voh-vol-5v-mid"], note: "Table 2.7: VOL max 0.8 V at IOL = 2.0 mA (low drive) or 4.0 mA (middle drive); other pin groups differ (IIC 0.4 V at 3 mA).", status: "single-source", unit: "V", value: 0.8 }
+family: RA4M1
+id: renesas-ra4m1
+pads:
+  P000:
+    errata: []
+    adc:
+      channel: 0
+      radio_conflict: { evidence: ["ra4m1-ds-rev1.10#pin-list-p26"], note: "RA4M1 has no on-chip radio. Negative finding inferred from absence: the datasheet function lists contain no radio; weak basis, single read.", status: "single-source", value: false }
+      unit: ADC14
+    functions:
+      - { fn: "GPIO", routing: "iomux" }
+      - { fn: "IRQ6", routing: "iomux" }
+      - { fn: "AN000", routing: "fixed" }
+      - { fn: "AMP0+", routing: "fixed" }
+      - { fn: "TS21", routing: "iomux" }
+    gpio: 0
+    input_only: { evidence: ["ra4m1-ds-rev1.10#input-ports", "ra4m1-ds-rev1.10#pin-list-p26"], note: "Not in the datasheet list of input-only ports (P200, P214, P215); output functions appear in the pin list.", status: "single-source", value: false }
+    power_up_glitch: { evidence: [], note: "No power-up glitch / errata item for this pad could be established. The RA4M1 datasheet and user manual contain no errata section, and Renesas publishes errata per topic as Technical Updates (TN-RA*) that were not opened in this session; this is not a finding of absence.", status: "missing", value: null }
+    reset_state: { evidence: ["ra4m1-um-rev1.10#reset-gpio", "ra4m1-um-rev1.10#pfs-initial-rule", "ra4m1-um-rev1.10#pfs-pdr", "ra4m1-um-rev1.10#pfs-pcr"], note: "All other pads: PmnPFS = 0 after reset, i.e. general I/O (PMR 0), input (PDR 0), no pull-up (PCR 0), low drive (DSCR 0).", status: "single-source", value: "input" }
+    strap: { evidence: ["ra4m1-um-rev1.10#md-table"], note: "No strap on this pad: the only mode-setting pin is MD (P201), Table 3.1. Negative finding from the single table; no second key yet.", status: "single-source", value: "none" }
+    touch:
+      channel: 21
+  P001:
+    errata: []
+    adc:
+      channel: 1
+      radio_conflict: { evidence: ["ra4m1-ds-rev1.10#pin-list-p26"], note: "RA4M1 has no on-chip radio. Negative finding inferred from absence: the datasheet function lists contain no radio; weak basis, single read.", status: "single-source", value: false }
+      unit: ADC14
+    functions:
+      - { fn: "GPIO", routing: "iomux" }
+      - { fn: "IRQ7", routing: "iomux" }
+      - { fn: "AN001", routing: "fixed" }
+      - { fn: "AMP0-", routing: "fixed" }
+      - { fn: "TS22", routing: "iomux" }
+    gpio: 1
+    input_only: { evidence: ["ra4m1-ds-rev1.10#input-ports", "ra4m1-ds-rev1.10#pin-list-p26"], note: "Not in the datasheet list of input-only ports (P200, P214, P215); output functions appear in the pin list.", status: "single-source", value: false }
+    power_up_glitch: { evidence: [], note: "No power-up glitch / errata item for this pad could be established. The RA4M1 datasheet and user manual contain no errata section, and Renesas publishes errata per topic as Technical Updates (TN-RA*) that were not opened in this session; this is not a finding of absence.", status: "missing", value: null }
+    reset_state: { evidence: ["ra4m1-um-rev1.10#reset-gpio", "ra4m1-um-rev1.10#pfs-initial-rule", "ra4m1-um-rev1.10#pfs-pdr", "ra4m1-um-rev1.10#pfs-pcr"], note: "All other pads: PmnPFS = 0 after reset, i.e. general I/O (PMR 0), input (PDR 0), no pull-up (PCR 0), low drive (DSCR 0).", status: "single-source", value: "input" }
+    strap: { evidence: ["ra4m1-um-rev1.10#md-table"], note: "No strap on this pad: the only mode-setting pin is MD (P201), Table 3.1. Negative finding from the single table; no second key yet.", status: "single-source", value: "none" }
+    touch:
+      channel: 22
+  P002:
+    errata: []
+    adc:
+      channel: 2
+      radio_conflict: { evidence: ["ra4m1-ds-rev1.10#pin-list-p26"], note: "RA4M1 has no on-chip radio. Negative finding inferred from absence: the datasheet function lists contain no radio; weak basis, single read.", status: "single-source", value: false }
+      unit: ADC14
+    functions:
+      - { fn: "GPIO", routing: "iomux" }
+      - { fn: "IRQ2", routing: "iomux" }
+      - { fn: "AN002", routing: "fixed" }
+      - { fn: "AMP0O", routing: "fixed" }
+    gpio: 2
+    input_only: { evidence: ["ra4m1-ds-rev1.10#input-ports", "ra4m1-ds-rev1.10#pin-list-p26"], note: "Not in the datasheet list of input-only ports (P200, P214, P215); output functions appear in the pin list.", status: "single-source", value: false }
+    power_up_glitch: { evidence: [], note: "No power-up glitch / errata item for this pad could be established. The RA4M1 datasheet and user manual contain no errata section, and Renesas publishes errata per topic as Technical Updates (TN-RA*) that were not opened in this session; this is not a finding of absence.", status: "missing", value: null }
+    reset_state: { evidence: ["ra4m1-um-rev1.10#reset-gpio", "ra4m1-um-rev1.10#pfs-initial-rule", "ra4m1-um-rev1.10#pfs-pdr", "ra4m1-um-rev1.10#pfs-pcr"], note: "All other pads: PmnPFS = 0 after reset, i.e. general I/O (PMR 0), input (PDR 0), no pull-up (PCR 0), low drive (DSCR 0).", status: "single-source", value: "input" }
+    strap: { evidence: ["ra4m1-um-rev1.10#md-table"], note: "No strap on this pad: the only mode-setting pin is MD (P201), Table 3.1. Negative finding from the single table; no second key yet.", status: "single-source", value: "none" }
+  P003:
+    errata: []
+    adc:
+      channel: 3
+      radio_conflict: { evidence: ["ra4m1-ds-rev1.10#pin-list-p26"], note: "RA4M1 has no on-chip radio. Negative finding inferred from absence: the datasheet function lists contain no radio; weak basis, single read.", status: "single-source", value: false }
+      unit: ADC14
+    functions:
+      - { fn: "GPIO", routing: "iomux" }
+      - { fn: "AN003", routing: "fixed" }
+      - { fn: "AMP1O", routing: "fixed" }
+    gpio: 3
+    input_only: { evidence: ["ra4m1-ds-rev1.10#input-ports", "ra4m1-ds-rev1.10#pin-list-p26"], note: "Not in the datasheet list of input-only ports (P200, P214, P215); output functions appear in the pin list.", status: "single-source", value: false }
+    power_up_glitch: { evidence: [], note: "No power-up glitch / errata item for this pad could be established. The RA4M1 datasheet and user manual contain no errata section, and Renesas publishes errata per topic as Technical Updates (TN-RA*) that were not opened in this session; this is not a finding of absence.", status: "missing", value: null }
+    reset_state: { evidence: ["ra4m1-um-rev1.10#reset-gpio", "ra4m1-um-rev1.10#pfs-initial-rule", "ra4m1-um-rev1.10#pfs-pdr", "ra4m1-um-rev1.10#pfs-pcr"], note: "All other pads: PmnPFS = 0 after reset, i.e. general I/O (PMR 0), input (PDR 0), no pull-up (PCR 0), low drive (DSCR 0).", status: "single-source", value: "input" }
+    strap: { evidence: ["ra4m1-um-rev1.10#md-table"], note: "No strap on this pad: the only mode-setting pin is MD (P201), Table 3.1. Negative finding from the single table; no second key yet.", status: "single-source", value: "none" }
+  P004:
+    errata: []
+    adc:
+      channel: 4
+      radio_conflict: { evidence: ["ra4m1-ds-rev1.10#pin-list-p26"], note: "RA4M1 has no on-chip radio. Negative finding inferred from absence: the datasheet function lists contain no radio; weak basis, single read.", status: "single-source", value: false }
+      unit: ADC14
+    functions:
+      - { fn: "GPIO", routing: "iomux" }
+      - { fn: "IRQ3", routing: "iomux" }
+      - { fn: "AN004", routing: "fixed" }
+      - { fn: "AMP2O", routing: "fixed" }
+    gpio: 4
+    input_only: { evidence: ["ra4m1-ds-rev1.10#input-ports", "ra4m1-ds-rev1.10#pin-list-p26"], note: "Not in the datasheet list of input-only ports (P200, P214, P215); output functions appear in the pin list.", status: "single-source", value: false }
+    power_up_glitch: { evidence: [], note: "No power-up glitch / errata item for this pad could be established. The RA4M1 datasheet and user manual contain no errata section, and Renesas publishes errata per topic as Technical Updates (TN-RA*) that were not opened in this session; this is not a finding of absence.", status: "missing", value: null }
+    reset_state: { evidence: ["ra4m1-um-rev1.10#reset-gpio", "ra4m1-um-rev1.10#pfs-initial-rule", "ra4m1-um-rev1.10#pfs-pdr", "ra4m1-um-rev1.10#pfs-pcr"], note: "All other pads: PmnPFS = 0 after reset, i.e. general I/O (PMR 0), input (PDR 0), no pull-up (PCR 0), low drive (DSCR 0).", status: "single-source", value: "input" }
+    strap: { evidence: ["ra4m1-um-rev1.10#md-table"], note: "No strap on this pad: the only mode-setting pin is MD (P201), Table 3.1. Negative finding from the single table; no second key yet.", status: "single-source", value: "none" }
+  P010:
+    errata: []
+    adc:
+      channel: 5
+      radio_conflict: { evidence: ["ra4m1-ds-rev1.10#pin-list-p26"], note: "RA4M1 has no on-chip radio. Negative finding inferred from absence: the datasheet function lists contain no radio; weak basis, single read.", status: "single-source", value: false }
+      unit: ADC14
+    functions:
+      - { fn: "GPIO", routing: "iomux" }
+      - { fn: "VREFH0", routing: "fixed" }
+      - { fn: "AN005", routing: "fixed" }
+      - { fn: "AMP2-", routing: "fixed" }
+      - { fn: "TS30", routing: "iomux" }
+    gpio: 10
+    input_only: { evidence: ["ra4m1-ds-rev1.10#input-ports", "ra4m1-ds-rev1.10#pin-list-p26"], note: "Not in the datasheet list of input-only ports (P200, P214, P215); output functions appear in the pin list.", status: "single-source", value: false }
+    power_up_glitch: { evidence: [], note: "No power-up glitch / errata item for this pad could be established. The RA4M1 datasheet and user manual contain no errata section, and Renesas publishes errata per topic as Technical Updates (TN-RA*) that were not opened in this session; this is not a finding of absence.", status: "missing", value: null }
+    reset_state: { evidence: ["ra4m1-um-rev1.10#reset-gpio", "ra4m1-um-rev1.10#pfs-initial-rule", "ra4m1-um-rev1.10#pfs-pdr", "ra4m1-um-rev1.10#pfs-pcr"], note: "All other pads: PmnPFS = 0 after reset, i.e. general I/O (PMR 0), input (PDR 0), no pull-up (PCR 0), low drive (DSCR 0).", status: "single-source", value: "input" }
+    strap: { evidence: ["ra4m1-um-rev1.10#md-table"], note: "No strap on this pad: the only mode-setting pin is MD (P201), Table 3.1. Negative finding from the single table; no second key yet.", status: "single-source", value: "none" }
+    touch:
+      channel: 30
+  P011:
+    errata: []
+    adc:
+      channel: 6
+      radio_conflict: { evidence: ["ra4m1-ds-rev1.10#pin-list-p26"], note: "RA4M1 has no on-chip radio. Negative finding inferred from absence: the datasheet function lists contain no radio; weak basis, single read.", status: "single-source", value: false }
+      unit: ADC14
+    functions:
+      - { fn: "GPIO", routing: "iomux" }
+      - { fn: "VREFL0", routing: "fixed" }
+      - { fn: "IRQ15", routing: "iomux" }
+      - { fn: "AN006", routing: "fixed" }
+      - { fn: "AMP2+", routing: "fixed" }
+      - { fn: "TS31", routing: "iomux" }
+    gpio: 11
+    input_only: { evidence: ["ra4m1-ds-rev1.10#input-ports", "ra4m1-ds-rev1.10#pin-list-p26"], note: "Not in the datasheet list of input-only ports (P200, P214, P215); output functions appear in the pin list.", status: "single-source", value: false }
+    power_up_glitch: { evidence: [], note: "No power-up glitch / errata item for this pad could be established. The RA4M1 datasheet and user manual contain no errata section, and Renesas publishes errata per topic as Technical Updates (TN-RA*) that were not opened in this session; this is not a finding of absence.", status: "missing", value: null }
+    reset_state: { evidence: ["ra4m1-um-rev1.10#reset-gpio", "ra4m1-um-rev1.10#pfs-initial-rule", "ra4m1-um-rev1.10#pfs-pdr", "ra4m1-um-rev1.10#pfs-pcr"], note: "All other pads: PmnPFS = 0 after reset, i.e. general I/O (PMR 0), input (PDR 0), no pull-up (PCR 0), low drive (DSCR 0).", status: "single-source", value: "input" }
+    strap: { evidence: ["ra4m1-um-rev1.10#md-table"], note: "No strap on this pad: the only mode-setting pin is MD (P201), Table 3.1. Negative finding from the single table; no second key yet.", status: "single-source", value: "none" }
+    touch:
+      channel: 31
+  P012:
+    errata: []
+    adc:
+      channel: 7
+      radio_conflict: { evidence: ["ra4m1-ds-rev1.10#pin-list-p26"], note: "RA4M1 has no on-chip radio. Negative finding inferred from absence: the datasheet function lists contain no radio; weak basis, single read.", status: "single-source", value: false }
+      unit: ADC14
+    functions:
+      - { fn: "GPIO", routing: "iomux" }
+      - { fn: "VREFH", routing: "fixed" }
+      - { fn: "AN007", routing: "fixed" }
+      - { fn: "AMP1-", routing: "fixed" }
+    gpio: 12
+    input_only: { evidence: ["ra4m1-ds-rev1.10#input-ports", "ra4m1-ds-rev1.10#pin-list-p26"], note: "Not in the datasheet list of input-only ports (P200, P214, P215); output functions appear in the pin list.", status: "single-source", value: false }
+    power_up_glitch: { evidence: [], note: "No power-up glitch / errata item for this pad could be established. The RA4M1 datasheet and user manual contain no errata section, and Renesas publishes errata per topic as Technical Updates (TN-RA*) that were not opened in this session; this is not a finding of absence.", status: "missing", value: null }
+    reset_state: { evidence: ["ra4m1-um-rev1.10#reset-gpio", "ra4m1-um-rev1.10#pfs-initial-rule", "ra4m1-um-rev1.10#pfs-pdr", "ra4m1-um-rev1.10#pfs-pcr"], note: "All other pads: PmnPFS = 0 after reset, i.e. general I/O (PMR 0), input (PDR 0), no pull-up (PCR 0), low drive (DSCR 0).", status: "single-source", value: "input" }
+    strap: { evidence: ["ra4m1-um-rev1.10#md-table"], note: "No strap on this pad: the only mode-setting pin is MD (P201), Table 3.1. Negative finding from the single table; no second key yet.", status: "single-source", value: "none" }
+  P013:
+    errata: []
+    adc:
+      channel: 8
+      radio_conflict: { evidence: ["ra4m1-ds-rev1.10#pin-list-p26"], note: "RA4M1 has no on-chip radio. Negative finding inferred from absence: the datasheet function lists contain no radio; weak basis, single read.", status: "single-source", value: false }
+      unit: ADC14
+    functions:
+      - { fn: "GPIO", routing: "iomux" }
+      - { fn: "VREFL", routing: "fixed" }
+      - { fn: "AN008", routing: "fixed" }
+      - { fn: "AMP1+", routing: "fixed" }
+    gpio: 13
+    input_only: { evidence: ["ra4m1-ds-rev1.10#input-ports", "ra4m1-ds-rev1.10#pin-list-p26"], note: "Not in the datasheet list of input-only ports (P200, P214, P215); output functions appear in the pin list.", status: "single-source", value: false }
+    power_up_glitch: { evidence: [], note: "No power-up glitch / errata item for this pad could be established. The RA4M1 datasheet and user manual contain no errata section, and Renesas publishes errata per topic as Technical Updates (TN-RA*) that were not opened in this session; this is not a finding of absence.", status: "missing", value: null }
+    reset_state: { evidence: ["ra4m1-um-rev1.10#reset-gpio", "ra4m1-um-rev1.10#pfs-initial-rule", "ra4m1-um-rev1.10#pfs-pdr", "ra4m1-um-rev1.10#pfs-pcr"], note: "All other pads: PmnPFS = 0 after reset, i.e. general I/O (PMR 0), input (PDR 0), no pull-up (PCR 0), low drive (DSCR 0).", status: "single-source", value: "input" }
+    strap: { evidence: ["ra4m1-um-rev1.10#md-table"], note: "No strap on this pad: the only mode-setting pin is MD (P201), Table 3.1. Negative finding from the single table; no second key yet.", status: "single-source", value: "none" }
+  P014:
+    errata: []
+    adc:
+      channel: 9
+      radio_conflict: { evidence: ["ra4m1-ds-rev1.10#pin-list-p26"], note: "RA4M1 has no on-chip radio. Negative finding inferred from absence: the datasheet function lists contain no radio; weak basis, single read.", status: "single-source", value: false }
+      unit: ADC14
+    dac:
+      channel: 0
+    functions:
+      - { fn: "GPIO", routing: "iomux" }
+      - { fn: "AN009", routing: "fixed" }
+      - { fn: "DA0", routing: "fixed" }
+    gpio: 14
+    input_only: { evidence: ["ra4m1-ds-rev1.10#input-ports", "ra4m1-ds-rev1.10#pin-list-p26"], note: "Not in the datasheet list of input-only ports (P200, P214, P215); output functions appear in the pin list.", status: "single-source", value: false }
+    power_up_glitch: { evidence: [], note: "No power-up glitch / errata item for this pad could be established. The RA4M1 datasheet and user manual contain no errata section, and Renesas publishes errata per topic as Technical Updates (TN-RA*) that were not opened in this session; this is not a finding of absence.", status: "missing", value: null }
+    reset_state: { evidence: ["ra4m1-um-rev1.10#reset-gpio", "ra4m1-um-rev1.10#pfs-initial-rule", "ra4m1-um-rev1.10#pfs-pdr", "ra4m1-um-rev1.10#pfs-pcr"], note: "All other pads: PmnPFS = 0 after reset, i.e. general I/O (PMR 0), input (PDR 0), no pull-up (PCR 0), low drive (DSCR 0).", status: "single-source", value: "input" }
+    strap: { evidence: ["ra4m1-um-rev1.10#md-table"], note: "No strap on this pad: the only mode-setting pin is MD (P201), Table 3.1. Negative finding from the single table; no second key yet.", status: "single-source", value: "none" }
+  P015:
+    errata: []
+    adc:
+      channel: 10
+      radio_conflict: { evidence: ["ra4m1-ds-rev1.10#pin-list-p26"], note: "RA4M1 has no on-chip radio. Negative finding inferred from absence: the datasheet function lists contain no radio; weak basis, single read.", status: "single-source", value: false }
+      unit: ADC14
+    functions:
+      - { fn: "GPIO", routing: "iomux" }
+      - { fn: "IRQ7", routing: "iomux" }
+      - { fn: "AN010", routing: "fixed" }
+      - { fn: "TS28", routing: "iomux" }
+    gpio: 15
+    input_only: { evidence: ["ra4m1-ds-rev1.10#input-ports", "ra4m1-ds-rev1.10#pin-list-p26"], note: "Not in the datasheet list of input-only ports (P200, P214, P215); output functions appear in the pin list.", status: "single-source", value: false }
+    power_up_glitch: { evidence: [], note: "No power-up glitch / errata item for this pad could be established. The RA4M1 datasheet and user manual contain no errata section, and Renesas publishes errata per topic as Technical Updates (TN-RA*) that were not opened in this session; this is not a finding of absence.", status: "missing", value: null }
+    reset_state: { evidence: ["ra4m1-um-rev1.10#reset-gpio", "ra4m1-um-rev1.10#pfs-initial-rule", "ra4m1-um-rev1.10#pfs-pdr", "ra4m1-um-rev1.10#pfs-pcr"], note: "All other pads: PmnPFS = 0 after reset, i.e. general I/O (PMR 0), input (PDR 0), no pull-up (PCR 0), low drive (DSCR 0).", status: "single-source", value: "input" }
+    strap: { evidence: ["ra4m1-um-rev1.10#md-table"], note: "No strap on this pad: the only mode-setting pin is MD (P201), Table 3.1. Negative finding from the single table; no second key yet.", status: "single-source", value: "none" }
+    touch:
+      channel: 28
+  P100:
+    errata: []
+    adc:
+      channel: 22
+      radio_conflict: { evidence: ["ra4m1-ds-rev1.10#pin-list-p25"], note: "RA4M1 has no on-chip radio. Negative finding inferred from absence: the datasheet function lists contain no radio; weak basis, single read.", status: "single-source", value: false }
+      unit: ADC14
+    functions:
+      - { fn: "GPIO", routing: "iomux" }
+      - { fn: "KR00", routing: "iomux" }
+      - { fn: "IRQ2", routing: "iomux" }
+      - { fn: "AGTIO0", routing: "iomux" }
+      - { fn: "GTETRGA", routing: "iomux" }
+      - { fn: "GTIOC5B", routing: "iomux" }
+      - { fn: "RXD0", routing: "iomux" }
+      - { fn: "MISO0", routing: "iomux" }
+      - { fn: "SCL0", routing: "iomux" }
+      - { fn: "SCK1", routing: "iomux" }
+      - { fn: "SCL1", routing: "iomux" }
+      - { fn: "MISOA", routing: "iomux" }
+      - { fn: "AN022", routing: "fixed" }
+      - { fn: "CMPIN0", routing: "fixed" }
+      - { fn: "VL1", routing: "iomux" }
+    gpio: 100
+    input_only: { evidence: ["ra4m1-ds-rev1.10#input-ports", "ra4m1-ds-rev1.10#pin-list-p25"], note: "Not in the datasheet list of input-only ports (P200, P214, P215); output functions appear in the pin list.", status: "single-source", value: false }
+    power_up_glitch: { evidence: [], note: "No power-up glitch / errata item for this pad could be established. The RA4M1 datasheet and user manual contain no errata section, and Renesas publishes errata per topic as Technical Updates (TN-RA*) that were not opened in this session; this is not a finding of absence.", status: "missing", value: null }
+    reset_state: { evidence: ["ra4m1-um-rev1.10#reset-gpio", "ra4m1-um-rev1.10#pfs-initial-rule", "ra4m1-um-rev1.10#pfs-pdr", "ra4m1-um-rev1.10#pfs-pcr"], note: "All other pads: PmnPFS = 0 after reset, i.e. general I/O (PMR 0), input (PDR 0), no pull-up (PCR 0), low drive (DSCR 0).", status: "single-source", value: "input" }
+    strap: { evidence: ["ra4m1-um-rev1.10#md-table"], note: "No strap on this pad: the only mode-setting pin is MD (P201), Table 3.1. Negative finding from the single table; no second key yet.", status: "single-source", value: "none" }
+  P101:
+    errata: []
+    adc:
+      channel: 21
+      radio_conflict: { evidence: ["ra4m1-ds-rev1.10#pin-list-p25"], note: "RA4M1 has no on-chip radio. Negative finding inferred from absence: the datasheet function lists contain no radio; weak basis, single read.", status: "single-source", value: false }
+      unit: ADC14
+    functions:
+      - { fn: "GPIO", routing: "iomux" }
+      - { fn: "KR01", routing: "iomux" }
+      - { fn: "IRQ1", routing: "iomux" }
+      - { fn: "AGTEE0", routing: "iomux" }
+      - { fn: "GTETRGB", routing: "iomux" }
+      - { fn: "GTIOC5A", routing: "iomux" }
+      - { fn: "TXD0", routing: "iomux" }
+      - { fn: "MOSI0", routing: "iomux" }
+      - { fn: "SDA0", routing: "iomux" }
+      - { fn: "CTS1_", routing: "iomux" }
+      - { fn: "RTS1", routing: "iomux" }
+      - { fn: "SS1", routing: "iomux" }
+      - { fn: "SDA1", routing: "iomux" }
+      - { fn: "MOSIA", routing: "iomux" }
+      - { fn: "AN021", routing: "fixed" }
+      - { fn: "CMPREF0", routing: "fixed" }
+      - { fn: "VL2", routing: "iomux" }
+    gpio: 101
+    input_only: { evidence: ["ra4m1-ds-rev1.10#input-ports", "ra4m1-ds-rev1.10#pin-list-p25"], note: "Not in the datasheet list of input-only ports (P200, P214, P215); output functions appear in the pin list.", status: "single-source", value: false }
+    power_up_glitch: { evidence: [], note: "No power-up glitch / errata item for this pad could be established. The RA4M1 datasheet and user manual contain no errata section, and Renesas publishes errata per topic as Technical Updates (TN-RA*) that were not opened in this session; this is not a finding of absence.", status: "missing", value: null }
+    reset_state: { evidence: ["ra4m1-um-rev1.10#reset-gpio", "ra4m1-um-rev1.10#pfs-initial-rule", "ra4m1-um-rev1.10#pfs-pdr", "ra4m1-um-rev1.10#pfs-pcr"], note: "All other pads: PmnPFS = 0 after reset, i.e. general I/O (PMR 0), input (PDR 0), no pull-up (PCR 0), low drive (DSCR 0).", status: "single-source", value: "input" }
+    strap: { evidence: ["ra4m1-um-rev1.10#md-table"], note: "No strap on this pad: the only mode-setting pin is MD (P201), Table 3.1. Negative finding from the single table; no second key yet.", status: "single-source", value: "none" }
+  P102:
+    errata: []
+    adc:
+      channel: 20
+      radio_conflict: { evidence: ["ra4m1-ds-rev1.10#pin-list-p25"], note: "RA4M1 has no on-chip radio. Negative finding inferred from absence: the datasheet function lists contain no radio; weak basis, single read.", status: "single-source", value: false }
+      unit: ADC14
+    functions:
+      - { fn: "GPIO", routing: "iomux" }
+      - { fn: "KR02", routing: "iomux" }
+      - { fn: "AGTO0", routing: "iomux" }
+      - { fn: "GTOWLO", routing: "iomux" }
+      - { fn: "GTIOC2B", routing: "iomux" }
+      - { fn: "CRX0", routing: "iomux" }
+      - { fn: "SCK0", routing: "iomux" }
+      - { fn: "TXD2", routing: "iomux" }
+      - { fn: "MOSI2", routing: "iomux" }
+      - { fn: "SDA2", routing: "iomux" }
+      - { fn: "RSPCKA", routing: "iomux" }
+      - { fn: "AN020", routing: "fixed" }
+      - { fn: "ADTRG0", routing: "fixed" }
+      - { fn: "CMPIN1", routing: "fixed" }
+      - { fn: "VL3", routing: "iomux" }
+    gpio: 102
+    input_only: { evidence: ["ra4m1-ds-rev1.10#input-ports", "ra4m1-ds-rev1.10#pin-list-p25"], note: "Not in the datasheet list of input-only ports (P200, P214, P215); output functions appear in the pin list.", status: "single-source", value: false }
+    power_up_glitch: { evidence: [], note: "No power-up glitch / errata item for this pad could be established. The RA4M1 datasheet and user manual contain no errata section, and Renesas publishes errata per topic as Technical Updates (TN-RA*) that were not opened in this session; this is not a finding of absence.", status: "missing", value: null }
+    reset_state: { evidence: ["ra4m1-um-rev1.10#reset-gpio", "ra4m1-um-rev1.10#pfs-initial-rule", "ra4m1-um-rev1.10#pfs-pdr", "ra4m1-um-rev1.10#pfs-pcr"], note: "All other pads: PmnPFS = 0 after reset, i.e. general I/O (PMR 0), input (PDR 0), no pull-up (PCR 0), low drive (DSCR 0).", status: "single-source", value: "input" }
+    strap: { evidence: ["ra4m1-um-rev1.10#md-table"], note: "No strap on this pad: the only mode-setting pin is MD (P201), Table 3.1. Negative finding from the single table; no second key yet.", status: "single-source", value: "none" }
+  P103:
+    errata: []
+    adc:
+      channel: 19
+      radio_conflict: { evidence: ["ra4m1-ds-rev1.10#pin-list-p25"], note: "RA4M1 has no on-chip radio. Negative finding inferred from absence: the datasheet function lists contain no radio; weak basis, single read.", status: "single-source", value: false }
+      unit: ADC14
+    functions:
+      - { fn: "GPIO", routing: "iomux" }
+      - { fn: "KR03", routing: "iomux" }
+      - { fn: "GTOWUP", routing: "iomux" }
+      - { fn: "GTIOC2A", routing: "iomux" }
+      - { fn: "CTX0", routing: "iomux" }
+      - { fn: "CTS0_", routing: "iomux" }
+      - { fn: "RTS0", routing: "iomux" }
+      - { fn: "SS0", routing: "iomux" }
+      - { fn: "SSLA0", routing: "iomux" }
+      - { fn: "AN019", routing: "fixed" }
+      - { fn: "CMPREF1", routing: "fixed" }
+      - { fn: "VL4", routing: "iomux" }
+    gpio: 103
+    input_only: { evidence: ["ra4m1-ds-rev1.10#input-ports", "ra4m1-ds-rev1.10#pin-list-p25"], note: "Not in the datasheet list of input-only ports (P200, P214, P215); output functions appear in the pin list.", status: "single-source", value: false }
+    power_up_glitch: { evidence: [], note: "No power-up glitch / errata item for this pad could be established. The RA4M1 datasheet and user manual contain no errata section, and Renesas publishes errata per topic as Technical Updates (TN-RA*) that were not opened in this session; this is not a finding of absence.", status: "missing", value: null }
+    reset_state: { evidence: ["ra4m1-um-rev1.10#reset-gpio", "ra4m1-um-rev1.10#pfs-initial-rule", "ra4m1-um-rev1.10#pfs-pdr", "ra4m1-um-rev1.10#pfs-pcr"], note: "All other pads: PmnPFS = 0 after reset, i.e. general I/O (PMR 0), input (PDR 0), no pull-up (PCR 0), low drive (DSCR 0).", status: "single-source", value: "input" }
+    strap: { evidence: ["ra4m1-um-rev1.10#md-table"], note: "No strap on this pad: the only mode-setting pin is MD (P201), Table 3.1. Negative finding from the single table; no second key yet.", status: "single-source", value: "none" }
+  P104:
+    errata: []
+    functions:
+      - { fn: "GPIO", routing: "iomux" }
+      - { fn: "KR04", routing: "iomux" }
+      - { fn: "IRQ1", routing: "iomux" }
+      - { fn: "GTETRGB", routing: "iomux" }
+      - { fn: "GTIOC1B", routing: "iomux" }
+      - { fn: "RXD0", routing: "iomux" }
+      - { fn: "MISO0", routing: "iomux" }
+      - { fn: "SCL0", routing: "iomux" }
+      - { fn: "SSLA1", routing: "iomux" }
+      - { fn: "COM0", routing: "iomux" }
+      - { fn: "TS13", routing: "iomux" }
+    gpio: 104
+    input_only: { evidence: ["ra4m1-ds-rev1.10#input-ports", "ra4m1-ds-rev1.10#pin-list-p25"], note: "Not in the datasheet list of input-only ports (P200, P214, P215); output functions appear in the pin list.", status: "single-source", value: false }
+    power_up_glitch: { evidence: [], note: "No power-up glitch / errata item for this pad could be established. The RA4M1 datasheet and user manual contain no errata section, and Renesas publishes errata per topic as Technical Updates (TN-RA*) that were not opened in this session; this is not a finding of absence.", status: "missing", value: null }
+    reset_state: { evidence: ["ra4m1-um-rev1.10#reset-gpio", "ra4m1-um-rev1.10#pfs-initial-rule", "ra4m1-um-rev1.10#pfs-pdr", "ra4m1-um-rev1.10#pfs-pcr"], note: "All other pads: PmnPFS = 0 after reset, i.e. general I/O (PMR 0), input (PDR 0), no pull-up (PCR 0), low drive (DSCR 0).", status: "single-source", value: "input" }
+    strap: { evidence: ["ra4m1-um-rev1.10#md-table"], note: "No strap on this pad: the only mode-setting pin is MD (P201), Table 3.1. Negative finding from the single table; no second key yet.", status: "single-source", value: "none" }
+    touch:
+      channel: 13
+  P105:
+    errata: []
+    functions:
+      - { fn: "GPIO", routing: "iomux" }
+      - { fn: "KR05", routing: "iomux" }
+      - { fn: "IRQ0", routing: "iomux" }
+      - { fn: "GTETRGA", routing: "iomux" }
+      - { fn: "GTIOC1A", routing: "iomux" }
+      - { fn: "SSLA2", routing: "iomux" }
+      - { fn: "COM1", routing: "iomux" }
+      - { fn: "TS34", routing: "iomux" }
+    gpio: 105
+    input_only: { evidence: ["ra4m1-ds-rev1.10#input-ports", "ra4m1-ds-rev1.10#pin-list-p25"], note: "Not in the datasheet list of input-only ports (P200, P214, P215); output functions appear in the pin list.", status: "single-source", value: false }
+    power_up_glitch: { evidence: [], note: "No power-up glitch / errata item for this pad could be established. The RA4M1 datasheet and user manual contain no errata section, and Renesas publishes errata per topic as Technical Updates (TN-RA*) that were not opened in this session; this is not a finding of absence.", status: "missing", value: null }
+    reset_state: { evidence: ["ra4m1-um-rev1.10#reset-gpio", "ra4m1-um-rev1.10#pfs-initial-rule", "ra4m1-um-rev1.10#pfs-pdr", "ra4m1-um-rev1.10#pfs-pcr"], note: "All other pads: PmnPFS = 0 after reset, i.e. general I/O (PMR 0), input (PDR 0), no pull-up (PCR 0), low drive (DSCR 0).", status: "single-source", value: "input" }
+    strap: { evidence: ["ra4m1-um-rev1.10#md-table"], note: "No strap on this pad: the only mode-setting pin is MD (P201), Table 3.1. Negative finding from the single table; no second key yet.", status: "single-source", value: "none" }
+    touch:
+      channel: 34
+  P106:
+    errata: []
+    functions:
+      - { fn: "GPIO", routing: "iomux" }
+      - { fn: "KR06", routing: "iomux" }
+      - { fn: "GTIOC0B", routing: "iomux" }
+      - { fn: "SSLA3", routing: "iomux" }
+      - { fn: "COM2", routing: "iomux" }
+    gpio: 106
+    input_only: { evidence: ["ra4m1-ds-rev1.10#input-ports", "ra4m1-ds-rev1.10#pin-list-p25"], note: "Not in the datasheet list of input-only ports (P200, P214, P215); output functions appear in the pin list.", status: "single-source", value: false }
+    power_up_glitch: { evidence: [], note: "No power-up glitch / errata item for this pad could be established. The RA4M1 datasheet and user manual contain no errata section, and Renesas publishes errata per topic as Technical Updates (TN-RA*) that were not opened in this session; this is not a finding of absence.", status: "missing", value: null }
+    reset_state: { evidence: ["ra4m1-um-rev1.10#reset-gpio", "ra4m1-um-rev1.10#pfs-initial-rule", "ra4m1-um-rev1.10#pfs-pdr", "ra4m1-um-rev1.10#pfs-pcr"], note: "All other pads: PmnPFS = 0 after reset, i.e. general I/O (PMR 0), input (PDR 0), no pull-up (PCR 0), low drive (DSCR 0).", status: "single-source", value: "input" }
+    strap: { evidence: ["ra4m1-um-rev1.10#md-table"], note: "No strap on this pad: the only mode-setting pin is MD (P201), Table 3.1. Negative finding from the single table; no second key yet.", status: "single-source", value: "none" }
+  P107:
+    errata: []
+    functions:
+      - { fn: "GPIO", routing: "iomux" }
+      - { fn: "KR07", routing: "iomux" }
+      - { fn: "GTIOC0A", routing: "iomux" }
+      - { fn: "COM3", routing: "iomux" }
+    gpio: 107
+    input_only: { evidence: ["ra4m1-ds-rev1.10#input-ports", "ra4m1-ds-rev1.10#pin-list-p25"], note: "Not in the datasheet list of input-only ports (P200, P214, P215); output functions appear in the pin list.", status: "single-source", value: false }
+    power_up_glitch: { evidence: [], note: "No power-up glitch / errata item for this pad could be established. The RA4M1 datasheet and user manual contain no errata section, and Renesas publishes errata per topic as Technical Updates (TN-RA*) that were not opened in this session; this is not a finding of absence.", status: "missing", value: null }
+    reset_state: { evidence: ["ra4m1-um-rev1.10#reset-gpio", "ra4m1-um-rev1.10#pfs-initial-rule", "ra4m1-um-rev1.10#pfs-pdr", "ra4m1-um-rev1.10#pfs-pcr"], note: "All other pads: PmnPFS = 0 after reset, i.e. general I/O (PMR 0), input (PDR 0), no pull-up (PCR 0), low drive (DSCR 0).", status: "single-source", value: "input" }
+    strap: { evidence: ["ra4m1-um-rev1.10#md-table"], note: "No strap on this pad: the only mode-setting pin is MD (P201), Table 3.1. Negative finding from the single table; no second key yet.", status: "single-source", value: "none" }
+  P108:
+    errata: []
+    functions:
+      - { fn: "GPIO", routing: "iomux" }
+      - { fn: "TMS", routing: "fixed" }
+      - { fn: "SWDIO", routing: "fixed" }
+      - { fn: "GTOULO", routing: "iomux" }
+      - { fn: "GTIOC0B", routing: "iomux" }
+      - { fn: "CTS9_", routing: "iomux" }
+      - { fn: "RTS9", routing: "iomux" }
+      - { fn: "SS9", routing: "iomux" }
+      - { fn: "SSLB0", routing: "iomux" }
+    gpio: 108
+    jtag: "TMS/SWDIO"
+    input_only: { evidence: ["ra4m1-ds-rev1.10#input-ports", "ra4m1-ds-rev1.10#pin-list-p24"], note: "Not in the datasheet list of input-only ports (P200, P214, P215); output functions appear in the pin list.", status: "single-source", value: false }
+    power_up_glitch: { evidence: [], note: "No power-up glitch / errata item for this pad could be established. The RA4M1 datasheet and user manual contain no errata section, and Renesas publishes errata per topic as Technical Updates (TN-RA*) that were not opened in this session; this is not a finding of absence.", status: "missing", value: null }
+    reset_state: { evidence: ["ra4m1-um-rev1.10#reset-gpio", "ra4m1-um-rev1.10#pfs-initial", "ra4m1-um-rev1.10#pfs-pcr", "ra4m1-um-rev1.10#pfs-pmr"], note: "PmnPFS initial value 0001 0010h: PMR = 1 (debug function selected at reset) and PCR = 1 (input pull-up enabled); the manual states the pull-up is disabled while reset is asserted. Pin is a debug pin until firmware reconfigures it.", status: "single-source", value: "pullup" }
+    strap: { evidence: ["ra4m1-um-rev1.10#md-table"], note: "No strap on this pad: the only mode-setting pin is MD (P201), Table 3.1. Negative finding from the single table; no second key yet.", status: "single-source", value: "none" }
+  P109:
+    errata: []
+    functions:
+      - { fn: "GPIO", routing: "iomux" }
+      - { fn: "TDO", routing: "fixed" }
+      - { fn: "SWO", routing: "fixed" }
+      - { fn: "CLKOUT", routing: "iomux" }
+      - { fn: "GTOVUP", routing: "iomux" }
+      - { fn: "GTIOC1A", routing: "iomux" }
+      - { fn: "CTX0", routing: "iomux" }
+      - { fn: "SCK1", routing: "iomux" }
+      - { fn: "TXD9", routing: "iomux" }
+      - { fn: "MOSI9", routing: "iomux" }
+      - { fn: "SDA9", routing: "iomux" }
+      - { fn: "MOSIB", routing: "iomux" }
+      - { fn: "SEG23", routing: "iomux" }
+      - { fn: "TS10", routing: "iomux" }
+    gpio: 109
+    jtag: "TDO/SWO"
+    input_only: { evidence: ["ra4m1-ds-rev1.10#input-ports", "ra4m1-ds-rev1.10#pin-list-p24"], note: "Not in the datasheet list of input-only ports (P200, P214, P215); output functions appear in the pin list.", status: "single-source", value: false }
+    power_up_glitch: { evidence: [], note: "No power-up glitch / errata item for this pad could be established. The RA4M1 datasheet and user manual contain no errata section, and Renesas publishes errata per topic as Technical Updates (TN-RA*) that were not opened in this session; this is not a finding of absence.", status: "missing", value: null }
+    reset_state: { evidence: ["ra4m1-um-rev1.10#reset-gpio", "ra4m1-um-rev1.10#pfs-initial", "ra4m1-um-rev1.10#pfs-pdr", "ra4m1-um-rev1.10#pfs-pmr"], note: "PmnPFS initial value 0001 0000h: PMR = 1 (debug function TDO/SWO selected at reset), PCR = 0 (no pull-up), PDR = 0. How the debug function drives the pin at reset is not stated in the documents read; recorded as input per PDR = 0.", status: "single-source", value: "input" }
+    strap: { evidence: ["ra4m1-um-rev1.10#md-table"], note: "No strap on this pad: the only mode-setting pin is MD (P201), Table 3.1. Negative finding from the single table; no second key yet.", status: "single-source", value: "none" }
+    touch:
+      channel: 10
+  P110:
+    errata: []
+    functions:
+      - { fn: "GPIO", routing: "iomux" }
+      - { fn: "TDI", routing: "fixed" }
+      - { fn: "IRQ3", routing: "iomux" }
+      - { fn: "GTOVLO", routing: "iomux" }
+      - { fn: "GTIOC1B", routing: "iomux" }
+      - { fn: "CRX0", routing: "iomux" }
+      - { fn: "CTS2_", routing: "iomux" }
+      - { fn: "RTS2", routing: "iomux" }
+      - { fn: "SS2", routing: "iomux" }
+      - { fn: "RXD9", routing: "iomux" }
+      - { fn: "MISO9", routing: "iomux" }
+      - { fn: "SCL9", routing: "iomux" }
+      - { fn: "MISOB", routing: "iomux" }
+      - { fn: "VCOUT", routing: "iomux" }
+      - { fn: "SEG24", routing: "iomux" }
+    gpio: 110
+    jtag: "TDI"
+    input_only: { evidence: ["ra4m1-ds-rev1.10#input-ports", "ra4m1-ds-rev1.10#pin-list-p24"], note: "Not in the datasheet list of input-only ports (P200, P214, P215); output functions appear in the pin list.", status: "single-source", value: false }
+    power_up_glitch: { evidence: [], note: "No power-up glitch / errata item for this pad could be established. The RA4M1 datasheet and user manual contain no errata section, and Renesas publishes errata per topic as Technical Updates (TN-RA*) that were not opened in this session; this is not a finding of absence.", status: "missing", value: null }
+    reset_state: { evidence: ["ra4m1-um-rev1.10#reset-gpio", "ra4m1-um-rev1.10#pfs-initial", "ra4m1-um-rev1.10#pfs-pcr", "ra4m1-um-rev1.10#pfs-pmr"], note: "PmnPFS initial value 0001 0010h: PMR = 1 (debug function selected at reset) and PCR = 1 (input pull-up enabled); the manual states the pull-up is disabled while reset is asserted. Pin is a debug pin until firmware reconfigures it.", status: "single-source", value: "pullup" }
+    strap: { evidence: ["ra4m1-um-rev1.10#md-table"], note: "No strap on this pad: the only mode-setting pin is MD (P201), Table 3.1. Negative finding from the single table; no second key yet.", status: "single-source", value: "none" }
+  P111:
+    errata: []
+    functions:
+      - { fn: "GPIO", routing: "iomux" }
+      - { fn: "IRQ4", routing: "iomux" }
+      - { fn: "GTIOC3A", routing: "iomux" }
+      - { fn: "SCK2", routing: "iomux" }
+      - { fn: "SCK9", routing: "iomux" }
+      - { fn: "RSPCKB", routing: "iomux" }
+      - { fn: "CAPH", routing: "iomux" }
+      - { fn: "TS12", routing: "iomux" }
+    gpio: 111
+    input_only: { evidence: ["ra4m1-ds-rev1.10#input-ports", "ra4m1-ds-rev1.10#pin-list-p25"], note: "Not in the datasheet list of input-only ports (P200, P214, P215); output functions appear in the pin list.", status: "single-source", value: false }
+    power_up_glitch: { evidence: [], note: "No power-up glitch / errata item for this pad could be established. The RA4M1 datasheet and user manual contain no errata section, and Renesas publishes errata per topic as Technical Updates (TN-RA*) that were not opened in this session; this is not a finding of absence.", status: "missing", value: null }
+    reset_state: { evidence: ["ra4m1-um-rev1.10#reset-gpio", "ra4m1-um-rev1.10#pfs-initial-rule", "ra4m1-um-rev1.10#pfs-pdr", "ra4m1-um-rev1.10#pfs-pcr"], note: "All other pads: PmnPFS = 0 after reset, i.e. general I/O (PMR 0), input (PDR 0), no pull-up (PCR 0), low drive (DSCR 0).", status: "single-source", value: "input" }
+    strap: { evidence: ["ra4m1-um-rev1.10#md-table"], note: "No strap on this pad: the only mode-setting pin is MD (P201), Table 3.1. Negative finding from the single table; no second key yet.", status: "single-source", value: "none" }
+    touch:
+      channel: 12
+  P112:
+    errata: []
+    functions:
+      - { fn: "GPIO", routing: "iomux" }
+      - { fn: "GTIOC3B", routing: "iomux" }
+      - { fn: "TXD2", routing: "iomux" }
+      - { fn: "MOSI2", routing: "iomux" }
+      - { fn: "SDA2", routing: "iomux" }
+      - { fn: "SCK1", routing: "iomux" }
+      - { fn: "SSLB0", routing: "iomux" }
+      - { fn: "SSIBCK0", routing: "iomux" }
+      - { fn: "CAPL", routing: "iomux" }
+      - { fn: "TSCAP", routing: "iomux" }
+    gpio: 112
+    input_only: { evidence: ["ra4m1-ds-rev1.10#input-ports", "ra4m1-ds-rev1.10#pin-list-p25"], note: "Not in the datasheet list of input-only ports (P200, P214, P215); output functions appear in the pin list.", status: "single-source", value: false }
+    power_up_glitch: { evidence: [], note: "No power-up glitch / errata item for this pad could be established. The RA4M1 datasheet and user manual contain no errata section, and Renesas publishes errata per topic as Technical Updates (TN-RA*) that were not opened in this session; this is not a finding of absence.", status: "missing", value: null }
+    reset_state: { evidence: ["ra4m1-um-rev1.10#reset-gpio", "ra4m1-um-rev1.10#pfs-initial-rule", "ra4m1-um-rev1.10#pfs-pdr", "ra4m1-um-rev1.10#pfs-pcr"], note: "All other pads: PmnPFS = 0 after reset, i.e. general I/O (PMR 0), input (PDR 0), no pull-up (PCR 0), low drive (DSCR 0).", status: "single-source", value: "input" }
+    strap: { evidence: ["ra4m1-um-rev1.10#md-table"], note: "No strap on this pad: the only mode-setting pin is MD (P201), Table 3.1. Negative finding from the single table; no second key yet.", status: "single-source", value: "none" }
+  P113:
+    errata: []
+    functions:
+      - { fn: "GPIO", routing: "iomux" }
+      - { fn: "GTIOC2A", routing: "iomux" }
+      - { fn: "SSILRCK0", routing: "iomux" }
+      - { fn: "SSIFS0", routing: "iomux" }
+      - { fn: "SEG00", routing: "iomux" }
+      - { fn: "COM4", routing: "iomux" }
+      - { fn: "TS27", routing: "iomux" }
+    gpio: 113
+    input_only: { evidence: ["ra4m1-ds-rev1.10#input-ports", "ra4m1-ds-rev1.10#pin-list-p25"], note: "Not in the datasheet list of input-only ports (P200, P214, P215); output functions appear in the pin list.", status: "single-source", value: false }
+    power_up_glitch: { evidence: [], note: "No power-up glitch / errata item for this pad could be established. The RA4M1 datasheet and user manual contain no errata section, and Renesas publishes errata per topic as Technical Updates (TN-RA*) that were not opened in this session; this is not a finding of absence.", status: "missing", value: null }
+    reset_state: { evidence: ["ra4m1-um-rev1.10#reset-gpio", "ra4m1-um-rev1.10#pfs-initial-rule", "ra4m1-um-rev1.10#pfs-pdr", "ra4m1-um-rev1.10#pfs-pcr"], note: "All other pads: PmnPFS = 0 after reset, i.e. general I/O (PMR 0), input (PDR 0), no pull-up (PCR 0), low drive (DSCR 0).", status: "single-source", value: "input" }
+    strap: { evidence: ["ra4m1-um-rev1.10#md-table"], note: "No strap on this pad: the only mode-setting pin is MD (P201), Table 3.1. Negative finding from the single table; no second key yet.", status: "single-source", value: "none" }
+    touch:
+      channel: 27
+  P200:
+    errata: []
+    functions:
+      - { fn: "GPIO", routing: "iomux" }
+      - { fn: "NMI", routing: "fixed" }
+    gpio: 200
+    input_only: { evidence: ["ra4m1-ds-rev1.10#input-ports", "ra4m1-ds-rev1.10#io-pin-count"], note: "Datasheet: P200, P214, P215 are input ports (no output driver); 3 input pins on the 64-pin package.", status: "single-source", value: true }
+    power_up_glitch: { evidence: [], note: "No power-up glitch / errata item for this pad could be established. The RA4M1 datasheet and user manual contain no errata section, and Renesas publishes errata per topic as Technical Updates (TN-RA*) that were not opened in this session; this is not a finding of absence.", status: "missing", value: null }
+    reset_state: { evidence: ["ra4m1-um-rev1.10#reset-gpio", "ra4m1-um-rev1.10#pfs-initial-rule", "ra4m1-um-rev1.10#pfs-pdr", "ra4m1-um-rev1.10#pfs-pcr"], note: "All other pads: PmnPFS = 0 after reset, i.e. general I/O (PMR 0), input (PDR 0), no pull-up (PCR 0), low drive (DSCR 0).", status: "single-source", value: "input" }
+    strap: { evidence: ["ra4m1-um-rev1.10#md-table"], note: "No strap on this pad: the only mode-setting pin is MD (P201), Table 3.1. Negative finding from the single table; no second key yet.", status: "single-source", value: "none" }
+  P201:
+    errata: []
+    functions:
+      - { fn: "GPIO", routing: "iomux" }
+      - { fn: "MD", routing: "fixed" }
+    gpio: 201
+    input_only: { evidence: ["ra4m1-ds-rev1.10#input-ports", "ra4m1-ds-rev1.10#pin-list-p24"], note: "Not in the datasheet list of input-only ports (P200, P214, P215); output functions appear in the pin list.", status: "single-source", value: false }
+    power_up_glitch: { evidence: [], note: "No power-up glitch / errata item for this pad could be established. The RA4M1 datasheet and user manual contain no errata section, and Renesas publishes errata per topic as Technical Updates (TN-RA*) that were not opened in this session; this is not a finding of absence.", status: "missing", value: null }
+    reset_state: { evidence: ["ra4m1-um-rev1.10#pfs-initial", "ra4m1-um-rev1.10#pfs-pcr", "ra4m1-um-rev1.10#md-table"], note: "PmnPFS initial value 0000 0010h: PCR = 1, input pull-up enabled (MD pin).", status: "single-source", value: "pullup" }
+    strap: { evidence: ["ra4m1-um-rev1.10#md-table", "ra4m1-um-rev1.10#md-single-chip", "ra4m1-um-rev1.10#md-boot-low", "ra4m1-um-rev1.10#pfs-initial", "abx00080-sch-v1.2#md-net"], note: "MD is the only mode-setting pin. High at reset release = normal single-chip start (required for running firmware). On the UNO R4 Minima the MD net goes to the BOOT header pin (JANALOG pin 1) and is tied to +5V by R5/R6 5.1 kohm (sch#md-net).", status: "single-source", value: { default_pull: "up", required_at_reset: "high", role: "MD boot mode (low at reset release = SCI/USB boot, high = single-chip)" } }
+  P204:
+    errata: []
+    functions:
+      - { fn: "GPIO", routing: "iomux" }
+      - { fn: "CACREF", routing: "iomux" }
+      - { fn: "AGTIO1", routing: "iomux" }
+      - { fn: "GTIW", routing: "iomux" }
+      - { fn: "GTIOC4B", routing: "iomux" }
+      - { fn: "USB_OVRCURB", routing: "iomux" }
+      - { fn: "SCK0", routing: "iomux" }
+      - { fn: "SCK9", routing: "iomux" }
+      - { fn: "SCL0", routing: "iomux" }
+      - { fn: "RSPCKB", routing: "iomux" }
+      - { fn: "SEG14", routing: "iomux" }
+      - { fn: "TS00", routing: "iomux" }
+    gpio: 204
+    input_only: { evidence: ["ra4m1-ds-rev1.10#input-ports", "ra4m1-ds-rev1.10#pin-list-p24"], note: "Not in the datasheet list of input-only ports (P200, P214, P215); output functions appear in the pin list.", status: "single-source", value: false }
+    power_up_glitch: { evidence: [], note: "No power-up glitch / errata item for this pad could be established. The RA4M1 datasheet and user manual contain no errata section, and Renesas publishes errata per topic as Technical Updates (TN-RA*) that were not opened in this session; this is not a finding of absence.", status: "missing", value: null }
+    reset_state: { evidence: ["ra4m1-um-rev1.10#reset-gpio", "ra4m1-um-rev1.10#pfs-initial-rule", "ra4m1-um-rev1.10#pfs-pdr", "ra4m1-um-rev1.10#pfs-pcr"], note: "All other pads: PmnPFS = 0 after reset, i.e. general I/O (PMR 0), input (PDR 0), no pull-up (PCR 0), low drive (DSCR 0).", status: "single-source", value: "input" }
+    strap: { evidence: ["ra4m1-um-rev1.10#md-table"], note: "No strap on this pad: the only mode-setting pin is MD (P201), Table 3.1. Negative finding from the single table; no second key yet.", status: "single-source", value: "none" }
+    touch:
+      channel: 0
+  P205:
+    errata: []
+    functions:
+      - { fn: "GPIO", routing: "iomux" }
+      - { fn: "CLKOUT", routing: "iomux" }
+      - { fn: "IRQ1", routing: "iomux" }
+      - { fn: "AGTO1", routing: "iomux" }
+      - { fn: "GTIV", routing: "iomux" }
+      - { fn: "GTIOC4A", routing: "iomux" }
+      - { fn: "USB_OVRCURA", routing: "iomux" }
+      - { fn: "TXD0", routing: "iomux" }
+      - { fn: "MOSI0", routing: "iomux" }
+      - { fn: "SDA0", routing: "iomux" }
+      - { fn: "CTS9_", routing: "iomux" }
+      - { fn: "RTS9", routing: "iomux" }
+      - { fn: "SS9", routing: "iomux" }
+      - { fn: "SCL1", routing: "iomux" }
+      - { fn: "SSLB0", routing: "iomux" }
+      - { fn: "SEG13", routing: "iomux" }
+      - { fn: "TSCAP", routing: "iomux" }
+    gpio: 205
+    input_only: { evidence: ["ra4m1-ds-rev1.10#input-ports", "ra4m1-ds-rev1.10#pin-list-p24"], note: "Not in the datasheet list of input-only ports (P200, P214, P215); output functions appear in the pin list.", status: "single-source", value: false }
+    power_up_glitch: { evidence: [], note: "No power-up glitch / errata item for this pad could be established. The RA4M1 datasheet and user manual contain no errata section, and Renesas publishes errata per topic as Technical Updates (TN-RA*) that were not opened in this session; this is not a finding of absence.", status: "missing", value: null }
+    reset_state: { evidence: ["ra4m1-um-rev1.10#reset-gpio", "ra4m1-um-rev1.10#pfs-initial-rule", "ra4m1-um-rev1.10#pfs-pdr", "ra4m1-um-rev1.10#pfs-pcr"], note: "All other pads: PmnPFS = 0 after reset, i.e. general I/O (PMR 0), input (PDR 0), no pull-up (PCR 0), low drive (DSCR 0).", status: "single-source", value: "input" }
+    strap: { evidence: ["ra4m1-um-rev1.10#md-table"], note: "No strap on this pad: the only mode-setting pin is MD (P201), Table 3.1. Negative finding from the single table; no second key yet.", status: "single-source", value: "none" }
+  P206:
+    errata: []
+    functions:
+      - { fn: "GPIO", routing: "iomux" }
+      - { fn: "IRQ0", routing: "iomux" }
+      - { fn: "GTIU", routing: "iomux" }
+      - { fn: "USB_VBUSEN", routing: "iomux" }
+      - { fn: "RXD0", routing: "iomux" }
+      - { fn: "MISO0", routing: "iomux" }
+      - { fn: "SCL0", routing: "iomux" }
+      - { fn: "SDA1", routing: "iomux" }
+      - { fn: "SSLB1", routing: "iomux" }
+      - { fn: "SEG12", routing: "iomux" }
+      - { fn: "TS01", routing: "iomux" }
+    gpio: 206
+    input_only: { evidence: ["ra4m1-ds-rev1.10#input-ports", "ra4m1-ds-rev1.10#pin-list-p24"], note: "Not in the datasheet list of input-only ports (P200, P214, P215); output functions appear in the pin list.", status: "single-source", value: false }
+    power_up_glitch: { evidence: [], note: "No power-up glitch / errata item for this pad could be established. The RA4M1 datasheet and user manual contain no errata section, and Renesas publishes errata per topic as Technical Updates (TN-RA*) that were not opened in this session; this is not a finding of absence.", status: "missing", value: null }
+    reset_state: { evidence: ["ra4m1-um-rev1.10#reset-gpio", "ra4m1-um-rev1.10#pfs-initial-rule", "ra4m1-um-rev1.10#pfs-pdr", "ra4m1-um-rev1.10#pfs-pcr"], note: "All other pads: PmnPFS = 0 after reset, i.e. general I/O (PMR 0), input (PDR 0), no pull-up (PCR 0), low drive (DSCR 0).", status: "single-source", value: "input" }
+    strap: { evidence: ["ra4m1-um-rev1.10#md-table"], note: "No strap on this pad: the only mode-setting pin is MD (P201), Table 3.1. Negative finding from the single table; no second key yet.", status: "single-source", value: "none" }
+    touch:
+      channel: 1
+  P212:
+    errata: []
+    functions:
+      - { fn: "GPIO", routing: "iomux" }
+      - { fn: "EXTAL", routing: "fixed" }
+      - { fn: "IRQ3", routing: "iomux" }
+      - { fn: "AGTEE1", routing: "iomux" }
+      - { fn: "GTETRGB", routing: "iomux" }
+      - { fn: "GTIOC0B", routing: "iomux" }
+      - { fn: "RXD1", routing: "iomux" }
+      - { fn: "MISO1", routing: "iomux" }
+      - { fn: "SCL1", routing: "iomux" }
+    gpio: 212
+    input_only: { evidence: ["ra4m1-ds-rev1.10#input-ports", "ra4m1-ds-rev1.10#pin-list-p23"], note: "Not in the datasheet list of input-only ports (P200, P214, P215); output functions appear in the pin list.", status: "single-source", value: false }
+    power_up_glitch: { evidence: [], note: "No power-up glitch / errata item for this pad could be established. The RA4M1 datasheet and user manual contain no errata section, and Renesas publishes errata per topic as Technical Updates (TN-RA*) that were not opened in this session; this is not a finding of absence.", status: "missing", value: null }
+    reset_state: { evidence: ["ra4m1-um-rev1.10#reset-gpio", "ra4m1-um-rev1.10#pfs-initial-rule", "ra4m1-um-rev1.10#pfs-pdr", "ra4m1-um-rev1.10#pfs-pcr"], note: "All other pads: PmnPFS = 0 after reset, i.e. general I/O (PMR 0), input (PDR 0), no pull-up (PCR 0), low drive (DSCR 0).", status: "single-source", value: "input" }
+    strap: { evidence: ["ra4m1-um-rev1.10#md-table"], note: "No strap on this pad: the only mode-setting pin is MD (P201), Table 3.1. Negative finding from the single table; no second key yet.", status: "single-source", value: "none" }
+  P213:
+    errata: []
+    functions:
+      - { fn: "GPIO", routing: "iomux" }
+      - { fn: "XTAL", routing: "fixed" }
+      - { fn: "IRQ2", routing: "iomux" }
+      - { fn: "GTETRGA", routing: "iomux" }
+      - { fn: "GTIOC0A", routing: "iomux" }
+      - { fn: "TXD1", routing: "iomux" }
+      - { fn: "MOSI1", routing: "iomux" }
+      - { fn: "SDA1", routing: "iomux" }
+    gpio: 213
+    input_only: { evidence: ["ra4m1-ds-rev1.10#input-ports", "ra4m1-ds-rev1.10#pin-list-p23"], note: "Not in the datasheet list of input-only ports (P200, P214, P215); output functions appear in the pin list.", status: "single-source", value: false }
+    power_up_glitch: { evidence: [], note: "No power-up glitch / errata item for this pad could be established. The RA4M1 datasheet and user manual contain no errata section, and Renesas publishes errata per topic as Technical Updates (TN-RA*) that were not opened in this session; this is not a finding of absence.", status: "missing", value: null }
+    reset_state: { evidence: ["ra4m1-um-rev1.10#reset-gpio", "ra4m1-um-rev1.10#pfs-initial-rule", "ra4m1-um-rev1.10#pfs-pdr", "ra4m1-um-rev1.10#pfs-pcr"], note: "All other pads: PmnPFS = 0 after reset, i.e. general I/O (PMR 0), input (PDR 0), no pull-up (PCR 0), low drive (DSCR 0).", status: "single-source", value: "input" }
+    strap: { evidence: ["ra4m1-um-rev1.10#md-table"], note: "No strap on this pad: the only mode-setting pin is MD (P201), Table 3.1. Negative finding from the single table; no second key yet.", status: "single-source", value: "none" }
+  P214:
+    errata: []
+    functions:
+      - { fn: "GPIO", routing: "iomux" }
+      - { fn: "XCOUT", routing: "fixed" }
+    gpio: 214
+    input_only: { evidence: ["ra4m1-ds-rev1.10#input-ports", "ra4m1-ds-rev1.10#io-pin-count"], note: "Datasheet: P200, P214, P215 are input ports (no output driver); 3 input pins on the 64-pin package.", status: "single-source", value: true }
+    power_up_glitch: { evidence: [], note: "No power-up glitch / errata item for this pad could be established. The RA4M1 datasheet and user manual contain no errata section, and Renesas publishes errata per topic as Technical Updates (TN-RA*) that were not opened in this session; this is not a finding of absence.", status: "missing", value: null }
+    reset_state: { evidence: ["ra4m1-um-rev1.10#reset-gpio", "ra4m1-um-rev1.10#pfs-initial-rule", "ra4m1-um-rev1.10#pfs-pdr", "ra4m1-um-rev1.10#pfs-pcr"], note: "All other pads: PmnPFS = 0 after reset, i.e. general I/O (PMR 0), input (PDR 0), no pull-up (PCR 0), low drive (DSCR 0).", status: "single-source", value: "input" }
+    strap: { evidence: ["ra4m1-um-rev1.10#md-table"], note: "No strap on this pad: the only mode-setting pin is MD (P201), Table 3.1. Negative finding from the single table; no second key yet.", status: "single-source", value: "none" }
+  P215:
+    errata: []
+    functions:
+      - { fn: "GPIO", routing: "iomux" }
+      - { fn: "XCIN", routing: "fixed" }
+    gpio: 215
+    input_only: { evidence: ["ra4m1-ds-rev1.10#input-ports", "ra4m1-ds-rev1.10#io-pin-count"], note: "Datasheet: P200, P214, P215 are input ports (no output driver); 3 input pins on the 64-pin package.", status: "single-source", value: true }
+    power_up_glitch: { evidence: [], note: "No power-up glitch / errata item for this pad could be established. The RA4M1 datasheet and user manual contain no errata section, and Renesas publishes errata per topic as Technical Updates (TN-RA*) that were not opened in this session; this is not a finding of absence.", status: "missing", value: null }
+    reset_state: { evidence: ["ra4m1-um-rev1.10#reset-gpio", "ra4m1-um-rev1.10#pfs-initial-rule", "ra4m1-um-rev1.10#pfs-pdr", "ra4m1-um-rev1.10#pfs-pcr"], note: "All other pads: PmnPFS = 0 after reset, i.e. general I/O (PMR 0), input (PDR 0), no pull-up (PCR 0), low drive (DSCR 0).", status: "single-source", value: "input" }
+    strap: { evidence: ["ra4m1-um-rev1.10#md-table"], note: "No strap on this pad: the only mode-setting pin is MD (P201), Table 3.1. Negative finding from the single table; no second key yet.", status: "single-source", value: "none" }
+  P300:
+    errata: []
+    functions:
+      - { fn: "GPIO", routing: "iomux" }
+      - { fn: "TCK", routing: "fixed" }
+      - { fn: "SWCLK", routing: "fixed" }
+      - { fn: "GTOUUP", routing: "iomux" }
+      - { fn: "GTIOC0A", routing: "iomux" }
+      - { fn: "SSLB1", routing: "iomux" }
+    gpio: 300
+    jtag: "TCK/SWCLK"
+    input_only: { evidence: ["ra4m1-ds-rev1.10#input-ports", "ra4m1-ds-rev1.10#pin-list-p24"], note: "Not in the datasheet list of input-only ports (P200, P214, P215); output functions appear in the pin list.", status: "single-source", value: false }
+    power_up_glitch: { evidence: [], note: "No power-up glitch / errata item for this pad could be established. The RA4M1 datasheet and user manual contain no errata section, and Renesas publishes errata per topic as Technical Updates (TN-RA*) that were not opened in this session; this is not a finding of absence.", status: "missing", value: null }
+    reset_state: { evidence: ["ra4m1-um-rev1.10#reset-gpio", "ra4m1-um-rev1.10#pfs-initial", "ra4m1-um-rev1.10#pfs-pcr", "ra4m1-um-rev1.10#pfs-pmr"], note: "PmnPFS initial value 0001 0010h: PMR = 1 (debug function selected at reset) and PCR = 1 (input pull-up enabled); the manual states the pull-up is disabled while reset is asserted. Pin is a debug pin until firmware reconfigures it.", status: "single-source", value: "pullup" }
+    strap: { evidence: ["ra4m1-um-rev1.10#md-table"], note: "No strap on this pad: the only mode-setting pin is MD (P201), Table 3.1. Negative finding from the single table; no second key yet.", status: "single-source", value: "none" }
+  P301:
+    errata: []
+    functions:
+      - { fn: "GPIO", routing: "iomux" }
+      - { fn: "IRQ6", routing: "iomux" }
+      - { fn: "AGTIO0", routing: "iomux" }
+      - { fn: "GTOULO", routing: "iomux" }
+      - { fn: "GTIOC4B", routing: "iomux" }
+      - { fn: "RXD2", routing: "iomux" }
+      - { fn: "MISO2", routing: "iomux" }
+      - { fn: "SCL2", routing: "iomux" }
+      - { fn: "CTS9_", routing: "iomux" }
+      - { fn: "RTS9", routing: "iomux" }
+      - { fn: "SS9", routing: "iomux" }
+      - { fn: "SSLB2", routing: "iomux" }
+      - { fn: "SEG01", routing: "iomux" }
+      - { fn: "COM5", routing: "iomux" }
+      - { fn: "TS09", routing: "iomux" }
+    gpio: 301
+    input_only: { evidence: ["ra4m1-ds-rev1.10#input-ports", "ra4m1-ds-rev1.10#pin-list-p24"], note: "Not in the datasheet list of input-only ports (P200, P214, P215); output functions appear in the pin list.", status: "single-source", value: false }
+    power_up_glitch: { evidence: [], note: "No power-up glitch / errata item for this pad could be established. The RA4M1 datasheet and user manual contain no errata section, and Renesas publishes errata per topic as Technical Updates (TN-RA*) that were not opened in this session; this is not a finding of absence.", status: "missing", value: null }
+    reset_state: { evidence: ["ra4m1-um-rev1.10#reset-gpio", "ra4m1-um-rev1.10#pfs-initial-rule", "ra4m1-um-rev1.10#pfs-pdr", "ra4m1-um-rev1.10#pfs-pcr"], note: "All other pads: PmnPFS = 0 after reset, i.e. general I/O (PMR 0), input (PDR 0), no pull-up (PCR 0), low drive (DSCR 0).", status: "single-source", value: "input" }
+    strap: { evidence: ["ra4m1-um-rev1.10#md-table"], note: "No strap on this pad: the only mode-setting pin is MD (P201), Table 3.1. Negative finding from the single table; no second key yet.", status: "single-source", value: "none" }
+    touch:
+      channel: 9
+  P302:
+    errata: []
+    functions:
+      - { fn: "GPIO", routing: "iomux" }
+      - { fn: "IRQ5", routing: "iomux" }
+      - { fn: "GTOUUP", routing: "iomux" }
+      - { fn: "GTIOC4A", routing: "iomux" }
+      - { fn: "TXD2", routing: "iomux" }
+      - { fn: "MOSI2", routing: "iomux" }
+      - { fn: "SDA2", routing: "iomux" }
+      - { fn: "SSLB3", routing: "iomux" }
+      - { fn: "SEG02", routing: "iomux" }
+      - { fn: "COM6", routing: "iomux" }
+      - { fn: "TS08", routing: "iomux" }
+    gpio: 302
+    input_only: { evidence: ["ra4m1-ds-rev1.10#input-ports", "ra4m1-ds-rev1.10#pin-list-p24"], note: "Not in the datasheet list of input-only ports (P200, P214, P215); output functions appear in the pin list.", status: "single-source", value: false }
+    power_up_glitch: { evidence: [], note: "No power-up glitch / errata item for this pad could be established. The RA4M1 datasheet and user manual contain no errata section, and Renesas publishes errata per topic as Technical Updates (TN-RA*) that were not opened in this session; this is not a finding of absence.", status: "missing", value: null }
+    reset_state: { evidence: ["ra4m1-um-rev1.10#reset-gpio", "ra4m1-um-rev1.10#pfs-initial-rule", "ra4m1-um-rev1.10#pfs-pdr", "ra4m1-um-rev1.10#pfs-pcr"], note: "All other pads: PmnPFS = 0 after reset, i.e. general I/O (PMR 0), input (PDR 0), no pull-up (PCR 0), low drive (DSCR 0).", status: "single-source", value: "input" }
+    strap: { evidence: ["ra4m1-um-rev1.10#md-table"], note: "No strap on this pad: the only mode-setting pin is MD (P201), Table 3.1. Negative finding from the single table; no second key yet.", status: "single-source", value: "none" }
+    touch:
+      channel: 8
+  P303:
+    errata: []
+    functions:
+      - { fn: "GPIO", routing: "iomux" }
+      - { fn: "GTIOC7B", routing: "iomux" }
+      - { fn: "SEG03", routing: "iomux" }
+      - { fn: "COM7", routing: "iomux" }
+      - { fn: "TS02", routing: "iomux" }
+    gpio: 303
+    input_only: { evidence: ["ra4m1-ds-rev1.10#input-ports", "ra4m1-ds-rev1.10#pin-list-p24"], note: "Not in the datasheet list of input-only ports (P200, P214, P215); output functions appear in the pin list.", status: "single-source", value: false }
+    power_up_glitch: { evidence: [], note: "No power-up glitch / errata item for this pad could be established. The RA4M1 datasheet and user manual contain no errata section, and Renesas publishes errata per topic as Technical Updates (TN-RA*) that were not opened in this session; this is not a finding of absence.", status: "missing", value: null }
+    reset_state: { evidence: ["ra4m1-um-rev1.10#reset-gpio", "ra4m1-um-rev1.10#pfs-initial-rule", "ra4m1-um-rev1.10#pfs-pdr", "ra4m1-um-rev1.10#pfs-pcr"], note: "All other pads: PmnPFS = 0 after reset, i.e. general I/O (PMR 0), input (PDR 0), no pull-up (PCR 0), low drive (DSCR 0).", status: "single-source", value: "input" }
+    strap: { evidence: ["ra4m1-um-rev1.10#md-table"], note: "No strap on this pad: the only mode-setting pin is MD (P201), Table 3.1. Negative finding from the single table; no second key yet.", status: "single-source", value: "none" }
+    touch:
+      channel: 2
+  P304:
+    errata: []
+    functions:
+      - { fn: "GPIO", routing: "iomux" }
+      - { fn: "IRQ9", routing: "iomux" }
+      - { fn: "GTIOC7A", routing: "iomux" }
+      - { fn: "SEG20", routing: "iomux" }
+      - { fn: "TS11", routing: "iomux" }
+    gpio: 304
+    input_only: { evidence: ["ra4m1-ds-rev1.10#input-ports", "ra4m1-ds-rev1.10#pin-list-p24"], note: "Not in the datasheet list of input-only ports (P200, P214, P215); output functions appear in the pin list.", status: "single-source", value: false }
+    power_up_glitch: { evidence: [], note: "No power-up glitch / errata item for this pad could be established. The RA4M1 datasheet and user manual contain no errata section, and Renesas publishes errata per topic as Technical Updates (TN-RA*) that were not opened in this session; this is not a finding of absence.", status: "missing", value: null }
+    reset_state: { evidence: ["ra4m1-um-rev1.10#reset-gpio", "ra4m1-um-rev1.10#pfs-initial-rule", "ra4m1-um-rev1.10#pfs-pdr", "ra4m1-um-rev1.10#pfs-pcr"], note: "All other pads: PmnPFS = 0 after reset, i.e. general I/O (PMR 0), input (PDR 0), no pull-up (PCR 0), low drive (DSCR 0).", status: "single-source", value: "input" }
+    strap: { evidence: ["ra4m1-um-rev1.10#md-table"], note: "No strap on this pad: the only mode-setting pin is MD (P201), Table 3.1. Negative finding from the single table; no second key yet.", status: "single-source", value: "none" }
+    touch:
+      channel: 11
+  P400:
+    errata: []
+    functions:
+      - { fn: "GPIO", routing: "iomux" }
+      - { fn: "CACREF", routing: "iomux" }
+      - { fn: "IRQ0", routing: "iomux" }
+      - { fn: "AGTIO1", routing: "iomux" }
+      - { fn: "GTIOC6A", routing: "iomux" }
+      - { fn: "SCK0", routing: "iomux" }
+      - { fn: "SCK1", routing: "iomux" }
+      - { fn: "SCL0", routing: "iomux" }
+      - { fn: "AUDIO_CLK", routing: "iomux" }
+      - { fn: "SEG04", routing: "iomux" }
+      - { fn: "TS20", routing: "iomux" }
+    gpio: 400
+    input_only: { evidence: ["ra4m1-ds-rev1.10#input-ports", "ra4m1-ds-rev1.10#pin-list-p23"], note: "Not in the datasheet list of input-only ports (P200, P214, P215); output functions appear in the pin list.", status: "single-source", value: false }
+    power_up_glitch: { evidence: [], note: "No power-up glitch / errata item for this pad could be established. The RA4M1 datasheet and user manual contain no errata section, and Renesas publishes errata per topic as Technical Updates (TN-RA*) that were not opened in this session; this is not a finding of absence.", status: "missing", value: null }
+    reset_state: { evidence: ["ra4m1-um-rev1.10#reset-gpio", "ra4m1-um-rev1.10#pfs-initial-rule", "ra4m1-um-rev1.10#pfs-pdr", "ra4m1-um-rev1.10#pfs-pcr"], note: "All other pads: PmnPFS = 0 after reset, i.e. general I/O (PMR 0), input (PDR 0), no pull-up (PCR 0), low drive (DSCR 0).", status: "single-source", value: "input" }
+    strap: { evidence: ["ra4m1-um-rev1.10#md-table"], note: "No strap on this pad: the only mode-setting pin is MD (P201), Table 3.1. Negative finding from the single table; no second key yet.", status: "single-source", value: "none" }
+    touch:
+      channel: 20
+  P401:
+    errata: []
+    functions:
+      - { fn: "GPIO", routing: "iomux" }
+      - { fn: "IRQ5", routing: "iomux" }
+      - { fn: "GTETRGA", routing: "iomux" }
+      - { fn: "GTIOC6B", routing: "iomux" }
+      - { fn: "CTX0", routing: "iomux" }
+      - { fn: "CTS0_", routing: "iomux" }
+      - { fn: "RTS0", routing: "iomux" }
+      - { fn: "SS0", routing: "iomux" }
+      - { fn: "TXD1", routing: "iomux" }
+      - { fn: "MOSI1", routing: "iomux" }
+      - { fn: "SDA1", routing: "iomux" }
+      - { fn: "SDA0", routing: "iomux" }
+      - { fn: "SEG05", routing: "iomux" }
+      - { fn: "TS19", routing: "iomux" }
+    gpio: 401
+    input_only: { evidence: ["ra4m1-ds-rev1.10#input-ports", "ra4m1-ds-rev1.10#pin-list-p23"], note: "Not in the datasheet list of input-only ports (P200, P214, P215); output functions appear in the pin list.", status: "single-source", value: false }
+    power_up_glitch: { evidence: [], note: "No power-up glitch / errata item for this pad could be established. The RA4M1 datasheet and user manual contain no errata section, and Renesas publishes errata per topic as Technical Updates (TN-RA*) that were not opened in this session; this is not a finding of absence.", status: "missing", value: null }
+    reset_state: { evidence: ["ra4m1-um-rev1.10#reset-gpio", "ra4m1-um-rev1.10#pfs-initial-rule", "ra4m1-um-rev1.10#pfs-pdr", "ra4m1-um-rev1.10#pfs-pcr"], note: "All other pads: PmnPFS = 0 after reset, i.e. general I/O (PMR 0), input (PDR 0), no pull-up (PCR 0), low drive (DSCR 0).", status: "single-source", value: "input" }
+    strap: { evidence: ["ra4m1-um-rev1.10#md-table"], note: "No strap on this pad: the only mode-setting pin is MD (P201), Table 3.1. Negative finding from the single table; no second key yet.", status: "single-source", value: "none" }
+    touch:
+      channel: 19
+  P402:
+    errata: []
+    functions:
+      - { fn: "GPIO", routing: "iomux" }
+      - { fn: "VBATWIO0", routing: "iomux" }
+      - { fn: "IRQ4", routing: "iomux" }
+      - { fn: "AGTIO0", routing: "iomux" }
+      - { fn: "AGTIO1", routing: "iomux" }
+      - { fn: "RTCIC0", routing: "iomux" }
+      - { fn: "CRX0", routing: "iomux" }
+      - { fn: "RXD1", routing: "iomux" }
+      - { fn: "MISO1", routing: "iomux" }
+      - { fn: "SCL1", routing: "iomux" }
+      - { fn: "SEG06", routing: "iomux" }
+      - { fn: "TS18", routing: "iomux" }
+    gpio: 402
+    input_only: { evidence: ["ra4m1-ds-rev1.10#input-ports", "ra4m1-ds-rev1.10#pin-list-p23"], note: "Not in the datasheet list of input-only ports (P200, P214, P215); output functions appear in the pin list.", status: "single-source", value: false }
+    power_up_glitch: { evidence: [], note: "No power-up glitch / errata item for this pad could be established. The RA4M1 datasheet and user manual contain no errata section, and Renesas publishes errata per topic as Technical Updates (TN-RA*) that were not opened in this session; this is not a finding of absence.", status: "missing", value: null }
+    reset_state: { evidence: ["ra4m1-um-rev1.10#reset-gpio", "ra4m1-um-rev1.10#pfs-initial-rule", "ra4m1-um-rev1.10#pfs-pdr", "ra4m1-um-rev1.10#pfs-pcr"], note: "All other pads: PmnPFS = 0 after reset, i.e. general I/O (PMR 0), input (PDR 0), no pull-up (PCR 0), low drive (DSCR 0).", status: "single-source", value: "input" }
+    strap: { evidence: ["ra4m1-um-rev1.10#md-table"], note: "No strap on this pad: the only mode-setting pin is MD (P201), Table 3.1. Negative finding from the single table; no second key yet.", status: "single-source", value: "none" }
+    touch:
+      channel: 18
+  P407:
+    errata: []
+    functions:
+      - { fn: "GPIO", routing: "iomux" }
+      - { fn: "AGTIO0", routing: "iomux" }
+      - { fn: "RTCOUT", routing: "iomux" }
+      - { fn: "USB_VBUS", routing: "iomux" }
+      - { fn: "CTS0_", routing: "iomux" }
+      - { fn: "RTS0", routing: "iomux" }
+      - { fn: "SS0", routing: "iomux" }
+      - { fn: "SDA0", routing: "iomux" }
+      - { fn: "SSLB3", routing: "iomux" }
+      - { fn: "ADTRG0", routing: "fixed" }
+      - { fn: "SEG11", routing: "iomux" }
+      - { fn: "TS03", routing: "iomux" }
+    gpio: 407
+    input_only: { evidence: ["ra4m1-ds-rev1.10#input-ports", "ra4m1-ds-rev1.10#pin-list-p23"], note: "Not in the datasheet list of input-only ports (P200, P214, P215); output functions appear in the pin list.", status: "single-source", value: false }
+    power_up_glitch: { evidence: [], note: "No power-up glitch / errata item for this pad could be established. The RA4M1 datasheet and user manual contain no errata section, and Renesas publishes errata per topic as Technical Updates (TN-RA*) that were not opened in this session; this is not a finding of absence.", status: "missing", value: null }
+    reset_state: { evidence: ["ra4m1-um-rev1.10#reset-gpio", "ra4m1-um-rev1.10#pfs-initial-rule", "ra4m1-um-rev1.10#pfs-pdr", "ra4m1-um-rev1.10#pfs-pcr"], note: "All other pads: PmnPFS = 0 after reset, i.e. general I/O (PMR 0), input (PDR 0), no pull-up (PCR 0), low drive (DSCR 0).", status: "single-source", value: "input" }
+    strap: { evidence: ["ra4m1-um-rev1.10#md-table"], note: "No strap on this pad: the only mode-setting pin is MD (P201), Table 3.1. Negative finding from the single table; no second key yet.", status: "single-source", value: "none" }
+    touch:
+      channel: 3
+  P408:
+    errata: []
+    functions:
+      - { fn: "GPIO", routing: "iomux" }
+      - { fn: "IRQ7", routing: "iomux" }
+      - { fn: "GTOWLO", routing: "iomux" }
+      - { fn: "GTIOC5B", routing: "iomux" }
+      - { fn: "USB_ID", routing: "iomux" }
+      - { fn: "CTS1_", routing: "iomux" }
+      - { fn: "RTS1", routing: "iomux" }
+      - { fn: "SS1", routing: "iomux" }
+      - { fn: "RXD9", routing: "iomux" }
+      - { fn: "MISO9", routing: "iomux" }
+      - { fn: "SCL9", routing: "iomux" }
+      - { fn: "SCL0", routing: "iomux" }
+      - { fn: "SEG10", routing: "iomux" }
+      - { fn: "TS04", routing: "iomux" }
+    gpio: 408
+    input_only: { evidence: ["ra4m1-ds-rev1.10#input-ports", "ra4m1-ds-rev1.10#pin-list-p23"], note: "Not in the datasheet list of input-only ports (P200, P214, P215); output functions appear in the pin list.", status: "single-source", value: false }
+    power_up_glitch: { evidence: [], note: "No power-up glitch / errata item for this pad could be established. The RA4M1 datasheet and user manual contain no errata section, and Renesas publishes errata per topic as Technical Updates (TN-RA*) that were not opened in this session; this is not a finding of absence.", status: "missing", value: null }
+    reset_state: { evidence: ["ra4m1-um-rev1.10#reset-gpio", "ra4m1-um-rev1.10#pfs-initial-rule", "ra4m1-um-rev1.10#pfs-pdr", "ra4m1-um-rev1.10#pfs-pcr"], note: "All other pads: PmnPFS = 0 after reset, i.e. general I/O (PMR 0), input (PDR 0), no pull-up (PCR 0), low drive (DSCR 0).", status: "single-source", value: "input" }
+    strap: { evidence: ["ra4m1-um-rev1.10#md-table"], note: "No strap on this pad: the only mode-setting pin is MD (P201), Table 3.1. Negative finding from the single table; no second key yet.", status: "single-source", value: "none" }
+    touch:
+      channel: 4
+  P409:
+    errata: []
+    functions:
+      - { fn: "GPIO", routing: "iomux" }
+      - { fn: "IRQ6", routing: "iomux" }
+      - { fn: "GTOWUP", routing: "iomux" }
+      - { fn: "GTIOC5A", routing: "iomux" }
+      - { fn: "USB_EXICEN", routing: "iomux" }
+      - { fn: "TXD9", routing: "iomux" }
+      - { fn: "MOSI9", routing: "iomux" }
+      - { fn: "SDA9", routing: "iomux" }
+      - { fn: "SEG09", routing: "iomux" }
+      - { fn: "TS05", routing: "iomux" }
+    gpio: 409
+    input_only: { evidence: ["ra4m1-ds-rev1.10#input-ports", "ra4m1-ds-rev1.10#pin-list-p23"], note: "Not in the datasheet list of input-only ports (P200, P214, P215); output functions appear in the pin list.", status: "single-source", value: false }
+    power_up_glitch: { evidence: [], note: "No power-up glitch / errata item for this pad could be established. The RA4M1 datasheet and user manual contain no errata section, and Renesas publishes errata per topic as Technical Updates (TN-RA*) that were not opened in this session; this is not a finding of absence.", status: "missing", value: null }
+    reset_state: { evidence: ["ra4m1-um-rev1.10#reset-gpio", "ra4m1-um-rev1.10#pfs-initial-rule", "ra4m1-um-rev1.10#pfs-pdr", "ra4m1-um-rev1.10#pfs-pcr"], note: "All other pads: PmnPFS = 0 after reset, i.e. general I/O (PMR 0), input (PDR 0), no pull-up (PCR 0), low drive (DSCR 0).", status: "single-source", value: "input" }
+    strap: { evidence: ["ra4m1-um-rev1.10#md-table"], note: "No strap on this pad: the only mode-setting pin is MD (P201), Table 3.1. Negative finding from the single table; no second key yet.", status: "single-source", value: "none" }
+    touch:
+      channel: 5
+  P410:
+    errata: []
+    functions:
+      - { fn: "GPIO", routing: "iomux" }
+      - { fn: "IRQ5", routing: "iomux" }
+      - { fn: "AGTOB1", routing: "iomux" }
+      - { fn: "GTOVLO", routing: "iomux" }
+      - { fn: "GTIOC6B", routing: "iomux" }
+      - { fn: "RXD0", routing: "iomux" }
+      - { fn: "MISO0", routing: "iomux" }
+      - { fn: "SCL0", routing: "iomux" }
+      - { fn: "MISOA", routing: "iomux" }
+      - { fn: "SEG08", routing: "iomux" }
+      - { fn: "TS06", routing: "iomux" }
+    gpio: 410
+    input_only: { evidence: ["ra4m1-ds-rev1.10#input-ports", "ra4m1-ds-rev1.10#pin-list-p23"], note: "Not in the datasheet list of input-only ports (P200, P214, P215); output functions appear in the pin list.", status: "single-source", value: false }
+    power_up_glitch: { evidence: [], note: "No power-up glitch / errata item for this pad could be established. The RA4M1 datasheet and user manual contain no errata section, and Renesas publishes errata per topic as Technical Updates (TN-RA*) that were not opened in this session; this is not a finding of absence.", status: "missing", value: null }
+    reset_state: { evidence: ["ra4m1-um-rev1.10#reset-gpio", "ra4m1-um-rev1.10#pfs-initial-rule", "ra4m1-um-rev1.10#pfs-pdr", "ra4m1-um-rev1.10#pfs-pcr"], note: "All other pads: PmnPFS = 0 after reset, i.e. general I/O (PMR 0), input (PDR 0), no pull-up (PCR 0), low drive (DSCR 0).", status: "single-source", value: "input" }
+    strap: { evidence: ["ra4m1-um-rev1.10#md-table"], note: "No strap on this pad: the only mode-setting pin is MD (P201), Table 3.1. Negative finding from the single table; no second key yet.", status: "single-source", value: "none" }
+    touch:
+      channel: 6
+  P411:
+    errata: []
+    functions:
+      - { fn: "GPIO", routing: "iomux" }
+      - { fn: "IRQ4", routing: "iomux" }
+      - { fn: "AGTOA1", routing: "iomux" }
+      - { fn: "GTOVUP", routing: "iomux" }
+      - { fn: "GTIOC6A", routing: "iomux" }
+      - { fn: "TXD0", routing: "iomux" }
+      - { fn: "MOSI0", routing: "iomux" }
+      - { fn: "SDA0", routing: "iomux" }
+      - { fn: "MOSIA", routing: "iomux" }
+      - { fn: "SEG07", routing: "iomux" }
+      - { fn: "TS07", routing: "iomux" }
+    gpio: 411
+    input_only: { evidence: ["ra4m1-ds-rev1.10#input-ports", "ra4m1-ds-rev1.10#pin-list-p23"], note: "Not in the datasheet list of input-only ports (P200, P214, P215); output functions appear in the pin list.", status: "single-source", value: false }
+    power_up_glitch: { evidence: [], note: "No power-up glitch / errata item for this pad could be established. The RA4M1 datasheet and user manual contain no errata section, and Renesas publishes errata per topic as Technical Updates (TN-RA*) that were not opened in this session; this is not a finding of absence.", status: "missing", value: null }
+    reset_state: { evidence: ["ra4m1-um-rev1.10#reset-gpio", "ra4m1-um-rev1.10#pfs-initial-rule", "ra4m1-um-rev1.10#pfs-pdr", "ra4m1-um-rev1.10#pfs-pcr"], note: "All other pads: PmnPFS = 0 after reset, i.e. general I/O (PMR 0), input (PDR 0), no pull-up (PCR 0), low drive (DSCR 0).", status: "single-source", value: "input" }
+    strap: { evidence: ["ra4m1-um-rev1.10#md-table"], note: "No strap on this pad: the only mode-setting pin is MD (P201), Table 3.1. Negative finding from the single table; no second key yet.", status: "single-source", value: "none" }
+    touch:
+      channel: 7
+  P500:
+    errata: []
+    adc:
+      channel: 16
+      radio_conflict: { evidence: ["ra4m1-ds-rev1.10#pin-list-p25"], note: "RA4M1 has no on-chip radio. Negative finding inferred from absence: the datasheet function lists contain no radio; weak basis, single read.", status: "single-source", value: false }
+      unit: ADC14
+    functions:
+      - { fn: "GPIO", routing: "iomux" }
+      - { fn: "AGTOA0", routing: "iomux" }
+      - { fn: "GTIU", routing: "iomux" }
+      - { fn: "GTIOC2A", routing: "iomux" }
+      - { fn: "USB_VBUSEN", routing: "iomux" }
+      - { fn: "AN016", routing: "fixed" }
+      - { fn: "CMPREF1", routing: "fixed" }
+      - { fn: "SEG34", routing: "iomux" }
+    gpio: 500
+    input_only: { evidence: ["ra4m1-ds-rev1.10#input-ports", "ra4m1-ds-rev1.10#pin-list-p25"], note: "Not in the datasheet list of input-only ports (P200, P214, P215); output functions appear in the pin list.", status: "single-source", value: false }
+    power_up_glitch: { evidence: [], note: "No power-up glitch / errata item for this pad could be established. The RA4M1 datasheet and user manual contain no errata section, and Renesas publishes errata per topic as Technical Updates (TN-RA*) that were not opened in this session; this is not a finding of absence.", status: "missing", value: null }
+    reset_state: { evidence: ["ra4m1-um-rev1.10#reset-gpio", "ra4m1-um-rev1.10#pfs-initial-rule", "ra4m1-um-rev1.10#pfs-pdr", "ra4m1-um-rev1.10#pfs-pcr"], note: "All other pads: PmnPFS = 0 after reset, i.e. general I/O (PMR 0), input (PDR 0), no pull-up (PCR 0), low drive (DSCR 0).", status: "single-source", value: "input" }
+    strap: { evidence: ["ra4m1-um-rev1.10#md-table"], note: "No strap on this pad: the only mode-setting pin is MD (P201), Table 3.1. Negative finding from the single table; no second key yet.", status: "single-source", value: "none" }
+  P501:
+    errata: []
+    adc:
+      channel: 17
+      radio_conflict: { evidence: ["ra4m1-ds-rev1.10#pin-list-p25"], note: "RA4M1 has no on-chip radio. Negative finding inferred from absence: the datasheet function lists contain no radio; weak basis, single read.", status: "single-source", value: false }
+      unit: ADC14
+    functions:
+      - { fn: "GPIO", routing: "iomux" }
+      - { fn: "IRQ11", routing: "iomux" }
+      - { fn: "AGTOB0", routing: "iomux" }
+      - { fn: "GTIV", routing: "iomux" }
+      - { fn: "GTIOC2B", routing: "iomux" }
+      - { fn: "USB_OVRCURA", routing: "iomux" }
+      - { fn: "TXD1", routing: "iomux" }
+      - { fn: "MOSI1", routing: "iomux" }
+      - { fn: "SDA1", routing: "iomux" }
+      - { fn: "AN017", routing: "fixed" }
+      - { fn: "CMPIN1", routing: "fixed" }
+      - { fn: "SEG35", routing: "iomux" }
+    gpio: 501
+    input_only: { evidence: ["ra4m1-ds-rev1.10#input-ports", "ra4m1-ds-rev1.10#pin-list-p25"], note: "Not in the datasheet list of input-only ports (P200, P214, P215); output functions appear in the pin list.", status: "single-source", value: false }
+    power_up_glitch: { evidence: [], note: "No power-up glitch / errata item for this pad could be established. The RA4M1 datasheet and user manual contain no errata section, and Renesas publishes errata per topic as Technical Updates (TN-RA*) that were not opened in this session; this is not a finding of absence.", status: "missing", value: null }
+    reset_state: { evidence: ["ra4m1-um-rev1.10#reset-gpio", "ra4m1-um-rev1.10#pfs-initial-rule", "ra4m1-um-rev1.10#pfs-pdr", "ra4m1-um-rev1.10#pfs-pcr"], note: "All other pads: PmnPFS = 0 after reset, i.e. general I/O (PMR 0), input (PDR 0), no pull-up (PCR 0), low drive (DSCR 0).", status: "single-source", value: "input" }
+    strap: { evidence: ["ra4m1-um-rev1.10#md-table"], note: "No strap on this pad: the only mode-setting pin is MD (P201), Table 3.1. Negative finding from the single table; no second key yet.", status: "single-source", value: "none" }
+  P502:
+    errata: []
+    adc:
+      channel: 18
+      radio_conflict: { evidence: ["ra4m1-ds-rev1.10#pin-list-p25"], note: "RA4M1 has no on-chip radio. Negative finding inferred from absence: the datasheet function lists contain no radio; weak basis, single read.", status: "single-source", value: false }
+      unit: ADC14
+    functions:
+      - { fn: "GPIO", routing: "iomux" }
+      - { fn: "IRQ12", routing: "iomux" }
+      - { fn: "GTIW", routing: "iomux" }
+      - { fn: "GTIOC3B", routing: "iomux" }
+      - { fn: "USB_OVRCURB", routing: "iomux" }
+      - { fn: "RXD1", routing: "iomux" }
+      - { fn: "MISO1", routing: "iomux" }
+      - { fn: "SCL1", routing: "iomux" }
+      - { fn: "AN018", routing: "fixed" }
+      - { fn: "CMPREF0", routing: "fixed" }
+      - { fn: "SEG36", routing: "iomux" }
+    gpio: 502
+    input_only: { evidence: ["ra4m1-ds-rev1.10#input-ports", "ra4m1-ds-rev1.10#pin-list-p25"], note: "Not in the datasheet list of input-only ports (P200, P214, P215); output functions appear in the pin list.", status: "single-source", value: false }
+    power_up_glitch: { evidence: [], note: "No power-up glitch / errata item for this pad could be established. The RA4M1 datasheet and user manual contain no errata section, and Renesas publishes errata per topic as Technical Updates (TN-RA*) that were not opened in this session; this is not a finding of absence.", status: "missing", value: null }
+    reset_state: { evidence: ["ra4m1-um-rev1.10#reset-gpio", "ra4m1-um-rev1.10#pfs-initial-rule", "ra4m1-um-rev1.10#pfs-pdr", "ra4m1-um-rev1.10#pfs-pcr"], note: "All other pads: PmnPFS = 0 after reset, i.e. general I/O (PMR 0), input (PDR 0), no pull-up (PCR 0), low drive (DSCR 0).", status: "single-source", value: "input" }
+    strap: { evidence: ["ra4m1-um-rev1.10#md-table"], note: "No strap on this pad: the only mode-setting pin is MD (P201), Table 3.1. Negative finding from the single table; no second key yet.", status: "single-source", value: "none" }
+  P914:
+    errata: []
+    functions:
+      - { fn: "GPIO", routing: "iomux" }
+      - { fn: "USB_DP", routing: "fixed" }
+    gpio: 914
+    input_only: { evidence: ["ra4m1-ds-rev1.10#input-ports", "ra4m1-ds-rev1.10#pin-list-p23"], note: "Not in the datasheet list of input-only ports (P200, P214, P215); output functions appear in the pin list.", status: "single-source", value: false }
+    power_up_glitch: { evidence: [], note: "No power-up glitch / errata item for this pad could be established. The RA4M1 datasheet and user manual contain no errata section, and Renesas publishes errata per topic as Technical Updates (TN-RA*) that were not opened in this session; this is not a finding of absence.", status: "missing", value: null }
+    reset_state: { evidence: ["ra4m1-um-rev1.10#reset-gpio", "ra4m1-um-rev1.10#pfs-initial", "ra4m1-um-rev1.10#pfs-pdr", "ra4m1-um-rev1.10#pfs-pmr"], note: "PmnPFS initial value 0001 0000h: PMR = 1 (USB function selected at reset), PCR = 0, PDR = 0.", status: "single-source", value: "input" }
+    strap: { evidence: ["ra4m1-um-rev1.10#md-table"], note: "No strap on this pad: the only mode-setting pin is MD (P201), Table 3.1. Negative finding from the single table; no second key yet.", status: "single-source", value: "none" }
+  P915:
+    errata: []
+    functions:
+      - { fn: "GPIO", routing: "iomux" }
+      - { fn: "USB_DM", routing: "fixed" }
+    gpio: 915
+    input_only: { evidence: ["ra4m1-ds-rev1.10#input-ports", "ra4m1-ds-rev1.10#pin-list-p23"], note: "Not in the datasheet list of input-only ports (P200, P214, P215); output functions appear in the pin list.", status: "single-source", value: false }
+    power_up_glitch: { evidence: [], note: "No power-up glitch / errata item for this pad could be established. The RA4M1 datasheet and user manual contain no errata section, and Renesas publishes errata per topic as Technical Updates (TN-RA*) that were not opened in this session; this is not a finding of absence.", status: "missing", value: null }
+    reset_state: { evidence: ["ra4m1-um-rev1.10#reset-gpio", "ra4m1-um-rev1.10#pfs-initial", "ra4m1-um-rev1.10#pfs-pdr", "ra4m1-um-rev1.10#pfs-pmr"], note: "PmnPFS initial value 0001 0000h: PMR = 1 (USB function selected at reset), PCR = 0, PDR = 0.", status: "single-source", value: "input" }
+    strap: { evidence: ["ra4m1-um-rev1.10#md-table"], note: "No strap on this pad: the only mode-setting pin is MD (P201), Table 3.1. Negative finding from the single table; no second key yet.", status: "single-source", value: "none" }
+peripherals:
+  ADC14: { kind: adc, matrix_routable: false }
+  GPT: { kind: pwm, matrix_routable: false }
+  IIC0: { kind: i2c, matrix_routable: false }
+  IIC1: { kind: i2c, matrix_routable: false }
+  RSPI0: { kind: spi, matrix_routable: false }
+  RSPI1: { kind: spi, matrix_routable: false }
+  SCI0: { kind: uart, matrix_routable: false }
+  SCI1: { kind: uart, matrix_routable: false }
+  SCI2: { kind: uart, matrix_routable: false }
+  SCI9: { kind: uart, matrix_routable: false }
+revisions: ["datasheet R01DS0355EJ0110 Rev.1.10"]
+series: RA4M1
+vdd_io: { evidence: ["abx00080-um-rev6#mcu-5v-fixed", "abx00080-um-rev6#operating-5v", "ra4m1-ds-rev1.10#vcc-range"], note: "5 V is the supply the Arduino UNO R4 Minima fixes for the RA4M1 (VCC = 5 V, about 4.7 V on USB power, abx00080-um-rev6#usb-4v7). The RA4M1 itself allows VCC 1.6-5.5 V (Table 2.2); the electrical facts below use the 4.0-5.5 V / 2.7-5.5 V columns.", status: "single-source", unit: "V", value: 5 }
+vendor: Renesas Electronics Corporation

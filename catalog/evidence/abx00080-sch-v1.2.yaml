@@ -1,0 +1,78 @@
+id: abx00080-sch-v1.2
+title: "UNO R4 MINIMA schematic (ABX00080)"
+publisher: "Arduino S.r.l."
+doc_number: "ABX00080"
+revision: "V1.2"
+revision_date: "2023-08-23"
+url: https://docs.arduino.cc/resources/schematics/ABX00080-schematics.pdf
+url_original: null
+accessed: "2026-10-22"
+sha256: "2377bdf99b4b45121b0dbd0e5edf9ffff80a4d835759e994cb1128772a91f19b"
+kind: schematic
+secondary: false
+manual: false
+claims:
+  - id: abx00080-sch-v1.2#title-block
+    locator: "Sheet 1 title block"
+    quote: "UNO R4 MINIMA ABX00080 V1.2 23/08/2023"
+    supports: "Schematic version V1.2 of 23/08/2023 for ABX00080 (board revision used by the catalog)"
+  - id: abx00080-sch-v1.2#vcc-usb-ldo
+    locator: "Sheet 1, MICROCONTROLLER note"
+    quote: "VCC_USB is the output of the internal USB LDO providing 3V3 to the peripheral"
+    supports: "The 3V3 net is the output of the RA4M1 internal USB LDO (VCC_USB)"
+  - id: abx00080-sch-v1.2#i2c-pullups-nm
+    locator: "Sheet 1, HEADERS block"
+    quote: "I2C PULLUPS NOT MOUNTED"
+    supports: "R1/R2 5.1 kOhm I2C pull-ups on SDA/SCL are not mounted"
+  - id: abx00080-sch-v1.2#net-sda
+    locator: "Sheet 1, JANALOG pin 13 and JDIGITAL pin 17 (transcribed)"
+    quote: "P101_AN21_SDA"
+    supports: "A4 and the JDIGITAL SDA position are the same net P101"
+  - id: abx00080-sch-v1.2#net-scl
+    locator: "Sheet 1, JANALOG pin 14 and JDIGITAL pin 18 (transcribed)"
+    quote: "P100_AN22_SCL"
+    supports: "A5 and the JDIGITAL SCL position are the same net P100"
+  - id: abx00080-sch-v1.2#net-dac
+    locator: "Sheet 1, JANALOG pin 9 (transcribed)"
+    quote: "P014_AN09_DAC"
+    supports: "A0 is net P014 (AN009 / DAC)"
+  - id: abx00080-sch-v1.2#led-sck
+    locator: "Sheet 1, LED block (transcribed)"
+    quote: "SCK LED DL4 KPT-1608YC YELLOW 330 R17 P111_GPT3_A"
+    supports: "DL4 SCK LED with R17 330 ohm is driven from P111 (D13)"
+  - id: abx00080-sch-v1.2#led-txrx
+    locator: "Sheet 1, LED block (transcribed)"
+    quote: "TX LED RX LED P012 P013 330 R14 330 R15"
+    supports: "DL1 TX LED on P012 and DL2 RX LED on P013 with 330 ohm series resistors"
+  - id: abx00080-sch-v1.2#crystal-not-fitted
+    locator: "Sheet 1, MICROCONTROLLER block (transcribed)"
+    quote: "FTX16.000M12SM3S-30/30 15pF C1 15pF C3"
+    supports: "Y1 and its load capacitors C1/C3 are drawn crossed out (not fitted); P212/P213 pads have no external connection"
+  - id: abx00080-sch-v1.2#aref-net
+    locator: "Sheet 1, MICROCONTROLLER and JDIGITAL pin 16 (transcribed)"
+    quote: "AREF +5V R4 5.1k BLM18PG471SN1D VREFH0"
+    supports: "AREF header pin is the VREFH0 (P010) net, through ferrite L1, with R4 5.1 kohm to +5V"
+  - id: abx00080-sch-v1.2#md-net
+    locator: "Sheet 1, MICROCONTROLLER and JANALOG pin 1 (transcribed)"
+    quote: "MD/P201 MD 5.1k R5 5.1k R6"
+    supports: "MD (P201) net goes to JANALOG pin 1 (BOOT) and is tied to +5V through R5 and R6 (5.1 kohm each)"
+  - id: abx00080-sch-v1.2#p500-divider
+    locator: "Sheet 1, MICROCONTROLLER block (transcribed)"
+    quote: "GTIOC2A/AN016/P500 R10 100k 0.1% R26 13.7k 0.1%"
+    supports: "P500 (AN016) is connected to the junction of R10 100 kohm / R26 13.7 kohm 0.1 % divider from +5V"
+  - id: abx00080-sch-v1.2#p407-network
+    locator: "Sheet 1, MICROCONTROLLER and USB blocks (transcribed)"
+    quote: "P407/USB_VBUS/ADTRG0 5.1k R7 5.1k R8 5.1k R9"
+    supports: "P407 is connected to a 5.1 kohm resistor network (R7, R8, R9); purpose not labelled"
+  - id: abx00080-sch-v1.2#swd-conn
+    locator: "Sheet 1, SWD CONNECTOR (transcribed)"
+    quote: "SWD CONNECTOR J2 HPH2-A-10-SGA P108_SWDIO P300_SWCLK P501_SCI1_TXD P502_SCI1_RXD"
+    supports: "J2 SWD connector uses P108, P300, P501, P502"
+  - id: abx00080-sch-v1.2#buck-converter
+    locator: "Sheet 1, BUCK CONVERTER block"
+    quote: "ISL854102FRZ-T"
+    supports: "Buck converter U2 is an ISL854102FRZ-T"
+  - id: abx00080-sch-v1.2#reset-pushbutton
+    locator: "Sheet 1, RESET PUSHBUTTON block"
+    quote: "RESET PUSHBUTTON"
+    supports: "PB1 pulls the RES net (RESET) low"
