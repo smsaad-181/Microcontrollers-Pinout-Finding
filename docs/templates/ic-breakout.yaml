@@ -1,16 +1,17 @@
 # catalog/ics/<ic-id>.yaml
+# Rule: a fact with status `missing` has `value: null` and `evidence: []`; any other status needs a value and >= 1 evidence id.
 id: <ic-id>
 vendor: <manufacturer>
 part: <part number>
-vdd_range: { value: [null, null], unit: V, evidence: [], status: missing }
-vio_range: { value: [null, null], unit: V, evidence: [], status: missing }
-input_abs_max: { value: "VDDIO+0.3", unit: V, evidence: [], status: missing }
+vdd_range: { value: null, unit: V, evidence: [], status: missing }   # when found: value: [min, max]
+vio_range: { value: null, unit: V, evidence: [], status: missing }
+input_abs_max: { value: null, unit: V, evidence: [], status: missing }   # when found, e.g. value: "VDDIO+0.3"
 interfaces:
   - kind: i2c
     signals: [ { role: SDA, dir: io, drive: open-drain, shareable: true }, { role: SCL, dir: in, drive: open-drain, shareable: true } ]
     limits: { max_hz: { value: null, unit: Hz, evidence: [], status: missing }, addresses: [ { value: 0x76, strap: "SDO=GND" } ] }
-select_strap: null
-supply_current: { value: { typ: null, max: null }, unit: mA, evidence: [], status: missing }
+# select_strap: omit when the IC has no interface-select strap (optional fields are omitted, never null)
+supply_current: { value: null, unit: mA, evidence: [], status: missing }   # when found: value: { typ: 0.0, max: 0.0 }
 ---
 # catalog/breakouts/<breakout-id>.yaml
 id: <breakout-id>
@@ -18,7 +19,7 @@ ic: <ic-id>
 vendor: <breakout vendor or "generic">
 variant_names: ["<alias 1>", "<alias 2>"]
 pins: [ { label: VCC, maps_to: VCC }, { label: GND, maps_to: GND }, { label: SDA, maps_to: SDA } ]
-regulator: { value: { present: null, vin_range: null }, evidence: [], status: missing }
+regulator: { value: null, evidence: [], status: missing }   # when found: value: { present: true, vin_range: [min, max] }
 level_shifter: { value: null, evidence: [], status: missing }
 pullups: [ { line: SDA, value_ohm: { value: null, unit: ohm, evidence: [], status: missing } } ]
 hardwired: []

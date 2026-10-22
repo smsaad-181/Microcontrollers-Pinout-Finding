@@ -7,7 +7,7 @@ revision: "<as printed>"
 revision_date: null             # only if printed in the document
 url: <final URL after redirects>
 url_original: null
-accessed: <YYYY-MM-DD>
+accessed: "<YYYY-MM-DD>"            # quoted: an unquoted date loads as a Date object
 sha256: null                    # hex of the downloaded file; null for HTML
 kind: datasheet                 # board-guide | datasheet | trm | errata | schematic | design-guide | api-doc | library | app-note | standard
 secondary: false
