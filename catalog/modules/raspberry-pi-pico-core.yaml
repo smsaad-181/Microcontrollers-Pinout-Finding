@@ -1,0 +1,13 @@
+# Thin "board core" module for the Raspberry Pi Pico (Rev3). The Pico has no separate RP2040 module: the RP2040,
+# the W25Q16JV QSPI flash and the crystal sit directly on the Pico PCB. The schema requires board -> variant ->
+# module -> chip, so this record stands for the RP2040 + flash core of the Pico PCB and nothing else.
+# - bonded_pads: all 30 user-bank pads are wired on the PCB (26 to the header, GPIO23/24/25/29 to board circuitry;
+#   pico-ds-rel21#gpio-exposed, #internal-gpio23..29).
+# - consumed: empty. The flash uses the separate QSPI bank, not GPIO0-29 (rp2040-ds-3184e62#qspi-bank). GPIO23
+#   (SMPS PS), GPIO24 (VBUS sense), GPIO25 (LED) and GPIO29 (VSYS/3) stay usable by firmware; they are recorded as
+#   board `onboard` parts in boards/raspberry-pi-pico@Rev3.yaml and are not on the header.
+bonded_pads: [GPIO0, GPIO1, GPIO2, GPIO3, GPIO4, GPIO5, GPIO6, GPIO7, GPIO8, GPIO9, GPIO10, GPIO11, GPIO12, GPIO13, GPIO14, GPIO15, GPIO16, GPIO17, GPIO18, GPIO19, GPIO20, GPIO21, GPIO22, GPIO23, GPIO24, GPIO25, GPIO26, GPIO27, GPIO28, GPIO29]
+chip: rp2040
+consumed: {}
+flash_voltage: { evidence: [pico-ds-rel21#schematic-flash, pico-ds-rel21#flash-part], note: "W25Q16JVUXIQ VCC (pin 8) is on the 3V3 net in the Pico Rev3 schematic (Figure 19); read from the schematic image.", status: single-source, transcribed: true, unit: V, value: 3.3 }
+id: raspberry-pi-pico-core

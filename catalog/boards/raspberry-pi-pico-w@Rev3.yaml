@@ -1,0 +1,85 @@
+# Raspberry Pi Pico W, board revision Rev3 (pico-w-ds-rel7#board-revision). Draft, single-source.
+# Header map transcribed from the pinout image (Figure 2) of the Pico W datasheet release 7
+# (pico-w-ds-rel7#pinout-figure); identical to the Pico. Positions are the official physical pin numbers 1-40
+# (Figure 4): 1-20 down the left edge, 21-40 up the right edge (USB at the top). Board label GPn = RP2040 pad GPIOn.
+# GPIO23/24/25/29 are wired to the CYW43439 and are consumed in modules/raspberry-pi-pico-w-core.yaml.
+# The user LED, SMPS power-save and VBUS sense are on CYW43439 pins WL_GPIO0/1/2, not on RP2040 pads.
+# Non-header items: the 3-pin SWD debug header and test points TP1-TP6 are not modelled as connectors.
+# Pin 37 3V3_EN is the SMPS enable input (pull low = 3V3 off, RP2040 de-powered); the pin-kind enum has no
+# "enable" kind, so it is recorded as `reset` (never assignable as a GPIO).
+connectors:
+  - id: left
+    pins:
+      - { kind: gpio, label: GP0, pad: GPIO0, position: 1 }
+      - { kind: gpio, label: GP1, pad: GPIO1, position: 2 }
+      - { kind: ground, label: GND, position: 3 }
+      - { kind: gpio, label: GP2, pad: GPIO2, position: 4 }
+      - { kind: gpio, label: GP3, pad: GPIO3, position: 5 }
+      - { kind: gpio, label: GP4, pad: GPIO4, position: 6 }
+      - { kind: gpio, label: GP5, pad: GPIO5, position: 7 }
+      - { kind: ground, label: GND, position: 8 }
+      - { kind: gpio, label: GP6, pad: GPIO6, position: 9 }
+      - { kind: gpio, label: GP7, pad: GPIO7, position: 10 }
+      - { kind: gpio, label: GP8, pad: GPIO8, position: 11 }
+      - { kind: gpio, label: GP9, pad: GPIO9, position: 12 }
+      - { kind: ground, label: GND, position: 13 }
+      - { kind: gpio, label: GP10, pad: GPIO10, position: 14 }
+      - { kind: gpio, label: GP11, pad: GPIO11, position: 15 }
+      - { kind: gpio, label: GP12, pad: GPIO12, position: 16 }
+      - { kind: gpio, label: GP13, pad: GPIO13, position: 17 }
+      - { kind: ground, label: GND, position: 18 }
+      - { kind: gpio, label: GP14, pad: GPIO14, position: 19 }
+      - { kind: gpio, label: GP15, pad: GPIO15, position: 20 }
+    side: left
+  - id: right
+    pins:
+      - { kind: gpio, label: GP16, pad: GPIO16, position: 21 }
+      - { kind: gpio, label: GP17, pad: GPIO17, position: 22 }
+      - { kind: ground, label: GND, position: 23 }
+      - { kind: gpio, label: GP18, pad: GPIO18, position: 24 }
+      - { kind: gpio, label: GP19, pad: GPIO19, position: 25 }
+      - { kind: gpio, label: GP20, pad: GPIO20, position: 26 }
+      - { kind: gpio, label: GP21, pad: GPIO21, position: 27 }
+      - { kind: ground, label: GND, position: 28 }
+      - { kind: gpio, label: GP22, pad: GPIO22, position: 29 }
+      - { kind: reset, label: RUN, position: 30 }
+      - { kind: gpio, label: GP26, pad: GPIO26, position: 31 }
+      - { kind: gpio, label: GP27, pad: GPIO27, position: 32 }
+      - { kind: ground, label: AGND, position: 33 }
+      - { kind: gpio, label: GP28, pad: GPIO28, position: 34 }
+      - { kind: analog-ref, label: ADC_VREF, position: 35 }
+      - { kind: power, label: "3V3(OUT)", position: 36, rail: "3V3" }
+      - { kind: reset, label: "3V3_EN", position: 37 }
+      - { kind: ground, label: GND, position: 38 }
+      - { kind: power, label: VSYS, position: 39, rail: VSYS }
+      - { kind: power, label: VBUS, position: 40, rail: VBUS }
+    side: right
+id: raspberry-pi-pico-w
+logic_voltage: { evidence: [pico-w-ds-rel7#gpio-3v3], status: single-source, unit: V, value: 3.3 }
+name: Raspberry Pi Pico W
+numbering: { primary: label }
+onboard:
+  - { effect: "Wireless chip on a shared SPI bus: GPIO23 = WL_ON (power on), GPIO24 = WL_D (data/IRQ), GPIO25 = WL_CS, GPIO29 = WL_CLK. Reserved for the wireless interface; not on the header.", evidence: [pico-w-ds-rel7#cyw43439, pico-w-ds-rel7#internal-gpio23, pico-w-ds-rel7#internal-gpio24, pico-w-ds-rel7#internal-gpio25, pico-w-ds-rel7#internal-gpio29, pico-w-ds-rel7#schematic-wireless], part: "Infineon CYW43439 2.4 GHz wireless (Wi-Fi + Bluetooth)", uses_pad: [GPIO23, GPIO24, GPIO25, GPIO29] }
+  - { effect: "GPIO29/ADC3 reads VSYS/3 only while GPIO25 is high and no wireless SPI transfer is in progress (GPIO29 is also WL_CLK).", evidence: [pico-w-ds-rel7#vsys-divider, pico-w-ds-rel7#internal-gpio25, pico-w-ds-rel7#clk-shared], part: "VSYS/3 divider (R5, R6), switched on by GPIO25", uses_pad: [GPIO25, GPIO29] }
+  - { effect: "User LED is driven by CYW43439 pin WL_GPIO0 (through R3 470 Ohm), not by an RP2040 pad.", evidence: [pico-w-ds-rel7#wl-gpio0-led, pico-w-ds-rel7#schematic-led], part: "User LED D2 (green)", uses_pad: [] }
+  - { effect: "SMPS power-save pin is driven by CYW43439 WL_GPIO1 and VBUS sense is read on CYW43439 WL_GPIO2; no RP2040 pad involved.", evidence: [pico-w-ds-rel7#wl-gpio-functions, pico-w-ds-rel7#smps-part], part: "RT6154 buck-boost SMPS PS pin and VBUS sense", uses_pad: [] }
+  - { effect: "Held at power-up it forces USB mass-storage (BOOTSEL) boot; RP2040 samples the boot mode on QSPI_SS. Uses no GPIO0-29 pad.", evidence: [pico-w-ds-rel7#bootsel-button, pico-w-ds-rel7#tp6-bootsel, rp2040-ds-3184e62#boot-cs-button], part: "BOOTSEL button (TP6)", uses_pad: [] }
+  - { effect: "2 MB flash on the dedicated QSPI pins (QSPI_SS, QSPI_SCLK, QSPI_SD0-3); uses no GPIO0-29 pad.", evidence: [pico-w-ds-rel7#flash-part, pico-w-ds-rel7#schematic-flash, rp2040-ds-3184e62#qspi-bank], part: "Winbond W25Q16JV QSPI flash (U3)", uses_pad: [] }
+rails:
+  - max_current: { evidence: [pico-w-ds-rel7#3v3-max-load], note: "Recommended maximum external load on pin 36; the actual capability depends on RP2040 load and VSYS voltage.", status: single-source, unit: mA, value: 300 }
+    name: "3V3"
+    source: "RT6154 buck-boost SMPS (U2), fed from VSYS"
+    voltage: { evidence: [pico-w-ds-rel7#3v3-desc, pico-w-ds-rel7#smps-part], status: single-source, unit: V, value: 3.3 }
+  - max_current: { evidence: [], note: "No VBUS current rating in the Pico W datasheet; it depends on the USB host or supply.", status: missing, unit: mA, value: null }
+    name: VBUS
+    source: "micro-USB connector VBUS (USB port pin 1)"
+    voltage: { evidence: [pico-w-ds-rel7#vbus-desc, pico-w-ds-rel7#operating-vbus], note: "Nominal 5 V, operating range 5 V +/- 10 %; 0 V when USB is not connected or not powered.", status: single-source, unit: V, value: 5 }
+  - max_current: { evidence: [], note: "No VSYS current rating in the Pico W datasheet; it depends on the source feeding VSYS.", status: missing, unit: mA, value: null }
+    name: VSYS
+    source: "VBUS through Schottky diode D1, or an external supply on pin 39"
+    voltage: { evidence: [], note: "VSYS is an input range 1.8 V to 5.5 V (pico-w-ds-rel7#vsys-desc), not one fixed voltage; Fact<number> cannot hold a range. USB-powered, VSYS = VBUS minus the D1 diode drop (no value given).", status: missing, unit: V, value: null }
+revision: Rev3
+status: partially-verified
+variants:
+  - { id: pico-w, module: raspberry-pi-pico-w-core }
+vendor: Raspberry Pi Ltd

@@ -1,0 +1,540 @@
+# RP2040 chip record (draft, single-source). Source: RP2040 Datasheet build 3184e62 (evidence rp2040-ds-3184e62).
+# Routing classes: RP2040 selects one function per pad from a fixed per-pad list (FUNCSEL, Table 2); there is no
+# free peripheral-to-pin matrix. Every FUNCSEL-selected function (SPI/UART/I2C/PWM/SIO/PIO/CLOCK/USB) is therefore
+# `iomux` (dedicated per-pad mux position) and the ADC inputs (GPIO26-29) are `fixed`. One peripheral role appears on
+# several pads (e.g. SPI0.RX on GPIO0/4/16/20); see each pad's `functions`. `iomux_pins` is omitted because
+# Record<role, PadId> cannot hold the alternative pads of one role. Function names follow the datasheet (SPI RX/TX/
+# CSn/SCK, not MISO/MOSI). `GPIO` = SIO (F5); PIO0/PIO1 (F6/F7) are available on every pad.
+# Errata ids: RP2040-E5 (GPIO15, USB enumeration workaround, B0/B1), RP2040-E6 (ADC pads digital input enabled, B0/B1),
+# RP2040-E11 (ADC DNL, all revisions); see evidence claims erratum-e5-gpio15, erratum-e6, erratum-e11.
+electrical:
+  abs_max_vin: { active: "VDDIO+0.3", evidence: [rp2040-ds-3184e62#abs-max-vpin, pico-ds-rel21#adc-diode, pico-w-ds-rel7#adc-diode], note: "RP2040 Table 622 gives VPIN max IOVDD + 0.5 V for digital IO; the Pico and Pico W datasheets limit the ADC-capable GPIO26-29 (internal reverse diode to IOVDD) to about IOVDD + 300 mV. The schema has one chip-wide value, so the restrictive reading is active for all pads. RP2040 Table 625 also lists VIH max IOVDD + 0.3 V for all pads (operating limit, not an absolute rating).", readings: [{ evidence: [rp2040-ds-3184e62#abs-max-vpin], value: "VDDIO+0.5" }, { evidence: [pico-ds-rel21#adc-diode, pico-w-ds-rel7#adc-diode], value: "VDDIO+0.3" }], status: conflict, unit: V, value: "VDDIO+0.3" }
+  cumulative_current_max: { evidence: [rp2040-ds-3184e62#iovdd-total-current, rp2040-ds-3184e62#iovss-total-current], note: "IIOVDD_MAX 50 mA = sum of current sourced by all GPIO and QSPI pins; IIOVSS_MAX 50 mA = sum of current sunk. Two separate 50 mA budgets.", status: single-source, unit: mA, value: 50 }
+  internal_pull_ohm: { evidence: [rp2040-ds-3184e62#pull-resistance], note: "RPU and RPD both 50-80 kOhm (Table 625, no typical given).", status: single-source, unit: ohm, value: { max: 80000, min: 50000 } }
+  pin_current_max: { conditions: { drive_strength: "12 mA setting" }, evidence: [rp2040-ds-3184e62#drive-strength, rp2040-ds-3184e62#voh-3v3, rp2040-ds-3184e62#drive-not-hard-limit], note: "Highest of the 2/4/8/12 mA drive settings, at which VOH/VOL are specified. The datasheet says these are not hard limits and gives no absolute per-pin maximum. Default drive is 4 mA (PADS_BANK0 DRIVE reset 0x1).", status: single-source, unit: mA, value: 12 }
+  vih_min: { conditions: { IOVDD: "3.3 V" }, evidence: [rp2040-ds-3184e62#vih-3v3, rp2040-ds-3184e62#input-thresholds-default], status: single-source, unit: V, value: 2 }
+  vil_max: { conditions: { IOVDD: "3.3 V" }, evidence: [rp2040-ds-3184e62#vil-3v3, rp2040-ds-3184e62#input-thresholds-default], status: single-source, unit: V, value: 0.8 }
+  voh_min: { conditions: { IOH: "equal to the selected drive strength (2/4/8/12 mA)", IOVDD: "3.3 V" }, evidence: [rp2040-ds-3184e62#voh-3v3], status: single-source, unit: V, value: 2.62 }
+  vol_max: { conditions: { IOL: "equal to the selected drive strength (2/4/8/12 mA)", IOVDD: "3.3 V" }, evidence: [rp2040-ds-3184e62#vol-3v3], status: single-source, unit: V, value: 0.5 }
+family: RP2040
+id: rp2040
+pads:
+  GPIO0:
+    errata: []
+    functions:
+      - { fn: SPI0.RX, routing: iomux }
+      - { fn: UART0.TX, routing: iomux }
+      - { fn: I2C0.SDA, routing: iomux }
+      - { fn: PWM0.A, routing: iomux }
+      - { fn: GPIO, routing: iomux }
+      - { fn: PIO0, routing: iomux }
+      - { fn: PIO1, routing: iomux }
+      - { fn: USB.OVCUR_DET, routing: iomux }
+    gpio: 0
+    input_only: { evidence: [rp2040-ds-3184e62#gpio-overview], status: single-source, value: false }
+    power_up_glitch: { evidence: [rp2040-ds-3184e62#errata-intro, rp2040-ds-3184e62#funcsel-reset, rp2040-ds-3184e62#pad-reset], note: "No power-up glitch is documented; errata appendix B checked. At reset FUNCSEL = NULL (no function drives the pad) and the pad pull-down is enabled.", status: single-source, value: none }
+    reset_state: { evidence: [rp2040-ds-3184e62#pin-reset-state, rp2040-ds-3184e62#pad-reset, rp2040-ds-3184e62#funcsel-reset], status: single-source, value: pulldown }
+    strap: { evidence: [rp2040-ds-3184e62#boot-cs-button], note: "RP2040 samples the boot mode on QSPI_SS (BOOTSEL), not on any user-bank GPIO.", status: single-source, value: none }
+  GPIO1:
+    errata: []
+    functions:
+      - { fn: SPI0.CSn, routing: iomux }
+      - { fn: UART0.RX, routing: iomux }
+      - { fn: I2C0.SCL, routing: iomux }
+      - { fn: PWM0.B, routing: iomux }
+      - { fn: GPIO, routing: iomux }
+      - { fn: PIO0, routing: iomux }
+      - { fn: PIO1, routing: iomux }
+      - { fn: USB.VBUS_DET, routing: iomux }
+    gpio: 1
+    input_only: { evidence: [rp2040-ds-3184e62#gpio-overview], status: single-source, value: false }
+    power_up_glitch: { evidence: [rp2040-ds-3184e62#errata-intro, rp2040-ds-3184e62#funcsel-reset, rp2040-ds-3184e62#pad-reset], note: "No power-up glitch is documented; errata appendix B checked. At reset FUNCSEL = NULL (no function drives the pad) and the pad pull-down is enabled.", status: single-source, value: none }
+    reset_state: { evidence: [rp2040-ds-3184e62#pin-reset-state, rp2040-ds-3184e62#pad-reset, rp2040-ds-3184e62#funcsel-reset], status: single-source, value: pulldown }
+    strap: { evidence: [rp2040-ds-3184e62#boot-cs-button], note: "RP2040 samples the boot mode on QSPI_SS (BOOTSEL), not on any user-bank GPIO.", status: single-source, value: none }
+  GPIO2:
+    errata: []
+    functions:
+      - { fn: SPI0.SCK, routing: iomux }
+      - { fn: UART0.CTS, routing: iomux }
+      - { fn: I2C1.SDA, routing: iomux }
+      - { fn: PWM1.A, routing: iomux }
+      - { fn: GPIO, routing: iomux }
+      - { fn: PIO0, routing: iomux }
+      - { fn: PIO1, routing: iomux }
+      - { fn: USB.VBUS_EN, routing: iomux }
+    gpio: 2
+    input_only: { evidence: [rp2040-ds-3184e62#gpio-overview], status: single-source, value: false }
+    power_up_glitch: { evidence: [rp2040-ds-3184e62#errata-intro, rp2040-ds-3184e62#funcsel-reset, rp2040-ds-3184e62#pad-reset], note: "No power-up glitch is documented; errata appendix B checked. At reset FUNCSEL = NULL (no function drives the pad) and the pad pull-down is enabled.", status: single-source, value: none }
+    reset_state: { evidence: [rp2040-ds-3184e62#pin-reset-state, rp2040-ds-3184e62#pad-reset, rp2040-ds-3184e62#funcsel-reset], status: single-source, value: pulldown }
+    strap: { evidence: [rp2040-ds-3184e62#boot-cs-button], note: "RP2040 samples the boot mode on QSPI_SS (BOOTSEL), not on any user-bank GPIO.", status: single-source, value: none }
+  GPIO3:
+    errata: []
+    functions:
+      - { fn: SPI0.TX, routing: iomux }
+      - { fn: UART0.RTS, routing: iomux }
+      - { fn: I2C1.SCL, routing: iomux }
+      - { fn: PWM1.B, routing: iomux }
+      - { fn: GPIO, routing: iomux }
+      - { fn: PIO0, routing: iomux }
+      - { fn: PIO1, routing: iomux }
+      - { fn: USB.OVCUR_DET, routing: iomux }
+    gpio: 3
+    input_only: { evidence: [rp2040-ds-3184e62#gpio-overview], status: single-source, value: false }
+    power_up_glitch: { evidence: [rp2040-ds-3184e62#errata-intro, rp2040-ds-3184e62#funcsel-reset, rp2040-ds-3184e62#pad-reset], note: "No power-up glitch is documented; errata appendix B checked. At reset FUNCSEL = NULL (no function drives the pad) and the pad pull-down is enabled.", status: single-source, value: none }
+    reset_state: { evidence: [rp2040-ds-3184e62#pin-reset-state, rp2040-ds-3184e62#pad-reset, rp2040-ds-3184e62#funcsel-reset], status: single-source, value: pulldown }
+    strap: { evidence: [rp2040-ds-3184e62#boot-cs-button], note: "RP2040 samples the boot mode on QSPI_SS (BOOTSEL), not on any user-bank GPIO.", status: single-source, value: none }
+  GPIO4:
+    errata: []
+    functions:
+      - { fn: SPI0.RX, routing: iomux }
+      - { fn: UART1.TX, routing: iomux }
+      - { fn: I2C0.SDA, routing: iomux }
+      - { fn: PWM2.A, routing: iomux }
+      - { fn: GPIO, routing: iomux }
+      - { fn: PIO0, routing: iomux }
+      - { fn: PIO1, routing: iomux }
+      - { fn: USB.VBUS_DET, routing: iomux }
+    gpio: 4
+    input_only: { evidence: [rp2040-ds-3184e62#gpio-overview], status: single-source, value: false }
+    power_up_glitch: { evidence: [rp2040-ds-3184e62#errata-intro, rp2040-ds-3184e62#funcsel-reset, rp2040-ds-3184e62#pad-reset], note: "No power-up glitch is documented; errata appendix B checked. At reset FUNCSEL = NULL (no function drives the pad) and the pad pull-down is enabled.", status: single-source, value: none }
+    reset_state: { evidence: [rp2040-ds-3184e62#pin-reset-state, rp2040-ds-3184e62#pad-reset, rp2040-ds-3184e62#funcsel-reset], status: single-source, value: pulldown }
+    strap: { evidence: [rp2040-ds-3184e62#boot-cs-button], note: "RP2040 samples the boot mode on QSPI_SS (BOOTSEL), not on any user-bank GPIO.", status: single-source, value: none }
+  GPIO5:
+    errata: []
+    functions:
+      - { fn: SPI0.CSn, routing: iomux }
+      - { fn: UART1.RX, routing: iomux }
+      - { fn: I2C0.SCL, routing: iomux }
+      - { fn: PWM2.B, routing: iomux }
+      - { fn: GPIO, routing: iomux }
+      - { fn: PIO0, routing: iomux }
+      - { fn: PIO1, routing: iomux }
+      - { fn: USB.VBUS_EN, routing: iomux }
+    gpio: 5
+    input_only: { evidence: [rp2040-ds-3184e62#gpio-overview], status: single-source, value: false }
+    power_up_glitch: { evidence: [rp2040-ds-3184e62#errata-intro, rp2040-ds-3184e62#funcsel-reset, rp2040-ds-3184e62#pad-reset], note: "No power-up glitch is documented; errata appendix B checked. At reset FUNCSEL = NULL (no function drives the pad) and the pad pull-down is enabled.", status: single-source, value: none }
+    reset_state: { evidence: [rp2040-ds-3184e62#pin-reset-state, rp2040-ds-3184e62#pad-reset, rp2040-ds-3184e62#funcsel-reset], status: single-source, value: pulldown }
+    strap: { evidence: [rp2040-ds-3184e62#boot-cs-button], note: "RP2040 samples the boot mode on QSPI_SS (BOOTSEL), not on any user-bank GPIO.", status: single-source, value: none }
+  GPIO6:
+    errata: []
+    functions:
+      - { fn: SPI0.SCK, routing: iomux }
+      - { fn: UART1.CTS, routing: iomux }
+      - { fn: I2C1.SDA, routing: iomux }
+      - { fn: PWM3.A, routing: iomux }
+      - { fn: GPIO, routing: iomux }
+      - { fn: PIO0, routing: iomux }
+      - { fn: PIO1, routing: iomux }
+      - { fn: USB.OVCUR_DET, routing: iomux }
+    gpio: 6
+    input_only: { evidence: [rp2040-ds-3184e62#gpio-overview], status: single-source, value: false }
+    power_up_glitch: { evidence: [rp2040-ds-3184e62#errata-intro, rp2040-ds-3184e62#funcsel-reset, rp2040-ds-3184e62#pad-reset], note: "No power-up glitch is documented; errata appendix B checked. At reset FUNCSEL = NULL (no function drives the pad) and the pad pull-down is enabled.", status: single-source, value: none }
+    reset_state: { evidence: [rp2040-ds-3184e62#pin-reset-state, rp2040-ds-3184e62#pad-reset, rp2040-ds-3184e62#funcsel-reset], status: single-source, value: pulldown }
+    strap: { evidence: [rp2040-ds-3184e62#boot-cs-button], note: "RP2040 samples the boot mode on QSPI_SS (BOOTSEL), not on any user-bank GPIO.", status: single-source, value: none }
+  GPIO7:
+    errata: []
+    functions:
+      - { fn: SPI0.TX, routing: iomux }
+      - { fn: UART1.RTS, routing: iomux }
+      - { fn: I2C1.SCL, routing: iomux }
+      - { fn: PWM3.B, routing: iomux }
+      - { fn: GPIO, routing: iomux }
+      - { fn: PIO0, routing: iomux }
+      - { fn: PIO1, routing: iomux }
+      - { fn: USB.VBUS_DET, routing: iomux }
+    gpio: 7
+    input_only: { evidence: [rp2040-ds-3184e62#gpio-overview], status: single-source, value: false }
+    power_up_glitch: { evidence: [rp2040-ds-3184e62#errata-intro, rp2040-ds-3184e62#funcsel-reset, rp2040-ds-3184e62#pad-reset], note: "No power-up glitch is documented; errata appendix B checked. At reset FUNCSEL = NULL (no function drives the pad) and the pad pull-down is enabled.", status: single-source, value: none }
+    reset_state: { evidence: [rp2040-ds-3184e62#pin-reset-state, rp2040-ds-3184e62#pad-reset, rp2040-ds-3184e62#funcsel-reset], status: single-source, value: pulldown }
+    strap: { evidence: [rp2040-ds-3184e62#boot-cs-button], note: "RP2040 samples the boot mode on QSPI_SS (BOOTSEL), not on any user-bank GPIO.", status: single-source, value: none }
+  GPIO8:
+    errata: []
+    functions:
+      - { fn: SPI1.RX, routing: iomux }
+      - { fn: UART1.TX, routing: iomux }
+      - { fn: I2C0.SDA, routing: iomux }
+      - { fn: PWM4.A, routing: iomux }
+      - { fn: GPIO, routing: iomux }
+      - { fn: PIO0, routing: iomux }
+      - { fn: PIO1, routing: iomux }
+      - { fn: USB.VBUS_EN, routing: iomux }
+    gpio: 8
+    input_only: { evidence: [rp2040-ds-3184e62#gpio-overview], status: single-source, value: false }
+    power_up_glitch: { evidence: [rp2040-ds-3184e62#errata-intro, rp2040-ds-3184e62#funcsel-reset, rp2040-ds-3184e62#pad-reset], note: "No power-up glitch is documented; errata appendix B checked. At reset FUNCSEL = NULL (no function drives the pad) and the pad pull-down is enabled.", status: single-source, value: none }
+    reset_state: { evidence: [rp2040-ds-3184e62#pin-reset-state, rp2040-ds-3184e62#pad-reset, rp2040-ds-3184e62#funcsel-reset], status: single-source, value: pulldown }
+    strap: { evidence: [rp2040-ds-3184e62#boot-cs-button], note: "RP2040 samples the boot mode on QSPI_SS (BOOTSEL), not on any user-bank GPIO.", status: single-source, value: none }
+  GPIO9:
+    errata: []
+    functions:
+      - { fn: SPI1.CSn, routing: iomux }
+      - { fn: UART1.RX, routing: iomux }
+      - { fn: I2C0.SCL, routing: iomux }
+      - { fn: PWM4.B, routing: iomux }
+      - { fn: GPIO, routing: iomux }
+      - { fn: PIO0, routing: iomux }
+      - { fn: PIO1, routing: iomux }
+      - { fn: USB.OVCUR_DET, routing: iomux }
+    gpio: 9
+    input_only: { evidence: [rp2040-ds-3184e62#gpio-overview], status: single-source, value: false }
+    power_up_glitch: { evidence: [rp2040-ds-3184e62#errata-intro, rp2040-ds-3184e62#funcsel-reset, rp2040-ds-3184e62#pad-reset], note: "No power-up glitch is documented; errata appendix B checked. At reset FUNCSEL = NULL (no function drives the pad) and the pad pull-down is enabled.", status: single-source, value: none }
+    reset_state: { evidence: [rp2040-ds-3184e62#pin-reset-state, rp2040-ds-3184e62#pad-reset, rp2040-ds-3184e62#funcsel-reset], status: single-source, value: pulldown }
+    strap: { evidence: [rp2040-ds-3184e62#boot-cs-button], note: "RP2040 samples the boot mode on QSPI_SS (BOOTSEL), not on any user-bank GPIO.", status: single-source, value: none }
+  GPIO10:
+    errata: []
+    functions:
+      - { fn: SPI1.SCK, routing: iomux }
+      - { fn: UART1.CTS, routing: iomux }
+      - { fn: I2C1.SDA, routing: iomux }
+      - { fn: PWM5.A, routing: iomux }
+      - { fn: GPIO, routing: iomux }
+      - { fn: PIO0, routing: iomux }
+      - { fn: PIO1, routing: iomux }
+      - { fn: USB.VBUS_DET, routing: iomux }
+    gpio: 10
+    input_only: { evidence: [rp2040-ds-3184e62#gpio-overview], status: single-source, value: false }
+    power_up_glitch: { evidence: [rp2040-ds-3184e62#errata-intro, rp2040-ds-3184e62#funcsel-reset, rp2040-ds-3184e62#pad-reset], note: "No power-up glitch is documented; errata appendix B checked. At reset FUNCSEL = NULL (no function drives the pad) and the pad pull-down is enabled.", status: single-source, value: none }
+    reset_state: { evidence: [rp2040-ds-3184e62#pin-reset-state, rp2040-ds-3184e62#pad-reset, rp2040-ds-3184e62#funcsel-reset], status: single-source, value: pulldown }
+    strap: { evidence: [rp2040-ds-3184e62#boot-cs-button], note: "RP2040 samples the boot mode on QSPI_SS (BOOTSEL), not on any user-bank GPIO.", status: single-source, value: none }
+  GPIO11:
+    errata: []
+    functions:
+      - { fn: SPI1.TX, routing: iomux }
+      - { fn: UART1.RTS, routing: iomux }
+      - { fn: I2C1.SCL, routing: iomux }
+      - { fn: PWM5.B, routing: iomux }
+      - { fn: GPIO, routing: iomux }
+      - { fn: PIO0, routing: iomux }
+      - { fn: PIO1, routing: iomux }
+      - { fn: USB.VBUS_EN, routing: iomux }
+    gpio: 11
+    input_only: { evidence: [rp2040-ds-3184e62#gpio-overview], status: single-source, value: false }
+    power_up_glitch: { evidence: [rp2040-ds-3184e62#errata-intro, rp2040-ds-3184e62#funcsel-reset, rp2040-ds-3184e62#pad-reset], note: "No power-up glitch is documented; errata appendix B checked. At reset FUNCSEL = NULL (no function drives the pad) and the pad pull-down is enabled.", status: single-source, value: none }
+    reset_state: { evidence: [rp2040-ds-3184e62#pin-reset-state, rp2040-ds-3184e62#pad-reset, rp2040-ds-3184e62#funcsel-reset], status: single-source, value: pulldown }
+    strap: { evidence: [rp2040-ds-3184e62#boot-cs-button], note: "RP2040 samples the boot mode on QSPI_SS (BOOTSEL), not on any user-bank GPIO.", status: single-source, value: none }
+  GPIO12:
+    errata: []
+    functions:
+      - { fn: SPI1.RX, routing: iomux }
+      - { fn: UART0.TX, routing: iomux }
+      - { fn: I2C0.SDA, routing: iomux }
+      - { fn: PWM6.A, routing: iomux }
+      - { fn: GPIO, routing: iomux }
+      - { fn: PIO0, routing: iomux }
+      - { fn: PIO1, routing: iomux }
+      - { fn: USB.OVCUR_DET, routing: iomux }
+    gpio: 12
+    input_only: { evidence: [rp2040-ds-3184e62#gpio-overview], status: single-source, value: false }
+    power_up_glitch: { evidence: [rp2040-ds-3184e62#errata-intro, rp2040-ds-3184e62#funcsel-reset, rp2040-ds-3184e62#pad-reset], note: "No power-up glitch is documented; errata appendix B checked. At reset FUNCSEL = NULL (no function drives the pad) and the pad pull-down is enabled.", status: single-source, value: none }
+    reset_state: { evidence: [rp2040-ds-3184e62#pin-reset-state, rp2040-ds-3184e62#pad-reset, rp2040-ds-3184e62#funcsel-reset], status: single-source, value: pulldown }
+    strap: { evidence: [rp2040-ds-3184e62#boot-cs-button], note: "RP2040 samples the boot mode on QSPI_SS (BOOTSEL), not on any user-bank GPIO.", status: single-source, value: none }
+  GPIO13:
+    errata: []
+    functions:
+      - { fn: SPI1.CSn, routing: iomux }
+      - { fn: UART0.RX, routing: iomux }
+      - { fn: I2C0.SCL, routing: iomux }
+      - { fn: PWM6.B, routing: iomux }
+      - { fn: GPIO, routing: iomux }
+      - { fn: PIO0, routing: iomux }
+      - { fn: PIO1, routing: iomux }
+      - { fn: USB.VBUS_DET, routing: iomux }
+    gpio: 13
+    input_only: { evidence: [rp2040-ds-3184e62#gpio-overview], status: single-source, value: false }
+    power_up_glitch: { evidence: [rp2040-ds-3184e62#errata-intro, rp2040-ds-3184e62#funcsel-reset, rp2040-ds-3184e62#pad-reset], note: "No power-up glitch is documented; errata appendix B checked. At reset FUNCSEL = NULL (no function drives the pad) and the pad pull-down is enabled.", status: single-source, value: none }
+    reset_state: { evidence: [rp2040-ds-3184e62#pin-reset-state, rp2040-ds-3184e62#pad-reset, rp2040-ds-3184e62#funcsel-reset], status: single-source, value: pulldown }
+    strap: { evidence: [rp2040-ds-3184e62#boot-cs-button], note: "RP2040 samples the boot mode on QSPI_SS (BOOTSEL), not on any user-bank GPIO.", status: single-source, value: none }
+  GPIO14:
+    errata: []
+    functions:
+      - { fn: SPI1.SCK, routing: iomux }
+      - { fn: UART0.CTS, routing: iomux }
+      - { fn: I2C1.SDA, routing: iomux }
+      - { fn: PWM7.A, routing: iomux }
+      - { fn: GPIO, routing: iomux }
+      - { fn: PIO0, routing: iomux }
+      - { fn: PIO1, routing: iomux }
+      - { fn: USB.VBUS_EN, routing: iomux }
+    gpio: 14
+    input_only: { evidence: [rp2040-ds-3184e62#gpio-overview], status: single-source, value: false }
+    power_up_glitch: { evidence: [rp2040-ds-3184e62#errata-intro, rp2040-ds-3184e62#funcsel-reset, rp2040-ds-3184e62#pad-reset], note: "No power-up glitch is documented; errata appendix B checked. At reset FUNCSEL = NULL (no function drives the pad) and the pad pull-down is enabled.", status: single-source, value: none }
+    reset_state: { evidence: [rp2040-ds-3184e62#pin-reset-state, rp2040-ds-3184e62#pad-reset, rp2040-ds-3184e62#funcsel-reset], status: single-source, value: pulldown }
+    strap: { evidence: [rp2040-ds-3184e62#boot-cs-button], note: "RP2040 samples the boot mode on QSPI_SS (BOOTSEL), not on any user-bank GPIO.", status: single-source, value: none }
+  GPIO15:
+    errata: [RP2040-E5]
+    functions:
+      - { fn: SPI1.TX, routing: iomux }
+      - { fn: UART0.RTS, routing: iomux }
+      - { fn: I2C1.SCL, routing: iomux }
+      - { fn: PWM7.B, routing: iomux }
+      - { fn: GPIO, routing: iomux }
+      - { fn: PIO0, routing: iomux }
+      - { fn: PIO1, routing: iomux }
+      - { fn: USB.OVCUR_DET, routing: iomux }
+    gpio: 15
+    input_only: { evidence: [rp2040-ds-3184e62#gpio-overview], status: single-source, value: false }
+    power_up_glitch: { evidence: [rp2040-ds-3184e62#errata-intro, rp2040-ds-3184e62#funcsel-reset, rp2040-ds-3184e62#pad-reset], note: "No power-up glitch is documented; errata appendix B checked. At reset FUNCSEL = NULL (no function drives the pad) and the pad pull-down is enabled.", status: single-source, value: none }
+    reset_state: { evidence: [rp2040-ds-3184e62#pin-reset-state, rp2040-ds-3184e62#pad-reset, rp2040-ds-3184e62#funcsel-reset], status: single-source, value: pulldown }
+    strap: { evidence: [rp2040-ds-3184e62#boot-cs-button], note: "RP2040 samples the boot mode on QSPI_SS (BOOTSEL), not on any user-bank GPIO.", status: single-source, value: none }
+  GPIO16:
+    errata: []
+    functions:
+      - { fn: SPI0.RX, routing: iomux }
+      - { fn: UART0.TX, routing: iomux }
+      - { fn: I2C0.SDA, routing: iomux }
+      - { fn: PWM0.A, routing: iomux }
+      - { fn: GPIO, routing: iomux }
+      - { fn: PIO0, routing: iomux }
+      - { fn: PIO1, routing: iomux }
+      - { fn: USB.VBUS_DET, routing: iomux }
+    gpio: 16
+    input_only: { evidence: [rp2040-ds-3184e62#gpio-overview], status: single-source, value: false }
+    power_up_glitch: { evidence: [rp2040-ds-3184e62#errata-intro, rp2040-ds-3184e62#funcsel-reset, rp2040-ds-3184e62#pad-reset], note: "No power-up glitch is documented; errata appendix B checked. At reset FUNCSEL = NULL (no function drives the pad) and the pad pull-down is enabled.", status: single-source, value: none }
+    reset_state: { evidence: [rp2040-ds-3184e62#pin-reset-state, rp2040-ds-3184e62#pad-reset, rp2040-ds-3184e62#funcsel-reset], status: single-source, value: pulldown }
+    strap: { evidence: [rp2040-ds-3184e62#boot-cs-button], note: "RP2040 samples the boot mode on QSPI_SS (BOOTSEL), not on any user-bank GPIO.", status: single-source, value: none }
+  GPIO17:
+    errata: []
+    functions:
+      - { fn: SPI0.CSn, routing: iomux }
+      - { fn: UART0.RX, routing: iomux }
+      - { fn: I2C0.SCL, routing: iomux }
+      - { fn: PWM0.B, routing: iomux }
+      - { fn: GPIO, routing: iomux }
+      - { fn: PIO0, routing: iomux }
+      - { fn: PIO1, routing: iomux }
+      - { fn: USB.VBUS_EN, routing: iomux }
+    gpio: 17
+    input_only: { evidence: [rp2040-ds-3184e62#gpio-overview], status: single-source, value: false }
+    power_up_glitch: { evidence: [rp2040-ds-3184e62#errata-intro, rp2040-ds-3184e62#funcsel-reset, rp2040-ds-3184e62#pad-reset], note: "No power-up glitch is documented; errata appendix B checked. At reset FUNCSEL = NULL (no function drives the pad) and the pad pull-down is enabled.", status: single-source, value: none }
+    reset_state: { evidence: [rp2040-ds-3184e62#pin-reset-state, rp2040-ds-3184e62#pad-reset, rp2040-ds-3184e62#funcsel-reset], status: single-source, value: pulldown }
+    strap: { evidence: [rp2040-ds-3184e62#boot-cs-button], note: "RP2040 samples the boot mode on QSPI_SS (BOOTSEL), not on any user-bank GPIO.", status: single-source, value: none }
+  GPIO18:
+    errata: []
+    functions:
+      - { fn: SPI0.SCK, routing: iomux }
+      - { fn: UART0.CTS, routing: iomux }
+      - { fn: I2C1.SDA, routing: iomux }
+      - { fn: PWM1.A, routing: iomux }
+      - { fn: GPIO, routing: iomux }
+      - { fn: PIO0, routing: iomux }
+      - { fn: PIO1, routing: iomux }
+      - { fn: USB.OVCUR_DET, routing: iomux }
+    gpio: 18
+    input_only: { evidence: [rp2040-ds-3184e62#gpio-overview], status: single-source, value: false }
+    power_up_glitch: { evidence: [rp2040-ds-3184e62#errata-intro, rp2040-ds-3184e62#funcsel-reset, rp2040-ds-3184e62#pad-reset], note: "No power-up glitch is documented; errata appendix B checked. At reset FUNCSEL = NULL (no function drives the pad) and the pad pull-down is enabled.", status: single-source, value: none }
+    reset_state: { evidence: [rp2040-ds-3184e62#pin-reset-state, rp2040-ds-3184e62#pad-reset, rp2040-ds-3184e62#funcsel-reset], status: single-source, value: pulldown }
+    strap: { evidence: [rp2040-ds-3184e62#boot-cs-button], note: "RP2040 samples the boot mode on QSPI_SS (BOOTSEL), not on any user-bank GPIO.", status: single-source, value: none }
+  GPIO19:
+    errata: []
+    functions:
+      - { fn: SPI0.TX, routing: iomux }
+      - { fn: UART0.RTS, routing: iomux }
+      - { fn: I2C1.SCL, routing: iomux }
+      - { fn: PWM1.B, routing: iomux }
+      - { fn: GPIO, routing: iomux }
+      - { fn: PIO0, routing: iomux }
+      - { fn: PIO1, routing: iomux }
+      - { fn: USB.VBUS_DET, routing: iomux }
+    gpio: 19
+    input_only: { evidence: [rp2040-ds-3184e62#gpio-overview], status: single-source, value: false }
+    power_up_glitch: { evidence: [rp2040-ds-3184e62#errata-intro, rp2040-ds-3184e62#funcsel-reset, rp2040-ds-3184e62#pad-reset], note: "No power-up glitch is documented; errata appendix B checked. At reset FUNCSEL = NULL (no function drives the pad) and the pad pull-down is enabled.", status: single-source, value: none }
+    reset_state: { evidence: [rp2040-ds-3184e62#pin-reset-state, rp2040-ds-3184e62#pad-reset, rp2040-ds-3184e62#funcsel-reset], status: single-source, value: pulldown }
+    strap: { evidence: [rp2040-ds-3184e62#boot-cs-button], note: "RP2040 samples the boot mode on QSPI_SS (BOOTSEL), not on any user-bank GPIO.", status: single-source, value: none }
+  GPIO20:
+    errata: []
+    functions:
+      - { fn: SPI0.RX, routing: iomux }
+      - { fn: UART1.TX, routing: iomux }
+      - { fn: I2C0.SDA, routing: iomux }
+      - { fn: PWM2.A, routing: iomux }
+      - { fn: GPIO, routing: iomux }
+      - { fn: PIO0, routing: iomux }
+      - { fn: PIO1, routing: iomux }
+      - { fn: CLOCK.GPIN0, routing: iomux }
+      - { fn: USB.VBUS_EN, routing: iomux }
+    gpio: 20
+    input_only: { evidence: [rp2040-ds-3184e62#gpio-overview], status: single-source, value: false }
+    power_up_glitch: { evidence: [rp2040-ds-3184e62#errata-intro, rp2040-ds-3184e62#funcsel-reset, rp2040-ds-3184e62#pad-reset], note: "No power-up glitch is documented; errata appendix B checked. At reset FUNCSEL = NULL (no function drives the pad) and the pad pull-down is enabled.", status: single-source, value: none }
+    reset_state: { evidence: [rp2040-ds-3184e62#pin-reset-state, rp2040-ds-3184e62#pad-reset, rp2040-ds-3184e62#funcsel-reset], status: single-source, value: pulldown }
+    strap: { evidence: [rp2040-ds-3184e62#boot-cs-button], note: "RP2040 samples the boot mode on QSPI_SS (BOOTSEL), not on any user-bank GPIO.", status: single-source, value: none }
+  GPIO21:
+    errata: []
+    functions:
+      - { fn: SPI0.CSn, routing: iomux }
+      - { fn: UART1.RX, routing: iomux }
+      - { fn: I2C0.SCL, routing: iomux }
+      - { fn: PWM2.B, routing: iomux }
+      - { fn: GPIO, routing: iomux }
+      - { fn: PIO0, routing: iomux }
+      - { fn: PIO1, routing: iomux }
+      - { fn: CLOCK.GPOUT0, routing: iomux }
+      - { fn: USB.OVCUR_DET, routing: iomux }
+    gpio: 21
+    input_only: { evidence: [rp2040-ds-3184e62#gpio-overview], status: single-source, value: false }
+    power_up_glitch: { evidence: [rp2040-ds-3184e62#errata-intro, rp2040-ds-3184e62#funcsel-reset, rp2040-ds-3184e62#pad-reset], note: "No power-up glitch is documented; errata appendix B checked. At reset FUNCSEL = NULL (no function drives the pad) and the pad pull-down is enabled.", status: single-source, value: none }
+    reset_state: { evidence: [rp2040-ds-3184e62#pin-reset-state, rp2040-ds-3184e62#pad-reset, rp2040-ds-3184e62#funcsel-reset], status: single-source, value: pulldown }
+    strap: { evidence: [rp2040-ds-3184e62#boot-cs-button], note: "RP2040 samples the boot mode on QSPI_SS (BOOTSEL), not on any user-bank GPIO.", status: single-source, value: none }
+  GPIO22:
+    errata: []
+    functions:
+      - { fn: SPI0.SCK, routing: iomux }
+      - { fn: UART1.CTS, routing: iomux }
+      - { fn: I2C1.SDA, routing: iomux }
+      - { fn: PWM3.A, routing: iomux }
+      - { fn: GPIO, routing: iomux }
+      - { fn: PIO0, routing: iomux }
+      - { fn: PIO1, routing: iomux }
+      - { fn: CLOCK.GPIN1, routing: iomux }
+      - { fn: USB.VBUS_DET, routing: iomux }
+    gpio: 22
+    input_only: { evidence: [rp2040-ds-3184e62#gpio-overview], status: single-source, value: false }
+    power_up_glitch: { evidence: [rp2040-ds-3184e62#errata-intro, rp2040-ds-3184e62#funcsel-reset, rp2040-ds-3184e62#pad-reset], note: "No power-up glitch is documented; errata appendix B checked. At reset FUNCSEL = NULL (no function drives the pad) and the pad pull-down is enabled.", status: single-source, value: none }
+    reset_state: { evidence: [rp2040-ds-3184e62#pin-reset-state, rp2040-ds-3184e62#pad-reset, rp2040-ds-3184e62#funcsel-reset], status: single-source, value: pulldown }
+    strap: { evidence: [rp2040-ds-3184e62#boot-cs-button], note: "RP2040 samples the boot mode on QSPI_SS (BOOTSEL), not on any user-bank GPIO.", status: single-source, value: none }
+  GPIO23:
+    errata: []
+    functions:
+      - { fn: SPI0.TX, routing: iomux }
+      - { fn: UART1.RTS, routing: iomux }
+      - { fn: I2C1.SCL, routing: iomux }
+      - { fn: PWM3.B, routing: iomux }
+      - { fn: GPIO, routing: iomux }
+      - { fn: PIO0, routing: iomux }
+      - { fn: PIO1, routing: iomux }
+      - { fn: CLOCK.GPOUT1, routing: iomux }
+      - { fn: USB.VBUS_EN, routing: iomux }
+    gpio: 23
+    input_only: { evidence: [rp2040-ds-3184e62#gpio-overview], status: single-source, value: false }
+    power_up_glitch: { evidence: [rp2040-ds-3184e62#errata-intro, rp2040-ds-3184e62#funcsel-reset, rp2040-ds-3184e62#pad-reset], note: "No power-up glitch is documented; errata appendix B checked. At reset FUNCSEL = NULL (no function drives the pad) and the pad pull-down is enabled.", status: single-source, value: none }
+    reset_state: { evidence: [rp2040-ds-3184e62#pin-reset-state, rp2040-ds-3184e62#pad-reset, rp2040-ds-3184e62#funcsel-reset], status: single-source, value: pulldown }
+    strap: { evidence: [rp2040-ds-3184e62#boot-cs-button], note: "RP2040 samples the boot mode on QSPI_SS (BOOTSEL), not on any user-bank GPIO.", status: single-source, value: none }
+  GPIO24:
+    errata: []
+    functions:
+      - { fn: SPI1.RX, routing: iomux }
+      - { fn: UART1.TX, routing: iomux }
+      - { fn: I2C0.SDA, routing: iomux }
+      - { fn: PWM4.A, routing: iomux }
+      - { fn: GPIO, routing: iomux }
+      - { fn: PIO0, routing: iomux }
+      - { fn: PIO1, routing: iomux }
+      - { fn: CLOCK.GPOUT2, routing: iomux }
+      - { fn: USB.OVCUR_DET, routing: iomux }
+    gpio: 24
+    input_only: { evidence: [rp2040-ds-3184e62#gpio-overview], status: single-source, value: false }
+    power_up_glitch: { evidence: [rp2040-ds-3184e62#errata-intro, rp2040-ds-3184e62#funcsel-reset, rp2040-ds-3184e62#pad-reset], note: "No power-up glitch is documented; errata appendix B checked. At reset FUNCSEL = NULL (no function drives the pad) and the pad pull-down is enabled.", status: single-source, value: none }
+    reset_state: { evidence: [rp2040-ds-3184e62#pin-reset-state, rp2040-ds-3184e62#pad-reset, rp2040-ds-3184e62#funcsel-reset], status: single-source, value: pulldown }
+    strap: { evidence: [rp2040-ds-3184e62#boot-cs-button], note: "RP2040 samples the boot mode on QSPI_SS (BOOTSEL), not on any user-bank GPIO.", status: single-source, value: none }
+  GPIO25:
+    errata: []
+    functions:
+      - { fn: SPI1.CSn, routing: iomux }
+      - { fn: UART1.RX, routing: iomux }
+      - { fn: I2C0.SCL, routing: iomux }
+      - { fn: PWM4.B, routing: iomux }
+      - { fn: GPIO, routing: iomux }
+      - { fn: PIO0, routing: iomux }
+      - { fn: PIO1, routing: iomux }
+      - { fn: CLOCK.GPOUT3, routing: iomux }
+      - { fn: USB.VBUS_DET, routing: iomux }
+    gpio: 25
+    input_only: { evidence: [rp2040-ds-3184e62#gpio-overview], status: single-source, value: false }
+    power_up_glitch: { evidence: [rp2040-ds-3184e62#errata-intro, rp2040-ds-3184e62#funcsel-reset, rp2040-ds-3184e62#pad-reset], note: "No power-up glitch is documented; errata appendix B checked. At reset FUNCSEL = NULL (no function drives the pad) and the pad pull-down is enabled.", status: single-source, value: none }
+    reset_state: { evidence: [rp2040-ds-3184e62#pin-reset-state, rp2040-ds-3184e62#pad-reset, rp2040-ds-3184e62#funcsel-reset], status: single-source, value: pulldown }
+    strap: { evidence: [rp2040-ds-3184e62#boot-cs-button], note: "RP2040 samples the boot mode on QSPI_SS (BOOTSEL), not on any user-bank GPIO.", status: single-source, value: none }
+  GPIO26:
+    adc:
+      channel: 0
+      radio_conflict: { evidence: [rp2040-ds-3184e62#adc-ainsel, rp2040-ds-3184e62#key-features], note: "RP2040 has no on-chip radio. On Pico W, GPIO29 (ADC3) is also the CYW43439 SPI clock; that is recorded on the Pico W module and board, not on the chip.", status: single-source, value: false }
+      unit: ADC
+    errata: [RP2040-E6, RP2040-E11]
+    functions:
+      - { fn: SPI1.SCK, routing: iomux }
+      - { fn: UART1.CTS, routing: iomux }
+      - { fn: I2C1.SDA, routing: iomux }
+      - { fn: PWM5.A, routing: iomux }
+      - { fn: GPIO, routing: iomux }
+      - { fn: PIO0, routing: iomux }
+      - { fn: PIO1, routing: iomux }
+      - { fn: USB.VBUS_EN, routing: iomux }
+      - { fn: ADC_CH0, routing: fixed }
+    gpio: 26
+    input_only: { evidence: [rp2040-ds-3184e62#gpio-overview], status: single-source, value: false }
+    power_up_glitch: { evidence: [rp2040-ds-3184e62#errata-intro, rp2040-ds-3184e62#funcsel-reset, rp2040-ds-3184e62#pad-reset], note: "No power-up glitch is documented; errata appendix B checked. At reset FUNCSEL = NULL (no function drives the pad) and the pad pull-down is enabled.", status: single-source, value: none }
+    reset_state: { evidence: [rp2040-ds-3184e62#pin-reset-state-adc, rp2040-ds-3184e62#pad-reset, rp2040-ds-3184e62#funcsel-reset], status: single-source, value: pulldown }
+    strap: { evidence: [rp2040-ds-3184e62#boot-cs-button], note: "RP2040 samples the boot mode on QSPI_SS (BOOTSEL), not on any user-bank GPIO.", status: single-source, value: none }
+  GPIO27:
+    adc:
+      channel: 1
+      radio_conflict: { evidence: [rp2040-ds-3184e62#adc-ainsel, rp2040-ds-3184e62#key-features], note: "RP2040 has no on-chip radio. On Pico W, GPIO29 (ADC3) is also the CYW43439 SPI clock; that is recorded on the Pico W module and board, not on the chip.", status: single-source, value: false }
+      unit: ADC
+    errata: [RP2040-E6, RP2040-E11]
+    functions:
+      - { fn: SPI1.TX, routing: iomux }
+      - { fn: UART1.RTS, routing: iomux }
+      - { fn: I2C1.SCL, routing: iomux }
+      - { fn: PWM5.B, routing: iomux }
+      - { fn: GPIO, routing: iomux }
+      - { fn: PIO0, routing: iomux }
+      - { fn: PIO1, routing: iomux }
+      - { fn: USB.OVCUR_DET, routing: iomux }
+      - { fn: ADC_CH1, routing: fixed }
+    gpio: 27
+    input_only: { evidence: [rp2040-ds-3184e62#gpio-overview], status: single-source, value: false }
+    power_up_glitch: { evidence: [rp2040-ds-3184e62#errata-intro, rp2040-ds-3184e62#funcsel-reset, rp2040-ds-3184e62#pad-reset], note: "No power-up glitch is documented; errata appendix B checked. At reset FUNCSEL = NULL (no function drives the pad) and the pad pull-down is enabled.", status: single-source, value: none }
+    reset_state: { evidence: [rp2040-ds-3184e62#pin-reset-state-adc, rp2040-ds-3184e62#pad-reset, rp2040-ds-3184e62#funcsel-reset], status: single-source, value: pulldown }
+    strap: { evidence: [rp2040-ds-3184e62#boot-cs-button], note: "RP2040 samples the boot mode on QSPI_SS (BOOTSEL), not on any user-bank GPIO.", status: single-source, value: none }
+  GPIO28:
+    adc:
+      channel: 2
+      radio_conflict: { evidence: [rp2040-ds-3184e62#adc-ainsel, rp2040-ds-3184e62#key-features], note: "RP2040 has no on-chip radio. On Pico W, GPIO29 (ADC3) is also the CYW43439 SPI clock; that is recorded on the Pico W module and board, not on the chip.", status: single-source, value: false }
+      unit: ADC
+    errata: [RP2040-E6, RP2040-E11]
+    functions:
+      - { fn: SPI1.RX, routing: iomux }
+      - { fn: UART0.TX, routing: iomux }
+      - { fn: I2C0.SDA, routing: iomux }
+      - { fn: PWM6.A, routing: iomux }
+      - { fn: GPIO, routing: iomux }
+      - { fn: PIO0, routing: iomux }
+      - { fn: PIO1, routing: iomux }
+      - { fn: USB.VBUS_DET, routing: iomux }
+      - { fn: ADC_CH2, routing: fixed }
+    gpio: 28
+    input_only: { evidence: [rp2040-ds-3184e62#gpio-overview], status: single-source, value: false }
+    power_up_glitch: { evidence: [rp2040-ds-3184e62#errata-intro, rp2040-ds-3184e62#funcsel-reset, rp2040-ds-3184e62#pad-reset], note: "No power-up glitch is documented; errata appendix B checked. At reset FUNCSEL = NULL (no function drives the pad) and the pad pull-down is enabled.", status: single-source, value: none }
+    reset_state: { evidence: [rp2040-ds-3184e62#pin-reset-state-adc, rp2040-ds-3184e62#pad-reset, rp2040-ds-3184e62#funcsel-reset], status: single-source, value: pulldown }
+    strap: { evidence: [rp2040-ds-3184e62#boot-cs-button], note: "RP2040 samples the boot mode on QSPI_SS (BOOTSEL), not on any user-bank GPIO.", status: single-source, value: none }
+  GPIO29:
+    adc:
+      channel: 3
+      radio_conflict: { evidence: [rp2040-ds-3184e62#adc-ainsel, rp2040-ds-3184e62#key-features], note: "RP2040 has no on-chip radio. On Pico W, GPIO29 (ADC3) is also the CYW43439 SPI clock; that is recorded on the Pico W module and board, not on the chip.", status: single-source, value: false }
+      unit: ADC
+    errata: [RP2040-E6, RP2040-E11]
+    functions:
+      - { fn: SPI1.CSn, routing: iomux }
+      - { fn: UART0.RX, routing: iomux }
+      - { fn: I2C0.SCL, routing: iomux }
+      - { fn: PWM6.B, routing: iomux }
+      - { fn: GPIO, routing: iomux }
+      - { fn: PIO0, routing: iomux }
+      - { fn: PIO1, routing: iomux }
+      - { fn: USB.VBUS_EN, routing: iomux }
+      - { fn: ADC_CH3, routing: fixed }
+    gpio: 29
+    input_only: { evidence: [rp2040-ds-3184e62#gpio-overview], status: single-source, value: false }
+    power_up_glitch: { evidence: [rp2040-ds-3184e62#errata-intro, rp2040-ds-3184e62#funcsel-reset, rp2040-ds-3184e62#pad-reset], note: "No power-up glitch is documented; errata appendix B checked. At reset FUNCSEL = NULL (no function drives the pad) and the pad pull-down is enabled.", status: single-source, value: none }
+    reset_state: { evidence: [rp2040-ds-3184e62#pin-reset-state-adc, rp2040-ds-3184e62#pad-reset, rp2040-ds-3184e62#funcsel-reset], status: single-source, value: pulldown }
+    strap: { evidence: [rp2040-ds-3184e62#boot-cs-button], note: "RP2040 samples the boot mode on QSPI_SS (BOOTSEL), not on any user-bank GPIO.", status: single-source, value: none }
+peripherals:
+  ADC: { kind: adc, matrix_routable: false }
+  I2C0: { kind: i2c, matrix_routable: false }
+  I2C1: { kind: i2c, matrix_routable: false }
+  PWM: { kind: pwm, matrix_routable: false }
+  SPI0: { kind: spi, matrix_routable: false }
+  SPI1: { kind: spi, matrix_routable: false }
+  UART0: { kind: uart, matrix_routable: false }
+  UART1: { kind: uart, matrix_routable: false }
+revisions: ["B0", "B1", "B2"]
+series: RP2040
+vdd_io: { evidence: [rp2040-ds-3184e62#iovdd-nominal, rp2040-ds-3184e62#input-thresholds-default], note: "IOVDD nominal 1.8-3.3 V; 3.3 V is the Pico / Pico W supply and the condition of the electrical facts. At 1.8 V the pad VOLTAGE_SELECT must be set.", status: single-source, unit: V, value: 3.3 }
+vendor: Raspberry Pi Ltd

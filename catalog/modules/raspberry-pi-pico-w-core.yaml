@@ -1,0 +1,16 @@
+# Thin "board core" module for the Raspberry Pi Pico W (Rev3). The Pico W has no separate RP2040 module: the RP2040,
+# the W25Q16JV QSPI flash, the crystal and the Infineon CYW43439 wireless chip sit directly on the Pico W PCB. The
+# schema requires board -> variant -> module -> chip, so this record stands for that core of the Pico W PCB.
+# - bonded_pads: all 30 user-bank pads are wired on the PCB (26 to the header, GPIO23/24/25/29 to the CYW43439).
+# - consumed: GPIO23/24/25/29 are the CYW43439 SPI/control lines (WL_ON, WL_D, WL_CS, WL_CLK) and must never be
+#   assigned to user parts. `internal` is the closest enum value (the enum has no `radio`/`wireless`).
+# - The flash uses the separate QSPI bank, not GPIO0-29 (rp2040-ds-3184e62#qspi-bank).
+bonded_pads: [GPIO0, GPIO1, GPIO2, GPIO3, GPIO4, GPIO5, GPIO6, GPIO7, GPIO8, GPIO9, GPIO10, GPIO11, GPIO12, GPIO13, GPIO14, GPIO15, GPIO16, GPIO17, GPIO18, GPIO19, GPIO20, GPIO21, GPIO22, GPIO23, GPIO24, GPIO25, GPIO26, GPIO27, GPIO28, GPIO29]
+chip: rp2040
+consumed:
+  GPIO23: { evidence: [pico-w-ds-rel7#internal-gpio23, pico-w-ds-rel7#schematic-wireless], note: "CYW43439 power-on signal (net WL_ON).", status: single-source, value: internal }
+  GPIO24: { evidence: [pico-w-ds-rel7#internal-gpio24, pico-w-ds-rel7#schematic-wireless], note: "CYW43439 SPI data/IRQ (net WL_D; DIN, DOUT and IRQ share this pin).", status: single-source, value: internal }
+  GPIO25: { evidence: [pico-w-ds-rel7#internal-gpio25, pico-w-ds-rel7#schematic-wireless], note: "CYW43439 SPI chip select (net WL_CS); when high it also switches the VSYS/3 divider onto GPIO29.", status: single-source, value: internal }
+  GPIO29: { evidence: [pico-w-ds-rel7#internal-gpio29, pico-w-ds-rel7#clk-shared, pico-w-ds-rel7#schematic-wireless], note: "CYW43439 SPI clock (net WL_CLK), shared with the VSYS/3 measurement on ADC3 (readable only when no SPI transfer is in progress).", status: single-source, value: internal }
+flash_voltage: { evidence: [pico-w-ds-rel7#schematic-flash, pico-w-ds-rel7#flash-part], note: "W25Q16JVUXIQ VCC (pin 8) is on the 3V3 net in the Pico W Rev3 schematic (Figure 12); read from the schematic image.", status: single-source, transcribed: true, unit: V, value: 3.3 }
+id: raspberry-pi-pico-w-core
