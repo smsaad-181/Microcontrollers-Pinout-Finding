@@ -9,7 +9,7 @@ Catalog version: none yet · Rule-set version: none yet · Last updated: 2026-10
 | Phase | Name | Status | Branch | Validation | Notes |
 | --- | --- | --- | --- | --- | --- |
 | 0 | Bootstrap: tools, repo, Pages enabled | IN PROGRESS (remote deferred) | main | — | 0.1, 0.2, 0.5, 0.6 done; 0.3/0.4 deferred by user (GitHub later) |
-| 1 | Foundation: monorepo, schema, evidence model, CI/CD, placeholder on Pages | VALIDATING (fix round 1/3 pending) | phase-1 | phase-validator FAIL (0 critical, 5 major) | local-only; 1.8 + CI/deploy gate items wait for GitHub |
+| 1 | Foundation: monorepo, schema, evidence model, CI/CD, placeholder on Pages | FIXING (round 1/3) | phase-1 | phase-validator FAIL · code-reviewer FAIL · github-actions-expert PASS | local-only; 1.8 + CI/deploy gate items wait for GitHub |
 | 2a | Catalog: MVP boards and modules, two-key verified | NOT STARTED | phase-2a | — | needs manual PDFs |
 | 2b | Engine: interface selection, CSP solver, rules R1–R8, explanations | NOT STARTED | phase-2b | — | |
 | 3 | Web app: UI, Web Worker, projects, sharing, export, offline | NOT STARTED | phase-3 | — | |
@@ -20,11 +20,10 @@ Status values: NOT STARTED · IN PROGRESS · VALIDATING · FIXING (round n/3) ·
 
 ## Current task
 
-Phase 1 VALIDATING. Validator results so far:
-- phase-validator: **FAIL** (0 critical, 5 major, 8 minor)
-- code-reviewer: **FAIL** (0 critical, 2 major, 7 minor; 26 mutation tests, 10 survived)
-Running now: **github-actions-expert** (validator 3/3, includes a clean-clone CI simulation).
-Then: fix round 1 for all findings together, then re-validate.
+Phase 1 FIXING (round 1/3), local only (user does GitHub later). Validators: phase-validator FAIL (5 major), code-reviewer FAIL (2 major), github-actions-expert PASS (0 major).
+Running now: **engine-developer fix agent** — checker/schema majors F2 F3 F4 F5 + CR1 CR2 and cheap minors (tests first).
+Me: workflow fixes (deploy `configure-pages`, Node pin, duplicate CI runs).
+Then: re-run all three validators.
 
 ## Task checklist
 
@@ -161,6 +160,7 @@ None of these block Phase 0. Re-check all three when a session is started inside
 
 | Date | Phase | Event |
 | --- | --- | --- |
+| 2026-10-22 | 1 | Validator 3/3 github-actions-expert: **PASS** — 0 Critical/Major, 6 Minor; clean-clone CI simulation (install, lint, typecheck, test, validate, compile, build) exit 0 on Node 22 and 24; branch-protection commands for 1.8 recorded in its report. |
 | 2026-10-22 | 1 | Validator 2/3 code-reviewer: **FAIL** — 2 Major: CR1 board with `variants: []`/unknown module passes as fully-verified (exit 0); CR2 surviving mutants (no positive `fully-verified` test, no content→version test). 7 Minor (e.g. `__proto__` pad silently dropped, alias-bomb stack trace). pnpm audit clean. |
 | 2026-10-22 | 1 | Validator 1/3 phase-validator: **FAIL** — all local gate commands pass (161 tests, 12/12 invalid fixtures rejected, compile deterministic, SHA pins OK); 5 Major findings in checker strictness + deploy.yml. Remote-only gate items not verifiable (no GitHub). |
 | 2026-10-22 | 1 | 1.9 done: CONTRIBUTING.md; `docs/schema.md` generated from the Zod descriptions (`pnpm docs:schema`, 11 schemas). |
