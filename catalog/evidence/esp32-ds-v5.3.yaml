@@ -157,6 +157,10 @@ claims:
     locator: "Appendix A.3, Table IO_MUX, pin 36 row, columns At Reset / After Reset, PDF p.69"
     quote: "36 GPIO23 oe=0, ie=0 oe=0, ie=1"
     supports: "GPIO23: during reset input disabled without pull (oe=0, ie=0); after reset oe=0, ie=1"
+  - id: "esp32-ds-v5.3#gpio2-download-boot-low"
+    locator: "§3.1, Table 3-3 Chip Boot Mode Control, row Joint Download Boot Mode (GPIO0 = 0, GPIO2 = 0), PDF p.23"
+    quote: "Joint Download Boot Mode"
+    supports: "Joint Download Boot Mode needs GPIO0 = 0 and GPIO2 = 0 (blind auditor reading: GPIO2 required level low for download)"
 doc_number: null
 id: "esp32-ds-v5.3"
 kind: "datasheet"
