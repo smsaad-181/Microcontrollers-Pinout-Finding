@@ -22,8 +22,8 @@ Status values: NOT STARTED · IN PROGRESS · VALIDATING · FIXING (round n/3) ·
 
 Phase 1 (local, branch `phase-1`). Running in parallel:
 - **1.1** pnpm workspace + all dependencies — _ci-pages-engineer_
-- **1.5** fake-part CLI fixtures (valid + 12 invalid catalogs) — _fixture-author_
-Next: 1.2–1.4 schema + CLI (TDD), 1.6 web placeholder, 1.7 workflows.
+- **1.7** CI / deploy / links workflows, actions pinned to SHAs — _ci-pages-engineer_
+Next (after 1.1): 1.2–1.4 schema + CLI (TDD), 1.6 web placeholder, then 1.9 docs.
 
 ## Task checklist
 
@@ -42,9 +42,9 @@ Legend: `[x]` done · `[~]` in progress · `[-]` deferred (needs GitHub) · `[ ]
 - [ ] 1.2 · Zod schemas for Evidence, Fact<T>, Chip, Module, Board, Pin view, IC, Breakout, Fixture… · _engine-developer_
 - [ ] 1.3 · catalog validate [--root <dir>] (default catalog/) · _engine-developer_
 - [ ] 1.4 · catalog compile · _engine-developer_
-- [~] 1.5 · Seed fixtures for the CLI · _fixture-author_
+- [x] 1.5 · Seed fixtures for the CLI · _fixture-author_
 - [ ] 1.6 · apps/web · _ui-developer_
-- [ ] 1.7 · Workflows · _ci-pages-engineer_
+- [~] 1.7 · Workflows · _ci-pages-engineer_
 - [-] 1.8 · Branch protection on main · _ci-pages-engineer_
 - [ ] 1.9 · Docs: docs/schema.md (generated from Zod descriptions), CONTRIBUTING.md skeleton. · _ci-pages-engineer_
 
@@ -154,4 +154,5 @@ None of these block Phase 0. Re-check all three when a session is started inside
 
 | Date | Phase | Event |
 | --- | --- | --- |
+| 2026-10-22 | 1 | 1.5 done: CLI fixtures (valid + 12 invalid cases, error-code contract in `packages/cli/test/fixtures/README.md`); each invalid case differs from valid in exactly one line (diff -r checked). |
 | 2026-10-22 | 0 | Started. Local git repo on `main`. Tasks 0.1 (tools), 0.2 (MCP), 0.5 (LICENSE, catalog/LICENSE, .editorconfig, .gitattributes) done; 0.6 already satisfied by `sources/manual/README.md`. Waiting on `gh` install/login + repo name. |

@@ -1,0 +1,19 @@
+# FAKE golden fixture for catalog-CLI schema tests only (fictional DEMO-* parts). It exercises the
+# Fixture schema; it is not a hardware regression fixture.
+board: demo-board-1@r1
+derivations:
+  - "GPIO3 is consumed by flash on DEMO-MODULE-1 (demo-datasheet-1#module-pads) and is absent from header J1 (demo-datasheet-1#board-pinout), so no assignment may use it."
+  - "The breakout exposes only I2C with ADDR hardwired to GND (demo-datasheet-1#breakout-pins); two signals fit on the two output-capable header pads GPIO0/GPIO1, so status is ok."
+evidence: [demo-datasheet-1#module-pads, demo-datasheet-1#board-pinout, demo-datasheet-1#breakout-pins]
+expect:
+  properties:
+    - { no_pad_in: [GPIO3] }
+id: demo-board-1-demo-breakout-1
+project:
+  board: demo-board-1@r1
+  locked: []
+  modules:
+    - { breakout: demo-breakout-1, instance: env }
+  reserved: []
+  variant: demo-variant-a
+variant: demo-variant-a
