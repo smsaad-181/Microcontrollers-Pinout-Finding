@@ -92,6 +92,7 @@
   <div class="grid">
     <div class="stack">
       <section class="panel now"><h2><span class="pulse"></span>Doing now</h2><div class="md" id="current"></div></section>
+      <section class="panel"><h2>Files being written right now <span class="dim" style="text-transform:none;letter-spacing:0">(uncommitted work by agents)</span></h2><ul class="commits" id="working"></ul></section>
       <section class="panel"><h2>Phases &amp; tasks <span class="dim" style="text-transform:none;letter-spacing:0">(click a phase)</span></h2><div id="phases"></div></section>
     </div>
     <div class="stack">
@@ -151,6 +152,10 @@
     document.getElementById('web').innerHTML = s.webDev
       ? `<p>● Running: <a href="http://localhost:5173/pinout-finder/" target="_blank" rel="noopener">http://localhost:5173/pinout-finder/</a></p>`
       : `<p class="dim">Web app dev server not running yet (starts once the workspace exists).</p>`;
+    const stName = { M: 'changed', A: 'added', D: 'deleted', '??': 'new' };
+    document.getElementById('working').innerHTML = (s.working || []).map((w) =>
+      `<li><span class="${w.st === 'D' ? 'm-dash' : 'm-tilde'}">${esc(stName[w.st] || w.st)}</span><span></span><code>${esc(w.path)}</code></li>`).join('')
+      || '<li class="dim">nothing uncommitted — all work is saved</li>';
     document.getElementById('commits').innerHTML = s.commits.map(([h, d, ref, msg]) =>
       `<li><code>${esc(h)}</code><span class="dim">${esc(d)}</span><span>${ref ? `<span class="ref">${esc(ref.trim())}</span> ` : ''}${esc(msg)}</span></li>`).join('') || '<li class="dim">none</li>';
     document.getElementById('reports').innerHTML = s.reports.length

@@ -106,6 +106,12 @@ async function state() {
     commits: git('log', '--all', '-15', '--date=format:%m-%d %H:%M', '--pretty=%h\t%ad\t%d\t%s')
       .split('\n').filter(Boolean).map((l) => l.split('\t')),
     dirty: git('status', '--porcelain').split('\n').filter(Boolean).length,
+    working: git('status', '--porcelain', '--untracked-files=all')
+      .split('\n').filter(Boolean)
+      .map((l) => /^\s*(\S+)\s+(.*)$/.exec(l))
+      .filter((m) => m !== null)
+      .map((m) => ({ st: m[1], path: m[2] }))
+      .slice(0, 40),
     reports: validationReports(),
     webDev: await probe('http://localhost:5173/pinout-finder/'),
     phaseOrder: PHASES,
