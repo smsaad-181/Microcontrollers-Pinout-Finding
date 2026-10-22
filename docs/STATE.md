@@ -20,9 +20,11 @@ Status values: NOT STARTED · IN PROGRESS · VALIDATING · FIXING (round n/3) ·
 
 ## Current task
 
-Phase 1 VALIDATING. phase-validator: **FAIL** (0 critical, 5 major, 8 minor) — report `docs/validation/phase-1/phase-validator.md`.
-Majors: F7 deploy `configure-pages` permissions · F2 duplicate entity ids accepted · F3 dangling refs only warnings · F4 reviewer names not normalised (two-key bypass) · F5 empty/over-long evidence quotes.
-Running now: **code-reviewer** (validator 2/3: checker/schema correctness, determinism, mutation tests on the tests themselves, web XSS). Then github-actions-expert; then fix round 1 for all findings together.
+Phase 1 VALIDATING. Validator results so far:
+- phase-validator: **FAIL** (0 critical, 5 major, 8 minor)
+- code-reviewer: **FAIL** (0 critical, 2 major, 7 minor; 26 mutation tests, 10 survived)
+Running now: **github-actions-expert** (validator 3/3, includes a clean-clone CI simulation).
+Then: fix round 1 for all findings together, then re-validate.
 
 ## Task checklist
 
@@ -159,6 +161,7 @@ None of these block Phase 0. Re-check all three when a session is started inside
 
 | Date | Phase | Event |
 | --- | --- | --- |
+| 2026-10-22 | 1 | Validator 2/3 code-reviewer: **FAIL** — 2 Major: CR1 board with `variants: []`/unknown module passes as fully-verified (exit 0); CR2 surviving mutants (no positive `fully-verified` test, no content→version test). 7 Minor (e.g. `__proto__` pad silently dropped, alias-bomb stack trace). pnpm audit clean. |
 | 2026-10-22 | 1 | Validator 1/3 phase-validator: **FAIL** — all local gate commands pass (161 tests, 12/12 invalid fixtures rejected, compile deterministic, SHA pins OK); 5 Major findings in checker strictness + deploy.yml. Remote-only gate items not verifiable (no GitHub). |
 | 2026-10-22 | 1 | 1.9 done: CONTRIBUTING.md; `docs/schema.md` generated from the Zod descriptions (`pnpm docs:schema`, 11 schemas). |
 | 2026-10-22 | 1 | 1.2–1.4 done (TDD): Zod schemas match the skill reference (type-level equality tests, 24 types), `catalog validate` (every invalid fixture → its contracted code, valid + empty real catalog → 0), `catalog compile` (twice → byte-identical; version = first 12 hex of content sha256). Orchestrator re-run: typecheck/lint 0; schema 62, cli 61, web 35 tests pass. |
