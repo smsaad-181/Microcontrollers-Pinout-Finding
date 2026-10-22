@@ -9,7 +9,7 @@ Catalog version: none yet · Rule-set version: none yet · Last updated: 2026-10
 | Phase | Name | Status | Branch | Validation | Notes |
 | --- | --- | --- | --- | --- | --- |
 | 0 | Bootstrap: tools, repo, Pages enabled | IN PROGRESS (remote deferred) | main | — | 0.1, 0.2, 0.5, 0.6 done; 0.3/0.4 deferred by user (GitHub later) |
-| 1 | Foundation: monorepo, schema, evidence model, CI/CD, placeholder on Pages | FIXING (round 1/3) | phase-1 | phase-validator FAIL · code-reviewer FAIL · github-actions-expert PASS | local-only; 1.8 + CI/deploy gate items wait for GitHub |
+| 1 | Foundation: monorepo, schema, evidence model, CI/CD, placeholder on Pages | RE-VALIDATING (fix round 1/3; already merged to main by user) | phase-1-fix-1 | phase-validator FAIL · code-reviewer FAIL · github-actions-expert PASS | local-only; 1.8 + CI/deploy gate items wait for GitHub |
 | 2a | Catalog: MVP boards and modules, two-key verified | NOT STARTED | phase-2a | — | needs manual PDFs |
 | 2b | Engine: interface selection, CSP solver, rules R1–R8, explanations | NOT STARTED | phase-2b | — | |
 | 3 | Web app: UI, Web Worker, projects, sharing, export, offline | NOT STARTED | phase-3 | — | |
@@ -20,10 +20,10 @@ Status values: NOT STARTED · IN PROGRESS · VALIDATING · FIXING (round n/3) ·
 
 ## Current task
 
-Phase 1 RE-VALIDATING after fix round 1 (of max 3), local only. One validator at a time:
-- **phase-validator** — running now: re-runs every gate item, reproduces every earlier finding (F1–F15, CR1–CR9) and probes the new code; overwrites `docs/validation/phase-1/phase-validator.md`.
-- code-reviewer — next (after user's go).
-- github-actions-expert — last.
+Phase 1 RE-VALIDATING (fix round 1/3). The user pushed and **merged PR #1 (phase-1 → main, merge commit 44d62b0) before the validators passed**; fixes now go on branch `phase-1-fix-1` (CLAUDE.md post-merge rule). One validator at a time:
+- **phase-validator** — running (re-checks gates, F1–F15, CR1–CR9, probes new code).
+- code-reviewer — next; github-actions-expert — last.
+Then the base-path rename (`/pinout-finder/` → `/Microcontrollers-Pinout-Finding/`) and the first Pages deploy.
 
 ## Task checklist
 
@@ -151,6 +151,7 @@ None of these block Phase 0. Re-check all three when a session is started inside
 
 ## Decisions needed
 
+- 2026-10-22 · **GitHub facts observed (read-only API):** repo `smsaad-181/Microcontrollers-Pinout-Finding` is public. PR #1 "Phase 1" merged by the user (21 commits, 463 files, merge commit, not squash). `ci` on the PR: all 7 jobs success (first real CI run — confirms the clean-clone simulation). `deploy` on main: `build` job success (validate, tests, compile, web build, upload-pages-artifact all green); `deploy` job failed at `actions/deploy-pages` with HTTP 404 "Ensure GitHub Pages has been enabled" — Pages is not enabled yet. **User action:** Settings → Pages → Source = "GitHub Actions" (or `gh auth login` and I do it). Do not re-run deploy until the base-path rename is on main, otherwise the published page would 404 its assets. Dependabot opened its first update runs.
 - 2026-10-22 · **Repo name differs from the plan default** (`pinout-finder` → `Microcontrollers-Pinout-Finding`). `origin` is added locally (nothing pushed; user chose "connect only"). Pages URL will be `https://smsaad-181.github.io/Microcontrollers-Pinout-Finding/`. TODO after the running re-validation finishes (do not edit during validation): change the Vite `base` default, the CI/deploy `grep '/pinout-finder/assets/'` check, `apps/web/test/manifest.test.ts`, `package.json`, dashboard probe URL, and docs to the new base path `/Microcontrollers-Pinout-Finding/`; ask the user before the first push. Needs `gh auth login` for Pages/branch protection (or the user enables Pages source = GitHub Actions in repo settings).
 
 - 2026-10-22 · **GitHub deferred by user ("I will update later in github… continue").** Work continues locally
@@ -164,6 +165,7 @@ None of these block Phase 0. Re-check all three when a session is started inside
 
 | Date | Phase | Event |
 | --- | --- | --- |
+| 2026-10-22 | 1 | GitHub: user pushed `main` + `phase-1`; PR #1 merged to main before validators passed. Real CI on the PR: 7/7 jobs green. Deploy: build green, publish step 404 because Pages is not enabled. |
 | 2026-10-22 | 1 | Fix round 1 (engine-developer + orchestrator): all 5 Majors addressed; tests schema 83 / cli 171 / web 46 (was 62/61/35); 48 invalid fixtures (was 12) each exit 1 with exactly its code; mutants M3 M5 M6 M10 M16 M18 M24 now killed; workflows: Node 24 pinned, configure-pages removed, single CI run per PR, deploy guarded to main. Re-validation pending. |
 | 2026-10-22 | 1 | Validator 3/3 github-actions-expert: **PASS** — 0 Critical/Major, 6 Minor; clean-clone CI simulation (install, lint, typecheck, test, validate, compile, build) exit 0 on Node 22 and 24; branch-protection commands for 1.8 recorded in its report. |
 | 2026-10-22 | 1 | Validator 2/3 code-reviewer: **FAIL** — 2 Major: CR1 board with `variants: []`/unknown module passes as fully-verified (exit 0); CR2 surviving mutants (no positive `fully-verified` test, no content→version test). 7 Minor (e.g. `__proto__` pad silently dropped, alias-bomb stack trace). pnpm audit clean. |
