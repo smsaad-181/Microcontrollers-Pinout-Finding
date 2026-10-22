@@ -8,8 +8,8 @@ Catalog version: none yet · Rule-set version: none yet · Last updated: 2026-10
 
 | Phase | Name | Status | Branch | Validation | Notes |
 | --- | --- | --- | --- | --- | --- |
-| 0 | Bootstrap: tools, repo, Pages enabled | IN PROGRESS | main | — | 0.1, 0.2, 0.5, 0.6 done locally; 0.3/0.4 wait for `gh` |
-| 1 | Foundation: monorepo, schema, evidence model, CI/CD, placeholder on Pages | NOT STARTED | phase-1 | — | |
+| 0 | Bootstrap: tools, repo, Pages enabled | IN PROGRESS (remote deferred) | main | — | 0.1, 0.2, 0.5, 0.6 done; 0.3/0.4 deferred by user (GitHub later) |
+| 1 | Foundation: monorepo, schema, evidence model, CI/CD, placeholder on Pages | IN PROGRESS | phase-1 | — | local-only; 1.8 + CI/deploy gate items wait for GitHub |
 | 2a | Catalog: MVP boards and modules, two-key verified | NOT STARTED | phase-2a | — | needs manual PDFs |
 | 2b | Engine: interface selection, CSP solver, rules R1–R8, explanations | NOT STARTED | phase-2b | — | |
 | 3 | Web app: UI, Web Worker, projects, sharing, export, offline | NOT STARTED | phase-3 | — | |
@@ -20,12 +20,12 @@ Status values: NOT STARTED · IN PROGRESS · VALIDATING · FIXING (round n/3) ·
 
 ## Current task
 
-Phase 0 — blocked on human prerequisite: install + log in to GitHub CLI, confirm repo name. Next: 0.3 (create repo, push `main`), 0.4 (enable Pages, workflow mode), then `phase-validator`.
+Phase 1 (local). Task 1.1 workspace, then 1.2–1.4 (schema+CLI), 1.5 (CLI fixtures), 1.6 (web placeholder), 1.7 (workflows) in parallel.
 
 ## Human prerequisites
 
 - [ ] Phase 0: GitHub CLI logged in (`gh auth status`) and repo name confirmed (default: `pinout-finder`)
-  - 2026-10-22: `gh` is **not installed** on this machine (not on PATH, not in `C:\Program Files\GitHub CLI`).
+  - 2026-10-22: `gh` 2.103.0 installed (winget). Login not completed; user will finish GitHub setup later.
 - [ ] Phase 2a: manual datasheet downloads listed in `sources/manual/README.md`
 - [ ] Phase 5 (mid-phase checkpoint after task 5.3): bench check on real boards
 
@@ -39,7 +39,7 @@ Claude ticks a box after checking it (command/files) or after the user confirms 
 | npm / npx | 10.9.2 | |
 | pnpm | 10.34.7 | Installed with `npm i -g pnpm@10.34.7` (user prefix). Corepack 0.33 cannot run pnpm 12 (native-binary layout) — pin `packageManager: pnpm@10.34.7` in Phase 1. |
 | git | 2.53.0.windows.1 | identity `smsaad-181` |
-| gh | **missing** | blocks 0.3 / 0.4 |
+| gh | 2.103.0 (`C:\Program Files\GitHub CLI`; open a new shell for PATH) | not logged in yet |
 | python3 | 3.14.3 via `py` launcher | `python`/`python3` on PATH are Microsoft Store stubs; use `py -3`. Hook `validate-on-edit.sh` calls `python3` — fix in Phase 1 (it exits 0 harmlessly today). |
 | uv / uvx | missing (optional) | needed only for the `fetch` MCP server |
 
@@ -66,7 +66,12 @@ None of these block Phase 0. Re-check all three when a session is started inside
 
 ## Decisions needed
 
-(none)
+- 2026-10-22 · **GitHub deferred by user ("I will update later in github… continue").** Work continues locally
+  (phase branches merged locally). When ready, the human runs `gh auth login --scopes repo,workflow`; then Claude:
+  0.3 `gh repo create pinout-finder --public --source . --push`; 0.4 enable Pages (`build_type=workflow`);
+  pushes all branches/tags; 1.8 branch protection (require `ci`, linear history) + CODEOWNERS owner;
+  and runs the remote-only gate items (CI green on a PR, deploy run, live Pages URL) for every phase done locally.
+  Phases are marked `DONE (local)` until those remote items pass.
 
 ## Log
 
