@@ -1,0 +1,1238 @@
+entities:
+- bme280
+- mpu-6050
+- adafruit-bme280
+- gy-bme280-4pin
+- gy-bme280-6pin
+- gy-521
+auditor: hardware-fact-auditor
+date: '2026-10-23'
+contaminated: []
+documents:
+- id: bosch-bme280-ds
+  title: Bosch BME280 Data sheet
+  url: https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bme280-ds002.pdf
+  revision: 'cover: 1.24, Feb 2024, BST-BME280-DS001-24; page footers still say BST-BME280-DS001-23 Revision_1.23_012022;
+    history p59 lists 1.24 2024-02-20 ("Remove condensation")'
+  pages: 60
+  sha256: a2ccdb449fec94380742fe8eec851a11d9bd4142252d332b34682b4deecd7d89
+  verified: sha256 of sources/cache/bme280-ds.pdf matches AND a fresh download of the URL on 2026-10-23 has the identical
+    sha256 (no newer revision at that URL). PDF page == printed page.
+- id: adafruit-bme280-guide-pinouts
+  title: Adafruit BME280 learn guide - Pinouts
+  url: https://learn.adafruit.com/adafruit-bme280-humidity-barometric-pressure-temperature-sensor-breakout/pinouts
+  revision: page last edited 2024-03-08; guide last edited 2026-08-18
+  sha256: 491a135ea8d8ab21e826dd329f8c6f972419a27d6b2c0e6a0cbf07cbd3cab843
+  verified: fetched 2026-10-23 (HTTP 200); sha256 of the HTML as served
+- id: adafruit-product-2652
+  title: Adafruit product 2652 (BME280, STEMMA QT)
+  url: https://www.adafruit.com/product/2652
+  sha256: 624ad26e73cbdc0c0f1fddff4decf487d2704716eb0658a81d81f150d4cdff29
+  verified: fetched 2026-10-23 (HTTP 200)
+- id: adafruit-bme280-downloads
+  title: Adafruit BME280 guide - Downloads page
+  url: https://learn.adafruit.com/adafruit-bme280-humidity-barometric-pressure-temperature-sensor-breakout/downloads
+  sha256: 397f9d5ea1ef85449438d08564b96feee306df4acf19100e02d2811c46397232
+  verified: 'fetched; lists schematic PNGs for QT and original versions and EagleCAD files (QT PCB files are in the BMP280
+    repo: "same exact PCB as the BMP280")'
+- id: adafruit-bmp280-stemma-qt-sch
+  title: Adafruit BMP280 STEMMA QT.sch (Eagle schematic; QT PCB shared with BME280)
+  url: https://raw.githubusercontent.com/adafruit/Adafruit-BMP280-Breakout-PCB/master/Adafruit%20BMP280%20STEMMA%20QT.sch
+  sha256: b4f4a4beaea8bb8c213b3b7cb3859e43d0cb7a149cb11014a18f0f1bfc1de8e3
+  verified: 'downloaded; parsed as XML (parts/nets). Note: it is the BMP280-named file of the shared PCB; the BME280 repo
+    (Adafruit-BME280-Breakout-PCB) contains only the original non-QT schematic. Last repo commit 2020-07-09.'
+- id: adafruit-bme280-qt-sch-png
+  title: Adafruit_products_BME280_sch.png (QT version schematic image, rev C 2020-07-20)
+  url: https://cdn-learn.adafruit.com/assets/assets/000/097/136/large1024/adafruit_products_BME280_sch.png?1605727658
+  sha256: a05c02a72afd36deb9dea47e9155b03ba1af47d2169cafba4406b469a102aa54
+  verified: viewed; topology (AP2112K-3.3, BSS138 shifter, 4 pull-up resistors, LED, 1N4148 on CS, SDO solder jumper) consistent
+    with the .sch; low resolution so component values read from the .sch
+- id: tdk-invensense-mpu6050-docs
+  title: TDK InvenSense MPU-6000/MPU-6050 datasheet PS-MPU-6000A-00 and register map RM-MPU-6000A-00
+  url: https://invensense.tdk.com/products/motion-tracking/6-axis/mpu-6050/
+  sha256: null
+  verified: 'BLOCKED: Official TDK InvenSense MPU-6000/MPU-6050 datasheet (PS-MPU-6000A-00) and register map (RM-MPU-6000A-00)
+    could not be fetched by automated access: invensense.tdk.com legacy PDF links redirect to a JS-rendered search-result
+    page, product.tdk.com and www.tdk.com return 403 Access Denied; not worked around. (product page itself loads but is client-rendered
+    with no static document links).'
+- id: none-found
+  title: Vendor documentation for generic GY-BME280 (4-pin and 6-pin) and GY-521 modules
+  url: null
+  sha256: null
+  verified: 'NOT FOUND: No vendor-published datasheet/schematic naming this generic module was found (web search returned
+    only retailer listings, hobbyist pages, a SnapEDA/Flux stub); retailer listings/forums are not evidence per task rules.'
+disagreements:
+- topic: Bosch datasheet revision
+  a: 'PDF p1: revision 1.24 / DS001-24, Feb 2024'
+  b: 'PDF p2-60 footers: BST-BME280-DS001-23 Revision_1.23_012022'
+  note: footer stale; document history p59 confirms 1.24; no technical value differs that I could detect
+- topic: Humidity/pressure/temperature measurement current IDDH/IDDP/IDDT
+  a: Table 1 puts 340/714/350 uA in the Typ column
+  b: Condition column reads "Max value at 85 C / -40 C"
+  note: 'internal ambiguity: typ or worst-case; both locators PDF p8 Table 1'
+- topic: Vil_si condition text
+  a: PDF p35 Table 32 "VDDIO=1.2 V to 3. 6V"
+  b: same row else
+  note: typo only
+- topic: Adafruit level-shifting claim
+  a: 'Guide Pinouts: "All pins going into the breakout have level shifting circuitry"'
+  b: 'Schematic: SDO/ADR is an output and is not shifted (3.3 V); CS uses diode+pull-up, SCK/SDI use BSS138'
+  note: 'compatible in the sense of "inputs"; flagged for engine: SDO output swings 0-3.3 V'
+- topic: Guide text typo
+  a: Guide Pinouts SDO text says data "sent from the BMP183 to your processor"
+  b: board is BME280
+  note: copy-paste typo in guide
+newer_or_more_authoritative_sources:
+- No newer Bosch datasheet at the official URL (fresh download identical hash). Adafruit schematic/Eagle files are the vendor-primary
+  source for board facts; the guide Pinouts page is secondary to the schematic for resistor values.
+facts:
+- entity: bme280
+  level: ic
+  path: interfaces[0].kind
+  value: i2c
+  unit: null
+  conditions: slave; Standard, Fast and High Speed modes
+  doc: bosch-bme280-ds
+  locator: PDF p32 / printed 32, sec 6 Digital interfaces
+  quote: The I²C interface supports the Standard, Fast and High Speed modes.
+  transcribed: false
+  confidence: found
+  notes: limits.i2c_modes = [sm, fm, hs]
+- entity: bme280
+  level: ic
+  path: interfaces[0].signals
+  value:
+    SCK: SCL in
+    SDI: SDA io open-drain to GND
+    SDO: address LSB in
+    CSB: must be VDDIO
+  unit: null
+  conditions: I2C mode
+  doc: bosch-bme280-ds
+  locator: PDF p33 / printed 33, sec 6.2; PDF p38 Table 35
+  quote: 'SDI is bi-directional with open drain to GND: it must be externally connected to VDDIO via a pull up resistor.'
+  transcribed: false
+  confidence: found
+  notes: 'SDA is open-drain, needs external pull-up (shareable bus). SCL is a high-Z input without drain capability and device
+    does not clock-stretch (p32: "the SCL structure is a high-Z input without drain capability").'
+- entity: bme280
+  level: ic
+  path: interfaces[1].kind
+  value: spi
+  unit: null
+  conditions: modes 00 and 11, 4-wire and 3-wire
+  doc: bosch-bme280-ds
+  locator: PDF p32 / printed 32, sec 6
+  quote: SPI mode ‘00’ (CPOL = CPHA = ‘0’) and mode ‘11’ (CPOL = CPHA = ‘1’)
+  transcribed: false
+  confidence: found
+  notes: limits.spi_modes=[0,3]; mode auto-selected by SCK level after CSB falling edge (p34). 3-wire selected by register
+    bit spi3w_en=1 (p34).
+- entity: bme280
+  level: ic
+  path: interfaces[1].signals.4wire
+  value:
+    CSB: in, active low
+    SCK: in
+    SDI: in (MOSI)
+    SDO: out (MISO), hi-Z in 3-wire
+  unit: null
+  conditions: 4-wire SPI
+  doc: bosch-bme280-ds
+  locator: PDF p34 / printed 34, sec 6.3; PDF p38 Table 35
+  quote: 'SDI: serial data input; data input/output in 3-wire mode'
+  transcribed: false
+  confidence: found
+  notes: 'Table 35 connect-to columns: SPI4W CSB/SDI/SCK/SDO; SPI3W CSB/SDI-SDO/SCK/SDO=DNC. SDO is a push-pull type output
+    with Tri-state: figure 11 shows tri-state when deselected/idle ("SDO ... tri-state"), exact deselect behaviour not separately
+    worded -> miso_tristate_when_deselected could-not-verify as a stated fact.'
+- entity: bme280
+  level: ic
+  path: interfaces[1].signals.3wire
+  value:
+    CSB: in
+    SCK: in
+    SDI/SDO: io
+    SDO: DNC
+  unit: null
+  conditions: 3-wire SPI
+  doc: bosch-bme280-ds
+  locator: PDF p38 / printed 38, Table 35 (SPI 3W column)
+  quote: 'SDO: serial data output; hi-Z in 3-wire mode'
+  transcribed: false
+  confidence: found
+  notes: ''
+- entity: bme280
+  level: ic
+  path: interfaces[1].limits.miso_tristate_when_deselected
+  value: null
+  unit: null
+  conditions: null
+  doc: bosch-bme280-ds
+  locator: PDF p34 Figure 11 (figure shows "tri-state" on SDO)
+  quote: figure
+  transcribed: false
+  confidence: could-not-verify
+  notes: Figure 11 labels SDO "tri-state" outside the data phase, but no sentence states MISO is hi-Z when CSB is high. Text
+    only says "hi-Z in 3-wire mode".
+- entity: bme280
+  level: ic
+  path: select_strap
+  value:
+    CSB=VDDIO: i2c
+    CSB=low: spi
+  unit: null
+  conditions: locks I2C off after first CSB low until power-on-reset
+  doc: bosch-bme280-ds
+  locator: PDF p32 / printed 32, sec 6.1 Interface selection
+  quote: If CSB is connected to VDDIO, the I²C interface is active. If CSB is pulled down, the SPI interface is activated.
+  transcribed: false
+  confidence: found
+  notes: ''
+- entity: bme280
+  level: ic
+  path: select_strap.lockout
+  value: I2C disabled after CSB pulled low once, until next power-on-reset
+  unit: null
+  conditions: regardless of whether any clock cycle occurred
+  doc: bosch-bme280-ds
+  locator: PDF p32 / printed 32, sec 6.1
+  quote: After CSB has been pulled down once (regardless of whether any clock cycle occurred), the I²C interface is disabled
+    until the next power-on-reset.
+  transcribed: false
+  confidence: found
+  notes: ''
+- entity: bme280
+  level: ic
+  path: select_strap.programmable_pin_warning
+  value: if I2C used and CSB driven by a GPIO, it must output VDDIO during power-on-reset, else locked in SPI mode
+  unit: null
+  conditions: null
+  doc: bosch-bme280-ds
+  locator: PDF p32 / printed 32, sec 6.1
+  quote: it must be ensured that this pin already outputs the VDDIO level during power-on- reset of the device.
+  transcribed: false
+  confidence: found
+  notes: Line break after "power-on-" in the PDF.
+- entity: bme280
+  level: ic
+  path: select_strap.csb_internal_pullup
+  value:
+    min: 70
+    typ: 120
+    max: 190
+  unit: kohm
+  conditions: internal CSB pull-up to VDDIO
+  doc: bosch-bme280-ds
+  locator: PDF p35 / printed 35, Table 32
+  quote: Internal CSB pull-up resistance to VDDIO 70 120 190
+  transcribed: false
+  confidence: found
+  notes: 'p34 also: "CSB is active low and has an integrated pull-up resistor." Datasheet p39 still requires "A direct connection
+    between CSB and VDDIO" for I2C.'
+- entity: bme280
+  level: ic
+  path: interfaces[0].limits.addresses[0]
+  value:
+    value: '0x76'
+    strap: SDO=GND
+  unit: null
+  conditions: 7-bit
+  doc: bosch-bme280-ds
+  locator: PDF p32-33 / printed 32-33, sec 6.2
+  quote: Connecting SDO to GND results in slave address 1110110 (0x76)
+  transcribed: false
+  confidence: found
+  notes: ''
+- entity: bme280
+  level: ic
+  path: interfaces[0].limits.addresses[1]
+  value:
+    value: '0x77'
+    strap: SDO=VDDIO
+  unit: null
+  conditions: 7-bit
+  doc: bosch-bme280-ds
+  locator: PDF p32-33 / printed 32-33, sec 6.2
+  quote: connection it to VDDIO results in slave address 1110111 (0x77)
+  transcribed: false
+  confidence: found
+  notes: Datasheet says 0x77 is the same as the BMP280 address. Address bit is read from SDO and "can be changed during operation".
+- entity: bme280
+  level: ic
+  path: interfaces[0].limits.addresses.sdo_float
+  value: SDO must not float; address undefined if floating
+  unit: null
+  conditions: null
+  doc: bosch-bme280-ds
+  locator: PDF p33 / printed 33, sec 6.2
+  quote: The SDO pin cannot be left floating; if left floating, the I²C address will be undefined.
+  transcribed: false
+  confidence: found
+  notes: ''
+- entity: bme280
+  level: ic
+  path: vdd_range
+  value:
+  - 1.71
+  - 3.6
+  unit: V
+  conditions: VDD internal domains; ripple max. 50 mVpp; typ 1.8 V
+  doc: bosch-bme280-ds
+  locator: PDF p8 / printed 8, Table 1; also PDF p2 key features
+  quote: Supply Voltage Internal Domains VDD ripple max. 50 mVpp 1.71 1.8 3.6 V
+  transcribed: false
+  confidence: found
+  notes: ''
+- entity: bme280
+  level: ic
+  path: vio_range
+  value:
+  - 1.2
+  - 3.6
+  unit: V
+  conditions: VDDIO I/O domain; typ 1.8 V
+  doc: bosch-bme280-ds
+  locator: PDF p8 / printed 8, Table 1
+  quote: Supply Voltage I/O Domain VDDIO 1.2 1.8 3.6 V
+  transcribed: false
+  confidence: found
+  notes: ''
+- entity: bme280
+  level: ic
+  path: input_abs_max.interface_pins
+  value: VDDIO+0.3
+  unit: V
+  conditions: min -0.3 V; max = VDDIO + 0.3 V; over full temperature range using corner lots
+  doc: bosch-bme280-ds
+  locator: PDF p13 / printed 13, sec 2 Table 5
+  quote: Voltage at any interface pin -0.3 VDDIO + 0.3 V
+  transcribed: false
+  confidence: found
+  notes: 'Expr form: VDDIO+0.3. NOT 5 V tolerant: with VDDIO=3.6 V the abs max is 3.9 V.'
+- entity: bme280
+  level: ic
+  path: input_abs_max.supply_pins
+  value: 4.25
+  unit: V
+  conditions: VDD and VDDIO pin; min -0.3 V
+  doc: bosch-bme280-ds
+  locator: PDF p13 / printed 13, sec 2 Table 5
+  quote: Voltage at any supply pin VDD and VDDIO pin -0.3 4.25 V
+  transcribed: false
+  confidence: found
+  notes: ''
+- entity: bme280
+  level: ic
+  path: logic_levels.vih_min
+  value: VDDIO*0.8
+  unit: null
+  conditions: VDDIO = 1.2 V to 3.6 V (Vih_si, % of VDDIO)
+  doc: bosch-bme280-ds
+  locator: PDF p35 / printed 35, Table 32
+  quote: Input high level Vih_si VDDIO=1.2 V to 3.6 V 80
+  transcribed: false
+  confidence: found
+  notes: ''
+- entity: bme280
+  level: ic
+  path: logic_levels.vil_max
+  value: VDDIO*0.2
+  unit: null
+  conditions: VDDIO = 1.2 V to 3.6 V (Vil_si, % of VDDIO)
+  doc: bosch-bme280-ds
+  locator: PDF p35 / printed 35, Table 32
+  quote: Input low level Vil_si VDDIO=1.2 V to 3. 6V
+  transcribed: false
+  confidence: found
+  notes: Typo "3. 6V" in the PDF. Value 20 %VDDIO sits in the Max column (extracted text order).
+- entity: bme280
+  level: ic
+  path: logic_levels.voh_min
+  value: VDDIO*0.8
+  unit: null
+  conditions: VDDIO=1.62 V, Ioh=1 mA (SDO, SDI); at VDDIO=1.2 V min is 60 % (Voh_1.2)
+  doc: bosch-bme280-ds
+  locator: PDF p35 / printed 35, Table 32
+  quote: Output high level Voh VDDIO=1.62 V, Ioh=1 mA
+  transcribed: false
+  confidence: found
+  notes: ''
+- entity: bme280
+  level: ic
+  path: logic_levels.vol_max.i2c
+  value: VDDIO*0.2
+  unit: null
+  conditions: SDA (SDI) output, VDDIO=1.62 V, Iol=3 mA; at VDDIO=1.2 V max is 23 % (Vol_SDI_1.2)
+  doc: bosch-bme280-ds
+  locator: PDF p35 / printed 35, Table 32
+  quote: Output low level I2C Vol_SDI VDDIO=1.62 V, Iol=3 mA
+  transcribed: false
+  confidence: found
+  notes: ''
+- entity: bme280
+  level: ic
+  path: logic_levels.vol_max.spi
+  value: VDDIO*0.2
+  unit: null
+  conditions: SDO output, VDDIO=1.62 V, Iol=1 mA; at VDDIO=1.2 V max is 23 % (Vol_SDO_1.2)
+  doc: bosch-bme280-ds
+  locator: PDF p35 / printed 35, Table 32
+  quote: Output low level SPI Vol_SDO VDDIO=1.62 V, Iol=1 mA
+  transcribed: false
+  confidence: found
+  notes: Table gives conditions only at VDDIO 1.62 V and 1.2 V; the 20 % figure at VDDIO up to 3.6 V is an extrapolation by
+    the schema reader, not stated.
+- entity: bme280
+  level: ic
+  path: interfaces[0].limits.max_hz
+  value: 3400000
+  unit: Hz
+  conditions: High Speed mode
+  doc: bosch-bme280-ds
+  locator: PDF p2 / printed 2, Key features
+  quote: I²C (up to 3.4 MHz) and SPI (3 and 4 wire, up to 10 MHz)
+  transcribed: false
+  confidence: found
+  notes: Table 33 (p36) lists setup/hold/low-pulse timings but no explicit fSCL row; 3.4 MHz appears only in key features.
+    Std 100 kHz and Fast 400 kHz are not stated numerically (only via "Standard, Fast" per I2C spec 2.1).
+- entity: bme280
+  level: ic
+  path: interfaces[1].limits.max_hz
+  value: 10000000
+  unit: Hz
+  conditions: F_spi min 0, max 10 MHz
+  doc: bosch-bme280-ds
+  locator: PDF p37 / printed 37, Table 34
+  quote: SPI clock input frequency F_spi 0 10 MHz
+  transcribed: false
+  confidence: found
+  notes: ''
+- entity: bme280
+  level: ic
+  path: supply_current.sleep
+  value:
+    typ: 0.1
+    max: 0.3
+  unit: uA
+  conditions: IDDSL sleep mode
+  doc: bosch-bme280-ds
+  locator: PDF p8 / printed 8, Table 1
+  quote: Sleep current IDDSL 0.1 0.3 µA
+  transcribed: false
+  confidence: found
+  notes: Typ values at 25 C; min/max over full temperature range via corner lots (p8 preamble).
+- entity: bme280
+  level: ic
+  path: supply_current.standby
+  value:
+    typ: 0.2
+    max: 0.5
+  unit: uA
+  conditions: IDDSB inactive period of normal mode
+  doc: bosch-bme280-ds
+  locator: PDF p8 / printed 8, Table 1
+  quote: Standby current (inactive period of normal mode) IDDSB 0.2 0.5 µA
+  transcribed: false
+  confidence: found
+  notes: ''
+- entity: bme280
+  level: ic
+  path: supply_current.measuring.humidity
+  value:
+    typ: 340
+  unit: uA
+  conditions: IDDH current during humidity measurement; cond column "Max value at 85 C"
+  doc: bosch-bme280-ds
+  locator: PDF p8 / printed 8, Table 1
+  quote: Current during humidity measurement IDDH Max value at 85 °C 340 µA
+  transcribed: false
+  confidence: found
+  notes: '340 uA sits in the Typ column while the Condition column says "Max value at 85 C": ambiguous (typ or worst case?).
+    Reported as the number in the Typ column.'
+- entity: bme280
+  level: ic
+  path: supply_current.measuring.pressure
+  value:
+    typ: 714
+  unit: uA
+  conditions: IDDP; cond "Max value at -40 C"
+  doc: bosch-bme280-ds
+  locator: PDF p8 / printed 8, Table 1
+  quote: Current during pressure measurement IDDP Max value at -40 °C 714 µA
+  transcribed: false
+  confidence: found
+  notes: Same ambiguity as IDDH.
+- entity: bme280
+  level: ic
+  path: supply_current.measuring.temperature
+  value:
+    typ: 350
+  unit: uA
+  conditions: IDDT; cond "Max value at 85 C"
+  doc: bosch-bme280-ds
+  locator: PDF p8 / printed 8, Table 1
+  quote: Current during temperature measurement IDDT Max value at 85 °C 350 µA
+  transcribed: false
+  confidence: found
+  notes: Same ambiguity as IDDH.
+- entity: bme280
+  level: ic
+  path: supply_current.typ_1hz_HPT
+  value:
+    typ: 3.6
+  unit: uA
+  conditions: '1 Hz, humidity+pressure+temperature (forced mode, per Table 11/12 conditions: 25 C, oversampling x1)'
+  doc: bosch-bme280-ds
+  locator: PDF p2 / printed 2, Key features
+  quote: 3.6 µA @ 1 Hz humidity, pressure and temperature
+  transcribed: false
+  confidence: found
+  notes: 'This is a TYPICAL average at 1 Hz sampling, not a max. No datasheet "max supply current" for continuous operation:
+    the worst-case is the peak IDDP 714 uA during pressure measurement (Table 1) plus others. Table 11 (p21): 1.8 uA typ at
+    1 Hz forced, 25 C, H+T x1/x1 incl. IDDSM.'
+- entity: bme280
+  level: ic
+  path: interrupt_alert_pins
+  value: none
+  unit: null
+  conditions: null
+  doc: bosch-bme280-ds
+  locator: PDF p38 / printed 38, Table 35 Pin description
+  quote: figure
+  transcribed: false
+  confidence: inferred
+  notes: Table 35 lists 8 pins (GND, CSB, SDI, SCK, SDO, VDDIO, GND, VDD); no INT/ALERT pin exists. Inferred from absence.
+- entity: bme280
+  level: ic
+  path: connection.i2c_pullups_recommended
+  value: 4.7 kohm normal; decoupling 100 nF on VDD and VDDIO
+  unit: null
+  conditions: null
+  doc: bosch-bme280-ds
+  locator: PDF p39 / printed 39, sec 7.2 Figure 17 notes
+  quote: a normal value is 4.7
+  transcribed: false
+  confidence: found
+  notes: 'Also: "A direct connection between CSB and VDDIO is required".'
+- entity: adafruit-bme280
+  level: breakout
+  path: pins
+  value:
+  - label: Vin
+    maps_to: VCC
+  - label: 3Vo
+    maps_to: 3.3V regulator output
+  - label: GND
+    maps_to: GND
+  - label: SCK
+    maps_to: SCK (SPI) / SCL (I2C)
+  - label: SDO
+    maps_to: SDO (SPI MISO) / I2C address bit
+  - label: SDI
+    maps_to: SDI (SPI MOSI) / SDA (I2C)
+  - label: CS
+    maps_to: CSB
+  unit: null
+  conditions: 7-pin header JP1, positions 1..7 in schematic order VCC, 3.3V, GND, SCK/SCL, SDO/ADR, SDI/SDA, CS
+  doc: adafruit-bmp280-stemma-qt-sch
+  locator: 'Eagle sch: nets VCC=JP1.1, 3.3V=JP1.2, GND=JP1.3, SCK/SCL=JP1.4, SDO/ADR=JP1.5, SDI/SDA=JP1.6, CS=JP1.7'
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: Labels from learn guide Pinouts page (Vin, 3Vo, GND, SCK, SDO, SDI, CS) agree with schematic net names. Schematic
+    file is the STEMMA QT .sch from the Adafruit-BMP280-Breakout-PCB repo (Adafruit downloads page says the QT version "is
+    the same exact PCB as the BMP280"). Rendered Downloads-page PNG "BME280 rev C" (2020-07-20) shows the same topology.
+- entity: adafruit-bme280
+  level: breakout
+  path: pins.stemma_qt
+  value:
+    connectors: 2
+    pins:
+    - GND
+    - V+
+    - SDA
+    - SCL
+  unit: null
+  conditions: two STEMMA QT / JST-SH connectors CONN3, CONN4 in parallel; V+ is on the VCC (Vin) net, ahead of the regulator
+  doc: adafruit-bmp280-stemma-qt-sch
+  locator: 'Eagle sch: CONN3/CONN4 pins GND, V+, SDA, SCL; V+ on net VCC'
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: 'Guide: "STEMMA QT - These connectors allow you to connectors to dev boards with STEMMA QT connectors". STEMMA QT
+    carries I2C only.'
+- entity: adafruit-bme280
+  level: breakout
+  path: regulator.present
+  value: true
+  unit: null
+  conditions: U2 AP2112K-3.3 SOT23-5, EN tied to VCC, input VCC (Vin), output 3.3V rail
+  doc: adafruit-bmp280-stemma-qt-sch
+  locator: 'Eagle sch: U2 VREG_SOT23-5 value AP2112K-3.3; IN and EN on net VCC; OUT on 3.3V'
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: Part number only from schematic; AP2112K datasheet not opened (out of scope), so its own absolute max/dropout are
+    not asserted.
+- entity: adafruit-bme280
+  level: breakout
+  path: regulator.vin_range
+  value:
+  - 3
+  - 5
+  unit: V
+  conditions: as stated by Adafruit
+  doc: adafruit-bme280-guide-pinouts
+  locator: 'Pinouts, Power Pins: Vin'
+  quote: we have included a voltage regulator on board that will take 3-5VDC and safely convert it down
+  transcribed: false
+  confidence: found
+  notes: Vendor range 3-5 V; no 6 V figure stated. Adafruit says to power Vin with the logic level of your microcontroller.
+- entity: adafruit-bme280
+  level: breakout
+  path: regulator.output_current
+  value: 100
+  unit: mA
+  conditions: 3Vo pin, "up to"
+  doc: adafruit-bme280-guide-pinouts
+  locator: 'Pinouts, Power Pins: 3Vo'
+  quote: you can grab up to 100mA from this if you like
+  transcribed: false
+  confidence: found
+  notes: Output current available to external loads via 3Vo.
+- entity: adafruit-bme280
+  level: breakout
+  path: level_shifter
+  value: true
+  unit: null
+  conditions: 'SCL/SDA: BSS138 dual N-MOSFET (Q2) bidirectional shifter between host side (Vin pull-ups) and 3.3 V sensor
+    side; CS: 1N4148 diode D2 + 10k pull-up R5 to 3.3 V; SDO/ADR not shifted (3.3 V pulled up)'
+  doc: adafruit-bmp280-stemma-qt-sch
+  locator: 'Eagle sch: Q2 BSS138 gate on 3.3V, D=SDI/SDA & SCK/SCL, S=SDI_3V & SCK_3V; D2 1N4148 anode CS_3V cathode CS'
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: 'Guide (Pinouts, SPI Logic pins): "All pins going into the breakout have level shifting circuitry to make them 3-5V
+    logic level safe." Product page: "comes with a 3.3V regulator and level shifting". Schematic shows SDO is NOT level-shifted
+    (3.3 V output) - minor nuance vs the guide wording (it is an output).'
+- entity: adafruit-bme280
+  level: breakout
+  path: level_shifter.guide
+  value: true
+  unit: null
+  conditions: all input pins
+  doc: adafruit-bme280-guide-pinouts
+  locator: Pinouts, SPI Logic pins
+  quote: All pins going into the breakout have level shifting circuitry to make them 3-5V logic level safe.
+  transcribed: false
+  confidence: found
+  notes: ''
+- entity: adafruit-bme280
+  level: breakout
+  path: level_shifter.product
+  value: true
+  unit: null
+  conditions: null
+  doc: adafruit-product-2652
+  locator: Description, 4th paragraph
+  quote: comes with a 3.3V regulator and level shifting so you can use it with a 3V or 5V logic microcontroller
+  transcribed: false
+  confidence: found
+  notes: ''
+- entity: adafruit-bme280
+  level: breakout
+  path: pullups[SCL host side]
+  value: 10
+  unit: kohm
+  conditions: R3 (10K 4-pack gate 1) from Vin (VCC) to SCK/SCL header/STEMMA side
+  doc: adafruit-bmp280-stemma-qt-sch
+  locator: 'Eagle sch: R3 G$1 pin1=VCC pin2=SCK/SCL, value 10K'
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: Pulled to Vin (VCC), not 3.3 V.
+- entity: adafruit-bme280
+  level: breakout
+  path: pullups[SDA host side]
+  value: 10
+  unit: kohm
+  conditions: R3 gate 3 from Vin (VCC) to SDI/SDA
+  doc: adafruit-bmp280-stemma-qt-sch
+  locator: 'Eagle sch: R3 G$3 pin1=VCC pin2=SDI/SDA, value 10K'
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: ''
+- entity: adafruit-bme280
+  level: breakout
+  path: pullups[SCL sensor side]
+  value: 10
+  unit: kohm
+  conditions: R3 gate 2 from 3.3V to SCK_3V (sensor side of BSS138)
+  doc: adafruit-bmp280-stemma-qt-sch
+  locator: 'Eagle sch: R3 G$2 pin1=3.3V pin2=SCK_3V'
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: ''
+- entity: adafruit-bme280
+  level: breakout
+  path: pullups[SDA sensor side]
+  value: 10
+  unit: kohm
+  conditions: R3 gate 4 from 3.3V to SDI_3V
+  doc: adafruit-bmp280-stemma-qt-sch
+  locator: 'Eagle sch: R3 G$4 pin1=3.3V pin2=SDI_3V'
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: Effective bus pull-up seen by host = 10k to Vin on the host side; sensor-side 10k reflect through the BSS138 shifter
+    only on the low-to-high edge of the sensor side. No pull-up value stated in the guide or product page.
+- entity: adafruit-bme280
+  level: breakout
+  path: hardwired.CSB
+  value:
+    value: pulled up to 3.3V via R5 10k; host CS pin drives it low through diode D2 (1N4148)
+  unit: null
+  conditions: default = I2C mode
+  doc: adafruit-bmp280-stemma-qt-sch
+  locator: 'Eagle sch: R5 10K pin2=3.3V pin1=CS_3V; D2 anode=CS_3V cathode=CS; U1 CSB=CS_3V'
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: Leave CS floating for I2C ("Leave the other pins disconnected" in the I2C section of the guide).
+- entity: adafruit-bme280
+  level: breakout
+  path: hardwired.SDO
+  value:
+    value: pulled up to 3.3V via R4 10k (default address 0x77); solder jumper SJ1 ("ADDR") to GND gives 0x76
+  unit: null
+  conditions: null
+  doc: adafruit-bmp280-stemma-qt-sch
+  locator: 'Eagle sch: R4 10K pin2=3.3V pin1=SDO/ADR; SJ1 pin1=SDO/ADR pin2=GND; U1 SDO=SDO/ADR'
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: ''
+- entity: adafruit-bme280
+  level: breakout
+  path: i2c_address.default
+  value: '0x77'
+  unit: null
+  conditions: SDO pulled up, jumper open
+  doc: adafruit-bme280-guide-pinouts
+  locator: Pinouts, I2C Address
+  quote: By default, the I2C address is 0x77.
+  transcribed: false
+  confidence: found
+  notes: ''
+- entity: adafruit-bme280
+  level: breakout
+  path: i2c_address.alternate
+  value: '0x76'
+  unit: null
+  conditions: SDO to GND by wire or by closing the ADDR jumper on the back
+  doc: adafruit-bme280-guide-pinouts
+  locator: Pinouts, I2C Address
+  quote: by soldering the ADDR jumper on the back closed, the address will change to 0x76
+  transcribed: false
+  confidence: found
+  notes: ''
+- entity: adafruit-bme280
+  level: breakout
+  path: interfaces_exposed
+  value:
+  - i2c
+  - spi
+  unit: null
+  conditions: I2C via header and STEMMA QT; SPI via header only
+  doc: adafruit-bme280-guide-pinouts
+  locator: Pinouts, SPI Logic pins / I2C Logic pins
+  quote: SCK - this is also the I2C clock pin, connect to your microcontrollers I2C clock line.
+  transcribed: false
+  confidence: found
+  notes: 'Product page: "can even be used in both I2C and SPI". SPI is 4-wire (SDO and SDI both brought out; SDI also SDA).'
+- entity: adafruit-bme280
+  level: breakout
+  path: supply_current
+  value: null
+  unit: null
+  conditions: null
+  doc: adafruit-bme280-guide-pinouts / adafruit-product-2652
+  locator: Pinouts; Description; Technical Details
+  quote: figure
+  transcribed: false
+  confidence: could-not-verify
+  notes: Neither the guide nor the product page states a board supply current. Not derivable (regulator quiescent current
+    not in opened documents).
+- entity: adafruit-bme280
+  level: breakout
+  path: logic_voltage_host
+  value:
+  - 3
+  - 5
+  unit: V
+  conditions: use the logic level of Vin
+  doc: adafruit-bme280-guide-pinouts
+  locator: Pinouts, SPI Logic pins
+  quote: Use whatever logic level is on Vin!
+  transcribed: false
+  confidence: found
+  notes: Host logic follows Vin.
+- entity: adafruit-bme280
+  level: breakout
+  path: revision.history
+  value: PCB updated to STEMMA QT 2020-11-11; Pinguin silkscreen 2023-09-18; pinout identical
+  unit: null
+  conditions: null
+  doc: adafruit-product-2652
+  locator: 'Technical Details: Revision History'
+  quote: The physical shape has changed but the pinout is identical to the non-QT earlier version.
+  transcribed: false
+  confidence: found
+  notes: ''
+- entity: mpu-6050
+  level: ic
+  path: interfaces
+  value: null
+  unit: null
+  conditions: null
+  doc: tdk-invensense-mpu6050-docs
+  locator: n/a - document not retrievable
+  quote: figure
+  transcribed: false
+  confidence: could-not-verify
+  notes: 'Official TDK InvenSense MPU-6000/MPU-6050 datasheet (PS-MPU-6000A-00) and register map (RM-MPU-6000A-00) could not
+    be fetched by automated access: invensense.tdk.com legacy PDF links redirect to a JS-rendered search-result page, product.tdk.com
+    and www.tdk.com return 403 Access Denied; not worked around. Fact: I2C (up to 400 kHz) and SPI for MPU-6000 only - interface
+    set, modes, signals. Values known from memory are deliberately not recorded.'
+- entity: mpu-6050
+  level: ic
+  path: select_strap
+  value: null
+  unit: null
+  conditions: null
+  doc: tdk-invensense-mpu6050-docs
+  locator: n/a - document not retrievable
+  quote: figure
+  transcribed: false
+  confidence: could-not-verify
+  notes: 'Official TDK InvenSense MPU-6000/MPU-6050 datasheet (PS-MPU-6000A-00) and register map (RM-MPU-6000A-00) could not
+    be fetched by automated access: invensense.tdk.com legacy PDF links redirect to a JS-rendered search-result page, product.tdk.com
+    and www.tdk.com return 403 Access Denied; not worked around. Fact: interface select behaviour. Values known from memory
+    are deliberately not recorded.'
+- entity: mpu-6050
+  level: ic
+  path: interfaces[i2c].limits.addresses
+  value: null
+  unit: null
+  conditions: null
+  doc: tdk-invensense-mpu6050-docs
+  locator: n/a - document not retrievable
+  quote: figure
+  transcribed: false
+  confidence: could-not-verify
+  notes: 'Official TDK InvenSense MPU-6000/MPU-6050 datasheet (PS-MPU-6000A-00) and register map (RM-MPU-6000A-00) could not
+    be fetched by automated access: invensense.tdk.com legacy PDF links redirect to a JS-rendered search-result page, product.tdk.com
+    and www.tdk.com return 403 Access Denied; not worked around. Fact: I2C 7-bit address(es) and AD0 strap. Values known from
+    memory are deliberately not recorded.'
+- entity: mpu-6050
+  level: ic
+  path: vdd_range
+  value: null
+  unit: null
+  conditions: null
+  doc: tdk-invensense-mpu6050-docs
+  locator: n/a - document not retrievable
+  quote: figure
+  transcribed: false
+  confidence: could-not-verify
+  notes: 'Official TDK InvenSense MPU-6000/MPU-6050 datasheet (PS-MPU-6000A-00) and register map (RM-MPU-6000A-00) could not
+    be fetched by automated access: invensense.tdk.com legacy PDF links redirect to a JS-rendered search-result page, product.tdk.com
+    and www.tdk.com return 403 Access Denied; not worked around. Fact: VDD supply range. Values known from memory are deliberately
+    not recorded.'
+- entity: mpu-6050
+  level: ic
+  path: vio_range
+  value: null
+  unit: null
+  conditions: null
+  doc: tdk-invensense-mpu6050-docs
+  locator: n/a - document not retrievable
+  quote: figure
+  transcribed: false
+  confidence: could-not-verify
+  notes: 'Official TDK InvenSense MPU-6000/MPU-6050 datasheet (PS-MPU-6000A-00) and register map (RM-MPU-6000A-00) could not
+    be fetched by automated access: invensense.tdk.com legacy PDF links redirect to a JS-rendered search-result page, product.tdk.com
+    and www.tdk.com return 403 Access Denied; not worked around. Fact: VLOGIC supply range. Values known from memory are deliberately
+    not recorded.'
+- entity: mpu-6050
+  level: ic
+  path: input_abs_max
+  value: null
+  unit: null
+  conditions: null
+  doc: tdk-invensense-mpu6050-docs
+  locator: n/a - document not retrievable
+  quote: figure
+  transcribed: false
+  confidence: could-not-verify
+  notes: 'Official TDK InvenSense MPU-6000/MPU-6050 datasheet (PS-MPU-6000A-00) and register map (RM-MPU-6000A-00) could not
+    be fetched by automated access: invensense.tdk.com legacy PDF links redirect to a JS-rendered search-result page, product.tdk.com
+    and www.tdk.com return 403 Access Denied; not worked around. Fact: absolute maximum on interface pins and on supply pins.
+    Values known from memory are deliberately not recorded.'
+- entity: mpu-6050
+  level: ic
+  path: logic_levels
+  value: null
+  unit: null
+  conditions: null
+  doc: tdk-invensense-mpu6050-docs
+  locator: n/a - document not retrievable
+  quote: figure
+  transcribed: false
+  confidence: could-not-verify
+  notes: 'Official TDK InvenSense MPU-6000/MPU-6050 datasheet (PS-MPU-6000A-00) and register map (RM-MPU-6000A-00) could not
+    be fetched by automated access: invensense.tdk.com legacy PDF links redirect to a JS-rendered search-result page, product.tdk.com
+    and www.tdk.com return 403 Access Denied; not worked around. Fact: VIH/VIL/VOH/VOL in VLOGIC terms. Values known from
+    memory are deliberately not recorded.'
+- entity: mpu-6050
+  level: ic
+  path: interfaces[i2c].limits.max_hz
+  value: null
+  unit: null
+  conditions: null
+  doc: tdk-invensense-mpu6050-docs
+  locator: n/a - document not retrievable
+  quote: figure
+  transcribed: false
+  confidence: could-not-verify
+  notes: 'Official TDK InvenSense MPU-6000/MPU-6050 datasheet (PS-MPU-6000A-00) and register map (RM-MPU-6000A-00) could not
+    be fetched by automated access: invensense.tdk.com legacy PDF links redirect to a JS-rendered search-result page, product.tdk.com
+    and www.tdk.com return 403 Access Denied; not worked around. Fact: maximum I2C clock. Values known from memory are deliberately
+    not recorded.'
+- entity: mpu-6050
+  level: ic
+  path: interfaces[spi].limits.max_hz
+  value: null
+  unit: null
+  conditions: null
+  doc: tdk-invensense-mpu6050-docs
+  locator: n/a - document not retrievable
+  quote: figure
+  transcribed: false
+  confidence: could-not-verify
+  notes: 'Official TDK InvenSense MPU-6000/MPU-6050 datasheet (PS-MPU-6000A-00) and register map (RM-MPU-6000A-00) could not
+    be fetched by automated access: invensense.tdk.com legacy PDF links redirect to a JS-rendered search-result page, product.tdk.com
+    and www.tdk.com return 403 Access Denied; not worked around. Fact: maximum SPI clock. Values known from memory are deliberately
+    not recorded.'
+- entity: mpu-6050
+  level: ic
+  path: supply_current
+  value: null
+  unit: null
+  conditions: null
+  doc: tdk-invensense-mpu6050-docs
+  locator: n/a - document not retrievable
+  quote: figure
+  transcribed: false
+  confidence: could-not-verify
+  notes: 'Official TDK InvenSense MPU-6000/MPU-6050 datasheet (PS-MPU-6000A-00) and register map (RM-MPU-6000A-00) could not
+    be fetched by automated access: invensense.tdk.com legacy PDF links redirect to a JS-rendered search-result page, product.tdk.com
+    and www.tdk.com return 403 Access Denied; not worked around. Fact: supply current typ/max with conditions. Values known
+    from memory are deliberately not recorded.'
+- entity: mpu-6050
+  level: ic
+  path: interrupt_alert_pins
+  value: null
+  unit: null
+  conditions: null
+  doc: tdk-invensense-mpu6050-docs
+  locator: n/a - document not retrievable
+  quote: figure
+  transcribed: false
+  confidence: could-not-verify
+  notes: 'Official TDK InvenSense MPU-6000/MPU-6050 datasheet (PS-MPU-6000A-00) and register map (RM-MPU-6000A-00) could not
+    be fetched by automated access: invensense.tdk.com legacy PDF links redirect to a JS-rendered search-result page, product.tdk.com
+    and www.tdk.com return 403 Access Denied; not worked around. Fact: INT pin, FSYNC, auxiliary I2C (XDA/XCL) roles. Values
+    known from memory are deliberately not recorded.'
+- entity: gy-bme280-4pin
+  level: breakout
+  path: pins
+  value: null
+  unit: null
+  conditions: null
+  doc: none-found
+  locator: n/a
+  quote: figure
+  transcribed: false
+  confidence: could-not-verify
+  notes: 'No vendor-published datasheet/schematic naming this generic module was found (web search returned only retailer
+    listings, hobbyist pages, a SnapEDA/Flux stub); retailer listings/forums are not evidence per task rules. Field: pins
+    (VIN/GND/SCL/SDA mapping).'
+- entity: gy-bme280-4pin
+  level: breakout
+  path: regulator
+  value: null
+  unit: null
+  conditions: null
+  doc: none-found
+  locator: n/a
+  quote: figure
+  transcribed: false
+  confidence: could-not-verify
+  notes: 'No vendor-published datasheet/schematic naming this generic module was found (web search returned only retailer
+    listings, hobbyist pages, a SnapEDA/Flux stub); retailer listings/forums are not evidence per task rules. Field: regulator.'
+- entity: gy-bme280-4pin
+  level: breakout
+  path: level_shifter
+  value: null
+  unit: null
+  conditions: null
+  doc: none-found
+  locator: n/a
+  quote: figure
+  transcribed: false
+  confidence: could-not-verify
+  notes: 'No vendor-published datasheet/schematic naming this generic module was found (web search returned only retailer
+    listings, hobbyist pages, a SnapEDA/Flux stub); retailer listings/forums are not evidence per task rules. Field: level_shifter.'
+- entity: gy-bme280-4pin
+  level: breakout
+  path: pullups
+  value: null
+  unit: null
+  conditions: null
+  doc: none-found
+  locator: n/a
+  quote: figure
+  transcribed: false
+  confidence: could-not-verify
+  notes: 'No vendor-published datasheet/schematic naming this generic module was found (web search returned only retailer
+    listings, hobbyist pages, a SnapEDA/Flux stub); retailer listings/forums are not evidence per task rules. Field: pullups.'
+- entity: gy-bme280-4pin
+  level: breakout
+  path: hardwired
+  value: null
+  unit: null
+  conditions: null
+  doc: none-found
+  locator: n/a
+  quote: figure
+  transcribed: false
+  confidence: could-not-verify
+  notes: 'No vendor-published datasheet/schematic naming this generic module was found (web search returned only retailer
+    listings, hobbyist pages, a SnapEDA/Flux stub); retailer listings/forums are not evidence per task rules. Field: hardwired
+    (CSB, SDO).'
+- entity: gy-bme280-4pin
+  level: breakout
+  path: interfaces_exposed
+  value: null
+  unit: null
+  conditions: null
+  doc: none-found
+  locator: n/a
+  quote: figure
+  transcribed: false
+  confidence: could-not-verify
+  notes: 'No vendor-published datasheet/schematic naming this generic module was found (web search returned only retailer
+    listings, hobbyist pages, a SnapEDA/Flux stub); retailer listings/forums are not evidence per task rules. Field: interfaces_exposed.'
+- entity: gy-bme280-4pin
+  level: breakout
+  path: supply_current
+  value: null
+  unit: null
+  conditions: null
+  doc: none-found
+  locator: n/a
+  quote: figure
+  transcribed: false
+  confidence: could-not-verify
+  notes: 'No vendor-published datasheet/schematic naming this generic module was found (web search returned only retailer
+    listings, hobbyist pages, a SnapEDA/Flux stub); retailer listings/forums are not evidence per task rules. Field: supply_current.'
+- entity: gy-bme280-6pin
+  level: breakout
+  path: pins
+  value: null
+  unit: null
+  conditions: null
+  doc: none-found
+  locator: n/a
+  quote: figure
+  transcribed: false
+  confidence: could-not-verify
+  notes: 'No vendor-published datasheet/schematic naming this generic module was found (web search returned only retailer
+    listings, hobbyist pages, a SnapEDA/Flux stub); retailer listings/forums are not evidence per task rules. Field: pins
+    (VCC/GND/SCL/SDA/CSB/SDO mapping).'
+- entity: gy-bme280-6pin
+  level: breakout
+  path: regulator
+  value: null
+  unit: null
+  conditions: null
+  doc: none-found
+  locator: n/a
+  quote: figure
+  transcribed: false
+  confidence: could-not-verify
+  notes: 'No vendor-published datasheet/schematic naming this generic module was found (web search returned only retailer
+    listings, hobbyist pages, a SnapEDA/Flux stub); retailer listings/forums are not evidence per task rules. Field: regulator.'
+- entity: gy-bme280-6pin
+  level: breakout
+  path: level_shifter
+  value: null
+  unit: null
+  conditions: null
+  doc: none-found
+  locator: n/a
+  quote: figure
+  transcribed: false
+  confidence: could-not-verify
+  notes: 'No vendor-published datasheet/schematic naming this generic module was found (web search returned only retailer
+    listings, hobbyist pages, a SnapEDA/Flux stub); retailer listings/forums are not evidence per task rules. Field: level_shifter.'
+- entity: gy-bme280-6pin
+  level: breakout
+  path: pullups
+  value: null
+  unit: null
+  conditions: null
+  doc: none-found
+  locator: n/a
+  quote: figure
+  transcribed: false
+  confidence: could-not-verify
+  notes: 'No vendor-published datasheet/schematic naming this generic module was found (web search returned only retailer
+    listings, hobbyist pages, a SnapEDA/Flux stub); retailer listings/forums are not evidence per task rules. Field: pullups.'
+- entity: gy-bme280-6pin
+  level: breakout
+  path: hardwired
+  value: null
+  unit: null
+  conditions: null
+  doc: none-found
+  locator: n/a
+  quote: figure
+  transcribed: false
+  confidence: could-not-verify
+  notes: 'No vendor-published datasheet/schematic naming this generic module was found (web search returned only retailer
+    listings, hobbyist pages, a SnapEDA/Flux stub); retailer listings/forums are not evidence per task rules. Field: hardwired
+    (CSB, SDO).'
+- entity: gy-bme280-6pin
+  level: breakout
+  path: interfaces_exposed
+  value: null
+  unit: null
+  conditions: null
+  doc: none-found
+  locator: n/a
+  quote: figure
+  transcribed: false
+  confidence: could-not-verify
+  notes: 'No vendor-published datasheet/schematic naming this generic module was found (web search returned only retailer
+    listings, hobbyist pages, a SnapEDA/Flux stub); retailer listings/forums are not evidence per task rules. Field: interfaces_exposed.'
+- entity: gy-bme280-6pin
+  level: breakout
+  path: supply_current
+  value: null
+  unit: null
+  conditions: null
+  doc: none-found
+  locator: n/a
+  quote: figure
+  transcribed: false
+  confidence: could-not-verify
+  notes: 'No vendor-published datasheet/schematic naming this generic module was found (web search returned only retailer
+    listings, hobbyist pages, a SnapEDA/Flux stub); retailer listings/forums are not evidence per task rules. Field: supply_current.'
+- entity: gy-521
+  level: breakout
+  path: pins
+  value: null
+  unit: null
+  conditions: null
+  doc: none-found
+  locator: n/a
+  quote: figure
+  transcribed: false
+  confidence: could-not-verify
+  notes: 'No vendor-published datasheet/schematic naming this generic module was found (web search returned only retailer
+    listings, hobbyist pages, a SnapEDA/Flux stub); retailer listings/forums are not evidence per task rules. Field: pins
+    (VCC/GND/SCL/SDA/XDA/XCL/AD0/INT mapping).'
+- entity: gy-521
+  level: breakout
+  path: regulator
+  value: null
+  unit: null
+  conditions: null
+  doc: none-found
+  locator: n/a
+  quote: figure
+  transcribed: false
+  confidence: could-not-verify
+  notes: 'No vendor-published datasheet/schematic naming this generic module was found (web search returned only retailer
+    listings, hobbyist pages, a SnapEDA/Flux stub); retailer listings/forums are not evidence per task rules. Field: regulator.'
+- entity: gy-521
+  level: breakout
+  path: level_shifter
+  value: null
+  unit: null
+  conditions: null
+  doc: none-found
+  locator: n/a
+  quote: figure
+  transcribed: false
+  confidence: could-not-verify
+  notes: 'No vendor-published datasheet/schematic naming this generic module was found (web search returned only retailer
+    listings, hobbyist pages, a SnapEDA/Flux stub); retailer listings/forums are not evidence per task rules. Field: level_shifter.'
+- entity: gy-521
+  level: breakout
+  path: pullups
+  value: null
+  unit: null
+  conditions: null
+  doc: none-found
+  locator: n/a
+  quote: figure
+  transcribed: false
+  confidence: could-not-verify
+  notes: 'No vendor-published datasheet/schematic naming this generic module was found (web search returned only retailer
+    listings, hobbyist pages, a SnapEDA/Flux stub); retailer listings/forums are not evidence per task rules. Field: pullups.'
+- entity: gy-521
+  level: breakout
+  path: hardwired
+  value: null
+  unit: null
+  conditions: null
+  doc: none-found
+  locator: n/a
+  quote: figure
+  transcribed: false
+  confidence: could-not-verify
+  notes: 'No vendor-published datasheet/schematic naming this generic module was found (web search returned only retailer
+    listings, hobbyist pages, a SnapEDA/Flux stub); retailer listings/forums are not evidence per task rules. Field: hardwired
+    (AD0 default, address jumpers).'
+- entity: gy-521
+  level: breakout
+  path: interfaces_exposed
+  value: null
+  unit: null
+  conditions: null
+  doc: none-found
+  locator: n/a
+  quote: figure
+  transcribed: false
+  confidence: could-not-verify
+  notes: 'No vendor-published datasheet/schematic naming this generic module was found (web search returned only retailer
+    listings, hobbyist pages, a SnapEDA/Flux stub); retailer listings/forums are not evidence per task rules. Field: interfaces_exposed.'
+- entity: gy-521
+  level: breakout
+  path: supply_current
+  value: null
+  unit: null
+  conditions: null
+  doc: none-found
+  locator: n/a
+  quote: figure
+  transcribed: false
+  confidence: could-not-verify
+  notes: 'No vendor-published datasheet/schematic naming this generic module was found (web search returned only retailer
+    listings, hobbyist pages, a SnapEDA/Flux stub); retailer listings/forums are not evidence per task rules. Field: supply_current.'
