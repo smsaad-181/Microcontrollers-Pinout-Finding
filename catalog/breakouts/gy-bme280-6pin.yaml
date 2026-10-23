@@ -1,35 +1,58 @@
-# Generic GY-BME280 6-pin module. No vendor publishes a schematic or datasheet for this generic board, so every board fact is missing. Drafted by hardware-researcher.
+# Generic GY-BME280 6-pin module. No vendor publishes a schematic or datasheet for this generic board, so every board fact is missing (reconciled with the blind audit, task 2a.4: all could-not-verify).
 hardwired: []
 ic: bme280
 id: gy-bme280-6pin
-interfaces_exposed: [i2c, spi]
+interfaces_exposed:
+- i2c
+- spi
 level_shifter:
   evidence: []
-  note: "No official schematic for the generic GY-BME280; listings disagree and are not evidence."
+  note: 'Fact: level_shifter. Researcher and blind auditor both searched; no vendor-published datasheet or schematic names this generic module (only retailer listings and hobbyist pages, which are not evidence); auditor: could-not-verify. Not recorded; do not infer from other boards.'
   status: missing
   value: null
-notes: "Pin labels VCC, GND, SCL, SDA, CSB, SDO come from the task brief, not from an opened vendor document, and the exposed interfaces follow from those labels. Which of CSB and SDO are pulled or tied on the board, the regulator, level shifting and pull-ups are unknown: show a Caution and do not assume. SCL/SDA double as SPI SCK/SDI, SDO as MISO."
+notes: 'Pin labels VCC, GND, SCL, SDA, CSB, SDO come from the task brief, not from an opened vendor document, and the exposed interfaces follow from those labels. Which of CSB and SDO are pulled or tied on the board, the regulator, level shifting and pull-ups are unknown: show a Caution and do not assume. SCL/SDA double as SPI SCK/SDI, SDO as MISO. The pin labels and exposed interfaces come from the project definition (task brief), not from a cited document; the blind auditor could not confirm them either.'
 pins:
-  - { label: VCC, maps_to: VCC }
-  - { label: GND, maps_to: GND }
-  - { label: SCL, maps_to: "SCL/SCK" }
-  - { label: SDA, maps_to: "SDA/MOSI" }
-  - { label: CSB, maps_to: CS }
-  - { label: SDO, maps_to: MISO }
+- label: VCC
+  maps_to: VCC
+- label: GND
+  maps_to: GND
+- label: SCL
+  maps_to: SCL/SCK
+- label: SDA
+  maps_to: SDA/MOSI
+- label: CSB
+  maps_to: CS
+- label: SDO
+  maps_to: MISO
 pullups:
-  - line: SDA
-    value_ohm: { evidence: [], status: missing, unit: ohm, value: null }
-  - line: SCL
-    value_ohm: { evidence: [], status: missing, unit: ohm, value: null }
+- line: SDA
+  value_ohm:
+    evidence: []
+    note: 'Fact: pull-up SDA. Researcher and blind auditor both searched; no vendor-published datasheet or schematic names this generic module (only retailer listings and hobbyist pages, which are not evidence); auditor: could-not-verify. Not recorded; do not infer from other boards.'
+    status: missing
+    unit: ohm
+    value: null
+- line: SCL
+  value_ohm:
+    evidence: []
+    note: 'Fact: pull-up SCL. Researcher and blind auditor both searched; no vendor-published datasheet or schematic names this generic module (only retailer listings and hobbyist pages, which are not evidence); auditor: could-not-verify. Not recorded; do not infer from other boards.'
+    status: missing
+    unit: ohm
+    value: null
 regulator:
   evidence: []
-  note: "No official schematic for the generic GY-BME280."
+  note: 'Fact: regulator. Researcher and blind auditor both searched; no vendor-published datasheet or schematic names this generic module (only retailer listings and hobbyist pages, which are not evidence); auditor: could-not-verify. Not recorded; do not infer from other boards.'
   status: missing
   value: null
 supply_current:
   evidence: []
+  note: 'Fact: supply_current. Researcher and blind auditor both searched; no vendor-published datasheet or schematic names this generic module (only retailer listings and hobbyist pages, which are not evidence); auditor: could-not-verify. Not recorded; do not infer from other boards.'
   status: missing
   unit: mA
   value: null
-variant_names: ["GY-BME280", "GY-BME280 6-pin", "GY-BME280-3.3", "BME280 module"]
+variant_names:
+- GY-BME280
+- GY-BME280 6-pin
+- GY-BME280-3.3
+- BME280 module
 vendor: generic

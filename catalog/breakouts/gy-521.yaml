@@ -1,37 +1,61 @@
-# Generic GY-521 (MPU-6050) module. No vendor publishes a schematic for this generic board, so every board fact is missing. Drafted by hardware-researcher.
+# Generic GY-521 (MPU-6050) module. No vendor publishes a schematic for this generic board, so every board fact is missing (reconciled with the blind audit, task 2a.4: all could-not-verify).
 hardwired: []
 ic: mpu-6050
 id: gy-521
-interfaces_exposed: [i2c]
+interfaces_exposed:
+- i2c
 level_shifter:
   evidence: []
-  note: "No official schematic for the generic GY-521."
+  note: 'Fact: level_shifter. Researcher and blind auditor both searched; no vendor-published datasheet or schematic names this generic module (only retailer listings and hobbyist pages, which are not evidence); auditor: could-not-verify. Not recorded; do not infer from other boards. The MPU-6050 itself also lacks its TDK documents (manual download requested, sources/manual/README.md row 4).'
   status: missing
   value: null
-notes: "Pin labels VCC, GND, SCL, SDA, XDA, XCL, AD0, INT come from the task brief, not from an opened vendor document. XDA/XCL (auxiliary I2C master) are recorded as NC; AD0 and INT use their own names because the MPU-6050 IC record has no address or INT signal yet (TDK datasheet not retrievable). Regulator part and input range, pull-up values and the AD0 pull-down are unknown: show a Caution and do not assume."
+notes: 'Pin labels VCC, GND, SCL, SDA, XDA, XCL, AD0, INT come from the task brief, not from an opened vendor document. XDA/XCL (auxiliary I2C master) are recorded as NC; AD0 and INT use their own names because the MPU-6050 IC record has no address or INT signal yet (TDK datasheet not retrievable). Regulator part and input range, pull-up values and the AD0 pull-down are unknown: show a Caution and do not assume. The pin labels and exposed interfaces come from the project definition (task brief), not from a cited document; the blind auditor could not confirm them either.'
 pins:
-  - { label: VCC, maps_to: VCC }
-  - { label: GND, maps_to: GND }
-  - { label: SCL, maps_to: SCL }
-  - { label: SDA, maps_to: SDA }
-  - { label: XDA, maps_to: NC }
-  - { label: XCL, maps_to: NC }
-  - { label: AD0, maps_to: AD0 }
-  - { label: INT, maps_to: INT }
+- label: VCC
+  maps_to: VCC
+- label: GND
+  maps_to: GND
+- label: SCL
+  maps_to: SCL
+- label: SDA
+  maps_to: SDA
+- label: XDA
+  maps_to: NC
+- label: XCL
+  maps_to: NC
+- label: AD0
+  maps_to: AD0
+- label: INT
+  maps_to: INT
 pullups:
-  - line: SDA
-    value_ohm: { evidence: [], status: missing, unit: ohm, value: null }
-  - line: SCL
-    value_ohm: { evidence: [], status: missing, unit: ohm, value: null }
+- line: SDA
+  value_ohm:
+    evidence: []
+    note: 'Fact: pull-up SDA. Researcher and blind auditor both searched; no vendor-published datasheet or schematic names this generic module (only retailer listings and hobbyist pages, which are not evidence); auditor: could-not-verify. Not recorded; do not infer from other boards. The MPU-6050 itself also lacks its TDK documents (manual download requested, sources/manual/README.md row 4).'
+    status: missing
+    unit: ohm
+    value: null
+- line: SCL
+  value_ohm:
+    evidence: []
+    note: 'Fact: pull-up SCL. Researcher and blind auditor both searched; no vendor-published datasheet or schematic names this generic module (only retailer listings and hobbyist pages, which are not evidence); auditor: could-not-verify. Not recorded; do not infer from other boards. The MPU-6050 itself also lacks its TDK documents (manual download requested, sources/manual/README.md row 4).'
+    status: missing
+    unit: ohm
+    value: null
 regulator:
   evidence: []
-  note: "No official schematic for the generic GY-521."
+  note: 'Fact: regulator. Researcher and blind auditor both searched; no vendor-published datasheet or schematic names this generic module (only retailer listings and hobbyist pages, which are not evidence); auditor: could-not-verify. Not recorded; do not infer from other boards. The MPU-6050 itself also lacks its TDK documents (manual download requested, sources/manual/README.md row 4).'
   status: missing
   value: null
 supply_current:
   evidence: []
+  note: 'Fact: supply_current. Researcher and blind auditor both searched; no vendor-published datasheet or schematic names this generic module (only retailer listings and hobbyist pages, which are not evidence); auditor: could-not-verify. Not recorded; do not infer from other boards. The MPU-6050 itself also lacks its TDK documents (manual download requested, sources/manual/README.md row 4).'
   status: missing
   unit: mA
   value: null
-variant_names: ["GY-521", "GY-521 MPU-6050", "MPU6050 module", "MPU-6050 module"]
+variant_names:
+- GY-521
+- GY-521 MPU-6050
+- MPU6050 module
+- MPU-6050 module
 vendor: generic

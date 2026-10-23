@@ -1,52 +1,103 @@
-# Adafruit BME280 breakout, product 2652 (STEMMA QT version, schematic "BME280 rev C"). Drafted by hardware-researcher; nothing verified.
+# Adafruit BME280 breakout, product 2652 (STEMMA QT version, schematic "BME280 rev C"). Researcher draft reconciled with the blind audit (task 2a.4); see docs/validation/phase-2a/reconcile-bme280-mpu6050.md.
 hardwired:
-  - { strap: SDO, value: "pulled up to 3.3 V by 10 kohm (R4); solder jumper SJ1 (ADDR) to GND gives address 0x76" }
-  - { strap: CSB, value: "pulled up to 3.3 V by 10 kohm (R5) through diode D2; CS pin left open keeps I2C selected" }
+- strap: SDO
+  value: pulled up to 3.3 V by 10 kohm (R4); solder jumper SJ1 (ADDR) to GND gives address 0x76
+- strap: CSB
+  value: pulled up to 3.3 V by 10 kohm (R5) through diode D2; CS pin left open keeps I2C selected
 ic: bme280
 id: adafruit-bme280
-interfaces_exposed: [i2c, spi]
+interfaces_exposed:
+- i2c
+- spi
 level_shifter:
-  evidence: ["adafruit-bme280-learn-pinouts#level-shifting", "adafruit-bme280-qt-sch-revc#i2c-pullups-shift"]
-  note: "BSS138 MOSFET shifters on SDA and SCL (schematic); CS is isolated from the 3.3 V side by diode D2 with a pull-up. Learn guide: all pins into the breakout are 3-5 V logic level safe."
-  status: single-source
+  active: false
+  evidence:
+  - adafruit-bme280-learn-pinouts#level-shifting
+  - adafruit-product-2652#regulator-level-shift
+  - adafruit-bme280-qt-sch-revc#i2c-pullups-shift
+  - adafruit-bme280-qt-sch-revc#csb-sdo
+  note: 'Boolean cannot express a partly shifted board. Reading true: learn guide (''all pins going into the breakout have level shifting circuitry'') and product page (''level shifting''). Reading false: the schematic shows only SCL/SDA (and SCK/SDI, same nets) shifted by BSS138 and CS isolated by diode D2 + pull-up; SDO/ADR goes straight to the sensor and is pulled up to 3.3 V by R4 (claim csb-sdo, no shifter), and as the SPI MISO output it swings 0-3.3 V, so a 5 V host sees a 3.3 V high on MISO and must not drive SDO (I2C address strap) above VDDIO + 0.3 V. Restrictive reading (false) is active. The auditor read the same topology from the Eagle file and flagged exactly this guide-vs-schematic difference. Do not read active=false as ''no shifting'': SDA, SCL, SCK, SDI and CS are shifted. Source difference: the researcher transcribed the rev C schematic image (2020-07-20, low resolution); the blind auditor parsed the Eagle file ''Adafruit BMP280 STEMMA QT.sch'' (the Downloads page says the QT version is the same PCB as the BMP280) and cross-checked the same PNG; both found the same topology.'
+  readings:
+  - evidence:
+    - adafruit-bme280-learn-pinouts#level-shifting
+    - adafruit-product-2652#regulator-level-shift
+    - adafruit-bme280-qt-sch-revc#i2c-pullups-shift
+    value: true
+  - evidence:
+    - adafruit-bme280-qt-sch-revc#csb-sdo
+    value: false
+  status: conflict
   transcribed: true
-  value: true
-notes: "Pin order on header JP1 per schematic: Vin, 3Vo, GND, SCK, SDO, SDI, CS. 3Vo is the regulator output (up to 100 mA per learn guide), recorded as NC because it is not a signal. SCK/SDI double as I2C SCL/SDA, SDO is MISO in SPI and the address strap in I2C (the strap is pulled up on the board, so I2C address is 0x77 unless the ADDR jumper is closed). The breakout also has a STEMMA QT connector (GND, VCC, SDA, SCL) in parallel with the header, and a 10 kohm + LED power indicator. Schematic is an image: values transcribed by hand. The original non-QT board has a different regulator in its Eagle file and was not recorded here."
+  value: false
+notes: 'Pin order on header JP1 per schematic: Vin, 3Vo, GND, SCK, SDO, SDI, CS. 3Vo is the regulator output (up to 100 mA per learn guide), recorded as NC because it is not a signal. SCK/SDI double as I2C SCL/SDA, SDO is MISO in SPI and the address strap in I2C (the strap is pulled up on the board, so I2C address is 0x77 unless the ADDR jumper is closed). The breakout also has a STEMMA QT connector (GND, VCC, SDA, SCL) in parallel with the header, and a 10 kohm + LED power indicator. Schematic is an image: values transcribed by hand. The original non-QT board has a different regulator in its Eagle file and was not recorded here. Reconcile: pin 3Vo is stored as NC (the schema has no regulator-output role; the auditor describes it as the 3.3 V regulator output). SDO as MISO: in SPI the SDO header pin is the MISO output and is not level-shifted.'
 pins:
-  - { label: Vin, maps_to: VCC }
-  - { label: 3Vo, maps_to: NC }
-  - { label: GND, maps_to: GND }
-  - { label: SCK, maps_to: "SCK/SCL" }
-  - { label: SDO, maps_to: MISO }
-  - { label: SDI, maps_to: "MOSI/SDA" }
-  - { label: CS, maps_to: CS }
+- label: Vin
+  maps_to: VCC
+- label: 3Vo
+  maps_to: NC
+- label: GND
+  maps_to: GND
+- label: SCK
+  maps_to: SCK/SCL
+- label: SDO
+  maps_to: MISO
+- label: SDI
+  maps_to: MOSI/SDA
+- label: CS
+  maps_to: CS
 pullups:
-  - line: SDA
-    value_ohm:
-      conditions: { pulled_to: "Vin (header side); a second 10 kohm to 3.3 V sits on the sensor side of the BSS138 shifter" }
-      evidence: ["adafruit-bme280-qt-sch-revc#i2c-pullups-shift"]
-      status: single-source
-      transcribed: true
-      unit: ohm
-      value: 10000
-  - line: SCL
-    value_ohm:
-      conditions: { pulled_to: "Vin (header side); a second 10 kohm to 3.3 V sits on the sensor side of the BSS138 shifter" }
-      evidence: ["adafruit-bme280-qt-sch-revc#i2c-pullups-shift"]
-      status: single-source
-      transcribed: true
-      unit: ohm
-      value: 10000
+- line: SDA
+  value_ohm:
+    conditions:
+      pulled_to: Vin (header side); a second 10 kohm to 3.3 V sits on the sensor side of the BSS138 shifter
+    evidence:
+    - adafruit-bme280-qt-sch-revc#i2c-pullups-shift
+    note: 'R3 gates: 10 kohm from Vin (VCC, host side) to SDA and a second 10 kohm from 3.3 V to the sensor side of the BSS138 shifter (4 x 10K in R3). The stored value is the host-side pull-up to Vin, not to 3.3 V. No pull-up value is stated in the learn guide or the product page. Source difference: the researcher transcribed the rev C schematic image (2020-07-20, low resolution); the blind auditor parsed the Eagle file ''Adafruit BMP280 STEMMA QT.sch'' (the Downloads page says the QT version is the same PCB as the BMP280) and cross-checked the same PNG; both found the same topology.'
+    reviewers:
+    - hardware-researcher
+    - hardware-fact-auditor
+    status: verified
+    transcribed: true
+    unit: ohm
+    value: 10000
+- line: SCL
+  value_ohm:
+    conditions:
+      pulled_to: Vin (header side); a second 10 kohm to 3.3 V sits on the sensor side of the BSS138 shifter
+    evidence:
+    - adafruit-bme280-qt-sch-revc#i2c-pullups-shift
+    note: 'R3 gates: 10 kohm from Vin (VCC, host side) to SCL and a second 10 kohm from 3.3 V to the sensor side of the BSS138 shifter (4 x 10K in R3). The stored value is the host-side pull-up to Vin, not to 3.3 V. No pull-up value is stated in the learn guide or the product page. Source difference: the researcher transcribed the rev C schematic image (2020-07-20, low resolution); the blind auditor parsed the Eagle file ''Adafruit BMP280 STEMMA QT.sch'' (the Downloads page says the QT version is the same PCB as the BMP280) and cross-checked the same PNG; both found the same topology.'
+    reviewers:
+    - hardware-researcher
+    - hardware-fact-auditor
+    status: verified
+    transcribed: true
+    unit: ohm
+    value: 10000
 regulator:
-  evidence: ["adafruit-bme280-learn-pinouts#vin-regulator", "adafruit-bme280-qt-sch-revc#regulator-u2"]
-  note: "Regulator is an AP2112K-3.3 per schematic rev C. Input range 3-5 V is the learn guide's statement, not a regulator datasheet rating."
-  status: single-source
-  value: { present: true, vin_range: [3, 5] }
+  evidence:
+  - adafruit-bme280-learn-pinouts#vin-regulator
+  - adafruit-bme280-qt-sch-revc#regulator-u2
+  note: 'U2 AP2112K-3.3 (SOT23-5, IN and EN on Vin, OUT on the 3.3 V rail) from the schematic; input range 3-5 V is Adafruit''s statement in the learn guide (''will take 3-5VDC''), not a regulator datasheet rating (AP2112K datasheet not opened; neither key asserts its absolute maximum). Learn guide also says up to 100 mA can be drawn from 3Vo. The STEMMA QT V+ pin is on the Vin net, ahead of the regulator. Source difference: the researcher transcribed the rev C schematic image (2020-07-20, low resolution); the blind auditor parsed the Eagle file ''Adafruit BMP280 STEMMA QT.sch'' (the Downloads page says the QT version is the same PCB as the BMP280) and cross-checked the same PNG; both found the same topology.'
+  reviewers:
+  - hardware-researcher
+  - hardware-fact-auditor
+  status: verified
+  transcribed: true
+  value:
+    present: true
+    vin_range:
+    - 3
+    - 5
 supply_current:
   evidence: []
-  note: "Adafruit publishes no board supply current; regulator quiescent current and the power LED are not documented."
+  note: 'Adafruit publishes no board supply current (learn guide and product page searched by both keys; auditor: could-not-verify); regulator quiescent current (AP2112K datasheet not opened) and the power LED current are not documented. Not derived from the sensor current.'
   status: missing
   unit: mA
   value: null
-variant_names: ["Adafruit BME280", "Adafruit BME280 STEMMA QT", "Adafruit 2652", "Adafruit product 2652"]
+variant_names:
+- Adafruit BME280
+- Adafruit BME280 STEMMA QT
+- Adafruit 2652
+- Adafruit product 2652
 vendor: Adafruit Industries

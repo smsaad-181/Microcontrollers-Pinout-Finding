@@ -1,33 +1,53 @@
-# Generic GY-BME280 4-pin module. No vendor publishes a schematic or datasheet for this generic board, so every board fact is missing. Drafted by hardware-researcher.
+# Generic GY-BME280 4-pin module. No vendor publishes a schematic or datasheet for this generic board, so every board fact is missing (reconciled with the blind audit, task 2a.4: all could-not-verify).
 hardwired: []
 ic: bme280
 id: gy-bme280-4pin
-interfaces_exposed: [i2c]
+interfaces_exposed:
+- i2c
 level_shifter:
   evidence: []
-  note: "No official schematic for the generic GY-BME280."
+  note: 'Fact: level_shifter. Researcher and blind auditor both searched; no vendor-published datasheet or schematic names this generic module (only retailer listings and hobbyist pages, which are not evidence); auditor: could-not-verify. Not recorded; do not infer from other boards.'
   status: missing
   value: null
-notes: "Pin labels VIN, GND, SCL, SDA and I2C-only exposure come from the task brief, not from an opened vendor document. The board's I2C address (how SDO is tied), CSB tie, regulator, level shifting and pull-ups are unknown: show a Caution and do not assume, and do not infer them from the 6-pin or Adafruit boards."
+notes: 'Pin labels VIN, GND, SCL, SDA and I2C-only exposure come from the task brief, not from an opened vendor document. The board''s I2C address (how SDO is tied), CSB tie, regulator, level shifting and pull-ups are unknown: show a Caution and do not assume, and do not infer them from the 6-pin or Adafruit boards. The pin labels and exposed interfaces come from the project definition (task brief), not from a cited document; the blind auditor could not confirm them either.'
 pins:
-  - { label: VIN, maps_to: VCC }
-  - { label: GND, maps_to: GND }
-  - { label: SCL, maps_to: SCL }
-  - { label: SDA, maps_to: SDA }
+- label: VIN
+  maps_to: VCC
+- label: GND
+  maps_to: GND
+- label: SCL
+  maps_to: SCL
+- label: SDA
+  maps_to: SDA
 pullups:
-  - line: SDA
-    value_ohm: { evidence: [], status: missing, unit: ohm, value: null }
-  - line: SCL
-    value_ohm: { evidence: [], status: missing, unit: ohm, value: null }
+- line: SDA
+  value_ohm:
+    evidence: []
+    note: 'Fact: pull-up SDA. Researcher and blind auditor both searched; no vendor-published datasheet or schematic names this generic module (only retailer listings and hobbyist pages, which are not evidence); auditor: could-not-verify. Not recorded; do not infer from other boards.'
+    status: missing
+    unit: ohm
+    value: null
+- line: SCL
+  value_ohm:
+    evidence: []
+    note: 'Fact: pull-up SCL. Researcher and blind auditor both searched; no vendor-published datasheet or schematic names this generic module (only retailer listings and hobbyist pages, which are not evidence); auditor: could-not-verify. Not recorded; do not infer from other boards.'
+    status: missing
+    unit: ohm
+    value: null
 regulator:
   evidence: []
-  note: "No official schematic for the generic GY-BME280."
+  note: 'Fact: regulator. Researcher and blind auditor both searched; no vendor-published datasheet or schematic names this generic module (only retailer listings and hobbyist pages, which are not evidence); auditor: could-not-verify. Not recorded; do not infer from other boards.'
   status: missing
   value: null
 supply_current:
   evidence: []
+  note: 'Fact: supply_current. Researcher and blind auditor both searched; no vendor-published datasheet or schematic names this generic module (only retailer listings and hobbyist pages, which are not evidence); auditor: could-not-verify. Not recorded; do not infer from other boards.'
   status: missing
   unit: mA
   value: null
-variant_names: ["GY-BME280", "GY-BME280 4-pin", "BME280 4-pin module", "BME280 module"]
+variant_names:
+- GY-BME280
+- GY-BME280 4-pin
+- BME280 4-pin module
+- BME280 module
 vendor: generic
