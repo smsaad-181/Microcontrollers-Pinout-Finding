@@ -252,7 +252,12 @@ function feasibility(
   return null;
 }
 
-export function selectInterfaces(index: CatalogIndex, project: Project): SelectionResult {
+export function selectInterfaces(
+  index: CatalogIndex,
+  project: Project,
+  /** Override of the I2C bus count (an I2C multiplexer gives several channels on one controller). */
+  i2cBusLimit?: number,
+): SelectionResult {
   const composed = composePinView(index, project.board, project.variant);
   if (composed.status === 'needs_variant') return composed;
   if (composed.status === 'error') return composed;
@@ -283,7 +288,7 @@ export function selectInterfaces(index: CatalogIndex, project: Project): Selecti
     project,
     view,
     usableGpio: usablePads.size,
-    i2cPeripherals: periphs.filter((p) => p.kind === 'i2c').length,
+    i2cPeripherals: i2cBusLimit ?? periphs.filter((p) => p.kind === 'i2c').length,
     uartFree: periphs.filter((p) => p.kind === 'uart').length - usbUarts,
     hasKind: (k) => periphs.some((p) => p.kind === k),
   };

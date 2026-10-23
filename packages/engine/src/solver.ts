@@ -39,6 +39,7 @@ import {
 } from './interfaces.js';
 import { moduleChecks } from './modulechecks.js';
 import { expandSignals, type ExpandedSignal } from './signals.js';
+import { analyzeUnsat } from './unsat.js';
 import { normRole } from './wiring.js';
 
 export const RULESET_VERSION = 'r1-r8@2b';
@@ -57,6 +58,11 @@ export interface SolveOptions {
   timeLimitMs?: number;
   /** Rules treated as removed (rule-disable gate). */
   disabledRules?: readonly RuleId[];
+  /**
+   * Model an I2C multiplexer (8 channels, one set of MCU pads): addresses must be unique per channel
+   * only. Used to verify the `add-i2c-multiplexer` relaxation; leave unset for a normal solve.
+   */
+  i2cMux?: boolean;
   catalogVersion?: string;
   catalogSha256?: string;
 }
@@ -102,6 +108,8 @@ interface Cand {
 
 interface Exclusion {
   pad: string;
+  /** False when the pad could not have served this net anyway (e.g. a consumed pad without an ADC). */
+  rel: boolean;
   /** Conflict-set token for this exclusion, e.g. `adc2-wifi:GPIO25`; null when it is not a conflict cause. */
   token: string | null;
   why: string;
@@ -116,6 +124,34 @@ interface Group {
   id: string;
   kind: BusKind;
   options: string[];
+}
+
+const MUX_CHANNELS = 8;
+
+/**
+ * Conflict tokens of an I2C address/controller shortage:
+ * `i2c-address:<breakout>:<n>-devices-vs-<m>-addresses` (m = distinct addresses x controllers) and
+ * `i2c-controllers:<chip>:<count>`. Mixed breakouts fall back to the instance list.
+ */
+function i2cConflictTokens(
+  ctx: Pick<Ctx, 'project' | 'view'>,
+  instances: readonly string[],
+  optionsOf: (instance: string) => number[],
+  controllers: number,
+): string[] {
+  const breakouts = new Set(
+    instances.flatMap((i) =>
+      ctx.project.modules.filter((m) => m.instance === i).map((m) => m.breakout),
+    ),
+  );
+  const only = breakouts.size === 1 ? [...breakouts][0] : undefined;
+  const addrs = new Set(instances.flatMap((i) => optionsOf(i))).size;
+  return [
+    only !== undefined && addrs > 0
+      ? `i2c-address:${only}:${String(instances.length)}-devices-vs-${String(addrs * controllers)}-addresses`
+      : `i2c-address:${[...instances].sort(cmp).join(',')}`,
+    `i2c-controllers:${ctx.view.variant.chip}:${String(controllers)}`,
+  ];
 }
 
 const cmp = (a: string, b: string): number => (a < b ? -1 : a > b ? 1 : 0);
@@ -159,6 +195,9 @@ interface Ctx {
   /** Pads of the UART the board wires to its USB bridge: the console link, never a free pin. */
   usbPads: Set<string>;
   budget: Budget;
+  i2cMux: boolean;
+  /** ADC pads of the chip that the board uses internally and does not route to a header (e.g. Pico W GPIO29). */
+  hiddenAdc: string[];
 }
 
 class Budget {
@@ -283,8 +322,9 @@ function domainFor(
   for (const pin of ctx.pins) {
     const pad = pin.pad ?? '';
     if (net.lockedPad !== undefined && net.lockedPad !== pad) continue;
+    const rel = net.kind !== 'adc' || pin.adc !== undefined;
     const ex = (token: string | null, why: string) => {
-      excluded.push({ pad, token, why });
+      excluded.push({ pad, rel, token, why });
     };
     if (!pin.usable) {
       ex(
@@ -435,15 +475,20 @@ function solveBranch(ctx: Ctx, branch: InterfaceBranch): BranchResult {
     return m && b && ic ? [resolveAddress(inst, b, ic, m.address_strap)] : [];
   });
   const i2cCount = ctx.chipPeripherals.filter(([, p]) => p.kind === 'i2c').length;
-  const placed = assignI2c(members, i2cCount);
+  const placed = assignI2c(members, ctx.i2cMux ? MUX_CHANNELS : i2cCount);
   if (!placed) {
-    return empty('I2C address collision cannot be resolved', [
-      `i2c-address:${i2cInst.join(',')}`,
-      `i2c-controllers:${String(i2cCount)}`,
-    ]);
+    return empty(
+      'I2C address collision cannot be resolved',
+      i2cConflictTokens(
+        ctx,
+        i2cInst,
+        (i) => members.find((m) => m.instance === i)?.options ?? [],
+        i2cCount,
+      ),
+    );
   }
   const busOf = (inst: string): number =>
-    placed.placements.find((p) => p.member.instance === inst)?.bus ?? 0;
+    ctx.i2cMux ? 0 : (placed.placements.find((p) => p.member.instance === inst)?.bus ?? 0);
   const { nets, groups: groupKinds } = buildNets(signals, busOf, ctx.project);
 
   const reserved = new Set(ctx.project.reserved);
@@ -519,7 +564,7 @@ function solveBranch(ctx: Ctx, branch: InterfaceBranch): BranchResult {
       addresses: placed,
     };
   }
-  const diag = diagnose(nets, groups, domainCache);
+  const diag = diagnose(nets, groups, domainCache, ctx.hiddenAdc);
   return {
     solution: null,
     nets,
@@ -534,19 +579,17 @@ function solveBranch(ctx: Ctx, branch: InterfaceBranch): BranchResult {
 // ---------- unsat: first-cut conflict set ----------
 
 /**
- * First-cut diagnosis. EXTENSION POINT for task 2b.6: replace `diagnose` with a deletion-based minimal
- * conflicting subset (QuickXplain style: re-run `searchOnce` on subsets of `nets`) and a ranked relaxation
- * list. The contract stays `{ tokens, nets, reason }` with tokens from fixture-vocabulary.ts.
- *
- * What it does today: (1) nets whose domain is empty, explained by the exclusions that removed the pads
- * (locked pad -> `locked:` + cause token); (2) Hall-style pigeonhole check on nets with an identical
- * domain (more ADC nets than ADC pads -> `adc:` token, with the excluded ADC pads that explain the
- * shortage); (3) otherwise the nets of the smallest domains, unminimised.
+ * Raw cause tokens of a failed branch (the project-level minimal subset is computed by `unsat.ts`):
+ * (1) nets whose domain is empty, explained by the exclusions that removed the pads (locked pad ->
+ * `locked:` + cause token); (2) Hall-style pigeonhole check on nets with an identical domain (more ADC
+ * nets than ADC pads -> `adc:` token, with the excluded ADC pads that explain the shortage); (3) otherwise
+ * the nets of the smallest domains.
  */
 function diagnose(
   nets: readonly Net[],
   groups: readonly Group[],
   cache: ReadonlyMap<string, NetDomain>,
+  hiddenAdc: readonly string[],
 ): { tokens: string[]; nets: string[]; reason: string } {
   const tokens = new Set<string>();
   const involved = new Set<string>();
@@ -569,7 +612,7 @@ function diagnose(
         if (m.lockedPad !== undefined) tokens.add(`locked:${m.id}=${m.lockedPad}`);
     }
     for (const d of ds) {
-      for (const e of d.excluded) if (e.token !== null) tokens.add(e.token);
+      for (const e of d.excluded) if (e.token !== null && e.rel) tokens.add(e.token);
     }
   }
   if (involved.size > 0) {
@@ -599,11 +642,13 @@ function diagnose(
           : `pads:${String(group.length)}-signals-vs-${String(pads.length)}-pads`,
       );
       for (const n of group) involved.add(n.id);
+      if (adc) for (const pad of hiddenAdc) tokens.add(`consumed:${pad}`);
       for (const n of group) {
         for (const d of domainsOf(n)) {
           for (const e of d.excluded) {
             if (
               e.token !== null &&
+              e.rel &&
               (e.token.startsWith('consumed:') ||
                 e.token.startsWith('reserved:') ||
                 e.token.startsWith('adc2-wifi:'))
@@ -631,42 +676,8 @@ function diagnose(
   return {
     tokens: [],
     nets: sorted.slice(0, 4).map((n) => n.id),
-    reason: 'no combination of pads satisfies every constraint at once (not yet minimised)',
+    reason: 'no combination of pads satisfies every constraint at once',
   };
-}
-
-function relaxations(
-  ctx: Ctx,
-  failure: { tokens: string[]; nets: string[] },
-  signals: readonly ExpandedSignal[],
-): string[] {
-  const out = new Set<string>();
-  for (const t of failure.tokens) {
-    if (t.startsWith('locked:')) out.add(`unlock:${t.slice(7).split('=')[0] ?? ''}`);
-    if (t.startsWith('adc2-wifi:')) out.add('wifi:false');
-    if (t.startsWith('i2c-address:') || t.startsWith('i2c-controllers:'))
-      out.add('add-i2c-multiplexer');
-    if (t.startsWith('adc:')) {
-      for (const b of ctx.index.catalog.breakouts) {
-        const ic = ctx.index.ic(b.ic);
-        if (ic?.interfaces.some((i) => i.kind === 'i2c') && /adc|^ads/.test(ic.id)) {
-          out.add(`add-external-adc:${b.id}`);
-        }
-      }
-    }
-  }
-  const mods = new Set<string>();
-  for (const id of failure.nets) {
-    for (const s of signals) if (s.id === id || id.startsWith(s.instance)) mods.add(s.breakout);
-  }
-  if (failure.tokens.some((t) => t.startsWith('adc:') || t.startsWith('pads:'))) {
-    for (const m of [...mods].sort(cmp)) out.add(`remove-module:${m}`);
-  }
-  if (out.size > 0 || failure.tokens.length > 0) {
-    const id = ctx.project.board.split('@')[0] ?? ctx.project.board;
-    out.add(`different-board:${id}`);
-  }
-  return [...out].sort(cmp);
 }
 
 // ---------- explanation ----------
@@ -930,11 +941,8 @@ function unsatRecommendation(
 
 // ---------- public API ----------
 
-export function solveDetailed(
-  index: CatalogIndex,
-  project: Project,
-  options: SolveOptions = {},
-): SolveOutcome {
+/** One solve without project-level diagnosis: an unsat result carries the raw cause tokens only. */
+function solveOnce(index: CatalogIndex, project: Project, options: SolveOptions): SolveOutcome {
   const stats: SolveStats = { nodes: 0, branchesTried: 0, budgetExhausted: false };
   const base = (status: 'needs_variant', candidates: string[]): SolveOutcome => ({
     recommendation: {
@@ -944,7 +952,7 @@ export function solveDetailed(
     },
     stats,
   });
-  const sel = selectInterfaces(index, project);
+  const sel = selectInterfaces(index, project, options.i2cMux === true ? MUX_CHANNELS : undefined);
   if (sel.status === 'needs_variant') return base('needs_variant', sel.candidates);
   if (sel.status === 'error') throw new Error(`${sel.code}: ${sel.message}`);
   const composed = composePinView(index, project.board, project.variant);
@@ -1003,6 +1011,12 @@ export function solveDetailed(
       }),
     ),
     budget,
+    i2cMux: options.i2cMux === true,
+    hiddenAdc: Object.entries(chip.pads)
+      .filter(([id, pad]) => pad.adc !== undefined && onboardPads.has(id))
+      .map(([id]) => id)
+      .filter((id) => !padPins(view).some((p) => p.pad === id))
+      .sort(cmp),
   };
 
   const finish = (): void => {
@@ -1050,9 +1064,16 @@ export function solveDetailed(
   if (branches.length === 0) {
     // interface level: some module has no feasible interface
     const tokens: string[] = [];
-    if (sel.i2c.conflicts.length > 0) {
-      for (const c of sel.i2c.conflicts) tokens.push(`i2c-address:${c.join(',')}`);
-      tokens.push(`i2c-controllers:${String(sel.i2c.buses)}`);
+    const controllers = chipPeripherals.filter(([, p]) => p.kind === 'i2c').length;
+    for (const c of sel.i2c.conflicts) {
+      tokens.push(
+        ...i2cConflictTokens(
+          ctx,
+          c,
+          (i) => sel.i2c.addresses.find((a) => a.instance === i)?.options ?? [],
+          controllers,
+        ),
+      );
     }
     for (const m of sel.modules) {
       if (m.chosen !== null) continue;
@@ -1066,13 +1087,7 @@ export function solveDetailed(
     const tk = sortedUnique(tokens);
     finish();
     return {
-      recommendation: unsatRecommendation(
-        options,
-        chosenInterfaces(),
-        tk,
-        relaxations(ctx, { tokens: tk, nets: [] }, []),
-        [],
-      ),
+      recommendation: unsatRecommendation(options, chosenInterfaces(), tk, [], []),
       stats,
     };
   }
@@ -1109,11 +1124,34 @@ export function solveDetailed(
       options,
       chosenInterfaces(ff?.b.choice),
       sortedUnique(tokens),
-      relaxations(ctx, failure, ff?.r.signals ?? []),
+      [],
       extra,
     ),
     stats,
   };
+}
+
+/**
+ * Solve a project. On unsat the result carries an irreducible conflicting subset (tokens) and ranked,
+ * re-solve-verified relaxations (see `unsat.ts`); `stats` describe the first (full-project) solve only.
+ */
+export function solveDetailed(
+  index: CatalogIndex,
+  project: Project,
+  options: SolveOptions = {},
+): SolveOutcome {
+  const first = solveOnce(index, project, options);
+  const rec = first.recommendation;
+  if (rec.status !== 'unsat' || first.stats.budgetExhausted) return first;
+  const a = analyzeUnsat(index, project, (p, o) => solveOnce(index, p, o), options);
+  const recommendation: Recommendation = {
+    ...rec,
+    unsat: {
+      minimal_conflict: a.tokens,
+      relaxations: a.relaxations,
+    },
+  };
+  return { recommendation, stats: first.stats };
 }
 
 /** Solve a project: the recommendation only. See `solveDetailed` for the search statistics. */
