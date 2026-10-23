@@ -1,0 +1,38 @@
+# Golden fixture 05 - Uno R4 Minima: user locks a relay input to D13 (P111), the pad that already carries the onboard SCK LED DL4 + 330 ohm.
+id: uno-r4-minima-d13-onboard-led-load
+board: arduino-uno-r4-minima@V1.2
+variant: minima
+project:
+  board: arduino-uno-r4-minima@V1.2
+  variant: minima
+  modules:
+    - { breakout: relay-board-4ch-opto-jdvcc, instance: relays }
+  locked:
+    - { instance: relays, role: "COIL[1]", pad: P111 }
+  reserved: []
+expect:
+  status: ok
+  exact:
+    "relays.COIL[1]": P111
+  properties:
+    - locked_pad_unchanged: ["relays.COIL[1]"]
+    - header_label_of_pad: { P111: D13 }
+  warnings_include:
+    - { code: ONBOARD_LOAD_ON_PAD, level: caution }    # DL4 + R17 330 ohm hang on the P111 net
+    - { code: PIN_CURRENT_UNVERIFIED, level: caution } # Vf of DL4 not in the catalog; upper bound 5/330 = 15.2 mA > 8 mA
+    - { code: FACT_CONFLICT_RELIED, level: caution }   # pin_current_max 4 vs 8 mA
+evidence:
+  - abx00080-sch-v1.2#led-sck
+  - abx00080-um-rev6#led-dl4-sck
+  - abx00080-pinout-20231127#led-pads
+  - ra4m1-ds-rev1.10#ioh-iol-low
+  - ra4m1-ds-rev1.10#ioh-iol-mid
+  - ra4m1-ds-rev1.10#ioh-iol-caution
+  - abx00080-um-rev6#gpio-8ma
+  - sunfounder-ts0011-4ch-relay#sch-channel
+derivations:
+  - "Board fact (onboard[0] of the Uno R4 Minima record): yellow LED DL4 anode on the P111 net, R17 330 ohm to ground, no buffer (abx00080-sch-v1.2#led-sck; D13 is also SCK/ICSP-SCK). A relay input on this net shares the pad with that LED."
+  - "Current: when P111 is high the LED branch draws (5 - Vf)/330; Vf is not in the catalog, so only the bound 5/330 = 0.01515 A = 15.2 mA (Vf >= 0) exists. 15.2 mA exceeds BOTH 4 mA (reset default, active conflict reading) and 8 mA (Arduino reading) -> the engine cannot prove the pad within limits; with a typical LED it would be lower but that is not a catalog value. Expected Caution (unknown, not a computed Critical)."
+  - "The user lock is honoured (locked pins are never moved silently): status stays ok and the warning explains the load."
+changelog:
+  - "2026-10-23: created (task 2a.7, fixture-author). Weakened: no LED Vf in the catalog, so Critical (as in electrical-rules T9) is not asserted."

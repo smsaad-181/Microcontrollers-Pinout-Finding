@@ -1,0 +1,39 @@
+# Golden fixture 07 (negative) - Pico W with four potentiometers: only GPIO26-28 are ADC-capable and exposed; GPIO29/ADC3 is the CYW43439 clock.
+id: pico-w-four-pots-no-free-adc-unsat
+board: raspberry-pi-pico-w@Rev3
+variant: pico-w
+project:
+  board: raspberry-pi-pico-w@Rev3
+  variant: pico-w
+  modules:
+    - { breakout: potentiometer-10k, instance: pot1 }
+    - { breakout: potentiometer-10k, instance: pot2 }
+    - { breakout: potentiometer-10k, instance: pot3 }
+    - { breakout: potentiometer-10k, instance: pot4 }
+  locked: []
+  reserved: []
+expect:
+  status: unsat
+  minimal_conflict_includes:
+    - "adc:4-analog-signals-vs-3-adc-pads"        # pot1..pot4 WIPER need ADC pads, only GPIO26/27/28 usable
+    - "reserved:GPIO29"                             # consumed by the CYW43439 (WL_CLK)
+  relaxations_include:
+    - "add-external-adc:ads1115-breakout"           # catalog has an I2C ADC breakout
+    - "remove-module:potentiometer-10k"
+    - "different-board:raspberry-pi-pico-w"         # the plain Pico has the same 3 exposed ADC pads; a board with more ADC pads is needed
+evidence:
+  - pico-w-ds-rel7#gpio-exposed
+  - pico-w-ds-rel7#internal-gpio29
+  - pico-w-ds-rel7#clk-shared
+  - pico-w-ds-rel7#vsys-divider
+  - rp2040-ds-3184e62#adc-ainsel
+  - rp2040-ds-3184e62#gpio-overview
+  - rp2040-ds-3184e62#key-features
+  - ads1115-ds-sbas444e#pin-ain
+  - ads1115-ds-sbas444e#i2c-address-table
+derivations:
+  - "ADC capable pads: GPIO26 (AIN0), GPIO27 (AIN1), GPIO28 (AIN2), GPIO29 (AIN3) = 4 on the RP2040 (rp2040-ds-3184e62#adc-ainsel, #key-features '4 analogue-capable'). On the Pico W GPIO29 is CYW43439 WL_CLK and also the VSYS/3 sense (pico-w-ds-rel7#internal-gpio29, #clk-shared) and is not on the header (#gpio-exposed: GPIO0-22, GPIO26-28) -> 3 usable. 4 pots > 3 pads -> unsat; a 3-pot project is satisfiable (fixture pico-w-reserved-gpio23-24-25-29)."
+  - "Analog inputs are `fixed` routing: no matrix can place an ADC signal on another pad."
+  - "Relaxation: ADS1115 offers 4 single-ended inputs per chip (ads1115-ds-sbas444e#pin-ain) on I2C; one chip adds 4 channels using 2 pins."
+changelog:
+  - "2026-10-23: created (task 2a.7, fixture-author). Conflict/relaxation tokens are a proposed convention (see report): the engine spec has no normative vocabulary."

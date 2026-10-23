@@ -1,0 +1,49 @@
+# Golden fixture 04 - Arduino UNO R4 Minima driving a 4-channel opto relay board: per-pin current limit is a catalog CONFLICT (4 mA reset default vs 8 mA after software drive config).
+# There is no bare-LED breakout in the catalog, so the load is the relay board's opto-LED input path (series resistor 1 kohm per the vendor schematic).
+id: uno-r4-minima-opto-relay-pin-current
+board: arduino-uno-r4-minima@V1.2
+variant: minima
+project:
+  board: arduino-uno-r4-minima@V1.2
+  variant: minima
+  modules:
+    - { breakout: relay-board-4ch-opto-jdvcc, instance: relays }
+  locked: []
+  reserved: []
+expect:
+  status: ok
+  properties:
+    - outputs_not_in: [P200, P214, P215]
+    - pin_current_limit_used_mA: 4        # chip pin_current_max is `conflict`; most restrictive (4 mA) is active
+    - port_group_total_mA_limit: { pads: [P000, P001, P002, P012, P013, P014, P015], mA: 30 }
+    - cumulative_mA_limit: 60
+  warnings_include:
+    - { code: FACT_CONFLICT_RELIED, level: caution }   # pin_current_max: 4 mA vs 8 mA
+    - { code: PIN_CURRENT_UNVERIFIED, level: caution } # LED Vf not in the catalog: upper bound 5 mA > 4 mA
+    - { code: LEVEL_SHIFTER_UNKNOWN, level: caution }
+evidence:
+  - ra4m1-ds-rev1.10#ioh-iol-low
+  - ra4m1-ds-rev1.10#ioh-iol-mid
+  - ra4m1-ds-rev1.10#ioh-iol-caution
+  - ra4m1-ds-rev1.10#ioh-iol-other-pins
+  - ra4m1-ds-rev1.10#ioh-total-p0
+  - ra4m1-ds-rev1.10#ioh-total-all
+  - ra4m1-um-rev1.10#pfs-initial
+  - abx00080-um-rev6#gpio-8ma
+  - abx00080-pinout-20231127#max-pin-8ma
+  - abx00080-um-rev6#pin-voltage
+  - sunfounder-ts0011-4ch-relay#sch-channel
+  - sunfounder-ts0011-4ch-relay#pinout-in-low
+  - sunfounder-ts0011-4ch-relay#intro-low-level
+  - sainsmart-4ch-relay-sch#channel-topology
+  - sainsmart-4ch-relay-page#spec-active-low
+derivations:
+  - "Conflict: RA4M1 datasheet Table 2.6 gives 4 mA per pin with low drive (the reset default: all PmnPFS reset to input, low drive, ra4m1-um-rev1.10#pfs-initial) and 8 mA with middle drive; the Arduino manual/pinout state '8 mA' without naming a drive setting (abx00080-um-rev6#gpio-8ma). Catalog fact pin_current_max = conflict, active 4 mA -> the engine must judge against 4 mA unless the project states the middle-drive setting."
+  - "Load: opto-LED path VCC -> R1 (1 kohm, sunfounder-ts0011-4ch-relay#sch-channel) -> LED(s) -> IN; the MCU pin sinks I = (5 - Vf)/1000. Vf of the 817C + indicator LED is not in the catalog, so I is bounded only by 5 V/1 kohm = 5.0 mA (Vf >= 0): 5.0 mA > 4 mA (cannot be proven within the reset default) but <= 8 mA (passes once middle drive is configured). Expected: Caution, not Critical, and the message must name both readings."
+  - "The vendor's '15-20 mA driver current per channel' (sunfounder-ts0011-4ch-relay#intro-low-level) contradicts the 1 kohm schematic (5 mA max) and is not stored as a fact; the engine must not use it as the pin current."
+  - "Group limits (inclusive): 4 inputs x 5.0 mA = 20 mA <= 30 mA for P000-P015 group (ra4m1-ds-rev1.10#ioh-total-p0) and <= 60 mA all pins (ra4m1-ds-rev1.10#ioh-total-all)."
+  - "Reference vector T9 of electrical-rules (220 ohm LED, Vf 2.0 V: (5-2)/220 = 13.6 mA > 8 mA critical; 470 ohm: 6.4 mA) cannot be a fixture: the catalog has no LED breakout. Recomputed: (5-2)/220 = 0.013636 A; (5-2)/470 = 0.006383 A."
+  - "Logic levels: all 5 V (abx00080-um-rev6#pin-voltage); active-low board rests at VCC when the MCU pin floats, so relay OFF at reset, no FLOATING_AT_RESET_LOAD expected for this board (resting level is inferred, interim)."
+  - "outputs_not_in P200/P214/P215 are the RA4M1 input-only ports; none is on a header, the property is a guard."
+changelog:
+  - "2026-10-23: created (task 2a.7, fixture-author). Weakened: LED current cannot be computed (no LED breakout, Vf not in catalog); the 4 vs 8 mA conflict is exercised through the opto input instead."

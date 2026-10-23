@@ -1,0 +1,65 @@
+# Golden fixture 08 - plain Raspberry Pi Pico: Adafruit BME280 (10 kohm host-side pull-ups, 0x77 default) + generic SSD1306 on one I2C instance.
+id: pico-i2c-bme280-ssd1306
+board: raspberry-pi-pico@Rev3
+variant: pico
+project:
+  board: raspberry-pi-pico@Rev3
+  variant: pico
+  modules:
+    - { breakout: adafruit-bme280, instance: env, interface: i2c }
+    - { breakout: ssd1306-128x64-i2c-4pin, instance: oled }
+  locked: []
+  reserved: []
+expect:
+  status: ok
+  properties:
+    - bus_shared: [[env.SDA, oled.SDA], [env.SCL, oled.SCL]]
+    # FUNCSEL routing: SDA/SCL must be an I2C0 pair or an I2C1 pair of the chip function table.
+    - i2c_pair_in:
+        signals: [env.SDA, env.SCL]
+        pairs:
+          - { sda: GPIO0, scl: GPIO1 }
+          - { sda: GPIO4, scl: GPIO5 }
+          - { sda: GPIO8, scl: GPIO9 }
+          - { sda: GPIO12, scl: GPIO13 }
+          - { sda: GPIO16, scl: GPIO17 }
+          - { sda: GPIO20, scl: GPIO21 }
+          - { sda: GPIO2, scl: GPIO3 }
+          - { sda: GPIO6, scl: GPIO7 }
+          - { sda: GPIO10, scl: GPIO11 }
+          - { sda: GPIO14, scl: GPIO15 }
+          - { sda: GPIO18, scl: GPIO19 }
+          - { sda: GPIO26, scl: GPIO27 }
+    - no_pad_in: [GPIO23, GPIO24, GPIO25, GPIO29]
+    - i2c_collision: none          # {0x76,0x77} vs {0x3C,0x3D}
+    - i2c_known_address: { env: "0x77" }    # Adafruit SDO pulled up on board, default 0x77
+    - risk_tier1_equals: 0
+  warnings_include:
+    - { code: I2C_ADDRESS_UNKNOWN, level: caution }    # SSD1306 module address unknown
+    - { code: I2C_PULLUP_UNKNOWN, level: caution }     # SSD1306 module pull-ups unknown: Rp,eff only bounded above by 10 kohm
+    - { code: LEVEL_SHIFTER_CONFLICT_RELIED, level: caution } # adafruit-bme280 level_shifter is `conflict`, restrictive reading (false) active
+evidence:
+  - rp2040-ds-3184e62#gpio-function-table
+  - rp2040-ds-3184e62#funcsel
+  - rp2040-ds-3184e62#boot-cs-button
+  - rp2040-ds-3184e62#pad-reset
+  - pico-ds-rel21#gpio-exposed
+  - pico-ds-rel21#internal-gpio29
+  - pico-ds-rel21#gpio-3v3
+  - adafruit-bme280-learn-pinouts#i2c-address
+  - adafruit-bme280-learn-pinouts#i2c-address-alt
+  - adafruit-bme280-learn-pinouts#vin-regulator
+  - adafruit-bme280-learn-pinouts#level-shifting
+  - adafruit-bme280-qt-sch-revc#i2c-pullups-shift
+  - adafruit-bme280-qt-sch-revc#csb-sdo
+  - bme280-ds-1.24#i2c-address
+  - ssd1306-ds-v1.1#i2c-address
+  - ssd1306-ds-v1.1#i2c-pullups
+derivations:
+  - "Pico header exposes GPIO0-22 and GPIO26-28 (pico-ds-rel21#gpio-exposed); GPIO23/24/25/29 are board circuitry, not on the header. I2C0: SDA 0,4,8,12,16,20 / SCL 1,5,9,13,17,21; I2C1: SDA 2,6,10,14,18,26 / SCL 3,7,11,15,19,27 (rp2040 chip function lists; GPIO28/29 I2C0 pair is not usable: GPIO29 is not on the header)."
+  - "Address: Adafruit BME280 SDO is pulled up to 3.3 V by R4 on the board, so 0x77 by default (adafruit-bme280-learn-pinouts#i2c-address); the ADDR jumper to GND gives 0x76. SSD1306: 0x3C/0x3D unknown strap on the generic module. Sets disjoint, no collision."
+  - "Pull-ups: Adafruit stores 10 kohm per line (host side, to Vin). Rp,eff <= 10 kohm; with the SSD1306 module unknown the exact Rp,eff is unknown. Bounds at 3.3 V: Rp,min = (3.3-0.4)/0.003 = 966.7 ohm; Rp,max(400 kHz, 50 pF) = 300e-9/(0.8473*50e-12) = 7081 ohm -> 10 kohm alone FAILS 400 kHz but passes 100 kHz (23604 ohm); because the other pull-ups are unknown, the engine reports Caution, not the computed warning."
+  - "Level shifting: adafruit-bme280 level_shifter is a catalog `conflict` (learn guide says all pins shifted, schematic shows SDA/SCL only; restrictive false). On a 3.3 V host this is harmless for I2C but the engine must say it relied on a conflict fact."
+  - "RP2040: no strap on user pads, reset state pull-down on every GPIO (rp2040-ds-3184e62#pad-reset) -> risk 0."
+changelog:
+  - "2026-10-23: created (task 2a.7, fixture-author)."

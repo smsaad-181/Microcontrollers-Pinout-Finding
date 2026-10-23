@@ -1,0 +1,42 @@
+# Golden fixture 16 (negative) - nine ADS1115 breakouts on an ESP32: 4 addresses per bus x 2 controllers = 8 < 9.
+id: ads1115-nine-boards-i2c-address-space-unsat
+board: esp32-devkitc-v4@V4
+variant: esp32-devkitc-32e
+project:
+  board: esp32-devkitc-v4@V4
+  variant: esp32-devkitc-32e
+  modules:
+    - { breakout: ads1115-breakout, instance: adc1 }
+    - { breakout: ads1115-breakout, instance: adc2 }
+    - { breakout: ads1115-breakout, instance: adc3 }
+    - { breakout: ads1115-breakout, instance: adc4 }
+    - { breakout: ads1115-breakout, instance: adc5 }
+    - { breakout: ads1115-breakout, instance: adc6 }
+    - { breakout: ads1115-breakout, instance: adc7 }
+    - { breakout: ads1115-breakout, instance: adc8 }
+    - { breakout: ads1115-breakout, instance: adc9 }
+  locked: []
+  reserved: []
+expect:
+  status: unsat
+  minimal_conflict_includes:
+    - "i2c-address:ads1115-breakout:9-devices-vs-8-addresses"   # 4 addresses (0x48..0x4B) x 2 I2C controllers
+    - "i2c-controllers:esp32:2"
+  relaxations_include:
+    - "remove-module:ads1115-breakout"
+    - "add-i2c-multiplexer"
+    - "different-board:esp32-devkitc-v4"
+evidence:
+  - ads1115-ds-sbas444e#i2c-address-table
+  - ads1115-ds-sbas444e#i2c-address-sda-note
+  - ads1115-ds-sbas444e#pin-addr
+  - adafruit-ads1115-guide#addr-pin
+  - adafruit-ads1115-guide#default-address
+  - esp32-ds-v5.3#i2c-two-interfaces
+  - esp32-ds-v5.3#i2c-matrix
+derivations:
+  - "ADS1115 address is set by ADDR: GND 0x48, VDD 0x49, SDA 0x4A, SCL 0x4B (ads1115-ds-sbas444e#i2c-address-table) = 4 addresses per bus; the breakout brings ADDR out on a pin (ads1115-breakout notes; adafruit-ads1115-guide#addr-pin) so all four are selectable."
+  - "The ESP32 has two I2C controllers (esp32-ds-v5.3#i2c-two-interfaces), both on any pads (#i2c-matrix): 2 x 4 = 8 distinct (bus, address) slots. 9 devices > 8 slots -> no assignment exists regardless of pad choice (pads are plentiful: 4 pins used). 8 modules would be satisfiable."
+  - "ADS1115 exposes only I2C on this breakout (interfaces_exposed: i2c), so the 'change interface' relaxation does not apply."
+changelog:
+  - "2026-10-23: created (task 2a.7, fixture-author). Conflict/relaxation tokens are a proposed convention (see report)."

@@ -1,0 +1,46 @@
+# Golden fixture 11 - LOLIN D1 mini + generic SSD1306: the catalog gives TWO different I2C pad sets and the expectation records both (documented ambiguity).
+#  (a) board: 4-pin I2C connector P1 wired to GPIO4 (SDA) / GPIO5 (SCL), verified by the schematic;
+#  (b) chip: esp8266ex peripheral I2C0 lists SDA GPIO2 / SCL GPIO14 with matrix_routable false (datasheet example pins, software I2C).
+id: d1-mini-ssd1306-i2c-pad-ambiguity
+board: lolin-d1-mini@V4.0.0
+variant: lolin-d1-mini-v4
+project:
+  board: lolin-d1-mini@V4.0.0
+  variant: lolin-d1-mini-v4
+  modules:
+    - { breakout: ssd1306-128x64-i2c-4pin, instance: oled }
+  locked: []
+  reserved: []
+expect:
+  status: ok
+  properties:
+    - interface_of: { oled: i2c }
+    - i2c_pair_in:
+        signals: [oled.SDA, oled.SCL]
+        pairs:
+          - { sda: GPIO4, scl: GPIO5 }     # board I2C connector P1 (verified)
+          - { sda: GPIO2, scl: GPIO14 }    # chip peripheral listing (software I2C example pins)
+    - i2c_max_hz: 100000                    # esp8266ex software I2C maximum
+  warnings_include:
+    - { code: I2C_PULLUP_UNKNOWN, level: caution }
+    - { code: I2C_ADDRESS_UNKNOWN, level: caution }
+    - { code: STRAP_FACT_MISSING, level: caution }   # only if the (b) pair is chosen: GPIO2 is a boot-mode strap with no level in the catalog
+evidence:
+  - lolin-d1-mini-v4-sch#i2c-port
+  - lolin-d1-mini-v4-ug#pinmap-i2c
+  - lolin-d1-mini-v4-ug#features-i2c
+  - esp8266ex-ds-v7.1#i2c-software
+  - esp8266ex-ds-v7.1#i2c-scl
+  - esp8266ex-ds-v7.1#i2c-sda
+  - esp8266ex-ds-v7.1#i2c-max
+  - esp8266ex-ds-v7.1#boot-mode-note
+  - lolin-d1-mini-v4-sch#pull-resistors
+  - ssd1306-ds-v1.1#i2c-address
+  - ssd1306-ds-v1.1#i2c-pullups
+derivations:
+  - "Board: schematic P1 connector SDA on IO4, SCL on IO5 (lolin-d1-mini-v4-sch#i2c-port, lolin-d1-mini-v4-ug#pinmap-i2c); both pads are header pins on J3."
+  - "Chip: datasheet lists I2C_SCL on IO14 and I2C_SDA on IO2 (esp8266ex-ds-v7.1#i2c-scl, #i2c-sda) and says I2C is a software implementation, max 100 kHz (#i2c-software, #i2c-max). The catalog records them as iomux_pins with matrix_routable false (most restrictive reading); the documents do not state that other pads are impossible."
+  - "A pin-allocation engine that honours matrix_routable=false literally returns SDA=GPIO2 / SCL=GPIO14 (GPIO2 is a boot strap with no documented level; board R10 12 kohm pull-up to 3V3 on GPIO2 and LED1 on the same net, lolin-d1-mini-v4-sch#pull-resistors); one that honours the board connector returns GPIO4/GPIO5. Both are accepted until the auditor settles the chip routing flag."
+  - "SSD1306 module: address and pull-ups unknown (generic module) -> caution; SSD1306 VDD 1.65-3.3 V accepts the 3.3 V rail."
+changelog:
+  - "2026-10-23: created (task 2a.7, fixture-author). Recorded as a catalog ambiguity, see hand-off gaps: esp8266ex I2C0 matrix_routable false vs board I2C connector on GPIO4/5."

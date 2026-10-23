@@ -1,0 +1,57 @@
+# Golden fixture 15 - R3 pull-up stack: four ADS1115 breakouts (10 kohm on SDA/SCL each) + one Adafruit BME280 (10 kohm host side) on one ESP32 bus.
+# The plan's 5 x 4.7 kohm = 940 ohm case cannot be instantiated: no catalog breakout has 4.7 kohm pull-ups.
+id: i2c-pullup-stack-ten-kohm-five-boards
+board: esp32-devkitc-v4@V4
+variant: esp32-devkitc-32e
+project:
+  board: esp32-devkitc-v4@V4
+  variant: esp32-devkitc-32e
+  modules:
+    - { breakout: ads1115-breakout, instance: adc1, interface: i2c, address_strap: "ADDR=GND" }
+    - { breakout: ads1115-breakout, instance: adc2, interface: i2c, address_strap: "ADDR=VDD" }
+    - { breakout: ads1115-breakout, instance: adc3, interface: i2c, address_strap: "ADDR=SDA" }
+    - { breakout: ads1115-breakout, instance: adc4, interface: i2c, address_strap: "ADDR=SCL" }
+    - { breakout: adafruit-bme280, instance: env, interface: i2c, address_strap: "SDO=GND" }
+  locked: []
+  reserved: []
+expect:
+  status: ok
+  properties:
+    - bus_shared: [[adc1.SDA, adc2.SDA, adc3.SDA, adc4.SDA, env.SDA], [adc1.SCL, adc2.SCL, adc3.SCL, adc4.SCL, env.SCL]]
+    - i2c_addresses_resolved: { values: ["0x48", "0x49", "0x4A", "0x4B", "0x76"] }
+    - i2c_collision: none
+    - pullup_rp_eff_ohm: 2000                 # 5 x 10 kohm in parallel (stored host-side values)
+    - rp_min_ohm_at_3v3: 966.7
+    - rp_max_ohm: { "100kHz_50pF": 23604, "400kHz_50pF": 7081, "400kHz_100pF": 3541 }
+    - r3_result: within_range                  # 966.7 <= 2000 <= 3540 (worst listed case)
+    - risk_tier1_equals: 0
+  warnings_include:
+    - { code: I2C_ADDRESS_SDA_STRAP_TIMING, level: info }       # ADDR on SDA needs SDA low >= 100 ns after SCL falls
+    - { code: LEVEL_SHIFTER_CONFLICT_RELIED, level: caution }   # adafruit-bme280 level_shifter is `conflict`
+evidence:
+  - ads1115-ds-sbas444e#i2c-address-table
+  - ads1115-ds-sbas444e#i2c-address-sda-note
+  - ads1115-ds-sbas444e#pin-scl
+  - ads1115-ds-sbas444e#pin-sda
+  - ads1115-ds-sbas444e#i2c-speed-modes
+  - ads1115-ds-sbas444e#rec-vdd
+  - adafruit-ads1115-guide#scl-pullup
+  - adafruit-ads1115-guide#sda-pullup
+  - adafruit-ads1115-guide#default-address
+  - adafruit-ads1115-guide#addr-pin
+  - adafruit-ads1115-sch#net-scl
+  - adafruit-ads1115-sch#net-sda
+  - adafruit-ads1115-sch#net-addr
+  - adafruit-bme280-qt-sch-revc#i2c-pullups-shift
+  - adafruit-bme280-learn-pinouts#i2c-address-alt
+  - bme280-ds-1.24#i2c-address
+  - esp32-ds-v5.3#i2c-matrix
+derivations:
+  - "Pull-ups (catalog): ads1115-breakout SDA and SCL 10 kohm to VIN each (adafruit-ads1115-guide#sda-pullup, #scl-pullup; schematic R1/R2 10K, adafruit-ads1115-sch#net-scl/#net-sda); adafruit-bme280 host-side 10 kohm to Vin per line (adafruit-bme280-qt-sch-revc#i2c-pullups-shift). All powered at 3.3 V so the pulled-up rail is the bus rail."
+  - "Rp,eff = 1/(5/10000) = 2000 ohm (node: 1/(5*1e-4) = 2000). Rp,min(3.3 V) = (3.3-0.4)/3 mA = 966.7 ohm (VOL max 0.4 V at 3 mA; ads1115-ds-sbas444e#elec-vol). Rp,max = tr/(0.8473*Cb): 400 kHz/50 pF = 300e-9/(0.8473*50e-12) = 7081 ohm; 100 kHz/50 pF = 23604 ohm; 400 kHz/100 pF = 3541 ohm. 966.7 <= 2000 <= 3541 -> R3 PASS at every listed speed/capacitance; no I2C_RISE_TIME or low-resistance warning."
+  - "Caveat recorded, NOT asserted: the Adafruit schematic also has a second 10 kohm pull-up per line on the sensor side of a BSS138 shifter (4 x 10K in R3). With host and sensor rails both at 3.3 V that branch is connected through the FET and could add 10 kohm in parallel: Rp,eff would be 1/(4/10000 + 1/5000) = 1666.7 ohm, still > 966.7 ohm. The catalog stores only the host-side value, so the engine's number is 2000 ohm; the auditor decides whether to model the second branch."
+  - "Plan vector T5 (5 x 4.7 kohm in parallel = 940 ohm < 966.7 ohm -> FAIL Rp,min) is kept as an engine unit-test vector only: 4700/5 = 940. No catalog breakout has 4.7 kohm pull-ups, so a golden fixture would need an invented part."
+  - "Addresses (ADDR pin): GND 0x48, VDD 0x49, SDA 0x4A, SCL 0x4B (ads1115-ds-sbas444e#i2c-address-table; Adafruit board pulls ADDR to GND through R3, default 0x48, adafruit-ads1115-sch#net-addr). Adafruit BME280 0x76 with the ADDR jumper to GND. All five addresses distinct. ADDR = SDA needs SDA held low >= 100 ns after SCL falls (#i2c-address-sda-note): info."
+  - "Strap token spellings in address_strap follow the IC strap labels (bme280 'SDO=GND'); the ADS1115 IC record has no strap list yet - schema gap in the hand-off."
+changelog:
+  - "2026-10-23: created (task 2a.7, fixture-author). Weakened: 4.7 kohm 940 ohm case not instantiable."

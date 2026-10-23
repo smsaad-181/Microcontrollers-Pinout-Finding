@@ -1,0 +1,53 @@
+# Golden fixture 10 - LOLIN D1 mini: four relay inputs + one button must stay off the boot pins GPIO0/GPIO2/GPIO15 (and UART0 GPIO1/GPIO3) when enough clean pads exist.
+id: d1-mini-boot-pins-gpio0-2-15-avoided
+board: lolin-d1-mini@V4.0.0
+variant: lolin-d1-mini-v4
+project:
+  board: lolin-d1-mini@V4.0.0
+  variant: lolin-d1-mini-v4
+  modules:
+    - { breakout: relay-board-4ch-transistor, instance: relays }
+    - { breakout: push-button, instance: sw1 }
+  locked: []
+  reserved: []
+expect:
+  status: ok
+  properties:
+    # Header pads: TOUT(A0), GPIO16, 14, 12, 13, 15 (J2); GPIO1, 3, 5, 4, 0, 2 (J3). Remove GPIO1/GPIO3 (CH340C bridge on UART0), GPIO0/2/15 (boot-mode pins),
+    # TOUT (analog only). Clean digital pads: GPIO4, 5, 12, 13, 14, 16 = 6 >= 5 signals.
+    - no_pad_in: [GPIO0, GPIO2, GPIO15, GPIO1, GPIO3, TOUT]
+    - signal_pad_in:
+        signals: ["relays.COIL[1]", "relays.COIL[2]", "relays.COIL[3]", "relays.COIL[4]", "sw1.SW"]
+        pads: [GPIO4, GPIO5, GPIO12, GPIO13, GPIO14, GPIO16]
+    - risk_tier1_equals: 0
+  warnings_include:
+    - { code: FLOATING_AT_RESET_UNKNOWN, level: caution }   # esp8266ex reset_state missing for every pad; relay board resting level missing
+    - { code: NO_INTERNAL_PULL_UP_ON_GPIO16, level: info }  # only if sw1 lands on GPIO16 (pull-down only chip pad)
+evidence:
+  - lolin-d1-mini-v4-sch#pull-resistors
+  - lolin-d1-mini-v4-sch#led
+  - lolin-d1-mini-v4-sch#usb-bridge
+  - lolin-d1-mini-v4-sch#uart-link
+  - lolin-d1-mini-v4-sch#auto-program
+  - lolin-d1-mini-v4-sch#rst-io16
+  - lolin-d1-mini-v4-sch#j2-pins
+  - lolin-d1-mini-v4-sch#j3-pins
+  - lolin-d1-mini-v4-ug#pinmap-left
+  - lolin-d1-mini-v4-ug#pinmap-right
+  - esp8266ex-ds-v7.1#boot-mode-note
+  - esp8266-hdg-v2.8#strap-register
+  - esp8266-hdg-v2.8#gpio15-low
+  - esp8266ex-ds-v7.1#u0txd-powerup
+  - esp8266ex-ds-v7.1#pull-config
+  - esp8266ex-ds-v7.1#pin-gpio16
+  - esp8266-trm-v1.7#gpio16-rtc-no-irq
+  - keyestudio-ks0058-wiki#active-high
+derivations:
+  - "Boot pins: GPIO0, GPIO2 and MTDO/GPIO15 are the boot-mode / SDIO-timing strapping pins (esp8266ex-ds-v7.1#boot-mode-note, esp8266-hdg-v2.8#strap-register); GPIO15 must be low at power-on (esp8266-hdg-v2.8#gpio15-low). The catalog has NO required level / default pull for GPIO0 and GPIO2 and none for GPIO15 (strap facts missing), so the engine must not claim R6 compatibility and treats them as risk pads."
+  - "Board circuitry on those pads (D1 mini V4.0.0 schematic): R9 12 kohm pull-up on GPIO0, R10 12 kohm pull-up on GPIO2, R11 12 kohm pull-down on GPIO15 (lolin-d1-mini-v4-sch#pull-resistors); LED1 anode via R5 2 kohm to 3V3 on GPIO2 (#led); GPIO0 is also driven by the auto-reset transistor pair (#auto-program)."
+  - "GPIO1/GPIO3 = UART0 to the CH340C bridge (lolin-d1-mini-v4-sch#usb-bridge, #uart-link; esp8266ex-ds-v7.1#u0txd-powerup says U0TXD must not be pulled low at power-up). GPIO6-11 are flash only (module consumed)."
+  - "Counting: pads on the headers = TOUT + 11 GPIO; minus GPIO1/3, 0/2/15, TOUT -> {4,5,12,13,14,16} = 6 pads; project needs 4 relay inputs + 1 switch = 5 signals -> a risk-free solution exists, so any boot pin use is wrong."
+  - "GPIO16: chip pad can only have an internal pull-down (esp8266ex-ds-v7.1#pull-config) and cannot trigger the IO interrupt (esp8266-trm-v1.7#gpio16-rtc-no-irq); a switch to GND on it would need an external pull-up: info only, not a block."
+  - "Relay board resting level and active level: active-high (keyestudio-ks0058-wiki#active-high); resting level missing; ESP8266 reset_state missing -> unknown, Caution."
+changelog:
+  - "2026-10-23: created (task 2a.7, fixture-author). Weakened: no required-level/default-pull facts for GPIO0/2/15 in the catalog, so only avoidance is asserted."
