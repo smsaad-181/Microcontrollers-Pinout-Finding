@@ -86,6 +86,23 @@ describe('SolverClient', () => {
     expect(workers[1]?.handle.init).toHaveBeenCalledWith(catalog, 'sha');
   });
 
+  it('uses the hard stop chosen per solve, never earlier than the 2 s notice', async () => {
+    const { factory, workers } = fakeFactory();
+    const client = new SolverClient(factory, catalog, 'sha');
+    const t = client.solve(project, undefined, 30_000);
+    await vi.advanceTimersByTimeAsync(29_999);
+    expect(workers[0]?.terminated).toBe(false);
+    await vi.advanceTimersByTimeAsync(1);
+    await expect(t.result).resolves.toEqual({ status: 'timeout', afterMs: 30_000 });
+    expect(workers[0]?.terminated).toBe(true);
+
+    const early = client.solve(project, undefined, 500);
+    await vi.advanceTimersByTimeAsync(SLOW_NOTICE_MS - 1);
+    expect(workers[1]?.terminated).toBe(false);
+    await vi.advanceTimersByTimeAsync(1);
+    await expect(early.result).resolves.toEqual({ status: 'timeout', afterMs: SLOW_NOTICE_MS });
+  });
+
   it('cancel terminates the worker and a late answer is ignored', async () => {
     const { factory, workers } = fakeFactory();
     const client = new SolverClient(factory, catalog, 'sha');

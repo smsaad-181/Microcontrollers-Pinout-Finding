@@ -7,7 +7,7 @@ import type { SolveResponse } from './api';
 
 /** The engine's own wall-clock cap; the UI says so when a solve passes it. */
 export const SLOW_NOTICE_MS = 2000;
-/** Hard stop: the worker is terminated if no answer arrives by then. */
+/** Default hard stop: the worker is terminated if no answer arrives by then (user-configurable). */
 export const HARD_TIMEOUT_MS = 10000;
 
 /** What the client needs from a worker: async engine calls and a way to kill it. */
@@ -68,8 +68,12 @@ export class SolverClient {
     this.ready = null;
   }
 
-  /** Starts a solve; a solve still running is cancelled first. `onSlow` fires at 2 s. */
-  solve(project: Project, onSlow?: () => void): SolveTicket {
+  /**
+   * Starts a solve; a solve still running is cancelled first. `onSlow` fires at 2 s; the worker is
+   * terminated at `hardStopMs` (never earlier than the 2 s notice).
+   */
+  solve(project: Project, onSlow?: () => void, hardStopMs = this.hardTimeoutMs): SolveTicket {
+    const stopMs = Math.max(hardStopMs, SLOW_NOTICE_MS);
     this.active?.();
     const { worker, ready } = this.ensure();
     let settle: (r: SolveRun) => void = () => undefined;
@@ -81,8 +85,8 @@ export class SolverClient {
       if (!done) onSlow?.();
     }, SLOW_NOTICE_MS);
     const hardId = this.timers.setTimeout(() => {
-      finish({ status: 'timeout', afterMs: this.hardTimeoutMs }, true);
-    }, this.hardTimeoutMs);
+      finish({ status: 'timeout', afterMs: stopMs }, true);
+    }, stopMs);
     const finish = (r: SolveRun, killWorker: boolean) => {
       if (done) return;
       done = true;
