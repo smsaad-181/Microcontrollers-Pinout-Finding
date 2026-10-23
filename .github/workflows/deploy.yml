@@ -1,8 +1,8 @@
 name: deploy
 
+# Manual only until the v1.0 release (GitHub Pages is not enabled yet).
+# At release: enable Pages, then restore `push: { branches: [main] }` here.
 on:
-  push:
-    branches: [main]
   workflow_dispatch: {}
 
 permissions:
