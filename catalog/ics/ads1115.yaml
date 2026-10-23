@@ -158,7 +158,7 @@ vio_range:
   evidence:
   - ads1115-ds-sbas444e#rec-vdd
   note: No separate VIO pin; digital I/O is powered from VDD, so the I/O supply range is the VDD range. Digital inputs tolerate up to 5.5 V regardless of VDD (ads1115-ds-sbas444e#absmax-digital).
-  status: single-source
+  status: interim
   unit: V
   value:
   - 2.0
