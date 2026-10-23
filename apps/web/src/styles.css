@@ -464,10 +464,261 @@ section {
   color: inherit;
 }
 
+.field-error {
+  color: #b3261e;
+  font-weight: 600;
+}
+
+@media (prefers-color-scheme: dark) {
+  .field-error {
+    color: #f2b8b5;
+  }
+}
+
+.storage-status {
+  margin: 0.25rem 0 0;
+  font-size: 0.875rem;
+  color: var(--muted);
+}
+
+.update-prompt {
+  margin: 0.5rem 1rem;
+  padding: 0.75rem 1rem;
+  border: 2px solid var(--focus);
+  border-radius: 8px;
+  background: var(--card-bg);
+}
+
+.update-prompt p {
+  margin: 0 0 0.5rem;
+}
+
+/* Header view. Each state has its own shape (see PinMarker); colours only reinforce it. */
+.board-view {
+  --pin-free: var(--fg);
+  --pin-assigned: #0b57d0;
+  --pin-bus: #6a1b9a;
+  --pin-restricted: #b3261e;
+  --pin-power: #b45309;
+  --pin-ground: #1a1a1a;
+  --pin-analog: #0f766e;
+}
+
+@media (prefers-color-scheme: dark) {
+  .board-view {
+    --pin-assigned: #8ab4f8;
+    --pin-bus: #ce93d8;
+    --pin-restricted: #f2b8b5;
+    --pin-power: #fbbf24;
+    --pin-ground: #e8e8e8;
+    --pin-analog: #5eead4;
+  }
+}
+
+.pin-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1.25rem;
+  padding: 0;
+  margin: 0.5rem 0 1rem;
+  list-style: none;
+}
+
+.pin-legend li {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.board-headers {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.header-svg {
+  max-width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.header-title {
+  font-weight: 700;
+  font-size: 15px;
+  fill: var(--fg);
+}
+
+.header-body {
+  fill: var(--card-bg);
+  stroke: var(--border);
+}
+
+.pin {
+  cursor: pointer;
+  outline: none;
+}
+
+.pin-hit {
+  fill: transparent;
+  stroke: none;
+}
+
+.pin:hover .pin-hit {
+  fill: var(--card-bg);
+}
+
+.pin-active .pin-hit {
+  fill: var(--card-bg);
+  stroke: var(--border);
+}
+
+.pin:focus-visible .pin-hit {
+  stroke: var(--focus);
+  stroke-width: 3;
+}
+
+.pin-pos {
+  font-size: 12px;
+  fill: var(--muted);
+}
+
+.pin-label {
+  font-size: 14px;
+  fill: var(--fg);
+}
+
+.pin-detail {
+  font-size: 12px;
+  fill: var(--muted);
+}
+
+.pm-free {
+  fill: var(--bg);
+  stroke: var(--pin-free);
+  stroke-width: 2;
+}
+
+.pm-assigned {
+  fill: var(--pin-assigned);
+}
+
+.pm-bus {
+  fill: var(--pin-bus);
+}
+
+.pm-restricted circle {
+  fill: var(--bg);
+  stroke: var(--pin-restricted);
+  stroke-width: 2;
+}
+
+.pm-restricted path {
+  stroke: var(--pin-restricted);
+  stroke-width: 2;
+}
+
+.pm-power rect {
+  fill: var(--bg);
+  stroke: var(--pin-power);
+  stroke-width: 2;
+}
+
+.pm-power path {
+  stroke: var(--pin-power);
+  stroke-width: 2;
+}
+
+.pm-ground {
+  fill: var(--pin-ground);
+}
+
+.pm-analog circle {
+  fill: var(--bg);
+  stroke: var(--pin-analog);
+  stroke-width: 2;
+}
+
+.pm-analog path {
+  fill: none;
+  stroke: var(--pin-analog);
+  stroke-width: 2;
+}
+
+.pin-selected {
+  min-height: 1.5em;
+  font-weight: 600;
+}
+
+/* Print / save as PDF: the result, its sources and the disclaimer; no navigation or controls. */
 @media print {
+  :root {
+    --bg: #ffffff;
+    --fg: #000000;
+    --muted: #333333;
+    --card-bg: #ffffff;
+    --border: #000000;
+    --link: #000000;
+    color-scheme: light;
+  }
+
+  body {
+    font-size: 11pt;
+  }
+
   .site-header,
   .skip-link,
-  button {
-    display: none;
+  .update-prompt,
+  .no-print,
+  .storage-status,
+  button,
+  input,
+  select,
+  .field label,
+  .lock-form,
+  .pin-selected {
+    display: none !important;
+  }
+
+  main {
+    max-width: none;
+    padding: 0;
+  }
+
+  .card {
+    border: 1px solid #000000;
+    break-inside: avoid;
+  }
+
+  section,
+  table,
+  .warning,
+  .header-svg {
+    break-inside: avoid;
+  }
+
+  h2,
+  h3 {
+    break-after: avoid;
+  }
+
+  .table-scroll {
+    overflow: visible;
+    max-height: none;
+  }
+
+  /* Citation links: print the URL after the document title. */
+  .citations a[href^='http']::after {
+    content: ' <' attr(href) '>';
+    font-size: 9pt;
+    word-break: break-all;
+  }
+
+  .board-view {
+    --pin-assigned: #000000;
+    --pin-bus: #000000;
+    --pin-restricted: #000000;
+    --pin-power: #000000;
+    --pin-ground: #000000;
+    --pin-analog: #000000;
   }
 }

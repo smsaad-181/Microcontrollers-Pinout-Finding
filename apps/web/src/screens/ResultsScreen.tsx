@@ -1,7 +1,11 @@
 import { useEffect, useId, useState } from 'react';
 import type { Recommendation } from '@pinout/schema';
+import { boardView } from '../catalog/boardView';
+import { BoardView } from '../components/BoardView';
 import { Citations, LevelBadge } from '../components/common';
-import { projectKey, toProject } from '../project/draft';
+import { ProjectActions } from '../components/ProjectActions';
+import { toProject } from '../project/draft';
+import { resultCsv } from '../results/csv';
 import {
   countByLevel,
   describeConflict,
@@ -18,7 +22,7 @@ import {
 import { hrefFor } from '../route';
 import { useAppState, type LoadedCatalog, type SolveState } from '../state/AppState';
 import type { SolveResponse } from '../worker/api';
-import { HARD_TIMEOUT_MS, SLOW_NOTICE_MS } from '../worker/solverClient';
+import { SLOW_NOTICE_MS } from '../worker/solverClient';
 import { PageHeading, WithCatalog, type HeadingRef } from './shared';
 
 function Elapsed() {
@@ -35,7 +39,15 @@ function Elapsed() {
   return <span>{(ms / 1000).toFixed(1)} s</span>;
 }
 
-function Progress({ slow, onCancel }: { slow: boolean; onCancel: () => void }) {
+function Progress({
+  slow,
+  stopAfterMs,
+  onCancel,
+}: {
+  slow: boolean;
+  stopAfterMs: number;
+  onCancel: () => void;
+}) {
   return (
     <section className="card" aria-labelledby="solve-progress">
       <h2 id="solve-progress">Finding pins…</h2>
@@ -45,11 +57,11 @@ function Progress({ slow, onCancel }: { slow: boolean; onCancel: () => void }) {
       </p>
       <p role="status">
         {slow
-          ? `This is taking longer than the engine's ${String(SLOW_NOTICE_MS / 1000)} s limit. It will stop by itself after ${String(HARD_TIMEOUT_MS / 1000)} s, or you can cancel now and simplify the project.`
+          ? `This is taking longer than the engine's ${String(SLOW_NOTICE_MS / 1000)} s limit. It will stop by itself after ${String(stopAfterMs / 1000)} s (change this under Constraints), or you can stop it now and simplify the project.`
           : 'The engine runs in the background; the page stays usable.'}
       </p>
       <button type="button" onClick={onCancel}>
-        Cancel
+        {slow ? 'Stop now' : 'Cancel'}
       </button>
     </section>
   );
@@ -137,6 +149,16 @@ function OkResult({ response, data }: { response: SolveResponse; data: LoadedCat
   const rec = response.outcome.recommendation;
   const rows = wiringRows(rec, response.pinLabels);
   const unattached = rec.required_parts.filter((p) => p.pads === undefined || p.pads.length === 0);
+  const { draft } = useAppState();
+  const view =
+    draft.board === null || draft.variant === null
+      ? null
+      : boardView(data.catalog, draft.board, draft.variant, {
+          reserved: draft.reserved,
+          connections: draft.connections,
+          locked: draft.locked,
+          rec,
+        });
   return (
     <>
       <section aria-labelledby={`${id}-if`}>
@@ -171,7 +193,12 @@ function OkResult({ response, data }: { response: SolveResponse; data: LoadedCat
 
       <section aria-labelledby={`${id}-alloc`}>
         <h2 id={`${id}-alloc`}>Pin allocation</h2>
-        <div className="table-scroll" tabIndex={0} role="region" aria-labelledby={`${id}-alloc`}>
+        <div
+          className="table-scroll"
+          tabIndex={0}
+          role="region"
+          aria-label="Pin allocation table (scrolls sideways)"
+        >
           <table>
             <thead>
               <tr>
@@ -205,6 +232,13 @@ function OkResult({ response, data }: { response: SolveResponse; data: LoadedCat
           </table>
         </div>
       </section>
+
+      {view !== null ? (
+        <section aria-labelledby={`${id}-view`}>
+          <h2 id={`${id}-view`}>Header view</h2>
+          <BoardView connectors={view} title="Board headers with the assigned pins" />
+        </section>
+      ) : null}
 
       <section aria-labelledby={`${id}-wire`}>
         <h2 id={`${id}-wire`}>Wiring instructions</h2>
@@ -438,10 +472,36 @@ function ResultView({
   );
 }
 
+function PinnedNotice({ data }: { data: LoadedCatalog }) {
+  const { latest, dispatch } = useAppState();
+  if (!data.pinned) return null;
+  return (
+    <div className="notice" role="note">
+      <p>
+        This project is shown with catalog <code>{data.catalog.version}</code>, the one it was
+        shared or saved with.
+        {latest !== null ? (
+          <>
+            {' '}
+            The latest catalog is <code>{latest.version}</code>; facts and rules may have changed.
+          </>
+        ) : null}
+      </p>
+      <button
+        type="button"
+        onClick={() => {
+          dispatch({ type: 'unpin-catalog' });
+        }}
+      >
+        Re-check against the latest catalog
+      </button>
+    </div>
+  );
+}
+
 function Results({ data }: { data: LoadedCatalog }) {
-  const { draft, solve, runSolve, cancelSolve } = useAppState();
+  const { draft, solve, solveKey: key, runSolve, cancelSolve } = useAppState();
   const project = toProject(draft);
-  const key = project ? projectKey(project) : null;
   const current = solve.status !== 'idle' && solve.key === key;
   const board = data.boards.find((b) => b.ref === draft.board && b.variant === draft.variant);
   const boardText = board
@@ -466,10 +526,13 @@ function Results({ data }: { data: LoadedCatalog }) {
       </p>
     );
   }
+  const done = solve.status === 'done' && current ? solve.response : null;
+  const okRec = done?.outcome.recommendation.status === 'ok' ? done : null;
   return (
     <>
+      <PinnedNotice data={data} />
       {solve.status === 'running' && current ? (
-        <Progress slow={solve.slow} onCancel={cancelSolve} />
+        <Progress slow={solve.slow} stopAfterMs={solve.stopAfterMs} onCancel={cancelSolve} />
       ) : null}
       {current &&
       (solve.status === 'cancelled' || solve.status === 'timeout' || solve.status === 'error') ? (
@@ -478,6 +541,9 @@ function Results({ data }: { data: LoadedCatalog }) {
       {solve.status === 'done' && current ? (
         <ResultView response={solve.response} data={data} boardText={boardText} />
       ) : null}
+      <ProjectActions
+        {...(okRec ? { csv: () => resultCsv(okRec.outcome.recommendation, okRec.pinLabels) } : {})}
+      />
       <Disclaimer />
     </>
   );

@@ -20,8 +20,23 @@ export function PageHeading({
 
 /** Renders `children` once the catalog is loaded; otherwise a status message. */
 export function WithCatalog({ children }: { children: (data: LoadedCatalog) => ReactNode }) {
-  const { manifest, catalog } = useAppState();
+  const { manifest, catalog, dispatch } = useAppState();
   if (catalog.status === 'ready') return <>{children(catalog.data)}</>;
+  if (catalog.status === 'error' && catalog.pinned) {
+    return (
+      <div role="alert" className="notice">
+        <p>{catalog.message}</p>
+        <button
+          type="button"
+          onClick={() => {
+            dispatch({ type: 'unpin-catalog' });
+          }}
+        >
+          Re-check against the latest catalog
+        </button>
+      </div>
+    );
+  }
   let message: string;
   if (catalog.status === 'error') message = catalog.message;
   else if (manifest.status === 'missing') message = 'The catalog has not been built yet.';

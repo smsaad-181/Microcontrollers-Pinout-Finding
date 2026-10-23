@@ -1,4 +1,5 @@
 import { CatalogStatus } from '../components/CatalogStatus';
+import { OpenProjectFile } from '../components/ProjectActions';
 import { hrefFor } from '../route';
 import { useAppState } from '../state/AppState';
 import { PageHeading, type HeadingRef } from './shared';
@@ -24,6 +25,10 @@ export function HomeScreen({ headingRef }: { headingRef: HeadingRef }) {
           Start: choose a board
         </a>
       </p>
+      <section aria-labelledby="open-heading" className="card">
+        <h2 id="open-heading">Continue a saved project</h2>
+        <OpenProjectFile />
+      </section>
       <section aria-labelledby="catalog-heading" className="card">
         <h2 id="catalog-heading">Catalog</h2>
         <div aria-live="polite">
