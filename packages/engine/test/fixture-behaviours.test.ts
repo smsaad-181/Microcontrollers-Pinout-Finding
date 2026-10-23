@@ -175,6 +175,13 @@ describe('modules, buses and addresses', () => {
     );
     expect(r.required_parts.some((p) => p.role === 'jd-vcc')).toBe(true);
   });
+  it('counts the MCU pin in the I2C bus capacitance (10 kΩ pull-up at 400 kHz warns)', () => {
+    const r = solve(
+      index,
+      base({ modules: [{ breakout: 'adafruit-bme280', instance: 'env', interface: 'i2c' }] }),
+    );
+    expect(find(r, 'I2C_PULLUP_OUT_OF_RANGE')?.level).toBe('warning');
+  });
   it('a level-shifter fact in conflict gives a Caution', () => {
     const r = solve(
       index,

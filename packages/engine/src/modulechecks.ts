@@ -32,6 +32,8 @@ export const I2C_VOL_MAX_V = 0.4;
 /** Bus capacitance estimate: per attached device (pF) and per metre of wire (pF). Engine assumption. */
 export const I2C_CB_PER_DEVICE_PF = 10;
 export const I2C_CB_PER_METRE_PF = 100;
+/** MCU pin capacitance, I2C spec UM10204 upper bound (assumption; no catalog fact yet). */
+export const I2C_CB_MCU_PIN_PF = 10;
 export const I2C_DEFAULT_WIRE_M = 0.2;
 export const I2C_DEFAULT_MAX_HZ = 400_000;
 
@@ -349,7 +351,8 @@ export function moduleChecks(
       if (sig?.maxHz != null) speed = Math.min(speed, sig.maxHz);
     }
     const wire = project.wiring_length_m ?? I2C_DEFAULT_WIRE_M;
-    const cb = members.length * I2C_CB_PER_DEVICE_PF + wire * I2C_CB_PER_METRE_PF;
+    const cb =
+      I2C_CB_MCU_PIN_PF + members.length * I2C_CB_PER_DEVICE_PF + wire * I2C_CB_PER_METRE_PF;
     const r3 = run('R3', scope, {
       pullUpsOhm: pulls,
       vddV: f(logic),
@@ -362,7 +365,7 @@ export function moduleChecks(
       cbPf: { value: cb, status: 'inferred', evidence: [] },
     });
     trace(scope, [
-      `bus capacitance estimated at ${fmt(cb)} pF (${String(members.length)} devices x ${String(I2C_CB_PER_DEVICE_PF)} pF + ${fmt(wire)} m x ${String(I2C_CB_PER_METRE_PF)} pF/m); IOL ${String(I2C_IOL_MA)} mA (I2C spec)`,
+      `bus capacitance estimated at ${fmt(cb)} pF (MCU pin ${String(I2C_CB_MCU_PIN_PF)} pF assumed + ${String(members.length)} devices x ${String(I2C_CB_PER_DEVICE_PF)} pF + ${fmt(wire)} m x ${String(I2C_CB_PER_METRE_PF)} pF/m); IOL ${String(I2C_IOL_MA)} mA (I2C spec)`,
     ]);
     const pads = ['SDA', 'SCL'].flatMap((role) => {
       const sig = signals.find((s) => s.instance === members[0] && normRole(s.role) === role);
