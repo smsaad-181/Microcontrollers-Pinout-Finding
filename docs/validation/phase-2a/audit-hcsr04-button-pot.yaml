@@ -1,0 +1,504 @@
+entities: [hc-sr04, push-button, potentiometer-10k]
+auditor: hardware-fact-auditor
+date: "2026-10-23"
+contaminated: []
+blindness: "No catalog/, docs/research/, PLAN/STATE/NOW, phase-1 or other phase-2a files were opened. Values below were derived only from the documents listed."
+documents:
+  - id: hcsr04-elecfreaks
+    url: https://cdn.sparkfun.com/datasheets/Sensors/Proximity/HCSR04.pdf
+    status: opened
+    sha256: 4ebdc3e1f70d84a1ca856d8fcd7f8b1f9e548a94e4012cd86d14ca0b30543b06
+    bytes: 80625
+    pages: 3
+    kind: "vendor datasheet (Elecfreaks branded, SparkFun-hosted copy); no revision/date printed in the document"
+  - id: hcsr04-33-sparkfun
+    url: https://cdn.sparkfun.com/assets/a/8/9/c/a/HC-SR04-33_Datasheet.pdf
+    status: opened
+    sha256: 7048abf099668b896ec4694900db9bf45e3f6ce5db45898e571fc6bce6dfc314
+    bytes: 502875
+    pages: 3
+    kind: "datasheet of a DIFFERENT product variant (HC-SR04-33, 3.3V~5V); used only to flag the variant, not as evidence for hc-sr04"
+  - id: omron-b3f
+    url: https://omronfs.omron.com/en_US/ecb/products/pdf/en-b3f.pdf
+    status: opened
+    sha256: be9cf69e5f43fb7689448a2097c19858e5643c0e2e49cd77d018881543e27a1f
+    bytes: 711882
+    pages: 9
+    kind: "manufacturer datasheet, Cat. No. A070-E1-08 (1014(0207)(O)) printed on p9"
+  - id: bourns-3386
+    url: https://www.bourns.com/docs/Product-Datasheets/3386.pdf
+    status: opened
+    sha256: 2b4a3fb768cfe410a96275377ef45214ec33dc0873d91d44d31e6119e8ea06bb
+    bytes: 642918
+    pages: 4
+    kind: "manufacturer datasheet, REV. 12/24 (p3); legal page p4 marked K2540 05/26R"
+  - id: elecfreaks-vendor-host
+    url: https://web.elecfreaks.com/
+    status: unreachable
+    reason: "connection failed (HTTP 000) from curl; https://shop.elecfreaks.com/ reachable (200) but contains no HC-SR04 datasheet link (grep of page found none). No vendor-own copy or newer revision found."
+  - id: cytron-hcsr04-guide
+    url: https://www.cytron.io/p-ultrasonic-sensor-hc-sr04
+    status: blocked
+    reason: "HTTP 403 to automated access; https://docs.cytron.io/ and /hc-sr04.pdf connection failed. Not worked around, no mirrors used. Fact set from Cytron user guide = could-not-verify."
+newer_or_more_authoritative_sources:
+  - "None found for HC-SR04: no newer Elecfreaks revision and no vendor-own host reachable. The only other vendor-branded document seen (HC-SR04-33, SparkFun CDN) is a different 3.3V~5V product variant; it must not be used for plain HC-SR04 facts."
+  - "Search results show third-party hosts of Cytron/Handson user guides (university and blog mirrors); not opened, secondary, not evidence."
+  - "Omron B3F: the datasheet defers to separate 'safety precautions common to all Tactile Switches' (p9), not reachable from the given URL; any further bounce/load guidance would be there. Not opened."
+  - "Bourns 3386: datasheet itself is current (REV. 12/24); no newer source sought beyond it."
+contradictions:
+  - id: C1
+    summary: "HC-SR04 'Working Frequency 40Hz' (table) vs 'eight 40 kHz' burst (text)"
+    a: {doc: hcsr04-elecfreaks, locator: "PDF p1 / Electric Parameter table", quote: "Working Frequency 40Hz"}
+    b: {doc: hcsr04-elecfreaks, locator: "PDF p1 / principle of work step (2) and p2 Timing diagram text", quote: "sends eight 40 kHz"}
+    resolution: "Table row is a unit typo (kHz intended); text and timing diagram say 40 kHz. 40 kHz is the ultrasonic carrier, not a measurement rate (measurement cycle is >60 ms)."
+  - id: C2
+    summary: "Echo Output Signal row is labelled 'Input TTL lever signal' for an output pin, with no voltage"
+    a: {doc: hcsr04-elecfreaks, locator: "PDF p1 / Electric Parameter table", quote: "Input TTL lever signal and the range in proportion"}
+    b: {doc: hcsr04-elecfreaks, locator: "PDF p2 / Timing diagram figure", quote: figure}
+    resolution: "Same garbled wording appears in the timing figure label. 'Input' and 'lever' are wording errors; it is not a voltage specification."
+  - id: C3
+    summary: "Trigger row says '10uS TTL pulse' (fixed) vs text 'at least 10us'"
+    a: {doc: hcsr04-elecfreaks, locator: "PDF p1 / Electric Parameter table", quote: "10uS TTL pulse"}
+    b: {doc: hcsr04-elecfreaks, locator: "PDF p1 / principle of work step (1)", quote: "at least 10us high level signal"}
+    resolution: "Not a conflict in practice: 10 us is the minimum."
+  - id: C4
+    summary: "Supply 'DC 5 V' (plain HC-SR04) vs 'DC 3.3V~5 V' (HC-SR04-33 variant document)"
+    a: {doc: hcsr04-elecfreaks, locator: "PDF p1 / Electric Parameter table", quote: "Working Voltage DC 5 V"}
+    b: {doc: hcsr04-33-sparkfun, locator: "PDF p1 / Electric Parameter table", quote: "DC 3.3V~5 V"}
+    resolution: "Different products (title says HC-SR04-33). Not a contradiction for the plain module, but a trap: the variant is not the plain HC-SR04. Recommend the catalog never merge them."
+facts:
+  # ---------------- HC-SR04 ----------------
+  - entity: hc-sr04
+    level: Interface
+    path: "interfaces[digital].signals"
+    value: "TRIG = input (trigger pulse input); ECHO = output (echo pulse output); pins in order Vcc, Trig, Echo, GND"
+    unit: null
+    conditions: "4-pin module"
+    doc: hcsr04-elecfreaks
+    locator: "PDF p1 'Wire connecting direct as following' list; PDF p2 pin labels under photo"
+    quote: "Echo Pulse Output"
+    transcribed: false
+    confidence: found
+    notes: "Directions stated in words. Pin order Vcc/Trig/Echo/GND is printed under the photo on p2 (text layer) and on PCB silkscreen in the photo."
+  - entity: hc-sr04
+    level: IC
+    path: "vdd_range"
+    value: "5"
+    unit: V
+    conditions: "single nominal value 'DC 5 V'; no minimum, maximum or tolerance is stated anywhere in the document"
+    doc: hcsr04-elecfreaks
+    locator: "PDF p1 / Electric Parameter table, row Working Voltage"
+    quote: "Working Voltage DC 5 V"
+    transcribed: false
+    confidence: found
+    notes: "NOT a range. Wiring bullet also says '5V Supply'. A min/max (e.g. 4.5-5.5 V) is not in this document: could-not-verify. HC-SR04-33 variant doc says 3.3V~5 V but is a different product (see C4)."
+  - entity: hc-sr04
+    level: IC
+    path: "supply_current"
+    value: "15"
+    unit: mA
+    conditions: "labelled 'Working Current'; no typ/max qualifier and no test condition given"
+    doc: hcsr04-elecfreaks
+    locator: "PDF p1 / Electric Parameter table, row Working Current"
+    quote: "Working Current 15mA"
+    transcribed: false
+    confidence: found
+    notes: "Document does not say typical or maximum; do not record it as max. No quiescent/standby current stated."
+  - entity: hc-sr04
+    level: Signal
+    path: "ECHO.output_high_level (voh)"
+    value: null
+    unit: V
+    conditions: "no voltage number, no logic family, no load stated for the echo output"
+    doc: hcsr04-elecfreaks
+    locator: "PDF p1 / Electric Parameter table, row Echo Output Signal; PDF p2 Timing diagram figure label"
+    quote: "Input TTL lever signal and the range in proportion"
+    transcribed: false
+    confidence: could-not-verify
+    notes: "EXACT words about the echo level: 'Input TTL lever signal and the range in proportion' (table, p1; identical label 'Input TTL lever signal with a range in proportion' in the p2 figure, read visually). It says TTL once, in a garbled sentence ('Input' for an output, 'lever' for level) and gives NO voltage. 'TTL' is not defined by the document (no VOH/VOL). The document does NOT state 3.3 V or 5 V for echo. Anything like '5 V echo' is an inference from the 5 V supply, not a stated fact."
+  - entity: hc-sr04
+    level: Signal
+    path: "ECHO.pulse_width_semantics"
+    value: "echo high-level duration is proportional to distance; range = high level time * 340 m/s / 2; uS/58 = cm; uS/148 = inch"
+    unit: null
+    conditions: "speed of sound 340 m/s as stated"
+    doc: hcsr04-elecfreaks
+    locator: "PDF p1 principle of work (3); PDF p2 Timing diagram section"
+    quote: "uS / 58 = centimeters or uS / 148 =inch"
+    transcribed: false
+    confidence: found
+    notes: "Timing figure (p2) shows trigger pulse, 8-cycle sonic burst, then echo pulse; no numeric delay between trigger and echo, no echo timeout / no-object behaviour stated."
+  - entity: hc-sr04
+    level: Signal
+    path: "TRIG.min_pulse_width"
+    value: "10"
+    unit: us
+    conditions: "high level on trigger input; text says 'at least'"
+    doc: hcsr04-elecfreaks
+    locator: "PDF p1 principle of work step (1); Electric Parameter table row Trigger Input Signal; PDF p2 figure '10uS TTL'"
+    quote: "Using IO trigger for at least 10us high level signal"
+    transcribed: false
+    confidence: found
+    notes: "Table row says '10uS TTL pulse'. The document labels the trigger 'TTL' but gives no VIH/VIL numbers, so the minimum trigger-high voltage is could-not-verify."
+  - entity: hc-sr04
+    level: Signal
+    path: "TRIG.vih / vil"
+    value: null
+    unit: V
+    conditions: "not stated"
+    doc: hcsr04-elecfreaks
+    locator: "whole document (3 pages) searched"
+    quote: "10uS TTL pulse"
+    transcribed: false
+    confidence: could-not-verify
+    notes: "Only the word 'TTL' (table p1, figure p2). No input threshold voltages."
+  - entity: hc-sr04
+    level: IC
+    path: "input_abs_max"
+    value: null
+    unit: V
+    conditions: "no absolute maximum ratings table or statement in the document"
+    doc: hcsr04-elecfreaks
+    locator: "whole document searched (p1-p3)"
+    quote: figure
+    transcribed: false
+    confidence: could-not-verify
+    notes: "No abs-max for supply, trig or echo. The p3 'Attention' only says GND should be connected first when powering."
+  - entity: hc-sr04
+    level: IC
+    path: "vio_range"
+    value: null
+    unit: V
+    conditions: "not stated"
+    doc: hcsr04-elecfreaks
+    locator: "whole document searched"
+    quote: figure
+    transcribed: false
+    confidence: could-not-verify
+    notes: "No separate I/O supply; no logic-level statement beyond 'TTL'."
+  - entity: hc-sr04
+    level: Breakout
+    path: "regulator / level_shifting"
+    value: "not stated (no regulator and no level shifter mentioned)"
+    unit: null
+    conditions: "module-level"
+    doc: hcsr04-elecfreaks
+    locator: "whole document searched (p1-p3); photo p2 shows no schematic"
+    quote: figure
+    transcribed: false
+    confidence: could-not-verify
+    notes: "Absence of mention is not evidence of absence. Module has no stated pull-ups, regulator or level shifting; schematic not in the document."
+  - entity: hc-sr04
+    level: IC
+    path: "recommended_measurement_cycle"
+    value: "> 60"
+    unit: ms
+    conditions: "recommendation to avoid trigger signal interfering with the echo signal (document wording: 'prevent trigger signal to the echo signal')"
+    doc: hcsr04-elecfreaks
+    locator: "PDF p2 / Timing diagram section"
+    quote: "we suggest to use over 60ms measurement cycle"
+    transcribed: false
+    confidence: found
+    notes: "A suggestion, not a hard limit."
+  - entity: hc-sr04
+    level: IC
+    path: "range"
+    value: "min 2 cm, max 400 cm (4 m), accuracy up to 3 mm"
+    unit: cm
+    conditions: "target should be >= 0.5 m^2 and as smooth as possible (p3 Attention)"
+    doc: hcsr04-elecfreaks
+    locator: "PDF p1 intro and Electric Parameter table rows Max Range / Min Range; PDF p3 Attention"
+    quote: "provides 2cm - 400cm non-contact measurement function"
+    transcribed: false
+    confidence: found
+    notes: "Measuring angle row: '15 degree'. Accuracy: 'can reach to 3mm' (best case, not a spec)."
+  - entity: hc-sr04
+    level: IC
+    path: "measuring_angle"
+    value: "15"
+    unit: degree
+    conditions: "table row MeasuringAngle; no definition of cone (full / half angle) given"
+    doc: hcsr04-elecfreaks
+    locator: "PDF p1 / Electric Parameter table"
+    quote: "MeasuringAngle 15 degree"
+    transcribed: false
+    confidence: found
+    notes: "No inconsistency in the angle row itself."
+  - entity: hc-sr04
+    level: IC
+    path: "burst_frequency"
+    value: "40"
+    unit: kHz
+    conditions: "eight-cycle burst of ultrasound"
+    doc: hcsr04-elecfreaks
+    locator: "PDF p1 principle of work (2); PDF p2 Timing diagram text and figure"
+    quote: "eight 40 kHz"
+    transcribed: false
+    confidence: found
+    notes: "Table row reads 'Working Frequency 40Hz' (PDF p1): an inconsistency, unit typo, see contradictions C1. Value used: 40 kHz."
+  - entity: hc-sr04
+    level: IC
+    path: "power_up_note"
+    value: "do not hot-connect; connect GND first"
+    unit: null
+    conditions: "p3 Attention"
+    doc: hcsr04-elecfreaks
+    locator: "PDF p3 / Attention"
+    quote: "the GND terminal should be connected the module first"
+    transcribed: false
+    confidence: found
+    notes: "Wording is poor ('connected to electric')."
+  - entity: hc-sr04
+    level: IC
+    path: "document_revision"
+    value: "no revision, date or part-number printed; Elecfreaks logo and services@elecfreaks.com only"
+    unit: null
+    conditions: null
+    doc: hcsr04-elecfreaks
+    locator: "PDF p1 header; p3 footer www.Elecfreaks.com"
+    quote: "Tech Support: services@elecfreaks.com"
+    transcribed: false
+    confidence: found
+    notes: "Evidence is undated; vendor-own host not reachable, so currency cannot be confirmed."
+  - entity: hc-sr04
+    level: IC
+    path: "variant_warning (HC-SR04-33)"
+    value: "SparkFun-hosted HC-SR04-33 datasheet states 'DC 3.3V~5 V'; same trigger/echo wording, same 15mA and '40Hz' typo"
+    unit: V
+    conditions: "different product; not the plain HC-SR04"
+    doc: hcsr04-33-sparkfun
+    locator: "PDF p1 title and Electric Parameter table"
+    quote: "Working Voltage DC 3.3V~5 V"
+    transcribed: false
+    confidence: found
+    notes: "Recorded to prevent mixing variants. Its echo wording is also 'Input TTL lever signal and the range in proportion' (no voltage)."
+  - entity: hc-sr04
+    level: IC
+    path: "cytron_guide_facts"
+    value: null
+    unit: null
+    conditions: "Cytron/Elecfreaks user guides blocked or unreachable"
+    doc: cytron-hcsr04-guide
+    locator: "n/a"
+    quote: figure
+    transcribed: false
+    confidence: could-not-verify
+    notes: "Cytron site returned 403 (not worked around). Request manual download of the Cytron HC-SR04 user guide via the orchestrator if more electrical detail (e.g. echo level) is wanted."
+  # ---------------- Push button (Omron B3F) ----------------
+  - entity: push-button
+    level: IC
+    path: "contact_form"
+    value: "SPST-NO"
+    unit: null
+    conditions: "B3F series"
+    doc: omron-b3f
+    locator: "PDF p3 (printed 3) / Ratings/Characteristics table"
+    quote: "Contact form SPST-NO"
+    transcribed: false
+    confidence: found
+    notes: "Four-terminal types are internally paired (two terminals each side); see terminal diagrams p4-p8 (not transcribed)."
+  - entity: push-button
+    level: IC
+    path: "contact_rating"
+    value: "1 to 50 mA, 3 to 24 VDC (resistive load); B3F-G gold models: 100 uA to 50 mA, 3 to 24 VDC"
+    unit: "mA, VDC"
+    conditions: "resistive load"
+    doc: omron-b3f
+    locator: "PDF p3 (printed 3) / Ratings/Characteristics, row Rating (resistive load)"
+    quote: "1 to 50 mA, 3 to 24 VDC (B3F-G: 100 μA to 50 mA, 3 to 24 VDC)"
+    transcribed: false
+    confidence: found
+    notes: "MEANING: this is the range of load the CONTACTS are rated to switch reliably. It is not a supply voltage requirement: a push button is passive and has no vdd_range. Do not record 3-24 V as vdd_range. 24 VDC is a contact switching limit, not a GPIO-safe level statement."
+  - entity: push-button
+    level: IC
+    path: "minimum_applicable_load"
+    value: "10 uA at 1 VDC"
+    unit: "uA @ V"
+    conditions: "reference value, resistive load"
+    doc: omron-b3f
+    locator: "PDF p3 / Ratings/Characteristics"
+    quote: "10 μA at 1 VDC (resistive load)"
+    transcribed: false
+    confidence: found
+    notes: "INFERRED (not stated in the document): a typical GPIO pull-up/pull-down current (e.g. 3.3 V into a 10 kohm resistor = 0.33 mA) is below the 1 mA lower end of the rating band but above the 10 uA @ 1 V minimum-load reference value. The document does not discuss GPIO use. The rating band lower limit (1 mA) vs reference minimum (10 uA) is an in-document tension worth a note."
+  - entity: push-button
+    level: IC
+    path: "bounce_time"
+    value: "5"
+    unit: ms
+    conditions: "max; all B3F models (single value for the table)"
+    doc: omron-b3f
+    locator: "PDF p3 / Ratings/Characteristics, row Bounce time"
+    quote: "Bounce time 5 ms max."
+    transcribed: false
+    confidence: found
+    notes: "Whether it applies to make, break or both is not stated in the datasheet. Debounce in firmware must exceed 5 ms (derived)."
+  - entity: push-button
+    level: IC
+    path: "contact_resistance_initial"
+    value: "100"
+    unit: mohm
+    conditions: "max, initial value"
+    doc: omron-b3f
+    locator: "PDF p3 / Ratings/Characteristics"
+    quote: "100 mΩ max."
+    transcribed: false
+    confidence: found
+    notes: null
+  - entity: push-button
+    level: IC
+    path: "durability"
+    value: "B3F-1000/3000/6000: 1,000,000 ops min at 0.98 N; 300,000 at 1.47 N; 100,000 at 2.55 N; 50,000 at 4.9 N (B3F-1070: 500,000); B3F-4000 3,000,000/1,000,000; B3F-5000/5001 10,000,000; B3F-G 300,000"
+    unit: operations
+    conditions: "by operating force (OF); the exact B3F variant used by the catalog part is not given to me"
+    doc: omron-b3f
+    locator: "PDF p3 / Ratings/Characteristics, row Durability"
+    quote: "1,000,000 operations min (OF: 0.98 N {100 gf})"
+    transcribed: false
+    confidence: found
+    notes: "Rating depends on model: need the variant to pick one number."
+  - entity: push-button
+    level: IC
+    path: "operating_temperature"
+    value: "-25 to +70"
+    unit: degC
+    conditions: "at 60%RH max, no icing or condensation"
+    doc: omron-b3f
+    locator: "PDF p3 / Ratings/Characteristics"
+    quote: "-25°C to +70°C at 60%RH max."
+    transcribed: false
+    confidence: found
+    notes: null
+  - entity: push-button
+    level: IC
+    path: "vdd_range"
+    value: null
+    unit: V
+    conditions: "not applicable: passive two-state contact; no supply pin"
+    doc: omron-b3f
+    locator: "PDF p3 / Ratings/Characteristics"
+    quote: "1 to 50 mA, 3 to 24 VDC (B3F-G: 100 μA to 50 mA, 3 to 24 VDC)"
+    transcribed: false
+    confidence: could-not-verify
+    notes: "The datasheet states no supply requirement because there is none. The 'Rating' is a contact load rating; the catalog must not treat it as VDD."
+  - entity: push-button
+    level: IC
+    path: "input_abs_max / abs max voltage current"
+    value: "no separate absolute maximum; 24 VDC / 50 mA appear only as the upper end of the rating"
+    unit: null
+    conditions: "datasheet defers to 'safety precautions common to all Tactile Switches' (not in this document)"
+    doc: omron-b3f
+    locator: "PDF p9 / Precautions"
+    quote: "Be sure to read the safety precautions common to all Tactile Switches for correct use."
+    transcribed: false
+    confidence: could-not-verify
+    notes: "Common precautions document not opened (separate Omron document)."
+  # ---------------- Potentiometer (Bourns 3386) ----------------
+  - entity: potentiometer-10k
+    level: IC
+    path: "resistance_options"
+    value: "standard range 10 ohms to 2 megohms; 10,000 ohm (code 103) is listed in the Standard Resistance Table"
+    unit: ohm
+    conditions: "3386 trimming potentiometer (3/8 in square trimpot, single turn cermet)"
+    doc: bourns-3386
+    locator: "PDF p1 (printed 1) / Electrical Characteristics, and 'Standard Resistance Table'"
+    quote: "10 ohms to 2 megohms"
+    transcribed: false
+    confidence: found
+    notes: "NOTE: this document is a TRIMMER (adjustment tool H-90, rotational life 200 cycles), not a panel/knob potentiometer. If the catalog part is a 10k rotary pot, this datasheet is only an analogue. Boldface 'popular distribution' values are not discernible in the text layer."
+  - entity: potentiometer-10k
+    level: IC
+    path: "tolerance"
+    value: "±10"
+    unit: "%"
+    conditions: "standard; 'tighter tolerance available'"
+    doc: bourns-3386
+    locator: "PDF p1 / Electrical Characteristics, Resistance Tolerance"
+    quote: "±10 % std."
+    transcribed: false
+    confidence: found
+    notes: null
+  - entity: potentiometer-10k
+    level: IC
+    path: "power_rating"
+    value: "0.5 W at 85 degC; 0 W at 125 degC; 300 V max"
+    unit: W
+    conditions: "Environmental Characteristics, 'Power Rating (300 volts max.)'; derating to zero at 125 degC (linear between points is not stated)"
+    doc: bourns-3386
+    locator: "PDF p1 / Environmental Characteristics"
+    quote: "Power Rating (300 volts max.)"
+    transcribed: false
+    confidence: found
+    notes: "The 85 degC / 0.5 watt and 125 degC / 0 watt rows are in the same block (text 'Power Rating (300 volts max.) 85 °C ... 0.5 watt 125 °C ... 0 watt'). Load Life row: '1,000 hours 0.5 watt @ 85 °C'. DERIVED: at 10 kohm, 0.5 W corresponds to ~70.7 V (sqrt(P*R)), so the 300 V figure is not the binding limit; with a 3.3-5 V divider power is micro-watts."
+  - entity: potentiometer-10k
+    level: IC
+    path: "max_applied_voltage"
+    value: "300"
+    unit: V
+    conditions: "attached to the Power Rating line, 'volts max.'; not specified whether DC or AC rms, nor wiper-to-end"
+    doc: bourns-3386
+    locator: "PDF p1 / Environmental Characteristics, Power Rating"
+    quote: "Power Rating (300 volts max.)"
+    transcribed: false
+    confidence: found
+    notes: "Interpretation of what the 300 V applies to is the document's wording only; not a signal voltage limit for GPIO."
+  - entity: potentiometer-10k
+    level: IC
+    path: "wiper_current_max"
+    value: null
+    unit: mA
+    conditions: "no wiper current rating stated"
+    doc: bourns-3386
+    locator: "whole document (4 pages) searched for 'wiper'"
+    quote: "50 % (Actual TR) ±10 %"
+    transcribed: false
+    confidence: could-not-verify
+    notes: "The only 'Wiper' entry on p1 is '50 % (Actual TR) ±10 %' (Physical Characteristics), apparently a factory-set wiper position, not a current rating. Its exact meaning is not defined in the text."
+  - entity: potentiometer-10k
+    level: IC
+    path: "taper"
+    value: null
+    unit: null
+    conditions: "no taper/law word (linear, log) appears in the document"
+    doc: bourns-3386
+    locator: "whole document searched for taper/linear/log"
+    quote: figure
+    transcribed: false
+    confidence: could-not-verify
+    notes: "Grep found 0 hits for taper, linear, wiper current. Cermet trimmers are conventionally linear but that is outside the document."
+  - entity: potentiometer-10k
+    level: IC
+    path: "voltage_divider_wiring"
+    value: "no wiring guidance; datasheet only lists 'Adjustability Voltage Divider ±0.05 %' (and Rheostat ±0.15 %)"
+    unit: null
+    conditions: "p1 Electrical Characteristics; p2 shows terminals 1,2,3 with CW / CCW / WIPER labels in the dimension drawing"
+    doc: bourns-3386
+    locator: "PDF p1 / Adjustability; PDF p2 / dimension drawings"
+    quote: "±0.05 %"
+    transcribed: false
+    confidence: found
+    notes: "Divider use is implied by the Adjustability row only. Pin number to CW/CCW/WIPER mapping not read (figure): could-not-verify. Derived for catalog: with ends on VCC and GND, wiper is a divider; source impedance seen by an ADC is up to R/4 = 2.5 kohm at mid-travel for 10 kohm (derived, not in document)."
+  - entity: potentiometer-10k
+    level: IC
+    path: "temperature_and_life"
+    value: "temp coefficient ±100 PPM/degC; range -55 to +125 degC; rotational life 200 cycles; adjustment angle 280 deg nominal; absolute minimum resistance 2 ohms max; resolution infinite"
+    unit: null
+    conditions: null
+    doc: bourns-3386
+    locator: "PDF p1 / Electrical and Environmental Characteristics"
+    quote: "200 cycles"
+    transcribed: false
+    confidence: found
+    notes: "Rotational life of 200 cycles confirms a trimmer, not a user-control pot."
+  - entity: potentiometer-10k
+    level: IC
+    path: "vdd_range"
+    value: null
+    unit: V
+    conditions: "passive component, no supply"
+    doc: bourns-3386
+    locator: "PDF p1"
+    quote: figure
+    transcribed: false
+    confidence: could-not-verify
+    notes: "A potentiometer has no supply requirement; the only voltage in the datasheet is the 300 V maximum on the Power Rating line."
