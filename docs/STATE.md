@@ -1,4 +1,4 @@
-# Build state
+﻿# Build state
 
 > Claude updates this file after every task. Humans may edit it too; Claude re-reads it each session.
 
@@ -10,7 +10,7 @@ Catalog version: none yet · Rule-set version: none yet · Last updated: 2026-10
 | --- | --- | --- | --- | --- | --- |
 | 0 | Bootstrap: tools, repo, Pages enabled | IN PROGRESS (remote deferred) | main | — | 0.1, 0.2, 0.5, 0.6 done; 0.3/0.4 deferred by user (GitHub later) |
 | 1 | Foundation: monorepo, schema, evidence model, CI/CD, placeholder on Pages | DONE (local) — remote items deferred to final release | main (55df47b) | phase-validator FAIL · code-reviewer FAIL · github-actions-expert PASS | local-only; 1.8 + CI/deploy gate items wait for GitHub |
-| 2a | Catalog: MVP boards and modules, two-key verified | IN PROGRESS (parallel with Phase 1 final check) | phase-2a (worktree ../pinout-finder-2a) | — | ESP32-DevKitC + Pico first; Uno R3 / ST7735S need manual PDFs |
+| 2a | Catalog: MVP boards and modules, two-key verified | DONE (local, merged to main; owner accepted deferrals) | phase-2a | — | ESP32-DevKitC + Pico first; Uno R3 / ST7735S need manual PDFs |
 | 2b | Engine: interface selection, CSP solver, rules R1–R8, explanations | NOT STARTED | phase-2b | — | |
 | 3 | Web app: UI, Web Worker, projects, sharing, export, offline | NOT STARTED | phase-3 | — | |
 | 4 | Code generation: Arduino + MicroPython | NOT STARTED | phase-4 | — | |
@@ -46,14 +46,14 @@ Legend: `[x]` done · `[~]` in progress · `[-]` deferred (needs GitHub) · `[ ]
 - [x] 1.9 · Docs: docs/schema.md (generated from Zod descriptions), CONTRIBUTING.md skeleton. · _ci-pages-engineer_
 
 **Phase 2a**
-- [~] 2a.1 · For each chip/module/board · _hardware-researcher_
-- [~] 2a.2 · Create catalog/.drafting (pauses the on-edit validation hook) · _hardware-researcher_
-- [ ] 2a.3 · Blind re-derivation · _hardware-fact-auditor_
-- [ ] 2a.4 · Reconcile · _catalog-author_
-- [ ] 2a.5 · Module records · _hardware-researcher → catalog-author_
-- [ ] 2a.6 · Known conflict to record explicitly · _catalog-author_
-- [ ] 2a.7 · Golden fixtures (hand-written from documents, before Phase 2b) · _fixture-author_
-- [ ] 2a.8 · Delete catalog/.drafting · _catalog-author_
+- [x] 2a.1 · For each chip/module/board · _hardware-researcher_
+- [x] 2a.2 · Create catalog/.drafting (pauses the on-edit validation hook) · _hardware-researcher_
+- [x] 2a.3 · Blind re-derivation · _hardware-fact-auditor_
+- [x] 2a.4 · Reconcile · _catalog-author_
+- [x] 2a.5 · Module records · _hardware-researcher → catalog-author_
+- [x] 2a.6 · Known conflict to record explicitly · _catalog-author_
+- [x] 2a.7 · Golden fixtures (hand-written from documents, before Phase 2b) · _fixture-author_
+- [x] 2a.8 · Delete catalog/.drafting · _catalog-author_
 
 **Phase 2b**
 - [ ] 2b.1 · packages/rules · _engine-developer_
@@ -100,7 +100,7 @@ Legend: `[x]` done · `[~]` in progress · `[-]` deferred (needs GitHub) · `[ ]
 
 - [ ] Phase 0: GitHub CLI logged in (`gh auth status`) and repo name confirmed — repo name confirmed by user 2026-10-22: `smsaad-181/Microcontrollers-Pinout-Finding` (public, empty); `gh` login still open
   - 2026-10-22: `gh` 2.103.0 installed (winget). Login not completed; user will finish GitHub setup later.
-- [ ] Phase 2a: manual datasheet downloads listed in `sources/manual/README.md`
+- [ ] (waiting on owner) manual datasheet downloads listed in `sources/manual/README.md`
 - [ ] Phase 5 (mid-phase checkpoint after task 5.3): bench check on real boards
 
 Claude ticks a box after checking it (command/files) or after the user confirms in chat.
@@ -212,3 +212,5 @@ None of these block Phase 0. Re-check all three when a session is started inside
 | 2026-10-22 | 1 | 1.7 done: ci.yml (aggregate `ci` job), deploy.yml, links.yml stub, dependabot.yml; 22 `uses:` pinned to 40-char SHAs (grep check OK), actionlint 1.7.12 → 0 errors. Not yet run on GitHub. |
 | 2026-10-22 | 1 | 1.5 done: CLI fixtures (valid + 12 invalid cases, error-code contract in `packages/cli/test/fixtures/README.md`); each invalid case differs from valid in exactly one line (diff -r checked). |
 | 2026-10-22 | 0 | Started. Local git repo on `main`. Tasks 0.1 (tools), 0.2 (MCP), 0.5 (LICENSE, catalog/LICENSE, .editorconfig, .gitattributes) done; 0.6 already satisfied by `sources/manual/README.md`. Waiting on `gh` install/login + repo name. |
+| 2026-10-23 | 2a | Phase 2a done: 1052 facts (789 verified, 42 conflict, 8 interim, 1 single-source->0, 212 missing), 24 golden fixtures, phase-validator PASS after owner accepted deferrals (Uno R3/ATmega328P, DS18B20, DHT22, MPU-6050, KS0058 await manual PDFs; ESP8266 GPIO0/2/15 strap facts missing until schema makes default_pull optional - first task of 2b). Merged phase-2a into main. |
+
