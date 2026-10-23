@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react';
-import { loadManifest, manifestUrl, type ManifestState } from './manifest';
+import { loadManifest, manifestUrl, type FetchLike, type ManifestState } from './manifest';
 
 /** Loads the catalog manifest once on mount; aborts the request on unmount. */
-export function useCatalogManifest(): ManifestState {
+export function useCatalogManifest(fetchFn: FetchLike): ManifestState {
   const [state, setState] = useState<ManifestState>({ status: 'loading' });
 
   useEffect(() => {
     const controller = new AbortController();
-    loadManifest(manifestUrl(import.meta.env.BASE_URL), fetch, controller.signal).then(
+    loadManifest(manifestUrl(import.meta.env.BASE_URL), fetchFn, controller.signal).then(
       setState,
       () => {
         // Only rejects when aborted on unmount; nothing to do.
@@ -16,7 +16,7 @@ export function useCatalogManifest(): ManifestState {
     return () => {
       controller.abort();
     };
-  }, []);
+  }, [fetchFn]);
 
   return state;
 }

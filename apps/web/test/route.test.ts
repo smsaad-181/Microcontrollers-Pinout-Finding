@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { CONTENT_SECURITY_POLICY } from '../src/csp';
-import { hrefFor, parseHashRoute } from '../src/route';
+import { hrefFor, parseHashRoute, routeKey } from '../src/route';
 
 describe('parseHashRoute', () => {
   it.each(['', '#', '#/', '#//', '/', '#/?x=1'])('maps %j to home', (hash) => {
@@ -13,8 +13,26 @@ describe('parseHashRoute', () => {
     ['#/board/esp32/', '/board/esp32'],
     ['#nope', '/nope'],
     ['#/a?b=c', '/a'],
+    ['#/p', '/p'],
   ])('maps %j to not-found %j', (hash, path) => {
     expect(parseHashRoute(hash)).toEqual({ name: 'not-found', path });
+  });
+
+  it.each(['board', 'modules', 'constraints', 'results'] as const)('maps #/%s to its step', (s) => {
+    expect(parseHashRoute(`#/${s}`)).toEqual({ name: s });
+    expect(parseHashRoute(`#/${s}/`)).toEqual({ name: s });
+  });
+
+  it('maps #/p/<data> to a shared project', () => {
+    expect(parseHashRoute('#/p/abc-123')).toEqual({ name: 'shared', data: 'abc-123' });
+  });
+});
+
+describe('routeKey', () => {
+  it('distinguishes pages', () => {
+    expect(routeKey({ name: 'board' })).toBe('board');
+    expect(routeKey({ name: 'shared', data: 'x' })).toBe('shared');
+    expect(routeKey({ name: 'not-found', path: '/x' })).toBe('not-found:/x');
   });
 });
 

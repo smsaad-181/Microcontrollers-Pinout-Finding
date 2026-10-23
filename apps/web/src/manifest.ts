@@ -8,6 +8,8 @@ export interface CatalogManifest {
   sha256: string;
   /** Entity counts (boards, modules, ...). */
   counts?: Record<string, number>;
+  /** File name of the versioned catalog next to the manifest (`<version>.json`). */
+  file?: string;
 }
 
 /** Load state of the manifest: `loading`, then `ready` or one of the three failure states. */
@@ -35,6 +37,7 @@ export function isCatalogManifest(value: unknown): value is CatalogManifest {
   if (!isNonEmptyString(value.version)) return false;
   if (!isNonEmptyString(value.date)) return false;
   if (!isNonEmptyString(value.sha256)) return false;
+  if (value.file !== undefined && !isNonEmptyString(value.file)) return false;
   if (value.counts !== undefined) {
     if (!isRecord(value.counts)) return false;
     for (const n of Object.values(value.counts)) {

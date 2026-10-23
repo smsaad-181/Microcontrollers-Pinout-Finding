@@ -12,14 +12,25 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@pinout/engine": "workspace:*",
     "@pinout/schema": "workspace:*",
+    "comlink": "4.4.2",
+    "idb-keyval": "6.3.0",
+    "lz-string": "1.5.0",
+    "minisearch": "7.2.0",
     "react": "19.3.1",
-    "react-dom": "19.3.1"
+    "react-dom": "19.3.1",
+    "workbox-window": "7.4.1"
   },
   "devDependencies": {
+    "@pinout/cli": "workspace:*",
+    "@types/jsdom": "30.0.0",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
     "@vitejs/plugin-react": "6.1.2",
-    "vite": "8.3.5"
+    "axe-core": "4.14.0",
+    "jsdom": "30.1.2",
+    "vite": "8.3.5",
+    "vite-plugin-pwa": "1.3.0"
   }
 }

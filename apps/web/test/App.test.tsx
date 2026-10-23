@@ -1,19 +1,77 @@
 import { renderToString } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 import { App, CatalogStatus } from '../src/App';
+import { Citations, LevelBadge, StatusBadge, StepNav } from '../src/components/common';
+import { citationIndex } from '../src/catalog/evidence';
 
-describe('App placeholder', () => {
-  it('renders the product name and one h1 inside main', () => {
+describe('App shell', () => {
+  it('renders the product name, one h1 inside main, and the step navigation', () => {
     const html = renderToString(<App />);
     expect(html).toContain('Pinout Finder');
-    expect(html).toContain('coming soon');
     expect(html.match(/<h1[\s>]/g)).toHaveLength(1);
     expect(html).toMatch(/<main[\s>]/);
     expect(html).toContain('href="#/"');
+    for (const s of ['board', 'modules', 'constraints', 'results'])
+      expect(html).toContain(`href="#/${s}"`);
+    expect(html).toContain('Skip to content');
   });
 
   it('shows the loading state before the manifest arrives', () => {
     expect(renderToString(<App />)).toContain('Loading catalog information');
+  });
+});
+
+describe('badges', () => {
+  it('board status shows text, not colour alone', () => {
+    const html = renderToString(<StatusBadge status="partially-verified" />);
+    expect(html).toContain('Partially verified');
+    expect(html).toContain('aria-hidden="true"');
+  });
+
+  it.each([
+    ['critical', 'Critical'],
+    ['warning', 'Warning'],
+    ['caution', 'Caution'],
+    ['info', 'Info'],
+  ] as const)('warning level %s has a text label and an icon', (level, label) => {
+    const html = renderToString(<LevelBadge level={level} />);
+    expect(html).toContain(label);
+    expect(html).toContain('level-icon');
+  });
+
+  it('marks the current step', () => {
+    expect(renderToString(<StepNav current="modules" />)).toMatch(
+      /href="#\/modules" aria-current="step"/,
+    );
+  });
+});
+
+describe('Citations', () => {
+  it('links a claim to its evidence URL and shows unknown ids', () => {
+    const cite = citationIndex([
+      {
+        id: 'doc',
+        title: 'Doc title',
+        publisher: 'P',
+        doc_number: null,
+        revision: '1.0',
+        revision_date: null,
+        url: 'https://example.com/doc.pdf',
+        url_original: null,
+        accessed: '2026-01-01',
+        sha256: null,
+        kind: 'datasheet',
+        secondary: false,
+        manual: false,
+        claims: [{ id: 'doc#a', locator: 'Table 1', quote: 'quoted words', supports: 's' }],
+      },
+    ]);
+    const html = renderToString(<Citations ids={['doc#a', 'missing#b']} cite={cite} />);
+    expect(html).toContain('href="https://example.com/doc.pdf"');
+    expect(html).toContain('rel="noopener noreferrer"');
+    expect(html).toContain('Doc title, rev. 1.0');
+    expect(html).toContain('Table 1');
+    expect(html).toContain('Source record not found');
   });
 });
 
