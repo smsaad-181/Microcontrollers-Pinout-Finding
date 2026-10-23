@@ -1,7 +1,7 @@
-Doing: Four data helpers are collecting the sensor and module data: the BME280 and MPU-6050 sensors, the SSD1306 OLED, the ST7735S display and the RFID reader, the DS18B20, DHT22 and HC-SR04, and the ADS1115, relay boards, push button and potentiometer.
-Why: The website will tell you how to wire each sensor: its voltage, its addresses, the pull-up resistors, and whether it needs a level shifter. These facts come from the chip datasheets and, for the common breakout boards, from the board makers' own documents. Anything with no official document stays marked missing.
-Folder: D:\Development\pinout-finder-kit\pinout-finder-2a (catalog = the data)
-Who: Four data helpers in parallel. Afterwards each part gets the same independent second check as the boards.
-Next: The independent checks of the sensor data. Then the Arduino Uno R3 when you provide the ATmega328P PDF. Then the 20 test cases that the pin-picking brain must pass.
-Needs you: Soon: the ATmega328P PDF (Microchip) for the Arduino Uno R3, and the ST7735S PDF (Sitronix) for the display. Both are listed in sources\manual\README.md. Without the ST7735S PDF, the display uses clearly marked "interim" values from the related ST7735 datasheet.
-Where: Phase 2a (real pin data) - 5 board families verified; sensor and module research started
+Doing: Four jobs run at once on the sensor data: 1) the BME280 and MPU-6050 comparison (resumed after the usage limit), 2) the SSD1306, display and RFID comparison, 3) an independent check of the ADS1115 and the two relay boards, 4) an independent check of the HC-SR04, push button and potentiometer.
+Why: Each sensor fact needs two independent reads of the documents before it counts as verified. An important find: an independent reader found a copy of the real ST7735S datasheet on a public mirror (not on Sitronix's own site). Its values differ from the related ST7735 datasheet, so those facts are marked as conflicts and the stricter value is used.
+Folder: D:\Development\pinout-finder-kit\pinout-finder-2a (catalog = the data, docs\validation\phase-2a = the reports)
+Who: Two compare agents and two checker agents running in parallel.
+Next: Compare the last two groups. Then the Arduino Uno R3 (needs your ATmega328P PDF), the 20 test cases, and the Phase 2a review. Then I give you the push commands.
+Needs you: Please download the PDFs listed in sources\manual\README.md (9 items; the important ones are the ATmega328P, MPU-6050, DS18B20 and DHT22). Optional: also tell me if you accept the unofficial mirror copy of the ST7735S datasheet.
+Where: Phase 2a (real pin data) - 5 board families verified; sensor data in the second-check step
