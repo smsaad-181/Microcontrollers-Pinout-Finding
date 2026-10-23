@@ -350,7 +350,7 @@ function domainFor(
   const wifi = ctx.project.wifi === true;
   for (const pin of ctx.pins) {
     const pad = pin.pad ?? '';
-    if (net.lockedPad !== undefined && net.lockedPad !== pad) continue;
+    if (net.lockConflict || (net.lockedPad !== undefined && net.lockedPad !== pad)) continue;
     const rel = net.kind !== 'adc' || pin.adc !== undefined;
     const ex = (token: string | null, why: string, evidence: readonly string[] = []) => {
       excluded.push({ pad, rel, token, why, evidence: [...evidence] });
@@ -524,6 +524,17 @@ function solveBranch(ctx: Ctx, branch: InterfaceBranch): BranchResult {
   });
   if (exp.status !== 'ok') return empty('expansion failed');
   const signals = exp.signals;
+
+  // A user lock is never dropped silently: a branch whose interface has no signal for a lock is infeasible.
+  const unmatched = ctx.project.locked.filter(
+    (l) => !signals.some((s) => s.id === `${l.instance}.${l.role}`),
+  );
+  if (unmatched.length > 0) {
+    return empty(
+      'a lock matches no signal of the chosen interface',
+      unmatched.map((l) => `locked:${l.instance}.${l.role}=${l.pad}`).sort(cmp),
+    );
+  }
 
   // I2C address placement fixes the number of buses
   const i2cInst = [...new Set(signals.filter((s) => s.interface === 'i2c').map((s) => s.instance))];

@@ -145,17 +145,7 @@ function build(s: Scenario): Project {
 /** Locks whose signal exists under the interfaces the solver chose. */
 function liveLocks(project: Project, signals: readonly ExpandedSignal[]): Project['locked'] {
   const ids = new Set(signals.map((s) => s.id));
-  const live = project.locked.filter((l) => ids.has(`${l.instance}.${l.role}`));
-  // BUG-2 (see below): locks of one shared bus line on different pads are not honoured; skip those groups.
-  const pads = new Map<string, Set<string>>();
-  for (const l of live) {
-    const r = normRole(l.role);
-    if (!BUS.has(r)) continue;
-    let set = pads.get(r);
-    if (!set) pads.set(r, (set = new Set()));
-    set.add(l.pad);
-  }
-  return live.filter((l) => (pads.get(normRole(l.role))?.size ?? 1) <= 1);
+  return project.locked.filter((l) => ids.has(`${l.instance}.${l.role}`));
 }
 
 // ---------- hard-constraint checker (independent of the solver internals) ----------
@@ -207,7 +197,7 @@ function violations(project: Project, out: SolveOutcome): string[] {
     if (reserved.has(a.pad)) v.push(`${a.pad} reserved but assigned to ${a.instance}.${a.role}`);
   }
 
-  // (3) locked pads unmoved (a lock whose signal vanished with the chosen interface: see BUG-1 below)
+  // (3) locked pads unmoved
   for (const l of liveLocks(project, signals)) {
     const a = rec.assignments.find((x) => x.instance === l.instance && x.role === l.role);
     if (a?.pad !== l.pad) v.push(`lock ${l.instance}.${l.role}=${l.pad} moved to ${a?.pad ?? '-'}`);
@@ -410,59 +400,48 @@ describe('solver properties (fast-check)', () => {
   );
 });
 
-describe('known defects found by the properties', () => {
-  // BUG-2: two modules share one I2C bus (one SCL net). Locking their SCL lines to different pads is
-  // contradictory, yet the result is ok: one lock is silently dropped (here GPIO36, also input-only).
-  // Expected: unsat naming both locks. `it.fails` turns red once it is fixed.
-  it.fails(
-    'BUG-2: contradictory locks on one shared bus line give unsat, not a dropped lock',
-    () => {
-      const p: Project = {
-        board: 'esp32-devkitc-v4@V4',
-        variant: 'esp32-devkitc-32e',
-        wifi: false,
-        modules: [
-          { breakout: 'adafruit-bme280', instance: 'm1' },
-          { breakout: 'adafruit-bme280', instance: 'm2' },
-        ],
-        locked: [
-          { instance: 'm1', role: 'SCL', pad: 'GPIO36' },
-          { instance: 'm2', role: 'SCL', pad: 'GPIO16' },
-        ],
-        reserved: [],
-      };
-      const rec = solveDetailed(index, p).recommendation;
-      const padOf = (i: string): string | undefined =>
-        rec.assignments.find((a) => a.instance === i && a.role === 'SCL')?.pad;
-      expect(rec.status === 'unsat' || (padOf('m1') === 'GPIO36' && padOf('m2') === 'GPIO16')).toBe(
-        true,
-      );
-    },
-  );
+describe('user locks are never dropped silently', () => {
+  // Two modules share one I2C bus (one SCL net); locking their SCL lines to different pads is contradictory.
+  it('contradictory locks on one shared bus line give unsat naming both locks', () => {
+    const p: Project = {
+      board: 'esp32-devkitc-v4@V4',
+      variant: 'esp32-devkitc-32e',
+      wifi: false,
+      modules: [
+        { breakout: 'adafruit-bme280', instance: 'm1' },
+        { breakout: 'adafruit-bme280', instance: 'm2' },
+      ],
+      locked: [
+        { instance: 'm1', role: 'SCL', pad: 'GPIO17' },
+        { instance: 'm2', role: 'SCL', pad: 'GPIO16' },
+      ],
+      reserved: [],
+    };
+    const rec = solveDetailed(index, p).recommendation;
+    expect(rec.status).toBe('unsat');
+    const mc = rec.unsat?.minimal_conflict ?? [];
+    expect(mc).toContain('locked:m1.SCL=GPIO17');
+    expect(mc).toContain('locked:m2.SCL=GPIO16');
+  });
 
-  // BUG-1 (reported to the engine owner): a lock on a bus signal is silently dropped when the lock makes
-  // the auto-chosen interface (I2C) infeasible and the solver falls back to another interface (SPI): the
-  // result is ok, the locked pad is not used and no warning mentions the lock. Expected: unsat naming the
-  // lock, or a warning (LOCK_UNMATCHED) on the recommendation. `it.fails` turns red once it is fixed.
-  it.fails(
-    'BUG-1: a lock that no longer matches a signal is reported, not dropped silently',
-    () => {
-      const p: Project = {
-        board: 'esp32-s3-devkitc-1@V1.1',
-        variant: 'esp32-s3-devkitc-1-n8',
-        wifi: false,
-        modules: [{ breakout: 'adafruit-bme280', instance: 'm1' }],
-        locked: [{ instance: 'm1', role: 'SDA', pad: 'GPIO43' }],
-        reserved: [],
-      };
-      const rec = solveDetailed(index, p).recommendation;
-      const kept = rec.assignments.some(
-        (a) => a.instance === 'm1' && a.role === 'SDA' && a.pad === 'GPIO43',
-      );
-      const reported = rec.warnings.some((w) => /lock/i.test(w.code + w.message));
-      expect(rec.status === 'unsat' || kept || reported).toBe(true);
-    },
-  );
+  // A lock on an I2C signal that would force a fallback to SPI is reported (unsat), not dropped.
+  it('a lock that matches no signal of the chosen interface is not dropped silently', () => {
+    const p: Project = {
+      board: 'esp32-s3-devkitc-1@V1.1',
+      variant: 'esp32-s3-devkitc-1-n8',
+      wifi: false,
+      modules: [{ breakout: 'adafruit-bme280', instance: 'm1' }],
+      locked: [{ instance: 'm1', role: 'SDA', pad: 'GPIO43' }],
+      reserved: [],
+    };
+    const rec = solveDetailed(index, p).recommendation;
+    const kept = rec.assignments.some(
+      (a) => a.instance === 'm1' && a.role === 'SDA' && a.pad === 'GPIO43',
+    );
+    expect(rec.status === 'unsat' || kept).toBe(true);
+    if (rec.status === 'unsat')
+      expect(rec.unsat?.minimal_conflict.some((t) => t.startsWith('locked:m1.SDA'))).toBe(true);
+  });
 });
 
 // ---------- independent oracle: potentiometer counting ----------
