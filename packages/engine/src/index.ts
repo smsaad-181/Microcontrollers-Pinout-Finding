@@ -10,3 +10,5 @@ export * from './compose.js';
 export * from './wiring.js';
 export * from './interfaces.js';
 export * from './signals.js';
+export * from './solver.js';
+export { compareCost, ZERO_COST, type Cost } from './assess.js';

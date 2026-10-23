@@ -21,6 +21,7 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@pinout/rules": "workspace:*",
     "@pinout/schema": "workspace:*"
   }
 }

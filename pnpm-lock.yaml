@@ -87,6 +87,9 @@ importers:
 
   packages/engine:
     dependencies:
+      '@pinout/rules':
+        specifier: workspace:*
+        version: link:../rules
       '@pinout/schema':
         specifier: workspace:*
         version: link:../schema
