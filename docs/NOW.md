@@ -1,7 +1,7 @@
-Doing: Phase 3 stage A started: the browser app core (pick board, add sensors, solve, show results).
-Why: This is the part you will actually use and see on localhost.
-Folder: D:\Development\pinout-finder-kit\pinout-finder-3 (apps\web)
-Who: One UI agent.
-Next: Stage B (constraints, SVG board view, save/share/export, offline), then tests and review.
-Needs you: Push Phase 2b if you have not yet. Optional: PDFs in sources\manual\README.md.
-Where: Phase 3 about 5%. Overall about 71%.
+Doing: Stopped at your request. Nothing is running.
+Why: You asked me to pause.
+Folder: D:\Development\pinout-finder-kit\pinout-finder-3 (Phase 3 branch phase-3)
+Who: Nobody.
+Next: Phase 3 stage C (browser end-to-end tests), then review, then Phase 4 and 5. Say "continue" or "go".
+Needs you: Push the commands from the chat.
+Where: Phase 3 about 60%. Overall about 80%.
