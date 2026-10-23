@@ -8,7 +8,14 @@ import {
   uniqueInstance,
   type ProjectDraft,
 } from '../src/project/draft';
-import { parseDraft, readDraft, writeDraft, type KeyValueStore } from '../src/project/storage';
+import {
+  loadDraft,
+  memoryStore,
+  parseDraft,
+  SafeStore,
+  saveDraft,
+  type AsyncStore,
+} from '../src/project/storage';
 
 const withBoard: ProjectDraft = draftReducer(EMPTY_DRAFT, {
   type: 'select-board',
@@ -105,38 +112,82 @@ describe('toProject', () => {
   });
 });
 
-describe('draft storage', () => {
-  const memory = (): KeyValueStore & { data: Map<string, string> } => {
-    const data = new Map<string, string>();
-    return {
-      data,
-      getItem: (k) => data.get(k) ?? null,
-      setItem: (k, v) => {
-        data.set(k, v);
-      },
-    };
-  };
-
-  it('round-trips a draft', () => {
-    const store = memory();
-    const s = draftReducer(withBoard, { type: 'add-module', breakout: 'x', base: 'x' });
-    expect(writeDraft(store, s)).toBe(true);
-    expect(readDraft(store)).toEqual(s);
+describe('constraints added in stage B', () => {
+  it('keeps existing connections free by sending their pads as reserved', () => {
+    let s = draftReducer(withBoard, { type: 'toggle-reserved', pad: 'GPIO10' });
+    s = draftReducer(s, {
+      type: 'add-connection',
+      connection: { pad: 'GPIO2', note: '  status LED  ' },
+    });
+    s = draftReducer(s, { type: 'add-connection', connection: { pad: 'GPIO10', note: '' } });
+    expect(s.connections).toEqual([
+      { pad: 'GPIO2', note: 'status LED' },
+      { pad: 'GPIO10', note: '' },
+    ]);
+    expect(toProject(s)?.reserved).toEqual(['GPIO2', 'GPIO10']);
+    s = draftReducer(s, { type: 'remove-connection', pad: 'GPIO2' });
+    expect(s.connections).toEqual([{ pad: 'GPIO10', note: '' }]);
+    expect(
+      draftReducer(s, { type: 'select-board', board: 'raspberry-pi-pico@Rev3', variant: 'v' })
+        .connections,
+    ).toEqual([]);
   });
 
-  it('falls back to memory when storage throws or is missing', () => {
-    const throwing: KeyValueStore = {
-      getItem: () => {
-        throw new Error('blocked');
-      },
-      setItem: () => {
-        throw new Error('quota');
-      },
-    };
-    expect(readDraft(throwing)).toEqual(EMPTY_DRAFT);
-    expect(writeDraft(throwing, withBoard)).toBe(false);
-    expect(readDraft(null)).toEqual(EMPTY_DRAFT);
-    expect(writeDraft(null, withBoard)).toBe(false);
+  it('accepts only a sensible wire length and passes it to the engine', () => {
+    const s = draftReducer(withBoard, { type: 'set-wiring-length', metres: 0.5 });
+    expect(toProject(s)?.wiring_length_m).toBe(0.5);
+    expect(draftReducer(s, { type: 'set-wiring-length', metres: -1 })).toBe(s);
+    expect(draftReducer(s, { type: 'set-wiring-length', metres: Number.NaN })).toBe(s);
+    expect(draftReducer(s, { type: 'set-wiring-length', metres: 1000 })).toBe(s);
+    const cleared = draftReducer(s, { type: 'set-wiring-length', metres: null });
+    expect(toProject(cleared)).not.toHaveProperty('wiring_length_m');
+  });
+
+  it('loads a whole draft and drops the catalog pin on re-check', () => {
+    const pinned = { ...withBoard, catalogPin: { version: 'old', sha256: 'a'.repeat(64) } };
+    const s = draftReducer(EMPTY_DRAFT, { type: 'load', draft: pinned });
+    expect(s).toBe(pinned);
+    expect(draftReducer(s, { type: 'unpin-catalog' }).catalogPin).toBeNull();
+    expect(draftReducer(withBoard, { type: 'unpin-catalog' })).toBe(withBoard);
+  });
+});
+
+describe('draft storage', () => {
+  const failWrite = () => Promise.reject(new Error('quota'));
+  const throwing: AsyncStore = {
+    get: () => Promise.reject(new Error('blocked')),
+    set: failWrite,
+  };
+
+  it('round-trips a draft through the store', async () => {
+    const store = new SafeStore(memoryStore());
+    const s = draftReducer(withBoard, { type: 'add-module', breakout: 'x', base: 'x' });
+    expect(await saveDraft(store, s)).toBe(true);
+    expect(await loadDraft(store)).toEqual(s);
+    expect(store.backend).toBe('indexeddb');
+  });
+
+  it('falls back to memory when storage throws, and keeps working', async () => {
+    const store = new SafeStore(throwing);
+    expect(await loadDraft(store)).toEqual(EMPTY_DRAFT);
+    expect(store.backend).toBe('memory');
+    expect(await saveDraft(store, withBoard)).toBe(false);
+    expect(await loadDraft(store)).toEqual(withBoard);
+  });
+
+  it('switches to memory when only writes fail (quota) without losing the value', async () => {
+    const readOnly: AsyncStore = { get: () => Promise.resolve(undefined), set: failWrite };
+    const store = new SafeStore(readOnly);
+    expect(await saveDraft(store, withBoard)).toBe(false);
+    expect(store.backend).toBe('memory');
+    expect(await loadDraft(store)).toEqual(withBoard);
+  });
+
+  it('uses memory when there is no storage at all', async () => {
+    const store = new SafeStore(null);
+    expect(store.backend).toBe('memory');
+    expect(await saveDraft(store, withBoard)).toBe(false);
+    expect(await loadDraft(store)).toEqual(withBoard);
   });
 
   it('drops malformed stored data', () => {
@@ -146,11 +197,18 @@ describe('draft storage', () => {
       JSON.stringify({
         board: 1,
         modules: [{ breakout: 'a', instance: 'a' }, { x: 1 }],
+        connections: [{ pad: 'GPIO1', note: 'x'.repeat(200) }, { pad: 2 }],
         framework: 'cobol',
+        wiringLengthM: -3,
+        catalogPin: { version: '../etc', sha256: 'a'.repeat(64) },
       }),
     );
     expect(d.board).toBeNull();
     expect(d.modules).toEqual([{ breakout: 'a', instance: 'a' }]);
+    expect(d.connections).toHaveLength(1);
+    expect(d.connections[0]?.note).toHaveLength(80);
     expect(d.framework).toBeNull();
+    expect(d.wiringLengthM).toBeNull();
+    expect(d.catalogPin).toBeNull();
   });
 });

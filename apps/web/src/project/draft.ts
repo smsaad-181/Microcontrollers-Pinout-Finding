@@ -24,14 +24,32 @@ export interface DraftLock {
   pad: string;
 }
 
+/** A wire that already exists on the board: its pad is kept free and the note says what it is. */
+export interface DraftConnection {
+  pad: string;
+  note: string;
+}
+
+/** The catalog a project was made with (from a shared link or an imported file). */
+export interface CatalogPin {
+  version: string;
+  sha256: string;
+}
+
 export interface ProjectDraft {
   board: string | null;
   variant: string | null;
   modules: DraftModule[];
   locked: DraftLock[];
   reserved: string[];
+  /** Existing connections; their pads are sent to the engine as reserved. */
+  connections: DraftConnection[];
   framework: Framework | null;
   wifi: boolean;
+  /** Typical wire length in metres (the engine uses it for bus checks), or null for its default. */
+  wiringLengthM: number | null;
+  /** Non-null while the project is shown against the catalog it was made with, not the latest. */
+  catalogPin: CatalogPin | null;
 }
 
 export const EMPTY_DRAFT: ProjectDraft = {
@@ -40,9 +58,17 @@ export const EMPTY_DRAFT: ProjectDraft = {
   modules: [],
   locked: [],
   reserved: [],
+  connections: [],
   framework: null,
   wifi: false,
+  wiringLengthM: null,
+  catalogPin: null,
 };
+
+/** Longest wire length the form accepts, in metres. */
+export const MAX_WIRING_LENGTH_M = 100;
+/** Longest note on an existing connection. */
+export const MAX_NOTE_LENGTH = 80;
 
 export type DraftAction =
   | { type: 'select-board'; board: string; variant: string }
@@ -54,6 +80,11 @@ export type DraftAction =
   | { type: 'toggle-reserved'; pad: string }
   | { type: 'set-framework'; framework: Framework | null }
   | { type: 'set-wifi'; wifi: boolean }
+  | { type: 'add-connection'; connection: DraftConnection }
+  | { type: 'remove-connection'; pad: string }
+  | { type: 'set-wiring-length'; metres: number | null }
+  | { type: 'unpin-catalog' }
+  | { type: 'load'; draft: ProjectDraft }
   | { type: 'reset' };
 
 /** Instance names: lower-case letters, digits and underscores, starting with a letter. */
@@ -78,15 +109,26 @@ export function uniqueInstance(base: string, taken: readonly string[]): string {
   }
 }
 
-const sortPads = (pads: string[]): string[] =>
-  [...new Set(pads)].sort((a, b) => a.localeCompare(b, 'en', { numeric: true }));
+const byPad = (a: string, b: string) => a.localeCompare(b, 'en', { numeric: true });
+const sortPads = (pads: string[]): string[] => [...new Set(pads)].sort(byPad);
+
+/** True for a usable wire length (or null, meaning the engine default). */
+export const isWiringLength = (m: number | null): boolean =>
+  m === null || (Number.isFinite(m) && m > 0 && m <= MAX_WIRING_LENGTH_M);
 
 export function draftReducer(state: ProjectDraft, action: DraftAction): ProjectDraft {
   switch (action.type) {
     case 'select-board': {
       if (state.board === action.board && state.variant === action.variant) return state;
       // Pads differ between boards and variants: drop pin constraints, keep the modules.
-      return { ...state, board: action.board, variant: action.variant, locked: [], reserved: [] };
+      return {
+        ...state,
+        board: action.board,
+        variant: action.variant,
+        locked: [],
+        reserved: [],
+        connections: [],
+      };
     }
     case 'add-module': {
       const instance = uniqueInstance(
@@ -138,6 +180,22 @@ export function draftReducer(state: ProjectDraft, action: DraftAction): ProjectD
       return { ...state, framework: action.framework };
     case 'set-wifi':
       return { ...state, wifi: action.wifi };
+    case 'add-connection': {
+      const note = action.connection.note.trim().slice(0, MAX_NOTE_LENGTH);
+      const rest = state.connections.filter((c) => c.pad !== action.connection.pad);
+      const connections = [...rest, { pad: action.connection.pad, note }].sort((a, b) =>
+        byPad(a.pad, b.pad),
+      );
+      return { ...state, connections };
+    }
+    case 'remove-connection':
+      return { ...state, connections: state.connections.filter((c) => c.pad !== action.pad) };
+    case 'set-wiring-length':
+      return isWiringLength(action.metres) ? { ...state, wiringLengthM: action.metres } : state;
+    case 'unpin-catalog':
+      return state.catalogPin === null ? state : { ...state, catalogPin: null };
+    case 'load':
+      return action.draft;
     case 'reset':
       return EMPTY_DRAFT;
   }
@@ -152,8 +210,10 @@ export function toProject(draft: ProjectDraft): Project | null {
     wifi: draft.wifi,
     modules: draft.modules.map((m) => ({ breakout: m.breakout, instance: m.instance })),
     locked: draft.locked.map((l) => ({ ...l })),
-    reserved: [...draft.reserved],
+    // Existing connections occupy their pads: the engine keeps them free like reserved pads.
+    reserved: sortPads([...draft.reserved, ...draft.connections.map((c) => c.pad)]),
     ...(draft.framework === null ? {} : { framework: draft.framework }),
+    ...(draft.wiringLengthM === null ? {} : { wiring_length_m: draft.wiringLengthM }),
   };
 }
 
