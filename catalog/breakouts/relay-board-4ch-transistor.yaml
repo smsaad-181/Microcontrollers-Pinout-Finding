@@ -2,7 +2,10 @@ active_level:
   evidence:
   - keyestudio-ks0058-wiki#active-high
   note: 'Vendor wiki: control signal "Active at HIGH level" (found by both keys, 2026-10-23 reconcile; the sample code agrees). Polarity only; says nothing about the resting level of a floating input.'
-  status: interim
+  reviewers:
+  - hardware-researcher
+  - hardware-fact-auditor
+  status: verified
   value: high
 hardwired: []
 ic: srd-05vdc-sl-c
