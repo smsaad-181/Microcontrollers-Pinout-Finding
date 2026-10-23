@@ -1,0 +1,66 @@
+id: abx00080-pinout-20231127
+title: "Arduino UNO R4 Minima Full Pinout (SKU ABX00080)"
+publisher: "Arduino S.r.l."
+doc_number: "ABX00080"
+revision: null
+revision_date: "2023-11-27"
+url: https://docs.arduino.cc/resources/pinouts/ABX00080-full-pinout.pdf
+url_original: null
+accessed: "2026-10-22"
+sha256: "853b0664a1cf51040738a51385693f9a5c615d4337035d6b36c3c00f6ff76f3c"
+kind: board-guide
+secondary: false
+manual: false
+claims:
+  - id: abx00080-pinout-20231127#max-pin-8ma
+    locator: "Legend box, pp. 1, 2, 4"
+    quote: "MAXIMUM current per pin 8mA"
+    supports: "Arduino pinout states 8 mA per pin maximum"
+  - id: abx00080-pinout-20231127#max-overall-60ma
+    locator: "Legend box, pp. 1, 2, 4"
+    quote: "MAXIMUM current overall 60mA"
+    supports: "Arduino pinout states 60 mA total maximum"
+  - id: abx00080-pinout-20231127#a4a5-same-pins
+    locator: "Page 4 note"
+    quote: "A4 and A5 are the same pins of D18/SDA and D19/SCL, only one peripheral at once can be used"
+    supports: "A4/A5 and the SDA/SCL header positions are the same pins"
+  - id: abx00080-pinout-20231127#spi-shared
+    locator: "Page 4 note"
+    quote: "The SPI connector pins are shared with the digital header"
+    supports: "ICSP pins are the same pads as D11/D12/D13"
+  - id: abx00080-pinout-20231127#pad-map-d8-d13
+    locator: "Page 4, figure, JDIGITAL side (transcribed)"
+    quote: "D13 P111 D12 P110 ~D11 P109 ~D10 P112 ~D9 P303 D8 P304"
+    supports: "D13=P111, D12=P110, D11=P109, D10=P112, D9=P303, D8=P304"
+  - id: abx00080-pinout-20231127#pad-map-d0-d7
+    locator: "Page 4, figure, JDIGITAL side (transcribed)"
+    quote: "D7 P107 ~D6 P106 ~D5 P102 D4 P103 ~D3 P104 D2 P105 D1/TX P302 D0/RX P301"
+    supports: "D7=P107, D6=P106, D5=P102, D4=P103, D3=P104, D2=P105, D1=P302, D0=P301"
+  - id: abx00080-pinout-20231127#pad-map-analog
+    locator: "Page 4, figure, JANALOG side (transcribed)"
+    quote: "P014 A0 D14 P000 A1 D15 P001 A2 D16 P002 A3 D17 P101 A4 D18 P100 A5 D19"
+    supports: "A0=P014, A1=P000, A2=P001, A3=P002, A4=P101, A5=P100; A0-A5 are also D14-D19"
+  - id: abx00080-pinout-20231127#pad-map-i2c
+    locator: "Page 4, figure, JDIGITAL side (transcribed)"
+    quote: "D19/SCL P100 IIC_SCL1 D18/SDA P101 IIC_SDA1"
+    supports: "SCL header position is P100 (IIC_SCL1), SDA header position is P101 (IIC_SDA1)"
+  - id: abx00080-pinout-20231127#led-pads
+    locator: "Page 4, figure, left side (transcribed)"
+    quote: "P111 LED_BUILTIN P012 TX LED P013 RX LED +5V Power"
+    supports: "LED_BUILTIN is on P111, TX LED on P012, RX LED on P013, power LED on +5V"
+  - id: abx00080-pinout-20231127#icsp-pads
+    locator: "Page 4, figure, ICSP table (transcribed)"
+    quote: "1 P110 CIPOB 2 +5V 3 P111 RSPCKB 4 P109 COPIB 5 RESET 6 GND"
+    supports: "ICSP: pin 1 CIPO=P110, 3 SCK=P111, 4 COPI=P109, 2 +5V, 5 RESET, 6 GND"
+  - id: abx00080-pinout-20231127#swd-pads
+    locator: "Page 4, figure, SWD table (transcribed)"
+    quote: "1 +5V 2 SWDIO P108 3 GND 4 SWCLK P300 5 GND 6 NC 7 SCI_RXD1 P502 8 SCI_TXD1 P501 9 GND 10 RESET"
+    supports: "SWD/JTAG header: SWDIO=P108, SWCLK=P300, RX=P502, TX=P501"
+  - id: abx00080-pinout-20231127#usb-pads
+    locator: "Page 4, figure, USB-C block (transcribed)"
+    quote: "USB-C VBUS USB D- P915 USB D+ P914 GND"
+    supports: "USB D- on P915, USB D+ on P914"
+  - id: abx00080-pinout-20231127#revision-info
+    locator: "Legend box, page 4"
+    quote: "SKU code: ABX00080 Full Pinout - Page 4 of 4 Last update: 27 Nov, 2023"
+    supports: "Pinout document for SKU ABX00080, last update 27 Nov 2023"

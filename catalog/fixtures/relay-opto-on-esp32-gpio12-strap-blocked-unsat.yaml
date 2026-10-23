@@ -1,0 +1,34 @@
+# Golden fixture 18 (negative) - the opto relay input is locked to ESP32 GPIO12 (MTDI strap, must be low at reset on 3.3 V flash parts). The board rests at VCC when the input floats, so the lock is blocked.
+id: relay-opto-on-esp32-gpio12-strap-blocked-unsat
+board: esp32-devkitc-v4@V4
+variant: esp32-devkitc-32e
+project:
+  board: esp32-devkitc-v4@V4
+  variant: esp32-devkitc-32e
+  wifi: true
+  modules:
+    - { breakout: relay-board-4ch-opto-jdvcc, instance: relays }
+  locked:
+    - { instance: relays, role: "COIL[1]", pad: GPIO12 }
+  reserved: []
+expect:
+  status: unsat
+  minimal_conflict_includes:
+    - "locked:relays.COIL[1]=GPIO12"
+    - "strap:GPIO12"
+  relaxations_include:
+    - "unlock:relays.COIL[1]"
+evidence:
+  - esp32-ds-v5.3#strap-default-config
+  - esp32-ds-v5.3#vdd-sdio-mtdi0
+  - esp32-ds-v5.3#vdd-sdio-mtdi1
+  - esp32-trm-v5.8#vdd-sdio-mtdi
+  - esp32-trm-v5.8#gpio-strap-reg
+  - sunfounder-ts0011-4ch-relay#sch-channel
+  - sunfounder-ts0011-4ch-relay#pinout-in-low
+derivations:
+  - "GPIO12 = MTDI: required_at_reset low for 3.3 V flash (WROOM-32E, flash_voltage 3.3 V), default pull-down; a high level at reset selects the 1.8 V VDD_SDIO and the module can fail to boot (esp32-ds-v5.3#vdd-sdio-mtdi0/1, esp32-trm-v5.8#vdd-sdio-mtdi)."
+  - "The opto board is active-low: the input LED path runs VCC -> R1 -> LED -> IN (sunfounder-ts0011-4ch-relay#sch-channel), so with the MCU pin floating or in reset the IN node rests at VCC (inferred, interim). A board input that pulls IN to VCC at reset puts GPIO12 high -> R6 blocked."
+  - "The lock removes any alternative, so the conflict set is exactly the lock plus the GPIO12 strap fact; the other pads are irrelevant (minimal)."
+changelog:
+  - "2026-10-23: created (task 2a.7, fixture-author). Conflict/relaxation tokens follow the proposed convention of fixture pico-w-four-pots-no-free-adc-unsat. Relay resting level is inferred, not a vendor statement."

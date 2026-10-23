@@ -1,0 +1,48 @@
+# TDK InvenSense MPU-6050. The official TDK/InvenSense datasheet (PS-MPU-6000A-00) and register map (RM-MPU-6000A-00) could not be fetched by either key
+# (invensense.tdk.com redirects the PDF URL to a search page, product.tdk.com and www.tdk.com return 403), so every fact is missing (manual download requested: sources/manual/README.md row 4).
+# Not recorded for the same reason: I2C addresses (AD0 strap), INT pin, XDA/XCL auxiliary bus, interface modes. Reconciled with the blind audit (all could-not-verify).
+id: mpu-6050
+input_abs_max:
+  evidence: []
+  note: 'The TDK InvenSense datasheet PS-MPU-6000A-00 and register map RM-MPU-6000A-00 could not be fetched (invensense.tdk.com legacy PDF links redirect to a JS-rendered search page; product.tdk.com and www.tdk.com return HTTP 403); researcher and blind auditor both searched, the auditor: could-not-verify. No value from memory or a secondary source is recorded. Manual download requested (sources/manual/README.md row 4). Fact: absolute maximum voltage on the interface pins.'
+  status: missing
+  unit: V
+  value: null
+interfaces:
+- kind: i2c
+  limits:
+    max_hz:
+      evidence: []
+      note: 'The TDK InvenSense datasheet PS-MPU-6000A-00 and register map RM-MPU-6000A-00 could not be fetched (invensense.tdk.com legacy PDF links redirect to a JS-rendered search page; product.tdk.com and www.tdk.com return HTTP 403); researcher and blind auditor both searched, the auditor: could-not-verify. No value from memory or a secondary source is recorded. Manual download requested (sources/manual/README.md row 4). Fact: maximum I2C clock.'
+      status: missing
+      unit: Hz
+      value: null
+  signals:
+  - dir: io
+    drive: open-drain
+    role: SDA
+    shareable: true
+  - dir: in
+    drive: open-drain
+    role: SCL
+    shareable: true
+part: MPU-6050
+supply_current:
+  evidence: []
+  note: 'The TDK InvenSense datasheet PS-MPU-6000A-00 and register map RM-MPU-6000A-00 could not be fetched (invensense.tdk.com legacy PDF links redirect to a JS-rendered search page; product.tdk.com and www.tdk.com return HTTP 403); researcher and blind auditor both searched, the auditor: could-not-verify. No value from memory or a secondary source is recorded. Manual download requested (sources/manual/README.md row 4). Fact: supply current typ/max with conditions.'
+  status: missing
+  unit: mA
+  value: null
+vdd_range:
+  evidence: []
+  note: 'The TDK InvenSense datasheet PS-MPU-6000A-00 and register map RM-MPU-6000A-00 could not be fetched (invensense.tdk.com legacy PDF links redirect to a JS-rendered search page; product.tdk.com and www.tdk.com return HTTP 403); researcher and blind auditor both searched, the auditor: could-not-verify. No value from memory or a secondary source is recorded. Manual download requested (sources/manual/README.md row 4). Fact: VDD supply range.'
+  status: missing
+  unit: V
+  value: null
+vendor: TDK InvenSense
+vio_range:
+  evidence: []
+  note: 'The TDK InvenSense datasheet PS-MPU-6000A-00 and register map RM-MPU-6000A-00 could not be fetched (invensense.tdk.com legacy PDF links redirect to a JS-rendered search page; product.tdk.com and www.tdk.com return HTTP 403); researcher and blind auditor both searched, the auditor: could-not-verify. No value from memory or a secondary source is recorded. Manual download requested (sources/manual/README.md row 4). Fact: VLOGIC (I/O supply) range.'
+  status: missing
+  unit: V
+  value: null

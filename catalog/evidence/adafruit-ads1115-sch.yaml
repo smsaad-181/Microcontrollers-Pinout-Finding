@@ -1,0 +1,38 @@
+accessed: '2026-10-23'
+claims:
+- id: adafruit-ads1115-sch#parts-r3
+  locator: <parts>, part R3
+  quote: <part name="R3" library="microbuilder" deviceset="RESISTOR" device="0805" value="10K"/>
+  supports: R3 is a 10K resistor (used on the ADDR net, see net ADDR / net GND)
+- id: adafruit-ads1115-sch#net-addr
+  locator: <nets>, net ADDR and net GND
+  quote: <net name="ADDR" class="0"> <segment> <pinref part="U1" gate="G$1" pin="ADDR"/>
+  supports: 'Net ADDR joins U1 ADDR, R3 pin 1 and JP1 pin 6; R3 pin 2 is on net GND (netlist parsed by script): 10 kohm pull-down, so ADDR is low by default'
+- id: adafruit-ads1115-sch#net-scl
+  locator: <nets>, net SCL
+  quote: <net name="SCL" class="0"> <segment> <pinref part="U1" gate="G$1" pin="SCL"/> <pinref part="R1" gate="G$1" pin="2"/>
+  supports: 'Net SCL joins U1 SCL, R1 pin 2 and JP1 pin 8; R1 (10K) pin 1 is on net VDD: 10 kohm pull-up'
+- id: adafruit-ads1115-sch#net-sda
+  locator: <nets>, net SDA
+  quote: <net name="SDA" class="0"> <segment> <pinref part="U1" gate="G$1" pin="SDA"/> <pinref part="R2" gate="G$1" pin="2"/>
+  supports: 'Net SDA joins U1 SDA, R2 pin 2 and JP1 pin 7; R2 (10K) pin 1 is on net VDD: 10 kohm pull-up'
+- id: adafruit-ads1115-sch#net-alert
+  locator: <nets>, net ALERT
+  quote: <net name="ALERT" class="0"> <segment> <pinref part="U1" gate="G$1" pin="ALERT"/> <wire x1="139.7" y1="93.98" x2="162.56" y2="93.98" width="0.1524" layer="91"/> <label x="142.24" y="93.98" size="1.778" layer="95"/> <pinref part="R4" gate="G$1" pin="2"/>
+  supports: 'Net ALERT joins U1 ALERT, R4 pin 2 and JP1 pin 5; R4 (10K) pin 1 is on net VDD: 10 kohm pull-up on ALERT/RDY'
+- id: adafruit-ads1115-sch#parts-no-regulator
+  locator: <parts> list (complete)
+  quote: <part name="U1" library="microbuilder" deviceset="ADC_ADS1015" device="" value="ADS1115IDGST"/>
+  supports: 'U1 (ADS1115IDGST) is the only IC in the part list (others: 4 resistors, 2 capacitors, 2 ferrites, header, supply symbols): no regulator and no level shifter on this board'
+doc_number: null
+id: adafruit-ads1115-sch
+kind: schematic
+manual: false
+publisher: Adafruit Industries
+revision: master branch (blob sha ab40c7484d60326e3150bda6acbab2700f4818ba)
+revision_date: null
+secondary: false
+sha256: 29995c25215dbe9f64f84418c988a2071af83bb6f61b3642c4edc7569aa56a09
+title: Adafruit ADS1115 16-Bit I2C ADC breakout (original version) - Eagle schematic Adafruit_ADS1115_16Bit_I2C_ADC.sch
+url: https://raw.githubusercontent.com/adafruit/ADS1X15-Breakout-Board-PCBs/master/Adafruit_ADS1115_16Bit_I2C_ADC.sch
+url_original: https://github.com/adafruit/ADS1X15-Breakout-Board-PCBs/blob/master/Adafruit_ADS1115_16Bit_I2C_ADC.sch

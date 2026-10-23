@@ -15,6 +15,7 @@ import {
   type BoardStatus,
   type Breakout,
   type Chip,
+  type ConnectorPin,
   type Evidence,
   type Fixture,
   type IC,
@@ -465,6 +466,16 @@ export function validateCatalog(sources: readonly SourceFile[]): ValidationResul
     });
     const railNames = new Set(board.rails.map((r) => r.name));
     const padUsers = new Map<string, string>();
+    // Decision 24: `<connector-id>:<position>` -> pin (first occurrence), and how many pins use each pad.
+    const primaries = new Map<string, ConnectorPin>();
+    const padCounts = new Map<string, number>();
+    for (const conn of board.connectors) {
+      for (const pin of conn.pins) {
+        const key = `${conn.id}:${String(pin.position)}`;
+        if (!primaries.has(key)) primaries.set(key, pin);
+        if (pin.pad !== undefined) padCounts.set(pin.pad, (padCounts.get(pin.pad) ?? 0) + 1);
+      }
+    }
     board.connectors.forEach((conn, ci) => {
       const positions = new Map<number, number>();
       const gpioLabels = new Map<string, number>();
@@ -485,13 +496,40 @@ export function validateCatalog(sources: readonly SourceFile[]): ValidationResul
         if (pin.kind === 'power' && pin.rail !== undefined && !railNames.has(pin.rail)) {
           badRef(`${at}.rail`, `${where}: rail "${pin.rail}" is not a rail of this board`);
         }
-        if (pin.pad !== undefined) {
+        if (pin.alias_of !== undefined) {
+          // Decision 24: a declared alias of the primary pin that shares this pad.
+          const alias = `${at}.alias_of`;
+          const target = pin.alias_of;
+          const primary = primaries.get(target);
+          if (pin.pad === undefined) {
+            bad(alias, `${where}: alias_of needs a pad; a pin without a pad aliases nothing`);
+          } else if ((padCounts.get(pin.pad) ?? 0) < 2) {
+            bad(
+              alias,
+              `${where}: alias_of "${target}" but pad "${pin.pad}" is on no other pin; an alias must share a pad`,
+            );
+          } else if (primary === undefined) {
+            badRef(alias, `${where}: alias_of "${target}" is not a pin of this board`);
+          } else if (primary === pin) {
+            bad(alias, `${where}: alias_of "${target}" is the pin itself`);
+          } else if (primary.pad !== pin.pad) {
+            bad(
+              alias,
+              `${where}: alias_of "${target}" is on pad "${primary.pad ?? '(none)'}", not "${pin.pad}"`,
+            );
+          } else if (primary.alias_of !== undefined) {
+            bad(
+              alias,
+              `${where}: alias_of "${target}" is itself an alias of "${primary.alias_of}"; point at the primary pin`,
+            );
+          }
+        } else if (pin.pad !== undefined) {
           const first = padUsers.get(pin.pad);
           if (first === undefined) padUsers.set(pin.pad, `${conn.id}-${String(pin.position)}`);
           else
             bad(
               `${at}.pad`,
-              `${where}: pad "${pin.pad}" is already on pin ${first}; one pad has one connector position`,
+              `${where}: pad "${pin.pad}" is already on pin ${first}; one pad has one connector position unless the repeat declares alias_of`,
             );
         }
         if (pin.kind !== 'gpio') return;

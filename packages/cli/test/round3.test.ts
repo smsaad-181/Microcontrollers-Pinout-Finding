@@ -28,7 +28,7 @@ import {
   type ErrorCode,
   type SourceFile,
 } from '../src/index.js';
-import { REAL_CATALOG, REPO_ROOT, VALID_ROOT } from './helpers.js';
+import { EMPTY_CATALOG, REAL_CATALOG, REPO_ROOT, VALID_ROOT } from './helpers.js';
 
 const validSources = () => loadCatalogSources(VALID_ROOT).sources;
 const errorsOf = (r: ReturnType<typeof validateCatalog>) =>
@@ -929,11 +929,18 @@ describe('catalog root, links and directory names', () => {
       expect(r.out).toContain('0 errors, 0 warnings in 0 files');
     });
 
-    it('the real, empty catalog still validates and compiles (exit 0)', () => {
-      expect(run(['validate', '--root', REAL_CATALOG]).code).toBe(0);
+    it('an empty catalog (only .gitkeep files) validates and compiles (exit 0)', () => {
+      expect(run(['validate', '--root', EMPTY_CATALOG]).code).toBe(0);
       const out = join(tmp(), 'out');
-      const r = run(['compile', '--root', REAL_CATALOG, '--out', out]);
+      const r = run(['compile', '--root', EMPTY_CATALOG, '--out', out]);
       expect(r.code).toBe(0);
+      expect(statSync(join(out, 'catalog-manifest.json')).isFile()).toBe(true);
+    });
+
+    it('the real catalog validates and compiles (exit 0), whatever it contains', () => {
+      expect(run(['validate', '--root', REAL_CATALOG]).code).toBe(0);
+      const out = join(tmp(), 'out-real');
+      expect(run(['compile', '--root', REAL_CATALOG, '--out', out]).code).toBe(0);
       expect(statSync(join(out, 'catalog-manifest.json')).isFile()).toBe(true);
     });
   });

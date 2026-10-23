@@ -1,0 +1,105 @@
+# Espressif ESP32-DevKitC V4 - reconciled against the blind audit (task 2a.4); see docs/validation/phase-2a/reconcile-esp32-modules-board.md.
+# Sources: ESP32-DevKitC V4 User Guide (esp-dev-kits, commit 4ffc5bd) Header Block tables J2/J3; schematic
+# ESP32_DevKitc_V4 Rev V4 (2020-02-25). Labels are the user guide "Name" column (silkscreen image not transcribed).
+# Positions J2-1..19 / J3-1..19 per guide; pad = GPIO from the guide "Function" column.
+# Facts: logic_voltage and rail voltages are verified (researcher + blind auditor); rail max_current (3V3, 5V) is missing:
+#   no document states a current (both keys searched).
+#
+# DISAGREEMENT DIS-1 (kept as a comment: connector pins are plain fields, they carry no evidence/status/conflict):
+#   J2-16 D2, J2-17 D3, J2-18 CMD, J3-17 D1, J3-18 D0, J3-19 CLK. Three readings:
+#   - user guide: GPIO9, GPIO10, GPIO11, GPIO8, GPIO7, GPIO6 "used internally for communication between ESP32 and SPI flash",
+#     "avoid using these pins";
+#   - schematic: wired to module pins 17-22 (nets SD2/SD3/CMD/SD1/SD0/CLK);
+#   - WROOM-32E v2.1 and WROVER-E v2.4 datasheets (Table 3, note 2): module pins 17-22 are NC, GPIO6-GPIO11 are connected to the
+#     in-module flash "and are not led out".
+#   The blind auditor modelled the six pins as kind gpio with pad GPIO6..11; the researcher as kind nc without a pad.
+#   Kept: kind nc, no pad. This is the most restrictive and the faithful reading of the module datasheets (those header pins
+#   reach no ESP32 pad at all); the engine can never assign a signal to a pin without a pad. Labels keep the user-guide names.
+# DIS-2 (J3-11 IO17 / J3-12 IO16): usable on ESP32-DevKitC-32E (WROOM-32E, PSRAM-less parts sold on this board; user guide
+#   footnote [3]); on ESP32-DevKitC-VE (WROVER-E) GPIO16/GPIO17 are consumed by PSRAM (module record) and the module leaves its
+#   pins 27/28 NC. The pins stay gpio with pads because the schema has one connector map for all variants; the engine takes
+#   the restriction from the module `consumed` facts. See the header of modules/esp32-wrover-e.yaml (bonded_pads gap).
+# DIS-3 (names only: VP/VN/TX/RX/5V vs SENSOR_VP/SENSOR_VN/TXD0/RXD0/EXT_5V) and DIS-4 (schematic symbol says ESP-WROOM-32,
+#   no -E suffix) are not electrical disagreements. DIS-5 (flash voltage statement) is handled in the module records.
+# J2-2 EN: auditor lists pad CHIP_PU; the catalog models it as kind reset without a pad (CHIP_PU is not a GPIO pad).
+# C15 (0.1 uF on GPIO0): NC in schematic V4, fitted on earlier V4 boards (user guide note); kept as an onboard part.
+# `status` is the value the catalog CLI computes.
+connectors:
+  - id: "J2"
+    pins:
+      - {"kind": "power", "label": "3V3", "position": 1, "rail": "3V3"}
+      - {"kind": "reset", "label": "EN", "position": 2}
+      - {"kind": "gpio", "label": "VP", "pad": "GPIO36", "position": 3}
+      - {"kind": "gpio", "label": "VN", "pad": "GPIO39", "position": 4}
+      - {"kind": "gpio", "label": "IO34", "pad": "GPIO34", "position": 5}
+      - {"kind": "gpio", "label": "IO35", "pad": "GPIO35", "position": 6}
+      - {"kind": "gpio", "label": "IO32", "pad": "GPIO32", "position": 7}
+      - {"kind": "gpio", "label": "IO33", "pad": "GPIO33", "position": 8}
+      - {"kind": "gpio", "label": "IO25", "pad": "GPIO25", "position": 9}
+      - {"kind": "gpio", "label": "IO26", "pad": "GPIO26", "position": 10}
+      - {"kind": "gpio", "label": "IO27", "pad": "GPIO27", "position": 11}
+      - {"kind": "gpio", "label": "IO14", "pad": "GPIO14", "position": 12}
+      - {"kind": "gpio", "label": "IO12", "pad": "GPIO12", "position": 13}
+      - {"kind": "ground", "label": "GND", "position": 14}
+      - {"kind": "gpio", "label": "IO13", "pad": "GPIO13", "position": 15}
+      - {"kind": "nc", "label": "D2", "position": 16}
+      - {"kind": "nc", "label": "D3", "position": 17}
+      - {"kind": "nc", "label": "CMD", "position": 18}
+      - {"kind": "power", "label": "5V", "position": 19, "rail": "5V"}
+  - id: "J3"
+    pins:
+      - {"kind": "ground", "label": "GND", "position": 1}
+      - {"kind": "gpio", "label": "IO23", "pad": "GPIO23", "position": 2}
+      - {"kind": "gpio", "label": "IO22", "pad": "GPIO22", "position": 3}
+      - {"kind": "gpio", "label": "TX", "pad": "GPIO1", "position": 4}
+      - {"kind": "gpio", "label": "RX", "pad": "GPIO3", "position": 5}
+      - {"kind": "gpio", "label": "IO21", "pad": "GPIO21", "position": 6}
+      - {"kind": "ground", "label": "GND", "position": 7}
+      - {"kind": "gpio", "label": "IO19", "pad": "GPIO19", "position": 8}
+      - {"kind": "gpio", "label": "IO18", "pad": "GPIO18", "position": 9}
+      - {"kind": "gpio", "label": "IO5", "pad": "GPIO5", "position": 10}
+      - {"kind": "gpio", "label": "IO17", "pad": "GPIO17", "position": 11}
+      - {"kind": "gpio", "label": "IO16", "pad": "GPIO16", "position": 12}
+      - {"kind": "gpio", "label": "IO4", "pad": "GPIO4", "position": 13}
+      - {"kind": "gpio", "label": "IO0", "pad": "GPIO0", "position": 14}
+      - {"kind": "gpio", "label": "IO2", "pad": "GPIO2", "position": 15}
+      - {"kind": "gpio", "label": "IO15", "pad": "GPIO15", "position": 16}
+      - {"kind": "nc", "label": "D1", "position": 17}
+      - {"kind": "nc", "label": "D0", "position": 18}
+      - {"kind": "nc", "label": "CLK", "position": 19}
+id: "esp32-devkitc-v4"
+logic_voltage: {"evidence": ["esp32-devkitc-v4-ug#j2-1-4", "esp32-devkitc-v4-sch-v4#ldo-3v3"], "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "unit": "V", "value": 3.3}
+name: "ESP32-DevKitC V4"
+numbering: {"primary": "gpio"}
+onboard:
+  - effect: "UART0: GPIO1 (TXD0) to bridge RXD and bridge TXD drives GPIO3 (RXD0), through 0 ohm R17/R18; used for flashing and the console."
+    evidence: ["esp32-devkitc-v4-ug#usb-uart-bridge", "esp32-devkitc-v4-ug#j3-1-5", "esp32-devkitc-v4-sch-v4#bridge-part", "esp32-devkitc-v4-sch-v4#uart0-links"]
+    part: "U1 CP2102N-A02-GQFN28 USB-to-UART bridge"
+    uses_pad: ["GPIO1", "GPIO3"]
+  - effect: "Q2 can pull GPIO0 low (and Q1 pulls EN low) to enter download mode; ESP-IDF: GPIO0 cannot be used for ADC oneshot on DevKitC because it is used for auto-flash."
+    evidence: ["esp32-devkitc-v4-sch-v4#auto-program", "esp-idf-adc-oneshot-v6.1#devkitc-gpio0-auto-flash"]
+    part: "Auto-program circuit Q1/Q2 SS8050-G (driven by bridge DTR/RTS)"
+    uses_pad: ["GPIO0"]
+  - effect: "Pressing connects GPIO0 to GND; held while pressing EN it selects firmware download mode."
+    evidence: ["esp32-devkitc-v4-ug#boot-button", "esp32-devkitc-v4-ug#j3-11-14", "esp32-devkitc-v4-sch-v4#switch-sw1-io0"]
+    part: "SW1 Boot button"
+    uses_pad: ["GPIO0"]
+  - effect: "Where fitted, can make the board boot into download mode and loads a clock output on GPIO0."
+    evidence: ["esp32-devkitc-v4-ug#c15-download-mode", "esp32-devkitc-v4-ug#c15-gpio0-clock", "esp32-devkitc-v4-sch-v4#switch-sw1-io0"]
+    part: "C15 0.1 uF on GPIO0 (NC in schematic V4; fitted on earlier V4 boards)"
+    uses_pad: ["GPIO0"]
+rails:
+  - max_current: {"evidence": [], "note": "Regulator is AMS1117-3.3 (schematic U2). Neither the user guide nor the schematic states a 3V3 current rating (researcher and blind auditor both searched; auditor: could-not-verify); the regulator manufacturer datasheet was not opened.", "status": "missing", "unit": "mA", "value": null}
+    name: "3V3"
+    source: "U2 AMS1117-3.3 LDO from EXT_5V (schematic)"
+    voltage: {"evidence": ["esp32-devkitc-v4-ug#j2-1-4", "esp32-devkitc-v4-sch-v4#ldo-3v3", "esp32-devkitc-v4-sch-v4#j2-power-pins"], "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "unit": "V", "value": 3.3}
+  - max_current: {"evidence": [], "note": "No current rating for the USB 5V path (diode D3 BAT760-7) is stated in the user guide or schematic (researcher and blind auditor both searched; auditor: could-not-verify).", "status": "missing", "unit": "mA", "value": null}
+    name: "5V"
+    source: "Micro-USB VBUS through D3 BAT760-7 (EXT_5V), or the 5V header pin"
+    voltage: {"evidence": ["esp32-devkitc-v4-ug#j2-17-19", "esp32-devkitc-v4-sch-v4#usb-5v", "esp32-devkitc-v4-sch-v4#j2-power-pins"], "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "unit": "V", "value": 5}
+revision: "V4"
+status: "partially-verified"
+variants:
+  - {"id": "esp32-devkitc-32e", "module": "esp32-wroom-32e"}
+  - {"id": "esp32-devkitc-ve", "module": "esp32-wrover-e"}
+vendor: "Espressif Systems"

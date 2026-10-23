@@ -1,0 +1,23 @@
+# Evidence record: ESP32-S3-DevKitC-1 Schematic (SCH_ESP32-S3-DevKitC-1_V1.1_20220413) (read 2026-10-22).
+accessed: "2026-10-22"
+claims:
+  - id: "esp32-s3-devkitc-1-sch-v1.1-20220413#title-block"
+    locator: "ESP32-S3-DevKitC-1 schematic (earlier V1.1 file), sheets 1 and 2, title block"
+    quote: "Wednesday, April 13, 2022"
+    supports: "Earlier schematic file SCH_ESP32-S3-DevKitC-1_V1.1_20220413 (Rev V1.1, both sheets dated 2022-04-13); same circuit and parts as the 20221130 file (diff of the text layer and visual check of sheet 2)"
+  - id: "esp32-s3-devkitc-1-sch-v1.1-20220413#auto-program-io2"
+    locator: "Sheet 2, block Auto program"
+    quote: "DTR RTS-->EN IO0 IO2"
+    supports: "Only difference from the 20221130 file: the Auto program truth table of this file has an extra IO2 column"
+doc_number: null
+id: "esp32-s3-devkitc-1-sch-v1.1-20220413"
+kind: "schematic"
+manual: false
+publisher: "Espressif Systems"
+revision: "V1.1"
+revision_date: "2022-04-13"
+secondary: false
+sha256: "5f25ae344dd67b9c1c503570ed4bcb3ffd34e99c6931210fc501a9a26683e496"
+title: "ESP32-S3-DevKitC-1 Schematic (SCH_ESP32-S3-DevKitC-1_V1.1_20220413)"
+url: "https://dl.espressif.com/dl/schematics/SCH_ESP32-S3-DevKitC-1_V1.1_20220413.pdf"
+url_original: null

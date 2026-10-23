@@ -1,0 +1,93 @@
+# Golden fixture 02 - canonical worked example of docs/research/worked-example-esp32-devkitc.md, re-derived against the catalog as it really is.
+# Where the catalog has a missing fact the expectation is Caution/unknown instead of the plan's computed warning (listed in derivations).
+id: devkitc-v4-wroom-bme280-rc522-st7735s-relays-switches
+board: esp32-devkitc-v4@V4
+variant: esp32-devkitc-32e
+project:
+  board: esp32-devkitc-v4@V4
+  variant: esp32-devkitc-32e
+  wifi: true
+  modules:
+    - { breakout: gy-bme280-6pin, instance: env }
+    - { breakout: rfid-rc522-blue, instance: rfid }
+    - { breakout: st7735s-1.8-spi-tft, instance: tft }
+    - { breakout: relay-board-4ch-transistor, instance: relays }
+    - { breakout: push-button, instance: sw1 }
+    - { breakout: push-button, instance: sw2 }
+    - { breakout: push-button, instance: sw3 }
+    - { breakout: push-button, instance: sw4 }
+  locked: []
+  reserved: []
+expect:
+  status: ok
+  exact:
+    # Both SPI devices sit on SPI3 and the shared bus lines can use the IO_MUX pads (esp-idf-spi-master-v6.1#iomux-pins-main).
+    bus.SCK: GPIO18
+    bus.MOSI: GPIO23
+    bus.MISO: GPIO19
+  properties:
+    - interface_of: { env: i2c, rfid: spi, tft: spi }
+    - no_pad_in: [GPIO6, GPIO7, GPIO8, GPIO9, GPIO10, GPIO11, GPIO1, GPIO3]
+    - outputs_not_in: [GPIO34, GPIO35, GPIO36, GPIO39]
+    - switches_on: [GPIO34, GPIO35, GPIO36, GPIO39]
+    - all_used: [GPIO16, GPIO17, GPIO18, GPIO19, GPIO21, GPIO22, GPIO23, GPIO25, GPIO26, GPIO27, GPIO32, GPIO33]
+    - risk_tier1_equals: 2
+    - risk_pads_subset_of: [GPIO5, GPIO13, GPIO14, GPIO2, GPIO15]
+    - if_used: { pad: GPIO5, role_in: [tft.CS, rfid.CS] }
+    - max_hz: { rfid: 10000000, tft: 15151515 }
+    - no_warning_at_level: [critical]
+  warnings_include:
+    - { code: I2C_PULLUP_UNKNOWN, level: caution }
+    - { code: FLOATING_AT_RESET_LOAD, level: warning }
+    - { code: RAIL_BUDGET_UNKNOWN, level: caution }
+    - { code: ERRATUM_GPIO_3_11, level: caution }
+    - { code: MODULE_REGULATOR_UNKNOWN, level: caution }
+    - { code: MISO_SHARE_UNPROVEN, level: info }
+  required_parts_include:
+    - { kind: resistor, role: pull-up, count: 4, note: "switch inputs on GPIO34/35/36/39 (no internal pulls); value not asserted by the catalog" }
+    - { kind: resistor, role: pull-down, count: 4, note: "relay inputs 25/26/27/32 float at reset and the board's resting level is unknown" }
+evidence:
+  - esp32-devkitc-v4-ug#j2-1-4
+  - esp32-devkitc-v4-ug#j2-5-8
+  - esp32-devkitc-v4-ug#j2-8-11
+  - esp32-devkitc-v4-ug#j2-11-13
+  - esp32-devkitc-v4-ug#j3-1-5
+  - esp32-devkitc-v4-ug#j3-6-10
+  - esp32-devkitc-v4-ug#j3-11-14
+  - esp32-devkitc-v4-ug#note-gpio16-17-wroom
+  - esp32-devkitc-v4-ug#note-flash-pins
+  - esp32-devkitc-v4-sch-v4#uart0-links
+  - esp32-ds-v5.3#strap-default-config
+  - esp32-ds-v5.3#input-only-note
+  - esp32-trm-v5.8#io-pins-output-pins
+  - esp32-trm-v5.8#input-only-34-39
+  - esp32-trm-v5.8#reset-legend-0-1
+  - esp32-trm-v5.8#gpio-strap-reg
+  - esp32-errata-v3.1#gpio-3-11
+  - esp32-errata-v3.1#gpio-3-11-workaround
+  - esp-idf-spi-master-v6.1#iomux-pins-main
+  - esp-idf-spi-master-v6.1#matrix-routing
+  - esp-idf-spi-master-v6.1#matrix-40mhz-iomux-80mhz
+  - esp32-wroom-32e-ds-v2.1#series-n4
+  - mfrc522-ds-v3.9#spi-pins
+  - mfrc522-ds-v3.9#host-interfaces-speed
+  - mfrc522-ds-v3.9#op-supply-core
+  - mfrc522-ds-v3.9#supply-current-tvdd
+  - mfrc522-ds-v3.9#supply-current-digital-analog
+  - st7735-ds-v2.1#serial-write-cycle-4line
+  - st7735-ds-v2.1#pin-dcx-resx
+  - st7735-ds-v2.1#dc-supply
+  - keyestudio-ks0058-wiki#active-high
+  - songle-srd-ds-circuitbasics#coil-5v-d-current
+  - bme280-ds-1.24#i2c-address
+  - omron-b3f-ds-a070-e1-08#contact-form
+derivations:
+  - "Pads: 12 clean output pads (16,17,18,19,21,22,23,25,26,27,32,33) on the WROOM-32E variant; output-capable signals = SDA, SCL, SCK, MOSI, MISO(iomux), tft.CS, tft.DC, tft.RST, rfid.CS, rfid.RST, 4 relay inputs = 14; 14 - 12 = 2 signals must sit on risk pads -> optimum risk tier 1 = 2 (the CS lines; GPIO5 strap-compatible idle-high CS, GPIO14/13 JTAG). Load pull assumption: relay inputs counted as pulled once the required pull-down is added, as in the plan."
+  - "Exact pins: SPI3 IO_MUX = SCLK GPIO18, MOSI GPIO23, MISO GPIO19, CS0 GPIO5 (esp-idf-spi-master-v6.1#iomux-pins-main). TFT is write-only (4-line SPI, st7735-ds-v2.1#pin-dcx-resx) so only the RC522 uses MISO; the unproven 'MISO high-Z when deselected' fact is missing for MFRC522 -> info only."
+  - "SPI clocks: ST7735 write cycle min 66 ns -> 1/66e-9 = 15 151 515 Hz; MFRC522 10 Mbit/s = 10 000 000 Hz; both are below the IO_MUX 80 MHz limit. node check: 1/66e-9 = 15151515.15."
+  - "Switches on GPIO34/35/36/39: input-only, no internal pulls (esp32-trm-v5.8#note-input-only) -> 4 external pull-ups; GPIO36/39 carry erratum GPIO-3.11 (~80 ns low pulse, esp32-errata-v3.1#gpio-3-11) -> Caution ERRATUM_GPIO_3_11 with debounce workaround. Pull-up value is NOT asserted: the plan's 10 kohm is a design choice, not a catalog fact."
+  - "Relays: relay-board-4ch-transistor has resting level, input current and pull-downs all missing; pads 25/26/27/32 have reset_state disabled (floating, verified) -> warning FLOATING_AT_RESET_LOAD, fix = pull-down to GND. Active-high per keyestudio-ks0058-wiki#active-high."
+  - "WEAKENED vs the plan: (1) plan I2C_RISE_TIME warning needs 10 kohm module pull-ups; gy-bme280-6pin pull-ups are missing -> I2C_PULLUP_UNKNOWN caution. (2) plan RAIL_5V_BUDGET / RAIL_3V3_BUDGET warnings need the DevKitC V4 5V and 3V3 current ratings; both max_current facts are missing -> RAIL_BUDGET_UNKNOWN caution. Reference numbers for the engine unit tests: 4 x 89.3 = 357.2 mA (0.45 W coil), 4 x 71.4 = 285.6 mA (0.36 W coil), MFRC522 100+9+10 = 119 mA."
+  - "Header positions in the plan table (J3-6 etc.) follow esp32-devkitc-v4-ug#j3-6-10 and #j2-5-8; they are not asserted in `exact` because header position is a tie-break, not a constraint."
+changelog:
+  - "2026-10-23: created (task 2a.7, fixture-author) from docs/research/worked-example-esp32-devkitc.md, re-derived against the catalog."

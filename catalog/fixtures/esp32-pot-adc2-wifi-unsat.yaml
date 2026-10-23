@@ -1,0 +1,30 @@
+# Golden fixture 21 (negative) - potentiometer locked on ESP32 GPIO25 (ADC2_CH8) while Wi-Fi is used: ADC2 is shared with the Wi-Fi driver.
+id: esp32-pot-adc2-wifi-unsat
+board: esp32-devkitc-v4@V4
+variant: esp32-devkitc-32e
+project:
+  board: esp32-devkitc-v4@V4
+  variant: esp32-devkitc-32e
+  wifi: true
+  modules:
+    - { breakout: potentiometer-10k, instance: pot }
+  locked:
+    - { instance: pot, role: WIPER, pad: GPIO25 }
+  reserved: []
+expect:
+  status: unsat
+  minimal_conflict_includes:
+    - "locked:pot.WIPER=GPIO25"
+    - "adc2-wifi:GPIO25"
+  relaxations_include:
+    - "unlock:pot.WIPER"           # ADC1 pads (GPIO32-39) are free
+    - "wifi:false"
+evidence:
+  - esp32-trm-v5.8#adc2-wifi
+  - esp-idf-adc-oneshot-v6.1#adc2-wifi
+  - esp32-trm-v5.8#iomux-gpio25
+derivations:
+  - "GPIO25 = ADC2_CH8; radio_conflict true: both TRM and ESP-IDF name ADC2 as shared with Wi-Fi (esp32-trm-v5.8#adc2-wifi, esp-idf-adc-oneshot-v6.1#adc2-wifi). With wifi true the locked analog pad is unusable."
+  - "Analog routing is fixed (ADC2_CH8 on GPIO25), so the lock cannot be satisfied another way; unlocking would allow ADC1 pads (e.g. GPIO32/33/34/35/36/39), turning the fixture satisfiable."
+changelog:
+  - "2026-10-23: created (task 2a.7, fixture-author). Conflict/relaxation tokens follow the proposed convention of fixture pico-w-four-pots-no-free-adc-unsat."

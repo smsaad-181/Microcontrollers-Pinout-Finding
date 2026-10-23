@@ -1,0 +1,23 @@
+# Evidence record: Adafruit product page 2652, BME280 STEMMA QT (read 2026-10-23). Vendor page, used only to tie product 2652 to the learn guide and schematic.
+accessed: "2026-10-23"
+claims:
+  - id: "adafruit-product-2652#regulator-level-shift"
+    locator: "Product description"
+    quote: "comes with a 3.3V regulator and level shifting so you can use it with a 3V or 5V logic microcontroller without worry"
+    supports: "Product 2652 has an onboard 3.3 V regulator and level shifting"
+  - id: "adafruit-product-2652#qt-pinout-identical"
+    locator: "Technical Details, Revision History"
+    quote: "we've updated this sensor to be STEMMA QT compatible"
+    supports: "Product 2652 is the STEMMA QT version (since 11 Nov 2020); the page says its pinout is identical to the earlier non-QT version"
+doc_number: null
+id: adafruit-product-2652
+kind: board-guide
+manual: false
+publisher: Adafruit Industries
+revision: null
+revision_date: null
+secondary: false
+sha256: null
+title: Adafruit BME280 I2C or SPI Temperature Humidity Pressure Sensor - STEMMA QT (product 2652)
+url: https://www.adafruit.com/product/2652
+url_original: null

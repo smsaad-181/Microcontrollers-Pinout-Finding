@@ -1,0 +1,46 @@
+# Golden fixture 13 - three Adafruit BME280 on an ESP32: only two I2C addresses exist, so the third sensor needs the second I2C controller or SPI.
+id: bme280-three-boards-second-bus-or-spi
+board: esp32-devkitc-v4@V4
+variant: esp32-devkitc-32e
+project:
+  board: esp32-devkitc-v4@V4
+  variant: esp32-devkitc-32e
+  modules:
+    - { breakout: adafruit-bme280, instance: env1 }
+    - { breakout: adafruit-bme280, instance: env2 }
+    - { breakout: adafruit-bme280, instance: env3 }
+  locked: []
+  reserved: []
+expect:
+  status: ok
+  properties:
+    - i2c_collision: none
+    - address_set_on_one_bus_distinct: true     # at most 2 BME280 per I2C bus: 0x76 and 0x77
+    - max_per_i2c_bus: { part: bme280, count: 2 }
+    # Interface-selection rule 5 order: address strap, then second I2C bus, then SPI. Either resolution is a valid answer for the third sensor.
+    - one_of:
+        - { env3_interface: i2c, bus: second_i2c_controller }
+        - { env3_interface: spi }
+    - no_pad_in: [GPIO6, GPIO7, GPIO8, GPIO9, GPIO10, GPIO11, GPIO1, GPIO3, GPIO34, GPIO35, GPIO36, GPIO39]
+  warnings_include:
+    - { code: LEVEL_SHIFTER_CONFLICT_RELIED, level: caution }   # adafruit-bme280 level_shifter is `conflict`
+    - { code: MISO_SHARE_UNPROVEN, level: info }                # only if the SPI resolution shares MISO with another device
+evidence:
+  - bme280-ds-1.24#i2c-address
+  - bme280-ds-1.24#iface-selection-csb
+  - bme280-ds-1.24#iface-lockout-csb
+  - bme280-ds-1.24#csb-pullup
+  - adafruit-bme280-learn-pinouts#i2c-address
+  - adafruit-bme280-learn-pinouts#i2c-address-alt
+  - adafruit-bme280-learn-pinouts#spi-pins
+  - adafruit-bme280-qt-sch-revc#csb-sdo
+  - adafruit-bme280-qt-sch-revc#header-jp1
+  - esp32-ds-v5.3#i2c-two-interfaces
+  - esp32-ds-v5.3#i2c-matrix
+  - esp-idf-spi-master-v6.1#iomux-pins-main
+derivations:
+  - "A BME280 has exactly two 7-bit addresses: 0x76 (SDO=GND) and 0x77 (SDO=VDDIO) (bme280-ds-1.24#i2c-address). Three sensors on one bus must collide. The Adafruit board pulls SDO up to 3.3 V (default 0x77); closing the ADDR jumper to GND gives 0x76 (adafruit-bme280-learn-pinouts#i2c-address, #i2c-address-alt); its header carries SCK/SDO/SDI/CS so SPI is also exposed (interfaces_exposed: i2c, spi)."
+  - "ESP32 has two I2C controllers I2C0/I2C1, both matrix-routed (esp32-ds-v5.3#i2c-two-interfaces, #i2c-matrix): third sensor on a second bus costs 2 pads; SPI costs 1 CS on an existing/new SPI bus (SPI3 IO_MUX SCK 18, MOSI 23, MISO 19, esp-idf-spi-master-v6.1#iomux-pins-main) plus 3 bus pads when no bus exists. Both are valid; which is chosen depends on interface-selection rules 3-5, so the fixture states the set."
+  - "Locking: a BME280 whose CSB has once gone low stays in SPI until power-on reset (bme280-ds-1.24#iface-lockout-csb): the engine must keep CSB high on I2C instances and may not mix modes on one module."
+changelog:
+  - "2026-10-23: created (task 2a.7, fixture-author)."

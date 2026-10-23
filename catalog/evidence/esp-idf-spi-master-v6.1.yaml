@@ -1,0 +1,35 @@
+# Evidence record: ESP-IDF Programming Guide v6.1 - SPI Master Driver (ESP32) (read 2026-10-22).
+accessed: "2026-10-22"
+claims:
+  - id: "esp-idf-spi-master-v6.1#matrix-routing"
+    locator: "SPI Master Driver - ESP32, section GPIO Matrix and IO_MUX"
+    quote: "the signals can also be routed to any other available pins using the less direct GPIO matrix."
+    supports: "SPI2/SPI3 matrix_routable true"
+  - id: "esp-idf-spi-master-v6.1#matrix-40mhz-iomux-80mhz"
+    locator: "SPI Master Driver - ESP32, section GPIO Matrix and IO_MUX"
+    quote: "Allows signals with clock frequencies only up to 40 MHz, as opposed to 80 MHz if IO_MUX pins are used."
+    supports: "SPI matrix_max_hz = 40 MHz, iomux_max_hz = 80 MHz"
+  - id: "esp-idf-spi-master-v6.1#iomux-pins-main"
+    locator: "SPI Master Driver - ESP32, section GPIO Matrix and IO_MUX, IO_MUX pin table (columns: Pin Name, SPI 2, SPI 3)"
+    quote: "CS0 15 5 SCLK 14 18 MISO 12 19 MOSI 13 23"
+    supports: "SPI2 IO_MUX: CS0 GPIO15, SCLK GPIO14, MISO GPIO12, MOSI GPIO13; SPI3: CS0 GPIO5, SCLK GPIO18, MISO GPIO19, MOSI GPIO23"
+  - id: "esp-idf-spi-master-v6.1#iomux-pins-quad"
+    locator: "SPI Master Driver - ESP32, section GPIO Matrix and IO_MUX, IO_MUX pin table (columns: Pin Name, SPI 2, SPI 3)"
+    quote: "QUADWP 2 22 QUADHD 4 21"
+    supports: "SPI2 IO_MUX: WP GPIO2, HD GPIO4; SPI3: WP GPIO22, HD GPIO21"
+  - id: "esp-idf-spi-master-v6.1#full-duplex-read-limit"
+    locator: "SPI Master Driver - ESP32, Timing Considerations, frequency limit table"
+    quote: "Frequency Limit (MHz) GPIO Matrix IO_MUX Pins 26.6 80 No"
+    supports: "Full-duplex read without dummy bits: 26.6 MHz via GPIO matrix, 80 MHz via IO_MUX"
+doc_number: null
+id: "esp-idf-spi-master-v6.1"
+kind: "api-doc"
+manual: false
+publisher: "Espressif Systems"
+revision: "v6.1"
+revision_date: null
+secondary: false
+sha256: null
+title: "ESP-IDF Programming Guide v6.1 - SPI Master Driver (ESP32)"
+url: "https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/peripherals/spi_master.html"
+url_original: null

@@ -1,0 +1,40 @@
+id: potentiometer-10k
+input_abs_max:
+  evidence: []
+  note: 'Missing: the field meaning does not match the document. The earlier placeholder 300 V was the Bourns 3386 "Power Rating (300 volts max.)" line (claim bourns-3386-ds-rev-12-24#power-max-v), a power-rating voltage of a TRIMMER, not an input/signal absolute maximum for a GPIO or ADC pin (the document does not even say whether it is DC or AC, or across the element or wiper-to-end). At 10 kohm, 0.5 W is only about 70.7 V (derived), so 300 V is not the binding limit either. The Bourns 3386 is a trimming potentiometer (rotational life 200 cycles, claim #trimmer-life), used here only as a representative part; panel pots differ. The sheet states no wiper-current rating. Other 3386 facts (resistance 10 ohm-2 Mohm #res-range, 10 kohm standard #res-10k, +/-10 % #res-tol, 0.5 W at 85 C #power-85c) have no schema field and are stated here only.'
+  status: missing
+  unit: V
+  value: null
+interfaces:
+- kind: analog
+  limits:
+    analog_range_v:
+      evidence: []
+      note: The wiper swings between the two end-terminal potentials, i.e. between GND and the supply it is wired to; there is no fixed range. See breakout notes.
+      status: missing
+      value: null
+  signals:
+  - dir: out
+    drive: push-pull
+    role: WIPER
+    shareable: false
+part: 10 kohm potentiometer (three-terminal voltage divider; taper not stated in the representative Bourns 3386 trimmer datasheet)
+supply_current:
+  evidence: []
+  note: 'Passive part: current is set by the applied voltage and the element resistance; the 3386 sheet gives no wiper or element current rating.'
+  status: missing
+  unit: mA
+  value: null
+vdd_range:
+  evidence: []
+  note: 'Passive part: the voltage across the end terminals is chosen by the user. No supply range exists.'
+  status: missing
+  unit: V
+  value: null
+vendor: 'generic (representative datasheet: Bourns 3386)'
+vio_range:
+  evidence: []
+  note: 'Not applicable: passive part.'
+  status: missing
+  unit: V
+  value: null

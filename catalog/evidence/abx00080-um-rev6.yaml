@@ -1,0 +1,210 @@
+id: abx00080-um-rev6
+title: "Arduino UNO R4 Minima User Manual (SKU ABX00080)"
+publisher: "Arduino S.r.l."
+doc_number: "ABX00080"
+revision: "6"
+revision_date: "2026-10-20"
+url: https://docs.arduino.cc/resources/datasheets/ABX00080-datasheet.pdf
+url_original: null
+accessed: "2026-10-22"
+sha256: "49f5fda615856efe43b880ed6196376191896f686216c10fcbc05a5f15c19fe3"
+kind: board-guide
+secondary: false
+manual: false
+claims:
+  - id: abx00080-um-rev6#mcu-part
+    locator: "Description, p. 1"
+    quote: "It features a RA4M1 series microcontroller from Renesas (R7FA4M1AB3CFM#AA0)"
+    supports: "The UNO R4 Minima MCU is the Renesas R7FA4M1AB3CFM#AA0 (RA4M1)"
+  - id: abx00080-um-rev6#operating-5v
+    locator: "Description, p. 1"
+    quote: "The UNO R4 Minima board's operating voltage is 5 V"
+    supports: "Board logic voltage is 5 V"
+  - id: abx00080-um-rev6#mcu-5v-fixed
+    locator: "§5 Microcontroller, p. 9"
+    quote: "On the UNO R4 Minima, the operating voltage is fixed at 5 V"
+    supports: "The RA4M1 supply (VCC) is fixed at 5 V on this board"
+  - id: abx00080-um-rev6#pin-voltage
+    locator: "§9.2 Pin Voltage, p. 11"
+    quote: "The UNO R4 Minima operates on 5 V, as does all pins on this board except for the 3.3V pin."
+    supports: "All header pins are 5 V logic except the 3V3 pin"
+  - id: abx00080-um-rev6#3v3-source
+    locator: "§9.2 Pin Voltage, p. 11"
+    quote: "This pin draws power from the VCC_USB pin on the R7FA4M1AB3CFM#AA0, and is not connected to the buck converter."
+    supports: "3V3 rail source is the RA4M1 VCC_USB (internal USB LDO) pin, not the buck converter"
+  - id: abx00080-um-rev6#gpio-8ma
+    locator: "§9.3 Pin Current, p. 11"
+    quote: "The GPIOs on the R7FA4M1AB3CFM#AA0 microcontroller can handle up to 8 mA."
+    supports: "Arduino states 8 mA per GPIO (no drive-strength setting named)"
+  - id: abx00080-um-rev6#vin-range
+    locator: "Features, p. 2"
+    quote: "Recommended input voltage (VIN) is 6-24 V"
+    supports: "VIN recommended input range 6-24 V"
+  - id: abx00080-um-rev6#vin-table
+    locator: "§2 Recommended Operating Conditions, p. 6"
+    quote: "VIN Input voltage from VIN pad / DC Jack 6 7.0 24 V"
+    supports: "VIN min 6 V, typ 7.0 V, max 24 V"
+  - id: abx00080-um-rev6#buck-5v
+    locator: "§9 Power Options, p. 10"
+    quote: "If power is supplied via VIN, the ISL854102FRZ buck converter steps the voltage down to 5 V."
+    supports: "5V rail is produced by the ISL854102FRZ buck converter from VIN/barrel jack"
+  - id: abx00080-um-rev6#usb-4v7
+    locator: "§9 Power Options, p. 10"
+    quote: "Power via USB supplies about ~4.7 V (due to Schottky drop) to the RA4M1 microcontroller."
+    supports: "With USB power the RA4M1 supply is about 4.7 V"
+  - id: abx00080-um-rev6#rail-current-none
+    locator: "§8 Rated Current, p. 10"
+    quote: "Average current consumption while powered with USB-C and running the default firmware shipped with the board (blink)."
+    supports: "Only a board consumption figure is given; no 5V, 3V3 or VIN output current rating appears in the manual"
+  - id: abx00080-um-rev6#dac-a0
+    locator: "§7 Digital Analog Converter (DAC), p. 10"
+    quote: "The UNO R4 Minima has a DAC with up to 12-bit resolution attached to the A0 analog pin."
+    supports: "DAC output is on A0"
+  - id: abx00080-um-rev6#ioref
+    locator: "§10.1 Analog, p. 13"
+    quote: "Reference for digital logic V - connected to 5 V"
+    supports: "IOREF pin is tied to 5 V"
+  - id: abx00080-um-rev6#boot-pin
+    locator: "§10.1 Analog, p. 13"
+    quote: "BOOT Mode Mode selection"
+    supports: "JANALOG pin 1 is a BOOT / mode-selection pin"
+  - id: abx00080-um-rev6#analog-a0
+    locator: "§10.1 Analog, p. 13"
+    quote: "A0 Analog Analog input 0 / DAC"
+    supports: "JANALOG pin 9 is A0 (analog input / DAC)"
+  - id: abx00080-um-rev6#analog-a1
+    locator: "§10.1 Analog, p. 13"
+    quote: "A1 Analog Analog input 1 / OPAMP+"
+    supports: "JANALOG pin 10 is A1 (OPAMP+)"
+  - id: abx00080-um-rev6#analog-a2
+    locator: "§10.1 Analog, p. 13"
+    quote: "A2 Analog Analog input 2 / OPAMP-"
+    supports: "JANALOG pin 11 is A2 (OPAMP-)"
+  - id: abx00080-um-rev6#analog-a3
+    locator: "§10.1 Analog, p. 13"
+    quote: "A3 Analog Analog input 3 / OPAMPOut"
+    supports: "JANALOG pin 12 is A3 (OPAMP output)"
+  - id: abx00080-um-rev6#analog-a4-sda
+    locator: "§10.1 Analog, p. 13"
+    quote: "A4 Analog Analog input 4 / I²C Serial Datal (SDA)"
+    supports: "A4 doubles as I2C SDA"
+  - id: abx00080-um-rev6#analog-a5-scl
+    locator: "§10.1 Analog, p. 13"
+    quote: "A5 Analog Analog input 5 / I²C Serial Clock (SCL)"
+    supports: "A5 doubles as I2C SCL"
+  - id: abx00080-um-rev6#digital-scl
+    locator: "§10.2 Digital, p. 13"
+    quote: "SCL Digital I²C Serial Clock (SCL)"
+    supports: "JDIGITAL pin 1 is a separate SCL header position"
+  - id: abx00080-um-rev6#digital-sda
+    locator: "§10.2 Digital, p. 13"
+    quote: "SDA Digital I²C Serial Datal (SDA)"
+    supports: "JDIGITAL pin 2 is a separate SDA header position"
+  - id: abx00080-um-rev6#digital-aref
+    locator: "§10.2 Digital, p. 13"
+    quote: "AREF Digital Analog Reference Voltage"
+    supports: "JDIGITAL pin 3 is AREF"
+  - id: abx00080-um-rev6#digital-d13
+    locator: "§10.2 Digital, p. 13"
+    quote: "D13/SCK Digital GPIO 13 / SPI Clock"
+    supports: "D13 is also SPI SCK"
+  - id: abx00080-um-rev6#digital-d12
+    locator: "§10.2 Digital, p. 13"
+    quote: "D12/CIPO Digital GPIO 12 / SPI Controller In Peripheral Out"
+    supports: "D12 is also SPI CIPO"
+  - id: abx00080-um-rev6#digital-d11
+    locator: "§10.2 Digital, p. 13"
+    quote: "D11/COPI Digital GPIO 11 (PWM) / SPI Controller Out Peripheral In"
+    supports: "D11 is also SPI COPI, PWM-capable"
+  - id: abx00080-um-rev6#digital-d10
+    locator: "§10.2 Digital, p. 13"
+    quote: "D10/CS Digital GPIO 10 (PWM) / SPI Chip Select"
+    supports: "D10 is also SPI chip select, PWM-capable"
+  - id: abx00080-um-rev6#digital-d5-can
+    locator: "§10.2 Digital, p. 13"
+    quote: "D5/CANRX0 Digital GPIO 5 (PWM~) / CAN Transmitter (TX)"
+    supports: "Manual labels D5 CANRX0 but describes it as CAN transmitter: internal inconsistency"
+  - id: abx00080-um-rev6#digital-d4-can
+    locator: "§10.2 Digital, p. 13"
+    quote: "D4/CANTX0 Digital GPIO 4 / CAN Receiver (RX)"
+    supports: "Manual labels D4 CANTX0 but describes it as CAN receiver: internal inconsistency"
+  - id: abx00080-um-rev6#digital-d1-tx0
+    locator: "§10.2 Digital, p. 13"
+    quote: "D1/TX0 Digital GPIO 1 / Serial 0 Transmitter (TX)"
+    supports: "D1 is serial TX"
+  - id: abx00080-um-rev6#digital-d0-tx0
+    locator: "§10.2 Digital, p. 13"
+    quote: "D0/TX0 Digital GPIO 0 / Serial 0 Receiver (RX)"
+    supports: "D0 labelled TX0 but described as the serial receiver: internal inconsistency"
+  - id: abx00080-um-rev6#comm-i2c
+    locator: "Features, Communication, p. 2"
+    quote: "1x I2C (pin A4, A5, SDA, SCL)"
+    supports: "One I2C bus on A4/A5 and the SDA/SCL positions"
+  - id: abx00080-um-rev6#comm-spi
+    locator: "Features, Communication, p. 2"
+    quote: "1x SPI (pin D10-D13, ICSP header)"
+    supports: "SPI on D10-D13 and the ICSP header"
+  - id: abx00080-um-rev6#comm-uart
+    locator: "Features, Communication, p. 2"
+    quote: "1x UART (pin D0, D1)"
+    supports: "UART on D0/D1"
+  - id: abx00080-um-rev6#comm-can
+    locator: "Features, Communication, p. 2"
+    quote: "1x CAN (pin D4, D5, external transceiver is required)"
+    supports: "CAN on D4/D5, external transceiver required"
+  - id: abx00080-um-rev6#led-dl1-tx
+    locator: "§4.1 Front View, p. 8"
+    quote: "DL1 LED TX (serial transmit)"
+    supports: "DL1 is the TX LED"
+  - id: abx00080-um-rev6#led-dl2-rx
+    locator: "§4.1 Front View, p. 8"
+    quote: "DL2 LED RX (serial receive)"
+    supports: "DL2 is the RX LED"
+  - id: abx00080-um-rev6#led-dl4-sck
+    locator: "§4.1 Front View, p. 8"
+    quote: "DL4 LED SCK (serial clock)"
+    supports: "DL4 is the SCK LED"
+  - id: abx00080-um-rev6#led-dl3-power
+    locator: "§4.1 Front View, p. 8"
+    quote: "DL3 LED Power"
+    supports: "DL3 is the power LED"
+  - id: abx00080-um-rev6#reset-button
+    locator: "§4.1 Front View, p. 8"
+    quote: "PB1 RESET Button"
+    supports: "PB1 is the reset button"
+  - id: abx00080-um-rev6#usb-connector
+    locator: "§6 USB Connector, p. 10"
+    quote: "The UNO R4 Minima has one USB-C® port, used to power and program your board"
+    supports: "One USB-C connector powers and programs the board"
+  - id: abx00080-um-rev6#bootloader-doubletap
+    locator: "§12.5 Board Recovery, p. 16"
+    quote: "it is possible to enter bootloader mode by double- tapping the reset button right after the power-up."
+    supports: "Bootloader is entered by a double tap on reset (software, not a strap)"
+  - id: abx00080-um-rev6#changelog-rev6
+    locator: "§19 Change Log, p. 19"
+    quote: "20/10/2026 6 Added note for Intended Use, and divided language"
+    supports: "Manual revision 6 dated 20/10/2026; no board hardware revision is printed"
+  - id: abx00080-um-rev6#analog-5v-rail
+    locator: "§10.1 Analog, p. 13"
+    quote: +5V Power Rail
+    supports: JANALOG pin 5 is the +5V power rail
+  - id: abx00080-um-rev6#analog-3v3-rail
+    locator: "§10.1 Analog, p. 13"
+    quote: +3V3 Power Rail
+    supports: JANALOG pin 4 is the +3V3 power rail
+  - id: abx00080-um-rev6#icsp-table
+    locator: §10.3 ICSP, p. 14
+    quote: CIPO Internal Controller In Peripheral Out
+    supports: ICSP header pin 1 is CIPO (pins 2 +5V, 3 SCK, 4 COPI, 5 RESET, 6 GND); no pads are given
+  - id: abx00080-um-rev6#swd-pin10-nc
+    locator: §10.4 SWD/JTAG, p. 14 (pins 6 and 10)
+    quote: NC Internal Not connected
+    supports: The manual prints SWD pins 6 and 10 as NC; the schematic (J2 pin 10 = RESET) and the pinout say pin 10 is RESET
+  - id: abx00080-um-rev6#vusb-buck
+    locator: "§9 Power Options, p. 10"
+    quote: The VUSB, barrel jack connector and VIN pins are connected to the ISL854102FRZ buck converter
+    supports: Manual says VUSB feeds the buck converter; the schematic netlist has the USB Schottky D3 on the +5V net directly (disagreement, no value depends on it)
+  - id: abx00080-um-rev6#power-led-dl1
+    locator: §12.1, p. 16
+    quote: as indicated by the LED (DL1)
+    supports: Manual names DL1 as the power indicator although s4.1 and the schematic make DL1 the TX LED and DL3 the power LED

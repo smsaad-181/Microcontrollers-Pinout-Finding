@@ -1,0 +1,41 @@
+# Golden fixture 12 - two GY-BME280 6-pin modules on one ESP32 bus: same address by default -> resolve with the SDO address strap, not by a second bus.
+id: bme280-two-boards-address-strap
+board: esp32-devkitc-v4@V4
+variant: esp32-devkitc-32e
+project:
+  board: esp32-devkitc-v4@V4
+  variant: esp32-devkitc-32e
+  modules:
+    - { breakout: gy-bme280-6pin, instance: env1, interface: i2c }
+    - { breakout: gy-bme280-6pin, instance: env2, interface: i2c }
+  locked: []
+  reserved: []
+expect:
+  status: ok
+  properties:
+    - bus_shared: [[env1.SDA, env2.SDA], [env1.SCL, env2.SCL]]
+    - address_straps_distinct: { instances: [env1, env2], values: ["SDO=GND", "SDO=VDDIO"] }
+    - i2c_addresses_resolved: { values: ["0x76", "0x77"] }
+    - interface_decided_by_rule: 5
+    - risk_tier1_equals: 0
+  warnings_include:
+    - { code: I2C_PULLUP_UNKNOWN, level: caution }
+    - { code: MODULE_REGULATOR_UNKNOWN, level: caution }
+  required_parts_include:
+    - { kind: wire, role: address-strap, count: 1, note: "SDO of one module to GND (0x76) and the other to VDDIO (0x77); the 6-pin module exposes SDO" }
+evidence:
+  - bme280-ds-1.24#i2c-address
+  - bme280-ds-1.24#i2c-sdo-float
+  - bme280-ds-1.24#iface-selection-csb
+  - bme280-ds-1.24#iface-lockout-csb
+  - bme280-ds-1.24#pinout
+  - bme280-ds-1.24#supply-voltage
+  - esp32-ds-v5.3#i2c-matrix
+  - esp32-devkitc-v4-ug#j3-6-10
+derivations:
+  - "Addresses: SDO=GND -> 1110110b = 0x76 (118); SDO=VDDIO -> 1110111b = 0x77 (119) (bme280-ds-1.24#i2c-address). Two boards at the same strap collide; two different straps give two distinct addresses on one bus."
+  - "gy-bme280-6pin exposes SDO and CSB (pin labels), so the strap is available (interface-selection rule 5: address strap first, then second bus, then SPI). The datasheet forbids a floating SDO (bme280-ds-1.24#i2c-sdo-float), so the board strap must be wired: that is the required part."
+  - "CSB: for I2C CSB must be at VDDIO; once CSB has gone low I2C is disabled until power-on reset (bme280-ds-1.24#iface-lockout-csb); the internal CSB pull-up is 70/120/190 kohm so a floating CSB selects I2C (bme280-ds-1.24#csb-pullup)."
+  - "Which strap the generic module ties by default is unknown (all board facts missing) -> the engine must instruct to wire SDO explicitly; no Critical."
+changelog:
+  - "2026-10-23: created (task 2a.7, fixture-author)."

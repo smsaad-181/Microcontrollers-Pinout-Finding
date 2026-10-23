@@ -1,0 +1,69 @@
+hardwired: []
+ic: srd-05vdc-sl-c
+id: relay-board-4ch-transistor
+interfaces_exposed:
+- digital
+level_shifter:
+  evidence: []
+  note: No schematic available.
+  status: missing
+  value: null
+notes: 'Only a vendor wiki page was readable (keyestudio-ks0058-wiki): control signal TTL voltage, ACTIVE AT HIGH LEVEL, four control pins, VCC, GND (labelled Pin 1..Pin 4 in the vendor text). The page does NOT state the driver topology, transistor, flyback diode, base resistor, input current, relay model, coil type or whether any input pull-down exists; all of that is missing. It is therefore not confirmed that this board is a transistor-driver design with a flyback diode, nor that it fits an SRD-05VDC-SL-C (the ''ic'' link is the common assumption, unverified). Polarity is active-high per the vendor wiki; that contradicts the opto board (active-low), so the engine must not share polarity between the two records. RESTING LEVEL of the inputs is undocumented (no pull-down known): treat as floating at MCU reset. RECONCILE 2026-10-23: blind audit agrees; every circuit fact (transistor, flyback diode, base resistor, input current, resting level, JD-VCC/jumper behaviour) is could-not-verify because the KS0058 schematic PDF (https://fs.keyestudio.com/KS0058) is unreachable; all stay missing. Polarity ACTIVE HIGH is found by both keys on the wiki (''Active at HIGH level'', claim keyestudio-ks0058-wiki#active-high) and the sample code agrees; the schema has no polarity Fact so it lives in this note only. Audit C8: the wiki photo shows a 6-pin header plus a separate 2-pin block with a jumper cap and DIP-4 footprints beside each relay, and the connection diagram draws the relay as SRD-06VDC-SL-C while the photo shows SRD-05VDC-SL-C, so KS0058 may not be a plain transistor-only board; do not infer the topology or the relay model from the images. Manual download requested: KS0058 PDF/schematic bundle (see hand-off).'
+pins:
+- label: Pin 1
+  maps_to: COIL
+- label: Pin 2
+  maps_to: COIL
+- label: Pin 3
+  maps_to: COIL
+- label: Pin 4
+  maps_to: COIL
+- label: VCC
+  maps_to: VCC
+- label: GND
+  maps_to: GND
+pullups:
+- line: Pin 1
+  value_ohm:
+    evidence: []
+    note: 'No schematic: input pull-up/pull-down unknown'
+    status: missing
+    unit: ohm
+    value: null
+- line: Pin 2
+  value_ohm:
+    evidence: []
+    note: 'No schematic: input pull-up/pull-down unknown'
+    status: missing
+    unit: ohm
+    value: null
+- line: Pin 3
+  value_ohm:
+    evidence: []
+    note: 'No schematic: input pull-up/pull-down unknown'
+    status: missing
+    unit: ohm
+    value: null
+- line: Pin 4
+  value_ohm:
+    evidence: []
+    note: 'No schematic: input pull-up/pull-down unknown'
+    status: missing
+    unit: ohm
+    value: null
+regulator:
+  evidence: []
+  note: Keyestudio wiki gives no schematic; the KS0058 PDF bundle is behind a Dropbox folder link (see notes).
+  status: missing
+  value: null
+supply_current:
+  evidence: []
+  note: Not stated on the vendor wiki page.
+  status: missing
+  unit: mA
+  value: null
+variant_names:
+- keyestudio 4-channel Relay Module
+- KS0058
+- 4-channel 5V relay module high level trigger
+vendor: Keyestudio

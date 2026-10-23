@@ -1,0 +1,49 @@
+# Generic blue "RFID-RC522" 8-pin board (13.56 MHz, MFRC522). Reconciled with the blind audit (task 2a.4): every module-level fact is missing (auditor could-not-verify;
+# community schematics and listings are not evidence). Pin labels and the SPI-only exposure are the catalog's definition of this variant (project definition), not a cited fact.
+hardwired: []
+ic: mfrc522
+id: rfid-rc522-blue
+interfaces_exposed:
+- spi
+level_shifter:
+  evidence: []
+  note: 'Fact: level_shifter. Researcher and blind auditor both searched; no vendor-published datasheet or schematic names this generic module (only retailer listings and hobbyist pages, which are not evidence); auditor: could-not-verify. Not recorded; do not infer from other boards.'
+  status: missing
+  value: null
+notes: 'Generic board, no official schematic. Unknown: whether the I2C and EA interface-select pins are strapped on the board (the 8-pin header exposes only SPI signals, so SPI is the only exposed interface; the IC picks SPI at reset when I2C = 0 and EA = 1, mfrc522-ds-v3.9#interface-table), regulator presence, level shifting (the IC is a 2.5-3.6 V part, so a 5 V supply or 5 V logic must be treated as unsafe until the module is documented), pull-ups and total supply current. Present a Caution in results.'
+pins:
+- label: SDA
+  maps_to: CS
+- label: SCK
+  maps_to: SCLK
+- label: MOSI
+  maps_to: MOSI
+- label: MISO
+  maps_to: MISO
+- label: IRQ
+  maps_to: IRQ
+- label: GND
+  maps_to: GND
+- label: RST
+  maps_to: RST
+- label: 3.3V
+  maps_to: VCC
+pullups: []
+regulator:
+  evidence: []
+  note: 'Fact: regulator. Researcher and blind auditor both searched; no vendor-published datasheet or schematic names this generic module (only retailer listings and hobbyist pages, which are not evidence); auditor: could-not-verify. Not recorded; do not infer from other boards.'
+  status: missing
+  value: null
+supply_current:
+  evidence: []
+  note: 'Fact: supply_current. Researcher and blind auditor both searched; no vendor-published datasheet or schematic names this generic module (only retailer listings and hobbyist pages, which are not evidence); auditor: could-not-verify. Not recorded; do not infer from other boards.'
+  status: missing
+  unit: mA
+  value: null
+variant_names:
+- RC522
+- MFRC522 module
+- RFID-RC522
+- RC522 RFID blue board
+- MFRC522 RFID reader module
+vendor: generic

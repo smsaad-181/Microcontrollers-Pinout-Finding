@@ -1,0 +1,89 @@
+hardwired: []
+ic: ads1115
+id: ads1115-breakout
+interfaces_exposed:
+- i2c
+level_shifter:
+  evidence:
+  - adafruit-ads1115-guide#logic-level
+  - adafruit-ads1115-sch#parts-no-regulator
+  note: Guide says to power the board at the MCU logic level; schematic part list has no level-shifter IC. I2C lines pull up to VIN, so bus levels equal the VIN voltage.
+  status: interim
+  value: false
+notes: Based on the Adafruit ADS1115 breakout (product 1085, original version; the vendor says the schematic of the STEMMA QT version is identical). ADDR is pulled to GND by a 10K resistor on the board (schematic R3, evidence adafruit-ads1115-sch#net-addr), default I2C address 0x48 (adafruit-ads1115-guide#default-address); ADDR is brought out on a pin, so it is not hardwired and the other addresses (0x49 VDD, 0x4A SDA, 0x4B SCL) remain selectable with an external connection. ALRT is the ALERT/RDY open-drain output (optional interrupt line); A0..A3 are the sensor-side analog inputs (not microcontroller pins), so only i2c is listed as exposed. Pins A+ and A- are filtered supply/ground OUTPUTS (guide) and are not listed. The public .sch has no separate VIN/GND header pad drawn on JP1, so VIN/GND labels rest on the guide only. Blind audit (2026-10-23) read the same facts and additionally parsed the current STEMMA QT schematic (VCC to AVDD through ferrite FB3, no regulator, no level shifter, 10K pull-ups on SCL/SDA/ALERT/ADDR-to-GND all in one resistor pack); the ALRT 10K pull-up is seen in the schematic only (the guide text never mentions it). Regulator absent and no level shifter are inferred from the absence of parts in the schematic, not stated by Adafruit, hence status interim. Schematic caveat - the STEMMA QT .sch labels U1 ADS1015IDGST and the legacy .sch labels it ADS1115IDGST on the same ADS1015 deviceset (shared PCB; the fitted IC is chosen by BOM, so the IC type must not be read from the schematic value). Generic ADS1115 modules from other sellers have no vendor schematic in this record; their pull-ups, regulator and ADDR default are unknown (missing).
+pins:
+- label: VIN
+  maps_to: VCC
+- label: GND
+  maps_to: GND
+- label: SCL
+  maps_to: SCL
+- label: SDA
+  maps_to: SDA
+- label: ADDR
+  maps_to: ADDR
+- label: ALRT
+  maps_to: ALERT
+- label: A0
+  maps_to: AIN0
+- label: A1
+  maps_to: AIN1
+- label: A2
+  maps_to: AIN2
+- label: A3
+  maps_to: AIN3
+pullups:
+- line: SCL
+  value_ohm:
+    evidence:
+    - adafruit-ads1115-guide#scl-pullup
+    - adafruit-ads1115-sch#net-scl
+    note: 10K to VIN/VDD (guide and schematic R1 agree)
+    reviewers:
+    - hardware-researcher
+    - hardware-fact-auditor
+    status: verified
+    unit: ohm
+    value: 10000
+- line: SDA
+  value_ohm:
+    evidence:
+    - adafruit-ads1115-guide#sda-pullup
+    - adafruit-ads1115-sch#net-sda
+    note: 10K to VIN/VDD (guide and schematic R2 agree)
+    reviewers:
+    - hardware-researcher
+    - hardware-fact-auditor
+    status: verified
+    unit: ohm
+    value: 10000
+- line: ALERT
+  value_ohm:
+    evidence:
+    - adafruit-ads1115-sch#net-alert
+    note: Schematic R4 10K to VDD on ALERT/RDY; the guide does not mention it
+    reviewers:
+    - hardware-researcher
+    - hardware-fact-auditor
+    status: verified
+    unit: ohm
+    value: 10000
+regulator:
+  evidence:
+  - adafruit-ads1115-guide#power-vin
+  - adafruit-ads1115-sch#parts-no-regulator
+  note: 'VIN feeds the ADS1115 VDD directly (guide: 2 V to 5 V, the IC supply range). ''present: false'' rests on the vendor schematic part list having no regulator IC; the guide does not state it in words.'
+  status: interim
+  value:
+    present: false
+supply_current:
+  evidence: []
+  note: Adafruit publishes no board current. Only the IC figure is documented (see ads1115 supply_current); the board adds pull-up and, on some versions, a power LED.
+  status: missing
+  unit: mA
+  value: null
+variant_names:
+- Adafruit ADS1115 16-Bit ADC - 4 Channel with Programmable Gain Amplifier
+- Adafruit 1085
+- ADS1115 breakout
+vendor: Adafruit

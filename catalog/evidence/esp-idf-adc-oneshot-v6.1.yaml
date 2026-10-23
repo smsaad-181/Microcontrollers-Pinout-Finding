@@ -1,0 +1,23 @@
+# Evidence record: ESP-IDF Programming Guide v6.1 - ADC Oneshot Mode Driver (ESP32) (read 2026-10-22).
+accessed: "2026-10-22"
+claims:
+  - id: "esp-idf-adc-oneshot-v6.1#adc2-wifi"
+    locator: "ADC Oneshot Mode Driver - ESP32, section Hardware Limitations"
+    quote: "ADC2 is also used by Wi-Fi."
+    supports: "ADC2 radio_conflict true; only ADC2 is named"
+  - id: "esp-idf-adc-oneshot-v6.1#devkitc-gpio0-auto-flash"
+    locator: "ADC Oneshot Mode Driver - ESP32, section Hardware Limitations"
+    quote: "ESP32-DevKitC: GPIO0 cannot be used in oneshot mode, because the DevKit has used it for auto-flash."
+    supports: "On ESP32-DevKitC, GPIO0 is wired to the auto-flash circuit"
+doc_number: null
+id: "esp-idf-adc-oneshot-v6.1"
+kind: "api-doc"
+manual: false
+publisher: "Espressif Systems"
+revision: "v6.1"
+revision_date: null
+secondary: false
+sha256: null
+title: "ESP-IDF Programming Guide v6.1 - ADC Oneshot Mode Driver (ESP32)"
+url: "https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/peripherals/adc/adc_oneshot.html"
+url_original: null

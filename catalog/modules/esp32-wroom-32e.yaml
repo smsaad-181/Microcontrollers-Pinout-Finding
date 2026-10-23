@@ -1,0 +1,44 @@
+# ESP32-WROOM-32E module (part numbers without PSRAM: N4/N8/N16/H4/H8) - reconciled (task 2a.4), see docs/validation/phase-2a/reconcile-esp32-modules-board.md.
+# Source: ESP32-WROOM-32E & ESP32-WROOM-32UE Datasheet v2.1. bonded_pads = the 26 GPIOs led out to module pins
+# (Figure 3 / Table 3; auditor agrees: 26 pads); GPIO37/38 are not bonded; GPIO6-GPIO11 go to the in-module flash and are not led out.
+# consumed: GPIO16 is consumed (PSRAM) only on the ...R2 part numbers (ESP32-D0WDR2-V3, Table 3 note 3); those parts are out of scope of this
+#   record (need their own module record), so there is deliberately no GPIO16/GPIO17 entry here. GPIO17 is not stated consumed on any variant.
+# flash_voltage is an inference (no module-level statement in this datasheet): see its note. psram applies to the stated part numbers.
+bonded_pads:
+  - "GPIO0"
+  - "GPIO1"
+  - "GPIO2"
+  - "GPIO3"
+  - "GPIO4"
+  - "GPIO5"
+  - "GPIO12"
+  - "GPIO13"
+  - "GPIO14"
+  - "GPIO15"
+  - "GPIO16"
+  - "GPIO17"
+  - "GPIO18"
+  - "GPIO19"
+  - "GPIO21"
+  - "GPIO22"
+  - "GPIO23"
+  - "GPIO25"
+  - "GPIO26"
+  - "GPIO27"
+  - "GPIO32"
+  - "GPIO33"
+  - "GPIO34"
+  - "GPIO35"
+  - "GPIO36"
+  - "GPIO39"
+chip: "esp32"
+consumed:
+  GPIO10: {"evidence": ["esp32-wroom-32e-ds-v2.1#gpio6-11-flash"], "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "flash"}
+  GPIO11: {"evidence": ["esp32-wroom-32e-ds-v2.1#gpio6-11-flash"], "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "flash"}
+  GPIO6: {"evidence": ["esp32-wroom-32e-ds-v2.1#gpio6-11-flash"], "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "flash"}
+  GPIO7: {"evidence": ["esp32-wroom-32e-ds-v2.1#gpio6-11-flash"], "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "flash"}
+  GPIO8: {"evidence": ["esp32-wroom-32e-ds-v2.1#gpio6-11-flash"], "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "flash"}
+  GPIO9: {"evidence": ["esp32-wroom-32e-ds-v2.1#gpio6-11-flash"], "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "flash"}
+flash_voltage: {"evidence": ["esp32-wroom-32e-ds-v2.1#vdd-sdio-mtdi0", "esp32-wroom-32e-ds-v2.1#io12-kept-low", "esp32-wroom-32e-ds-v2.1#block-diagram-flash-vdd-sdio"], "note": "Inference, not a stated value: the WROOM-32E datasheet has no module flash-voltage statement (the WROVER-E datasheet does: Table 1 \"VDD_SDIO Voltage 3.3 V\"). Researcher and auditor both derived 3.3 V independently from the VDD_SDIO supply of the in-module flash (Figure 1/Figure 7 net) and the default MTDI = 0 setting (VDD_SDIO = VDD3P3_RTC, typically 3.3 V; IO12 must be low at power-on). Figure-based, hence transcribed.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "transcribed": true, "unit": "V", "value": 3.3}
+id: "esp32-wroom-32e"
+psram: {"conditions": {"part_number": "ESP32-WROOM-32E-N4/N8/N16/H4/H8"}, "evidence": ["esp32-wroom-32e-ds-v2.1#series-n4", "esp32-devkitc-v4-ug#ordering-32e", "esp32-wroom-32e-ds-v2.1#features-psram-r2"], "note": "Record covers WROOM-32E part numbers without PSRAM (DevKitC-32E fits the 4 MB N4). The ...R2 part numbers embed 2 MB PSRAM and consume GPIO16 (Table 3 note 3); they need their own module record.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "none"}

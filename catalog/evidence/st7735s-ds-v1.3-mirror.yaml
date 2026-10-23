@@ -1,0 +1,63 @@
+# Evidence record: ST7735S datasheet Version 1.3 (2012/06, page headers 2012-06-20), 201 pages, read 2026-10-23.
+# THIS IS A COPY ON A THIRD-PARTY MIRROR (makerguides.com), NOT the Sitronix-hosted file: its provenance is unverified.
+# It names the real part (cover: ST7735S), unlike st7735-ds-v2.1 / v1.9 (ST7735). Found and read by the blind auditor; the SHA-256 is of that downloaded copy.
+# The official ST7735S PDF is on the manual-download list (sources/manual/README.md request 2). Facts citing this record stay interim/conflict until the official file is hashed.
+# PDF page numbers equal the printed 'Page n of 201'.
+accessed: '2026-10-23'
+claims:
+- id: st7735s-ds-v1.3-mirror#abs-max
+  locator: §7.1 Absolute Operation Range, Table 1, p.28
+  quote: Logic Input Voltage Range VIN -0.3 ~ VDDI + 0.3 V
+  supports: Absolute maximum logic input voltage -0.3 V to VDDI + 0.3 V (ST7735S)
+- id: st7735s-ds-v1.3-mirror#abs-max-supply
+  locator: §7.1 Absolute Operation Range, Table 1, p.28
+  quote: Supply Voltage VDD - 0.3 ~ +4.8 V; Supply Voltage (Logic) VDDI - 0.3 ~ +4.6 V
+  supports: 'Supply-pin absolute maximum: VDD -0.3..+4.8 V, VDDI -0.3..+4.6 V (ST7735 V2.1 gives VDD +4.6 V)'
+- id: st7735s-ds-v1.3-mirror#dc-supply
+  locator: §7.2 DC Characteristic, Table 2, p.29
+  quote: System Voltage VDD Operating Voltage 2.5 2.75 4.8 V
+  supports: 'VDD (analog) operating 2.5 / 2.75 / 4.8 V min/typ/max (ST7735 V2.1: 2.6 / 2.75 / 3.3 V)'
+- id: st7735s-ds-v1.3-mirror#dc-supply-vddi
+  locator: §7.2 DC Characteristic, Table 2, p.29
+  quote: Interface Operation Voltage VDDI I/O Supply Voltage 1.65 1.8 3.7 V
+  supports: 'VDDI (I/O) operating 1.65 / 1.8 / 3.7 V min/typ/max (ST7735 V2.1: 1.65 / 1.9 / 3.3 V)'
+- id: st7735s-ds-v1.3-mirror#dc-logic-levels
+  locator: §7.2 DC Characteristic, Table 2, Input / Output, p.29
+  quote: Logic-High Input Voltage VIH 0.7VDDI VDDI V; Logic-Low Input Voltage VIL VSS 0.3VDDI V
+  supports: VIH min 0.7 x VDDI, VIL max 0.3 x VDDI (TA -30 to 85 C)
+- id: st7735s-ds-v1.3-mirror#power-consumption
+  locator: §7.3 Power Consumption, Table 3, p.30 (Ta 25 C, 60 Hz, bare die, default registers)
+  quote: Normal Mode Note 2 0.01 0.9 0.02 2
+  supports: 'Normal mode, all pixels white: IDDI typ 0.01 / IDD typ 0.9 / IDDI max 0.02 / IDD max 2 mA; same values for all-black (note 1); typ at VDDI 1.8 V, VDD 2.75 V; max at VDDI 1.65-3.7 V, VDD 2.5-4.8 V'
+- id: st7735s-ds-v1.3-mirror#serial-write-cycle-3line
+  locator: §8.3 Serial Interface Characteristics (3-line Serial), Table 6, p.35
+  quote: TSCYCW Serial Clock Cycle (Write) 66 ns
+  supports: 3-line serial write clock cycle min 66 ns (VDDI 1.65-3.7 V, VDD 2.5-4.8 V, Ta 25 C); SCL H/L pulse width (write) min 15 ns in this document
+- id: st7735s-ds-v1.3-mirror#serial-write-cycle-4line
+  locator: §8.4 Serial Interface Characteristics (4-line Serial), Table 7, p.36
+  quote: TSCYCW Serial Clock Cycle (Write) 66 ns
+  supports: '4-line serial write clock cycle min 66 ns (same conditions); TSHW/TSLW (write) min 15 ns in this document (ST7735 V2.1: 30 ns)'
+- id: st7735s-ds-v1.3-mirror#serial-write-pulse-4line
+  locator: §8.4 Serial Interface Characteristics (4-line Serial), Table 7, p.36
+  quote: TSHW SCL “H” Pulse Width (Write) 15 ns
+  supports: SCL high pulse width (write) min 15 ns (TSLW low pulse width also 15 ns); ST7735 V2.1 gives 30 ns
+- id: st7735s-ds-v1.3-mirror#pin-im2-spi4w
+  locator: §6.2 Interface Logic Pin, p.23
+  quote: IM2=’0’, Serial Interface; SPI4W=’0’, 3-line SPI Enable. - SPI4W=’1’, 4-line SPI Enable.
+  supports: IM2 low selects the serial interface; SPI4W selects 3-line (0) or 4-line (1) SPI with D/CX
+- id: st7735s-ds-v1.3-mirror#pin-dcx-sda
+  locator: §6.2 Interface Logic Pin, p.24
+  quote: In 4-line SPI, this pin is used as D/CX (data/ command selection).
+  supports: In 4-line SPI the WRX/D/CX pin is the data/command select; D/CX(SCL) is the serial clock; D0 is the serial data pin
+doc_number: null
+id: st7735s-ds-v1.3-mirror
+kind: datasheet
+manual: false
+publisher: Sitronix Technology Corp. (document hosted by makerguides.com, not the publisher)
+revision: '1.3'
+revision_date: '2012-06-20'
+secondary: true
+sha256: 332320d26c30d3711f56ed92d488878889c2357ac9d51e49cc9d6d95ff8c46ac
+title: ST7735S 132RGB x 162dot 262K Color with Frame Memory Single-Chip TFT Controller/Driver Datasheet (Version 1.3, 2012/06; copy hosted by a third party)
+url: https://www.makerguides.com/wp-content/uploads/2025/01/ST7735S-Datasheet.pdf
+url_original: null

@@ -1,0 +1,195 @@
+# Evidence: NXP MFRC522 Product data sheet Rev. 3.9 (27 April 2016); see catalog/evidence/mfrc522-ds-v3.9.yaml.
+# Researcher draft reconciled with the blind audit (task 2a.4): all stored values verified by two keys, except spi.miso_tristate_when_deselected (missing).
+# See docs/validation/phase-2a/reconcile-ssd1306-st7735-mfrc522.md. The I2C address (0x28-0x2F with EA low) is derived arithmetic and is not stored.
+id: mfrc522
+input_abs_max:
+  evidence:
+  - mfrc522-ds-v3.9#abs-max-input
+  note: 'Datasheet: VI = VSS(PVSS) - 0.5 V to VDD(PVDD) + 0.5 V for all input pins except MFIN and RX. VDDIO means the PVDD pin supply. Verified: the blind auditor read the same value independently (Table 150, p74; supplies VDDA/VDDD/PVDD/TVDD/SVDD max +4.0 V). Not 5 V tolerant.'
+  reviewers:
+  - hardware-researcher
+  - hardware-fact-auditor
+  status: verified
+  unit: V
+  value: VDDIO+0.5
+interfaces:
+- kind: spi
+  limits:
+    max_hz:
+      evidence:
+      - mfrc522-ds-v3.9#host-interfaces-speed
+      - mfrc522-ds-v3.9#spi-speed-section
+      note: 'Datasheet states a data rate of 10 Mbit/s (SPI, one bit per SCK cycle); stored as an SCK frequency. SCK pulse width min 50 ns high and low (Table 154). Verified: the blind auditor read the same value independently: 10 Mbit/s (p10 section 8.1.2, p2). Unit conversion: 10 Mbit/s = 10 000 000 Hz because SPI moves one bit per SCK cycle; the datasheet prints a data rate, not an SCK frequency (the SCK pulse widths 50 ns high / 50 ns low in Table 154 allow a 10 MHz clock).'
+      reviewers:
+      - hardware-researcher
+      - hardware-fact-auditor
+      status: verified
+      unit: Hz
+      value: 10000000
+    miso_tristate_when_deselected:
+      evidence: []
+      note: 'Researcher and blind auditor both searched the 95-page datasheet for 3-state / high-impedance wording: only the I2C SDA output stage (p16: 3-state output stage for wired-AND) and the IRQ pin are stated as 3-state; MISO behaviour while NSS is high is not stated. Table 154 only gives th(SCKL-Q) for MISO. Not recorded; the engine must treat MISO sharing as unproven.'
+      status: missing
+      value: null
+  signals:
+  - dir: in
+    drive: push-pull
+    role: SCLK
+    shareable: true
+  - dir: in
+    drive: push-pull
+    role: MOSI
+    shareable: true
+  - dir: out
+    drive: push-pull
+    role: MISO
+    shareable: false
+  - dir: in
+    drive: push-pull
+    role: CS
+    shareable: false
+  - dir: out
+    drive: push-pull
+    role: IRQ
+    shareable: false
+  - dir: in
+    drive: push-pull
+    role: RST
+    shareable: false
+- kind: i2c
+  limits:
+    i2c_modes:
+    - sm
+    - fm
+    - hs
+    max_hz:
+      conditions:
+        mode: Fast mode
+      evidence:
+      - mfrc522-ds-v3.9#i2c-fscl
+      - mfrc522-ds-v3.9#i2c-speed-section
+      note: 'Table 155: fSCL 0-400 kHz in Fast mode; High-speed mode 3400 kHz. The address is set by pins ADR_0..ADR_5 and EA, not modelled here. Verified: the blind auditor read the same value independently: Table 155 (p79) fSCL 400 kHz Fast mode / 3400 kHz High-speed; section 8.1.3 (p16) states the same as 400 kBd / 3.4 Mbit/s. The auditor''s derived I2C address range 0x28-0x2F (EA low: upper 4 bits 0101b) is its own arithmetic, so it is not stored as a fact.'
+      reviewers:
+      - hardware-researcher
+      - hardware-fact-auditor
+      status: verified
+      unit: Hz
+      value: 400000
+  signals:
+  - dir: io
+    drive: open-drain
+    role: SDA
+    shareable: true
+  - dir: in
+    drive: open-drain
+    role: SCL
+    shareable: true
+  - dir: out
+    drive: push-pull
+    role: IRQ
+    shareable: false
+  - dir: in
+    drive: push-pull
+    role: RST
+    shareable: false
+- kind: uart
+  limits: {}
+  signals:
+  - dir: in
+    drive: push-pull
+    role: RX
+    shareable: false
+  - dir: out
+    drive: push-pull
+    role: TX
+    shareable: false
+  - dir: out
+    drive: push-pull
+    role: IRQ
+    shareable: false
+  - dir: in
+    drive: push-pull
+    role: RST
+    shareable: false
+logic_levels:
+  vih_min:
+    evidence:
+    - mfrc522-ds-v3.9#logic-levels
+    note: 'Datasheet: 0.7 x VDD(PVDD) for pins EA, I2C, NRSTPD, SDA and D1-D7 (SCK/MOSI/MISO/NSS share the D/SDA pads). Verified: the blind auditor read the same value independently (Table 153, p75-76).'
+    reviewers:
+    - hardware-researcher
+    - hardware-fact-auditor
+    status: verified
+    unit: V
+    value: VDDIO*0.7
+  vil_max:
+    evidence:
+    - mfrc522-ds-v3.9#logic-levels
+    note: 'Datasheet: 0.3 x VDD(PVDD). Verified: the blind auditor read the same value independently (Table 153, p75-76).'
+    reviewers:
+    - hardware-researcher
+    - hardware-fact-auditor
+    status: verified
+    unit: V
+    value: VDDIO*0.3
+part: MFRC522
+select_strap:
+  evidence:
+  - mfrc522-ds-v3.9#interface-table
+  - mfrc522-ds-v3.9#interface-detect
+  pins:
+  - I2C
+  - EA
+  table:
+  - selects: uart
+    value:
+      EA: 0
+      I2C: 0
+  - selects: spi
+    value:
+      EA: 1
+      I2C: 0
+  - selects: i2c
+    value:
+      I2C: 1
+supply_current:
+  conditions:
+    VDD: 3 V
+    mode: continuous wave
+    pin: TVDD
+  evidence:
+  - mfrc522-ds-v3.9#supply-current-tvdd
+  note: 'TVDD (transmitter) only. Separate datasheet currents: IDDD typ 6.5 / max 9 mA, IDDA typ 7 / max 10 mA (claim supply-current-digital-analog), SVDD max 4 mA, PVDD max 40 mA. No total is stated. Verified: the blind auditor read the same value independently (Table 153, p77: IDD(TVDD) typ 60 / max 100 mA, plus IDDD 6.5/9, IDDA 7/10, PVDD, SVDD, power-down 5 uA hard / 10 uA soft).'
+  reviewers:
+  - hardware-researcher
+  - hardware-fact-auditor
+  status: verified
+  unit: mA
+  value:
+    max: 100
+    typ: 60
+vdd_range:
+  evidence:
+  - mfrc522-ds-v3.9#op-supply-core
+  note: 'VDDA = VDDD = VDD(TVDD), recommended operating range; below 3 V the operating distance drops. Verified: the blind auditor read the same value independently (Table 151, p74: VDDA, VDDD, VDD(TVDD) each 2.5 / 3.3 / 3.6 V).'
+  reviewers:
+  - hardware-researcher
+  - hardware-fact-auditor
+  status: verified
+  unit: V
+  value:
+  - 2.5
+  - 3.6
+vendor: NXP
+vio_range:
+  evidence:
+  - mfrc522-ds-v3.9#op-supply-pvdd
+  note: 'VDD(PVDD) pin supply, must be the same or lower than VDDD. Verified: the blind auditor read the same value independently (Table 151, p74: PVDD 1.6 / 1.8 / 3.6 V; SVDD 1.6-3.6 V).'
+  reviewers:
+  - hardware-researcher
+  - hardware-fact-auditor
+  status: verified
+  unit: V
+  value:
+  - 1.6
+  - 3.6

@@ -1,0 +1,74 @@
+id: ra4m1-um-rev1.10
+title: "Renesas RA4M1 Group User’s Manual: Hardware"
+publisher: "Renesas Electronics Corporation"
+doc_number: "R01UH0887EJ0110"
+revision: "1.10"
+revision_date: "2023-09-29"
+url: https://www.renesas.com/en/document/mah/renesas-ra4m1-group-users-manual-hardware
+url_original: null
+accessed: "2026-10-22"
+sha256: "06281c67da6e7b79d5c2cfb5756d0fab578ba576115528043744efe2b8fcda77"
+kind: trm
+secondary: false
+manual: false
+claims:
+  - id: ra4m1-um-rev1.10#reset-gpio
+    locator: "§19.3.1 General I/O Ports, p. 363"
+    quote: "All pins except P108, P109, P110, P300, P914, P915 operate as general I/O ports after reset."
+    supports: "Reset function of ordinary pads is general I/O; P108/P109/P110/P300 (debug) and P914/P915 (USB) start as peripheral pins"
+  - id: ra4m1-um-rev1.10#pfs-initial
+    locator: "§19.2.5 PmnPFS, note 2, p. 362"
+    quote: "P108 is 0001 0010h, P109 is 0001 0000h, P110 is 0001 0010h, P201 is 0000 0010h, P300 is 0001 0010h"
+    supports: "PmnPFS initial values (PMR b16, PCR b4); all other pads 0000 0000h = input, no pull-up, low drive"
+  - id: ra4m1-um-rev1.10#pfs-initial-rule
+    locator: "§19.2.5 PmnPFS, note 2, p. 362"
+    quote: "The initial value of P108, P109, P110, P201, P300, P914, and P915 is not 0000 0000h."
+    supports: "Every other pad has PmnPFS = 0 after reset (PDR 0, PCR 0, PMR 0, DSCR 0)"
+  - id: ra4m1-um-rev1.10#pfs-pcr
+    locator: "§19.2.5 PmnPFS, p. 361"
+    quote: "b4 PCR Pull-up Control 0: Disable an input pull-up 1: Enable an input pull-up"
+    supports: "PCR bit 4 enables the input pull-up"
+  - id: ra4m1-um-rev1.10#pfs-pdr
+    locator: "§19.2.5 PmnPFS, p. 361"
+    quote: "b2 PDR Port Direction 0: Input (functions as an input pin) 1: Output (functions as an output pin)."
+    supports: "PDR bit 2: 0 = input"
+  - id: ra4m1-um-rev1.10#pfs-pmr
+    locator: "§19.2.5 PmnPFS, p. 362"
+    quote: "b16 PMR Port Mode Control 0: Used as a general I/O pin 1: Used as an I/O port for peripheral functions."
+    supports: "PMR bit 16: 1 = peripheral function selected"
+  - id: ra4m1-um-rev1.10#pfs-dscr
+    locator: "§19.2.5 PmnPFS, p. 361"
+    quote: "Other than P408> b10 0: Low drive 1: Middle drive"
+    supports: "DSCR bit 10: 0 = low drive (reset value), 1 = middle drive"
+  - id: ra4m1-um-rev1.10#md-single-chip
+    locator: "§3.2.1 Single-Chip Mode, p. 91"
+    quote: "When a reset is released while the MD pin is high, the MCU starts in single-chip mode"
+    supports: "MD (P201) high at reset release = normal single-chip start"
+  - id: ra4m1-um-rev1.10#md-boot-low
+    locator: "§3.2.2 SCI Boot Mode, p. 91"
+    quote: "The MCU starts up in SCI boot mode if the MD pin is held low on release from the reset state."
+    supports: "MD (P201) low at reset release = SCI/USB boot mode"
+  - id: ra4m1-um-rev1.10#md-table
+    locator: "§3.3.1 Table 3.1, p. 91"
+    quote: "Mode-setting pin Operating mode On-chip flash memory MD 1 Single-chip mode Enable 0 SCI/USB boot mode Enable"
+    supports: "MD pin selects single-chip (1) or SCI/USB boot (0); MD is the only mode-setting pin"
+  - id: ra4m1-um-rev1.10#input-only-table
+    locator: "§19.1 Table 19.2, p. 356"
+    quote: "P200, P214, P215"
+    supports: "P200, P214, P215 row shows no pull-up, open-drain, drive switching or 5 V tolerance (input-only ports)"
+  - id: ra4m1-um-rev1.10#pfs-reset-pullup-disabled
+    locator: "§19.2.5 PmnPFS, PCR bit description, p. 362"
+    quote: "The pull-up resistor is also disabled in the reset state."
+    supports: "Ordinary pads: no pull-up at reset. Also read as pull-up disabled while reset is asserted for the pads whose PCR initial value is 1"
+  - id: ra4m1-um-rev1.10#pfs-pullup-initial-note
+    locator: "§19.4 Table 19.3 note 2, p. 367"
+    quote: "these pins are input pull-up enabled from initial value (PmnPFS.PCR = 1)."
+    supports: "P108, P110, P300 have the input pull-up enabled from their initial register value"
+  - id: ra4m1-um-rev1.10#p109-output-initial
+    locator: "§19.4 Table 19.3 note 3, p. 367"
+    quote: "P109 is recommended to be set as an output (PCNTR1.PDRn = 1) as this pin is output from the initial value."
+    supports: "P109 is an output (TDO/SWO) from the initial value; the level it drives is not stated"
+  - id: ra4m1-um-rev1.10#p914-p915-initial
+    locator: "§19.2.5 PmnPFS note 2, p. 362"
+    quote: "P914 is 0001 0000h, and P915 is 0001 0000h."
+    supports: "P914 and P915 reset with PMR = 1 (USB function selected), not as general I/O"

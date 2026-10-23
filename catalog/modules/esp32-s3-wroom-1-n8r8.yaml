@@ -1,0 +1,58 @@
+# ESP32-S3-WROOM-1-N8R8 module (8 MB Quad SPI flash + 8 MB Octal SPI in-package PSRAM, chip ESP32-S3R8) - facts reconciled with the blind audit (task 2a.4: verified, two keys).
+# Source: ESP32-S3-WROOM-1 & ESP32-S3-WROOM-1U Datasheet v1.8 (+ ESP32-S3 Series Datasheet v2.2 Tables 1-1 and 2-14, DevKitC-1 v1.1 user guide).
+# bonded_pads = the same 36 GPIOs as the N8 (module Table 3-1): IO0-IO21, IO35-IO42, TXD0 (GPIO43), RXD0 (GPIO44), IO45-IO48; GPIO35/36/37 stay in the list because they have module pins (28-30),
+#   but they are consumed by the Octal PSRAM and listed in `consumed` (module Table 3-1 footnote b: 'not available for other uses').
+# GPIO33 and GPIO34 (octal data lines DQ4/DQ5 in chip Table 2-14) and GPIO26 (SPICS1, PSRAM CE#) have NO module pin: the module datasheet does not mention them and they are not listed here.
+# consumed: GPIO27-GPIO32 are wired inside the module to the QSPI flash (block diagram Figure 2-1, schematic Figure 8-1); the PSRAM shares that bus (block diagram 'PSRAM (opt.)').
+# flash_voltage is a verified inference (both keys, same value): the datasheet states VDD_SPI = 1.8 V only for the N16R16VA modules, it never prints '3.3 V' for the N8R8 (see the note).
+bonded_pads:
+  - "GPIO0"
+  - "GPIO1"
+  - "GPIO2"
+  - "GPIO3"
+  - "GPIO4"
+  - "GPIO5"
+  - "GPIO6"
+  - "GPIO7"
+  - "GPIO8"
+  - "GPIO9"
+  - "GPIO10"
+  - "GPIO11"
+  - "GPIO12"
+  - "GPIO13"
+  - "GPIO14"
+  - "GPIO15"
+  - "GPIO16"
+  - "GPIO17"
+  - "GPIO18"
+  - "GPIO19"
+  - "GPIO20"
+  - "GPIO21"
+  - "GPIO35"
+  - "GPIO36"
+  - "GPIO37"
+  - "GPIO38"
+  - "GPIO39"
+  - "GPIO40"
+  - "GPIO41"
+  - "GPIO42"
+  - "GPIO43"
+  - "GPIO44"
+  - "GPIO45"
+  - "GPIO46"
+  - "GPIO47"
+  - "GPIO48"
+chip: "esp32-s3"
+consumed:
+  GPIO27: {"evidence": ["esp32-s3-wroom-1-ds-v1.8#block-diagram-flash-bus", "esp32-s3-wroom-1-ds-v1.8#sch-flash-pins", "esp32-s3-ds-v2.2#pin-map-spihd"], "note": "GPIO27 = SPIHD: the module's QSPI flash is wired to SPICS0, SPICLK, SPID, SPIQ, SPIHD, SPIWP (module block diagram and schematic); no module pin is led out for GPIO26-GPIO34 (module Table 3-1 lists no pins for them). Second key (blind audit, same value; it also notes these lines are shared with the Octal PSRAM, which does not change the unusable verdict): read the flash signal names from Figure 2-1 and the GPIO numbers from the chip datasheet pin mapping; the module datasheet never prints GPIO27-GPIO32 (inference, figure-based, hence transcribed).", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "transcribed": true, "value": "flash"}
+  GPIO28: {"evidence": ["esp32-s3-wroom-1-ds-v1.8#block-diagram-flash-bus", "esp32-s3-wroom-1-ds-v1.8#sch-flash-pins", "esp32-s3-ds-v2.2#pin-map-spiwp"], "note": "GPIO28 = SPIWP: the module's QSPI flash is wired to SPICS0, SPICLK, SPID, SPIQ, SPIHD, SPIWP (module block diagram and schematic); no module pin is led out for GPIO26-GPIO34 (module Table 3-1 lists no pins for them). Second key (blind audit, same value; it also notes these lines are shared with the Octal PSRAM, which does not change the unusable verdict): read the flash signal names from Figure 2-1 and the GPIO numbers from the chip datasheet pin mapping; the module datasheet never prints GPIO27-GPIO32 (inference, figure-based, hence transcribed).", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "transcribed": true, "value": "flash"}
+  GPIO29: {"evidence": ["esp32-s3-wroom-1-ds-v1.8#block-diagram-flash-bus", "esp32-s3-wroom-1-ds-v1.8#sch-flash-pins", "esp32-s3-ds-v2.2#pin-map-spics0"], "note": "GPIO29 = SPICS0: the module's QSPI flash is wired to SPICS0, SPICLK, SPID, SPIQ, SPIHD, SPIWP (module block diagram and schematic); no module pin is led out for GPIO26-GPIO34 (module Table 3-1 lists no pins for them). Second key (blind audit, same value; it also notes these lines are shared with the Octal PSRAM, which does not change the unusable verdict): read the flash signal names from Figure 2-1 and the GPIO numbers from the chip datasheet pin mapping; the module datasheet never prints GPIO27-GPIO32 (inference, figure-based, hence transcribed).", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "transcribed": true, "value": "flash"}
+  GPIO30: {"evidence": ["esp32-s3-wroom-1-ds-v1.8#block-diagram-flash-bus", "esp32-s3-wroom-1-ds-v1.8#sch-flash-pins", "esp32-s3-ds-v2.2#pin-map-spiclk"], "note": "GPIO30 = SPICLK: the module's QSPI flash is wired to SPICS0, SPICLK, SPID, SPIQ, SPIHD, SPIWP (module block diagram and schematic); no module pin is led out for GPIO26-GPIO34 (module Table 3-1 lists no pins for them). Second key (blind audit, same value; it also notes these lines are shared with the Octal PSRAM, which does not change the unusable verdict): read the flash signal names from Figure 2-1 and the GPIO numbers from the chip datasheet pin mapping; the module datasheet never prints GPIO27-GPIO32 (inference, figure-based, hence transcribed).", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "transcribed": true, "value": "flash"}
+  GPIO31: {"evidence": ["esp32-s3-wroom-1-ds-v1.8#block-diagram-flash-bus", "esp32-s3-wroom-1-ds-v1.8#sch-flash-pins", "esp32-s3-ds-v2.2#pin-map-spiq"], "note": "GPIO31 = SPIQ: the module's QSPI flash is wired to SPICS0, SPICLK, SPID, SPIQ, SPIHD, SPIWP (module block diagram and schematic); no module pin is led out for GPIO26-GPIO34 (module Table 3-1 lists no pins for them). Second key (blind audit, same value; it also notes these lines are shared with the Octal PSRAM, which does not change the unusable verdict): read the flash signal names from Figure 2-1 and the GPIO numbers from the chip datasheet pin mapping; the module datasheet never prints GPIO27-GPIO32 (inference, figure-based, hence transcribed).", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "transcribed": true, "value": "flash"}
+  GPIO32: {"evidence": ["esp32-s3-wroom-1-ds-v1.8#block-diagram-flash-bus", "esp32-s3-wroom-1-ds-v1.8#sch-flash-pins", "esp32-s3-ds-v2.2#pin-map-spid"], "note": "GPIO32 = SPID: the module's QSPI flash is wired to SPICS0, SPICLK, SPID, SPIQ, SPIHD, SPIWP (module block diagram and schematic); no module pin is led out for GPIO26-GPIO34 (module Table 3-1 lists no pins for them). Second key (blind audit, same value; it also notes these lines are shared with the Octal PSRAM, which does not change the unusable verdict): read the flash signal names from Figure 2-1 and the GPIO numbers from the chip datasheet pin mapping; the module datasheet never prints GPIO27-GPIO32 (inference, figure-based, hence transcribed).", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "transcribed": true, "value": "flash"}
+  GPIO35: {"evidence": ["esp32-s3-wroom-1-ds-v1.8#pins-io35-37-psram", "esp32-s3-ds-v2.2#pin-map-gpio35", "esp32-s3-devkitc-1-ug-v1.1#octal-note"], "note": "Module datasheet Table 3-1 footnote b: for modules with Octal SPI PSRAM (ESP32-S3R8/R16V) IO35, IO36 and IO37 are connected to the Octal SPI PSRAM and not available for other uses. Chip datasheet Table 2-14 (Octal SPI/OPI): GPIO35 carries the PSRAM/flash data line shown in that row. The DevKitC-1 guide repeats this for boards with Octal modules. Second key (blind audit) independently found footnote b verbatim: IO35, IO36 and IO37 are connected to the Octal SPI PSRAM and not available for other uses (module pins 28-30).", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "psram"}
+  GPIO36: {"evidence": ["esp32-s3-wroom-1-ds-v1.8#pins-io35-37-psram", "esp32-s3-ds-v2.2#pin-map-gpio36", "esp32-s3-devkitc-1-ug-v1.1#octal-note"], "note": "Module datasheet Table 3-1 footnote b: for modules with Octal SPI PSRAM (ESP32-S3R8/R16V) IO35, IO36 and IO37 are connected to the Octal SPI PSRAM and not available for other uses. Chip datasheet Table 2-14 (Octal SPI/OPI): GPIO36 carries the PSRAM/flash data line shown in that row. The DevKitC-1 guide repeats this for boards with Octal modules. Second key (blind audit) independently found footnote b verbatim: IO35, IO36 and IO37 are connected to the Octal SPI PSRAM and not available for other uses (module pins 28-30).", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "psram"}
+  GPIO37: {"evidence": ["esp32-s3-wroom-1-ds-v1.8#pins-io35-37-psram", "esp32-s3-ds-v2.2#pin-map-gpio37", "esp32-s3-devkitc-1-ug-v1.1#octal-note"], "note": "Module datasheet Table 3-1 footnote b: for modules with Octal SPI PSRAM (ESP32-S3R8/R16V) IO35, IO36 and IO37 are connected to the Octal SPI PSRAM and not available for other uses. Chip datasheet Table 2-14 (Octal SPI/OPI): GPIO37 carries the PSRAM/flash data line shown in that row. The DevKitC-1 guide repeats this for boards with Octal modules. Second key (blind audit) independently found footnote b verbatim: IO35, IO36 and IO37 are connected to the Octal SPI PSRAM and not available for other uses (module pins 28-30).", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "psram"}
+flash_voltage: {"evidence": ["esp32-s3-wroom-1-ds-v1.8#vdd-spi-1v8-only-n16r16va", "esp32-s3-wroom-1-ds-v1.8#flash-vcc-3v3", "esp32-s3-ds-v2.2#table-1-1-s3r8-3v3", "esp32-s3-wroom-1-ds-v1.8#sch-modules-with-psram-vdd-spi", "esp32-s3-devkitc-1-ug-v1.0#ordering-n8r8-spi-voltage"], "note": "Not stated for the N8R8 in so many words: module datasheet Table 1-1 footnote 7 says the VDD_SPI voltage is 1.8 V for the N16R16VA modules only; chip Table 1-1 lists the ESP32-S3R8 (the SoC of the N8R8) with a VDD_SPI voltage of 3.3 V; Table 6-8 lists flash supply options of 1.8 V and 3.3 V. Module schematic note (section 8): for modules with PSRAM the VDD_SPI voltage is fixed to 3.3 V or 1.8 V via eFuse and is not affected by the GPIO45 level. INFERENCE, not a stated value: both keys independently reached 3.3 V (module datasheet section 8 note and footnote 7 by exclusion; chip datasheet ESP32-S3R8 row 3.3 V). Second key additionally found the v1.0 DevKitC-1 guide ordering table 'SPI Voltage 3.3 V' for ESP32-S3-WROOM-1-N8R8 (added as a claim). The module datasheet never prints 3.3 V for the N8R8.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "unit": "V", "value": 3.3}
+id: "esp32-s3-wroom-1-n8r8"
+psram: {"conditions": {"part_number": "ESP32-S3-WROOM-1-N8R8"}, "evidence": ["esp32-s3-wroom-1-ds-v1.8#series-n8r8", "esp32-s3-wroom-1-ds-v1.8#psram-in-package", "esp32-s3-devkitc-1-ug-v1.1#ordering-n8r8"], "note": "In-package PSRAM of the ESP32-S3R8 chip (8 MB, Octal SPI); the flash is a separate 8 MB Quad SPI part. Second key (blind audit) found it in Table 1-1 (8 MB Octal SPI) and footnote 4 (PSRAM integrated in the chip's package).", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "8 MB Octal SPI"}

@@ -1,0 +1,34 @@
+accessed: '2026-10-23'
+claims:
+- id: omron-b3f-ds-a070-e1-08#rating
+  locator: Ratings/Characteristics, PDF p.3
+  quote: Rating (resistive load) 1 to 50 mA, 3 to 24 VDC
+  supports: 'B3F contact rating: 1-50 mA at 3-24 VDC resistive load (B3F-G gold-plated: 100 uA to 50 mA)'
+- id: omron-b3f-ds-a070-e1-08#min-load
+  locator: Ratings/Characteristics, PDF p.3
+  quote: Minimum applicable load (reference value) 10 μA at 1 VDC (resistive load)
+  supports: Minimum applicable load 10 uA at 1 VDC (reference value)
+- id: omron-b3f-ds-a070-e1-08#contact-form
+  locator: Ratings/Characteristics, PDF p.3
+  quote: Contact form SPST-NO
+  supports: Contact form single-pole single-throw normally open
+- id: omron-b3f-ds-a070-e1-08#bounce
+  locator: Ratings/Characteristics, PDF p.3
+  quote: Bounce time 5 ms max.
+  supports: Contact bounce time 5 ms maximum
+- id: omron-b3f-ds-a070-e1-08#contact-res
+  locator: Ratings/Characteristics, PDF p.3
+  quote: Contact resistance (initial value) 100 mΩ max.
+  supports: Initial contact resistance 100 mohm max
+doc_number: A070-E1-08
+id: omron-b3f-ds-a070-e1-08
+kind: datasheet
+manual: false
+publisher: Omron Corporation
+revision: Cat. No. A070-E1-08
+revision_date: null
+secondary: false
+sha256: be9cf69e5f43fb7689448a2097c19858e5643c0e2e49cd77d018881543e27a1f
+title: B3F Tactile Switch (Omron datasheet)
+url: https://omronfs.omron.com/en_US/ecb/products/pdf/en-b3f.pdf
+url_original: https://omronfs.omron.com/en_US/ecb/products/pdf/en-b3f.pdf

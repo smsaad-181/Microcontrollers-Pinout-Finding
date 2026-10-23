@@ -1,0 +1,592 @@
+header:
+  entities: [ssd1306, st7735s, mfrc522, ssd1306-128x64-i2c-4pin, st7735s-1.8-spi-tft, rfid-rc522-blue]
+  auditor: hardware-fact-auditor
+  role: second key (blind)
+  date: 2026-10-23
+  contaminated: []
+  documents:
+    - id: ssd1306-rev1.1
+      title: SSD1306 128 x 64 Dot Matrix OLED/PLED Segment/Common Driver with Controller, Rev 1.1, Apr 2008, Advance Information (Solomon Systech)
+      url: https://cdn-shop.adafruit.com/datasheets/SSD1306.pdf
+      sha256: d55f875357de96d8c0e92153a389acc57e8bab4db7a0687f2e0bd3362f0036f6
+      hash_verified: true
+      pdf_pages: 65
+      note: printed page number (P n/59) equals PDF page number in this file. Document says "Advance Information" (pre-release). Search results report a Rev 1.5 (Aug 2010, 64 pages) mirrored on radiolocman.com; it could NOT be downloaded/opened here (HTML viewer only), so facts below are Rev 1.1 only and may differ in Rev 1.5.
+    - id: mfrc522-rev3.9
+      title: MFRC522 Standard performance MIFARE and NTAG frontend, Rev. 3.9, 27 April 2016 (NXP)
+      url: https://www.nxp.com/docs/en/data-sheet/MFRC522.pdf
+      sha256: 5e2fdff12348a21b0203fed3fc49a252d589c39511324ad29396e1975fe01451
+      hash_verified: true
+      pdf_pages: 95
+      note: printed page (n of 95) equals PDF page.
+    - id: st7735-v2.1
+      title: ST7735 262K Color Single-Chip TFT Controller/Driver V2.1 2010-02-01 (Sitronix, hosted by displayfuture.com). Title page names ST7735 (NOT ST7735S).
+      url: https://www.displayfuture.com/Display/datasheet/controller/ST7735.pdf
+      sha256: ff5c5b5189dbcd413f7b2d6313fc0426e8225bb503a96af4a528e5ca2027db79
+      hash_verified: true
+      pdf_pages: 167
+      related_source: true
+    - id: st7735-v1.9-file-named-st7735s
+      title: File named ST7735S.pdf but title page reads "ST7735 ... V1.9 2010-01-20" (Sitronix). Content is the ST7735, NOT the ST7735S.
+      url: https://www.displayfuture.com/Display/datasheet/controller/ST7735S.pdf
+      sha256: f20019f6e04606f2285906625bdb88d988a06137d04adccf2378514841cfefa6
+      hash_verified: true
+      pdf_pages: 167
+      related_source: true
+      note: Only spot-checked (abs max, DC operating ranges, serial write cycle); identical to V2.1 for those items.
+    - id: st7735s-v1.3-third-party-mirror
+      title: ST7735S 132RGB x 162dot 262K Color with Frame Memory Single-Chip TFT Controller/Driver Datasheet, Version 1.3, 2012/06 (Sitronix)
+      url: https://www.makerguides.com/wp-content/uploads/2025/01/ST7735S-Datasheet.pdf
+      sha256: 332320d26c30d3711f56ed92d488878889c2357ac9d51e49cc9d6d95ff8c46ac
+      hash_verified: n/a (no reference hash was supplied; hash is of the downloaded copy)
+      pdf_pages: 201
+      note: Genuine ST7735S datasheet text (title page names ST7735S). It is a THIRD-PARTY MIRROR (makerguides.com), openly downloadable with plain HTTP GET, found by web search - no block was circumvented. The orchestrator must decide whether it counts as the official/manual-download document (it is not the Sitronix-hosted file and its provenance/authenticity is not verified). Treated here as the ST7735S document but flagged secondary=true; related_source=false for its values. Printed page (Page n of 201) equals PDF page.
+  unreachable_sources:
+    - Sitronix-hosted ST7735S datasheet (sitronix.com.tw): not reached by search results and not attempted via workaround; replaced by the third-party mirror above. Latest ST7735S version seen in search results is V1.3 (also V1.1 on 21ic.com); Crystalfontz lists v1.1 and v1.3.
+    - SSD1306 Rev 1.5 (radiolocman.com di=168297): page served as HTML viewer, PDF not downloadable here.
+    - Vendor documentation naming the generic boards ssd1306-128x64-i2c-4pin, st7735s-1.8-spi-tft, rfid-rc522-blue: none found (retailer listings, blog posts only). Waveshare 1.8inch LCD Module page exists but is a different named product, not the generic board; not opened.
+  newer_or_more_authoritative: ST7735S V1.3 (2012) is newer and ST7735S-specific compared with the ST7735 V2.1/V1.9 (2010). SSD1306 Rev 1.5 reportedly exists (not opened).
+  document_disagreements:
+    - id: D1
+      what: VDD (analog supply) absolute maximum and operating range, ST7735S V1.3 vs ST7735 V2.1/V1.9
+      a: "ST7735S V1.3 p28 abs max VDD -0.3 ~ +4.8 V; p29 operating VDD 2.5/2.75/4.8 V (min/typ/max)"
+      b: "ST7735 V2.1 p19 abs max VDD -0.3 ~ +4.6 V; p19 operating VDD 2.6/2.75/3.3 V; VDDI max 3.3 V vs ST7735S 3.7 V"
+    - id: D2
+      what: Serial interface selection inside ST7735S V1.3
+      a: "p25/p24 pin description: SPI4W pin selects 3-line (0) / 4-line (1); IM2 selects serial (0)"
+      b: "p44 Table 12 names the 4-line select '4WSPI'; p37 Table 8 selects 3-line serial by IM2=0 alone; p199-200 headings write 'IM2,IM1,IM0=000, SPI4W=0/1'"
+      note: naming inconsistency (SPI4W vs 4WSPI), same function.
+    - id: D3
+      what: SSD1306 internal - VDD limits
+      a: "p47 Table 11-1 abs max VDD -0.3 to +4 V"
+      b: "p48 Table 12-1 DC characteristics VDD 1.65 to 3.3 V (operating); not a conflict, but Vin abs max is VDD+0.3 so inputs are NOT 5 V tolerant"
+    - id: D4
+      what: ST7735S V1.3 vs ST7735 V2.1 write SCL H/L pulse width (15 ns vs 30 ns) and normal-mode IDD (typ 0.9/max 2 mA vs 0.5/0.7 mA)
+      a: "ST7735S V1.3 p36 TSHW/TSLW 15 ns; p30 IDD 0.9 typ / 2 max mA"
+      b: "ST7735 V2.1 p25 TSHW/TSLW 30 ns; p21 IDD 0.5 typ / 0.7 max mA"
+  checks: quotes verified against extracted PDF text with a py script (see end of run); YAML parse checked.
+
+facts:
+# ---------------- SSD1306 ----------------
+  - entity: ssd1306
+    level: ic
+    path: Interface.interfaces
+    value: [I2C, SPI-4wire, SPI-3wire, parallel-8080-8bit, parallel-6800-8bit]
+    unit: null
+    conditions: selected by BS[2:0]
+    doc: ssd1306-rev1.1
+    locator: "PDF 14 / printed 14, Table 7-1; p15 Table 8-1"
+    quote: "I2C Interface 6800-parallel interface (8 bit) 8080-parallel interface (8 bit) 4-wire Serial interface 3-wire Serial interface"
+    transcribed: false
+    related_source: false
+    confidence: found
+    notes: "No UART. Table 8-1 p15 gives roles: I2C = D0 SCL, D1 SDAIN, D2 SDAOUT (D1+D2 tied = SDA), D/C# = SA0, RES#; SPI = D0 SCLK, D1 SDIN, CS#, D/C# (4-wire only; tie LOW in 3-wire), RES#; D2 NC."
+  - entity: ssd1306
+    level: ic
+    path: Interface.strap.BS[2:0]
+    value: {I2C: "BS2=0 BS1=1 BS0=0", 8080: "BS2=1 BS1=1 BS0=0", 6800: "BS2=1 BS1=0 BS0=0", 4-wire SPI: "BS2=0 BS1=0 BS0=0", 3-wire SPI: "BS2=0 BS1=0 BS0=1"}
+    unit: null
+    conditions: "0 = connected to VSS, 1 = connected to VDD"
+    doc: ssd1306-rev1.1
+    locator: "PDF 14 / printed 14, Table 7-1 (columns I2C, 6800, 8080, 4-wire, 3-wire; rows BS0 0 0 0 0 1; BS1 1 0 1 0 0; BS2 0 1 1 0 0)"
+    quote: "0 is connected to VSS"
+    transcribed: true
+    related_source: false
+    confidence: found
+    notes: "Table rows read from extracted text cell order and cross-checked against block of column headings; transcribed from table."
+  - entity: ssd1306
+    level: ic
+    path: Interface.i2c.address_7bit
+    value: ["0x3C", "0x3D"]
+    unit: null
+    conditions: "SA0 = D/C# pin: LOW -> 0111100 (0x3C), HIGH -> 0111101 (0x3D); 8-bit write byte format 0 1 1 1 1 0 SA0 R/W#"
+    doc: ssd1306-rev1.1
+    locator: "PDF 19 / printed 19, section 8.1.5 a); p20 8.1.5.2 step 2"
+    quote: "selected as the slave address of SSD1306. D/C# pin acts as SA0 for slave address selection."
+    transcribed: false
+    related_source: false
+    confidence: found
+    notes: "Quote in the PDF has curly quotation marks around the binary numbers; checker normalizes them. D/C# acts as SA0."
+  - entity: ssd1306
+    level: ic
+    path: IC.vdd_range
+    value: {min: 1.65, max: 3.3}
+    unit: V
+    conditions: "VDD = logic supply (core logic and I/O), TA = 25C; Table 12-1 'VDD Logic Supply Voltage'. Same pin is the I/O supply (no separate VDDIO)."
+    doc: ssd1306-rev1.1
+    locator: "PDF 48 / printed 48, Table 12-1"
+    quote: "VDD Logic Supply Voltage - 1.65 - 3.3 V"
+    transcribed: false
+    related_source: false
+    confidence: found
+    notes: "vio_range = same pin as vdd (VDD). Panel supply VCC (separate): operating 7 min / 15 max V (Table 12-1 'VCC Operating Voltage - 7 - 15 V'); abs max 0 to 16 V."
+  - entity: ssd1306
+    level: ic
+    path: IC.vio_range
+    value: {min: 1.65, max: 3.3}
+    unit: V
+    conditions: "VDD is the only logic/IO supply"
+    doc: ssd1306-rev1.1
+    locator: "PDF 48 / printed 48, Table 12-1 and condition block 'VDD = 1.65 to 3.3V'"
+    quote: "VDD = 1.65 to 3.3V"
+    transcribed: false
+    related_source: false
+    confidence: found
+    notes: "Panel VCC 7-15 V is separate."
+  - entity: ssd1306
+    level: ic
+    path: IC.input_abs_max
+    value: {vin_min: "VSS-0.3", vin_max: "VDD+0.3", vdd_max: 4, vcc_max: 16}
+    unit: V
+    conditions: "Voltage referenced to VSS"
+    doc: ssd1306-rev1.1
+    locator: "PDF 47 / printed 47, Table 11-1"
+    quote: "Vin Input voltage VSS-0.3 to VDD+0.3 V"
+    transcribed: false
+    related_source: false
+    confidence: found
+    notes: "VDD row: '-0.3 to +4 V'; VCC 0 to 16 V. Input is not 5 V tolerant."
+  - entity: ssd1306
+    level: ic
+    path: IC.logic_levels
+    value: {VIH_min: "0.8 x VDD", VIL_max: "0.2 x VDD", VOH_min: "0.9 x VDD", VOL_max: "0.1 x VDD"}
+    unit: V
+    conditions: "VDD = 1.65 to 3.3 V, TA = 25C; VOH/VOL at IOUT = 100uA, 3.3MHz"
+    doc: ssd1306-rev1.1
+    locator: "PDF 48 / printed 48, Table 12-1"
+    quote: "VIH High Logic Input Level - 0.8 x VDD"
+    transcribed: false
+    related_source: false
+    confidence: found
+    notes: "Table columns: VOH min 0.9 x VDD; VOL max 0.1 x VDD; VIL max 0.2 x VDD."
+  - entity: ssd1306
+    level: ic
+    path: Interface.spi.max_clock
+    value: {tcycle_min: 100}
+    unit: ns
+    conditions: "Clock Cycle Time min, VDD-VSS = 1.65V to 3.3V, TA = 25C, 4-wire (Table 13-4, p52) and 3-wire (Table 13-5, p53) both 100 ns"
+    doc: ssd1306-rev1.1
+    locator: "PDF 52 / printed 52, Table 13-4; PDF 53 Table 13-5"
+    quote: "tcycle Clock Cycle Time 100 - - ns"
+    transcribed: false
+    related_source: false
+    confidence: found
+    notes: "Datasheet gives minimum cycle time only (not converted)."
+  - entity: ssd1306
+    level: ic
+    path: Interface.i2c.max_clock
+    value: {tcycle_min: 2.5}
+    unit: us
+    conditions: "Clock Cycle Time min, VDD 1.65V to 3.3V, TA=25C; tR/tF max 300 ns; tIDLE min 1.3 us"
+    doc: ssd1306-rev1.1
+    locator: "PDF 54 / printed 54, Table 13-6"
+    quote: "tcycle Clock Cycle Time 2.5 - - us"
+    transcribed: false
+    related_source: false
+    confidence: found
+    notes: "Datasheet gives minimum cycle time only (not converted). No Fast/Standard mode name stated."
+  - entity: ssd1306
+    level: ic
+    path: IC.supply_current
+    value: {ICC_typ: 430, ICC_max: 780, IDD_typ: 50, IDD_max: 150, sleep_ICC_max: 10, sleep_IDD_max: 10}
+    unit: uA
+    conditions: "VDD = 2.8V, VCC = 12V, IREF = 12.5uA, no loading, Display ON, All ON (ICC = VCC supply, IDD = VDD supply); IDD with Contrast = FFh; sleep: Display OFF, no panel attached, VDD 1.65-3.3V VCC 7-15V"
+    doc: ssd1306-rev1.1
+    locator: "PDF 48 / printed 48, Table 12-1"
+    quote: "VCC Supply Current VDD = 2.8V, VCC = 12V, IREF = 12.5uA No loading, Display ON, All ON - 430 780 uA"
+    transcribed: false
+    related_source: false
+    confidence: found
+    notes: "Panel load current (ISEG) is separate; ISEG 25 uA at contrast 3Fh typ listed. IDD row typ/max (50/150) read from cell order; 'Contrast=FFh 100, AFh 69' appear as separate typ values in the same row group (conflicting-looking cells; extraction order ambiguous) - treat IDD 50/150 as medium reliability."
+  - entity: ssd1306
+    level: ic
+    path: IC.reset
+    value: {pin: "RES#", active: low, min_low_pulse_us: 3}
+    unit: us
+    conditions: "RES# pulled LOW executes initialization; keep HIGH in normal operation; AC table VDD 1.65-3.3V"
+    doc: ssd1306-rev1.1
+    locator: "PDF 13 / printed 13 (pin description RES#); PDF 49 Table 13-1"
+    quote: "When the pin is pulled LOW, initialization of the chip is executed."
+    transcribed: false
+    related_source: false
+    confidence: found
+    notes: "Reset low pulse width Table 13-1 p49: min 3 us."
+  - entity: ssd1306
+    level: ic
+    path: Interface.data_out_when_deselected
+    value: null
+    unit: null
+    conditions: ""
+    doc: ssd1306-rev1.1
+    locator: "searched whole text for 'high impedance', 'tri-state': only COM pins (p14) mentioned"
+    quote: "figure"
+    transcribed: false
+    related_source: false
+    confidence: could-not-verify
+    notes: "No statement about SDA/D[7:0] output state when deselected found. In I2C mode SDAOUT may be left disconnected and then the ACK is ignored (p19: 'When SDAOUT pin is disconnected, the acknowledgement signal will be ignored')."
+  - entity: ssd1306
+    level: ic
+    path: Interface.i2c.pullups_required
+    value: external pull-ups on SDA and SCL are required (chip has none stated)
+    unit: null
+    conditions: ""
+    doc: ssd1306-rev1.1
+    locator: "PDF 19 / printed 19, section 8.1.5"
+    quote: "Both the data and clock signals must be connected to pull-up resistors."
+    transcribed: false
+    related_source: false
+    confidence: found
+    notes: ""
+  - entity: ssd1306-128x64-i2c-4pin
+    level: breakout
+    path: Breakout.*
+    value: null
+    unit: null
+    conditions: "pin labels, regulator, level_shifter, pullups, hardwired straps, address jumper, interfaces_exposed, board supply_current"
+    doc: none
+    locator: "no vendor-published document naming this board found (only retailer/blog pages)"
+    quote: "figure"
+    transcribed: false
+    related_source: false
+    confidence: could-not-verify
+    notes: "Search results (circuit.rocks, shillehtek, etc.) are retailer/blog pages, not evidence."
+# ---------------- ST7735S ----------------
+  - entity: st7735s
+    level: ic
+    path: Interface.interfaces
+    value: [SPI-3line-9bit, SPI-4line-8bit, parallel-8080-8/9/16/18bit, parallel-6800-8/9/16/18bit]
+    unit: null
+    conditions: ""
+    doc: st7735s-v1.3-third-party-mirror
+    locator: "PDF 37 / printed 37, Table 8 and Table 9; PDF 44 section 9.4"
+    quote: "The serial interface is either 3-lines/9-bits or 4-lines/8-bts bi-directional interface for communication between the micro controller and the LCD driver."
+    transcribed: false
+    related_source: false
+    confidence: found
+    notes: "No I2C, no UART. 4-line SPI signals: CSX, D/CX, SCL, SDA (D0, bidirectional; D[17:1] unused). 3-line: CSX, SCL, SDA. Pin pages: PDF 23-24."
+  - entity: st7735s
+    level: ic
+    path: Interface.strap.mode
+    value: {serial: "IM2=0", 3-line-SPI: "SPI4W=0", 4-line-SPI: "SPI4W=1", parallel-8080: "IM2=1, P68=0", parallel-6800: "IM2=1, P68=1", parallel-width: "IM1 IM0 = 00 8-bit, 01 16-bit, 10 9-bit, 11 18-bit"}
+    unit: null
+    conditions: "Pins fixed at DGND/VDDI"
+    doc: st7735s-v1.3-third-party-mirror
+    locator: "PDF 23-24 / printed 23-24 section 6.2 (P68, IM2, IM1/IM0, SPI4W); PDF 37 Table 8; PDF 44 Table 12"
+    quote: "SPI4W='0', 3-line SPI Enable."
+    transcribed: false
+    related_source: false
+    confidence: found
+    notes: "See disagreement D2 (SPI4W vs 4WSPI naming). Table 12 p44 lists IM2=0 with 4WSPI=0 -> 3-line, 4WSPI=1 -> 4-line."
+  - entity: st7735s
+    level: ic
+    path: IC.vdd_range
+    value: {min: 2.5, typ: 2.75, max: 4.8}
+    unit: V
+    conditions: "VDD = power supply for analog, digital and booster circuit; Table 2 'System Voltage - Operating Voltage'"
+    doc: st7735s-v1.3-third-party-mirror
+    locator: "PDF 29 / printed 29, Table 2 (7.2); pin description PDF 23"
+    quote: "System Voltage VDD Operating Voltage 2.5 2.75 4.8 V"
+    transcribed: false
+    related_source: false
+    confidence: found
+    notes: "ST7735 (non-S) V2.1 p19 gives 2.6/2.75/3.3 V (related_source, see D1)."
+  - entity: st7735s
+    level: ic
+    path: IC.vio_range
+    value: {min: 1.65, typ: 1.8, max: 3.7}
+    unit: V
+    conditions: "VDDI = I/O supply"
+    doc: st7735s-v1.3-third-party-mirror
+    locator: "PDF 29 / printed 29, Table 2"
+    quote: "VDDI I/O Supply Voltage 1.65 1.8 3.7 V"
+    transcribed: false
+    related_source: false
+    confidence: found
+    notes: "Table cell order: Interface Operation Voltage VDDI, I/O Supply Voltage 1.65 / 1.8 / 3.7. ST7735 V2.1: 1.65/1.9/3.3."
+  - entity: st7735s
+    level: ic
+    path: IC.input_abs_max
+    value: {vin_min: -0.3, vin_max: "VDDI + 0.3", vdd_max: 4.8, vddi_max: 4.6, vcc_max: 1.95}
+    unit: V
+    conditions: "Logic input voltage range VIN"
+    doc: st7735s-v1.3-third-party-mirror
+    locator: "PDF 28 / printed 28, Table 1 (7.1)"
+    quote: "Logic Input Voltage Range VIN -0.3 ~ VDDI + 0.3 V"
+    transcribed: false
+    related_source: false
+    confidence: found
+    notes: "VDD -0.3~+4.8 V; VDDI -0.3~+4.6 V; Input not 5 V tolerant. (ST7735 V2.1: VDD abs max 4.6 V.)"
+  - entity: st7735s
+    level: ic
+    path: IC.logic_levels
+    value: {VIH_min: "0.7VDDI", VIL_max: "0.3VDDI", VOH_min: "0.8VDDI", VOL_max: "0.2VDDI"}
+    unit: V
+    conditions: "TA = -30 to 85C; VOH at IOH = -1.0mA, VOL at IOL = +1.0mA; input current IIH max 1 uA (VIN=VDDI), IIL -1 uA"
+    doc: st7735s-v1.3-third-party-mirror
+    locator: "PDF 29 / printed 29, Table 2"
+    quote: "Logic-High Input Voltage VIH 0.7VDDI VDDI V Note 1"
+    transcribed: false
+    related_source: false
+    confidence: found
+    notes: "Same values in ST7735 V2.1 p19."
+  - entity: st7735s
+    level: ic
+    path: Interface.spi.max_clock
+    value: {write_cycle_min: 66, read_cycle_min: 150}
+    unit: ns
+    conditions: "Serial Clock Cycle (Write) TSCYCW min 66 ns; (Read) TSCYCR min 150 ns; Ta=25C, VDDI=1.65~3.7V, VDD=2.5~4.8V; SCL H/L pulse width write min 15 ns; same for 3-line (p35) and 4-line (p36)"
+    doc: st7735s-v1.3-third-party-mirror
+    locator: "PDF 36 / printed 36, Table 7 (4-line); PDF 35 Table 6 (3-line)"
+    quote: "TSCYCW Serial Clock Cycle (Write) 66 ns"
+    transcribed: false
+    related_source: false
+    confidence: found
+    notes: "Minimum cycle times only (not converted). V2.1 (related): 66/150 ns too, SCL H/L 30 ns."
+  - entity: st7735s
+    level: ic
+    path: IC.supply_current
+    value: {normal_IDD_typ: 0.9, normal_IDD_max: 2, normal_IDDI_typ: 0.01, normal_IDDI_max: 0.02, sleep_IDD_typ: 0.005, sleep_IDD_max: 0.01, sleep_IDDI_typ: 0.015, sleep_IDDI_max: 0.03}
+    unit: mA
+    conditions: "Ta=25C, frame rate 60Hz, bare die, default registers; typ at VDDI=1.8V VDD=2.75V; max at VDDI=1.65 to 3.7V, VDD=2.5 to 4.8V; IDD = VDD, IDDI = VDDI (panel backlight not included)"
+    doc: st7735s-v1.3-third-party-mirror
+    locator: "PDF 30 / printed 30, Table 3 (7.3)"
+    quote: "Typical: VDDI=1.8V, VDD=2.75V; Maximum: VDDI=1.65 to 3.7V, VDD=2.5 to 4.8V"
+    transcribed: true
+    related_source: false
+    confidence: found
+    notes: "Sleep-in row cells ordered 0.005 0.015 0.01 0.03 (IDDI typ, IDD typ?, ...) are ambiguous from text extraction; sleep values medium reliability. Normal mode values 0.01/0.9/0.02/2 mA (IDDI typ, IDD typ, IDDI max, IDD max)."
+  - entity: st7735s
+    level: ic
+    path: Interface.data_out_when_deselected
+    value: "SDA tri-state is required by the host after a read command; with CSX=1 'there is no influence to the parallel and serial interface'"
+    unit: null
+    conditions: ""
+    doc: st7735s-v1.3-third-party-mirror
+    locator: "PDF 46 / printed 46, 9.4.2; PDF 24 Note 2; PDF 35 TOH output disable time 15-50 ns"
+    quote: "After the read status command has been sent, the SDA line must be set to tri-state no later than at the falling edge of SCL of the last bit."
+    transcribed: false
+    related_source: false
+    confidence: inferred
+    notes: "Datasheet does not explicitly state that the SDA output is tri-stated when CSX is high; Output Disable Time TOH 15..50 ns is listed. Inferred only."
+  - entity: st7735s
+    level: ic
+    path: IC.reset
+    value: {pin: "RESX", active: low, tRESW_min: 10, reset_cancel_max: 5, wait_before_sleep_out: 120}
+    unit: us (tRESW) / ms (cancel, wait)
+    conditions: "Reset pulse shorter than 5 us rejected, longer than 9 us resets; wait 5 ms after releasing RESX before commands; Sleep Out cannot be sent for 120 ms"
+    doc: st7735s-v1.3-third-party-mirror
+    locator: "PDF 93 / printed 93, section 9.17 Table 14 and notes"
+    quote: "It is necessary to wait 5msec after releasing RESX before sending commands."
+    transcribed: false
+    related_source: false
+    confidence: found
+    notes: "ST7735 V2.1 PDF 72 sec 9.16 same tRESW 10 us / 5 ms / 120 ms."
+  - entity: st7735s
+    level: ic
+    path: IC.input_abs_max
+    value: {vin_min: -0.3, vin_max: "VDDI + 0.3", vdd_max: 4.6, vddi_max: 4.6}
+    unit: V
+    conditions: "ST7735 (non-S) V2.1, VIN"
+    doc: st7735-v2.1
+    locator: "PDF 19 / printed 19, 7.1"
+    quote: "Logic input voltage range VIN -0.3 ~ VDDI +0.3 V"
+    transcribed: false
+    related_source: true
+    confidence: found
+    notes: "Related source (ST7735, not S); V1.9 file has same rows (PDF 19). Disagrees with ST7735S VDD abs max 4.8 (D1)."
+  - entity: st7735s
+    level: ic
+    path: IC.vdd_range
+    value: {min: 2.6, typ: 2.75, max: 3.3, vddi_min: 1.65, vddi_typ: 1.9, vddi_max: 3.3}
+    unit: V
+    conditions: "ST7735 (non-S) V2.1 7.2"
+    doc: st7735-v2.1
+    locator: "PDF 19 / printed 19, 7.2 DC characteristic"
+    quote: "System voltage VDD Operating voltage 2.6 2.75 3.3 V"
+    transcribed: false
+    related_source: true
+    confidence: found
+    notes: "Related source only; prefer ST7735S V1.3 values."
+  - entity: st7735s-1.8-spi-tft
+    level: breakout
+    path: Breakout.*
+    value: null
+    unit: null
+    conditions: "pin labels, regulator, level_shifter, pullups, hardwired straps, interfaces_exposed, board supply_current"
+    doc: none
+    locator: "no vendor-published document naming this generic board found"
+    quote: "figure"
+    transcribed: false
+    related_source: false
+    confidence: could-not-verify
+    notes: "Waveshare sells a differently named '1.8inch LCD Module' (ST7735S, pins VCC GND DIN CLK CS DC RST BL) - not this generic board; not opened. Seller copy claims 3.3 V LDO and level shifter, unverified."
+# ---------------- MFRC522 ----------------
+  - entity: mfrc522
+    level: ic
+    path: Interface.interfaces
+    value: [SPI, I2C, UART]
+    unit: null
+    conditions: "auto-detected after power-on or hard reset by sensing pin levels (Table 5)"
+    doc: mfrc522-rev3.9
+    locator: "PDF 9 / printed 9, section 8.1.1 and Table 5"
+    quote: "The MFRC522 supports direct interfacing of hosts using SPI, I2C-bus or serial UART interfaces."
+    transcribed: false
+    related_source: false
+    confidence: found
+    notes: "Roles: SPI = NSS(pin24 SDA), SCK(D5), MOSI(D6), MISO(D7); I2C = SDA(pin24), SCL(D7), ADR_0..5 (D6..D1); UART = RX(pin24), TX(D7), MX(D6), DTRQ(D5)."
+  - entity: mfrc522
+    level: ic
+    path: Interface.strap.I2C_EA
+    value: {UART: "I2C=0, EA=0", SPI: "I2C=0, EA=1", I2C: "I2C=1, EA=address-mode select"}
+    unit: null
+    conditions: "latched immediately after releasing reset (NRSTPD) / power-on reset"
+    doc: mfrc522-rev3.9
+    locator: "PDF 9 / printed 9, Table 5 (rendered image)"
+    quote: "The MFRC522 resets its interface and checks the current host interface type automatically after performing a power-on or hard reset."
+    transcribed: true
+    related_source: false
+    confidence: found
+    notes: "Table 5 rows read from rendered image: SDA = RX / NSS / SDA; I2C = 0 / 0 / 1; EA = 0 / 1 / EA; D7 = TX / MISO / SCL; D6 = MX / MOSI / ADR_0; D5 = DTRQ / SCK / ADR_1; D4..D1 = - / - / ADR_2..ADR_5."
+  - entity: mfrc522
+    level: ic
+    path: Interface.i2c.address_7bit
+    value: {EA_low: "0101 a2 a1 a0 (ADR_0, ADR_1, ADR_2 free) -> 0x28..0x2F", EA_high: "ADR_5..ADR_0 fully set by pins, ADR_6 = 0"}
+    unit: null
+    conditions: "address latched after reset; pin EA LOW: upper 4 bits fixed to 0101b"
+    doc: mfrc522-rev3.9
+    locator: "PDF 19 / printed 19, section 8.1.4.5"
+    quote: "If pin EA is set LOW, the upper 4 bits of the device bus address are reserved by NXP Semiconductors and set to 0101b for all MFRC522 devices."
+    transcribed: false
+    related_source: false
+    confidence: found
+    notes: "The datasheet does not print hex addresses; 0x28-0x2F is derived: 0101 + 3 bits = 7-bit address 0b0101xxx (inferred arithmetic). The address-bit order (ADR_0 = bit0) is not stated in this section. A default address is not stated in the datasheet."
+  - entity: mfrc522
+    level: ic
+    path: IC.vdd_range
+    value: {VDDA_VDDD_TVDD_min: 2.5, typ: 3.3, max: 3.6}
+    unit: V
+    conditions: "VDD(PVDD) <= VDDA = VDDD = VDD(TVDD); supply voltages below 3 V reduce the achievable operating distance"
+    doc: mfrc522-rev3.9
+    locator: "PDF 74 / printed 74, Table 151 (section 12)"
+    quote: "VDDA analog supply voltage"
+    transcribed: false
+    related_source: false
+    confidence: found
+    notes: "Rows VDDA/VDDD/VDD(TVDD) each 2.5 / 3.3 / 3.6 V. No 5 V supply allowed (abs max 4.0 V)."
+  - entity: mfrc522
+    level: ic
+    path: IC.vio_range
+    value: {PVDD_min: 1.6, typ: 1.8, max: 3.6, SVDD_min: 1.6, SVDD_max: 3.6}
+    unit: V
+    conditions: "VDD(PVDD) is the supply of the digital pins (I2C, EA, NRSTPD, SDA/NSS, D1-D7, IRQ); PVDD must be the same or lower than VDDD. SVDD supplies MFIN/MFOUT pins."
+    doc: mfrc522-rev3.9
+    locator: "PDF 74 / printed 74, Table 151; footnote [3]; PDF 76 Table 153"
+    quote: "VDD(PVDD) must always be the same or lower voltage than VDDD."
+    transcribed: false
+    related_source: false
+    confidence: found
+    notes: "Table 151: PVDD 1.6/1.8/3.6 V; SVDD 1.6/-/3.6 V."
+  - entity: mfrc522
+    level: ic
+    path: IC.input_abs_max
+    value: {vin_min: "VSS(PVSS) - 0.5", vin_max: "VDD(PVDD) + 0.5", supply_max: 4.0}
+    unit: V
+    conditions: "all input pins except MFIN and RX; pin MFIN: VDD(SVDD)+0.5; supplies VDDA, VDDD, PVDD, TVDD, SVDD max +4.0 V"
+    doc: mfrc522-rev3.9
+    locator: "PDF 74 / printed 74, Table 150 (rendered)"
+    quote: "In accordance with the Absolute Maximum Rating System (IEC 60134)."
+    transcribed: true
+    related_source: false
+    confidence: found
+    notes: "Minus signs lost in text layer; read from render of PDF 74 (VSS(PVSS) - 0.5 shown). Not 5 V tolerant."
+  - entity: mfrc522
+    level: ic
+    path: IC.logic_levels
+    value: {VIH_min: "0.7VDD(PVDD)", VIL_max: "0.3VDD(PVDD)", VOH_min: "VDD(PVDD) - 0.4", VOL_max: "VSS(PVSS) + 0.4"}
+    unit: V
+    conditions: "pins D1-D7 (VOH/VOL at VDD(PVDD)=3 V, IO=4 mA); pins EA, I2C, NRSTPD and SDA: VIH 0.7VDD(PVDD), VIL 0.3VDD(PVDD); IOH/IOL max 4 mA; input leakage +-1 uA"
+    doc: mfrc522-rev3.9
+    locator: "PDF 75-76 / printed 75-76, Table 153"
+    quote: "VIH HIGH-level input voltage 0.7VDD(PVDD)"
+    transcribed: false
+    related_source: false
+    confidence: found
+    notes: "VOH row text: 'VDD(PVDD) - 0.4' (minus lost in text layer)."
+  - entity: mfrc522
+    level: ic
+    path: Interface.spi.max_clock
+    value: 10
+    unit: Mbit/s
+    conditions: "slave; SCK low/high pulse width min 50 ns each (Table 154)"
+    doc: mfrc522-rev3.9
+    locator: "PDF 10 / printed 10, section 8.1.2; PDF 78 Table 154"
+    quote: "The interface can handle data speeds up to 10 Mbit/s."
+    transcribed: false
+    related_source: false
+    confidence: found
+    notes: "Figure as printed. tWL = tWH = 50 ns min."
+  - entity: mfrc522
+    level: ic
+    path: Interface.i2c.max_clock
+    value: {standard: 100, fast: 400, high_speed: 3400}
+    unit: kBd (Standard, Fast) / Mbit/s (HS 3.4)
+    conditions: "slave only; Table 155 Fast mode fSCL max 400 kHz, HS mode 3400 kHz"
+    doc: mfrc522-rev3.9
+    locator: "PDF 16 / printed 16, section 8.1.3; PDF 79 Table 155"
+    quote: "up to 100 kBd in Standard mode, up to 400 kBd in Fast mode or up to 3.4 Mbit/s in High-speed mode."
+    transcribed: false
+    related_source: false
+    confidence: found
+    notes: "Interface has a 3-state output stage (wired-AND): 'The MFRC522 has a 3-state output stage to perform the wired-AND function.'"
+  - entity: mfrc522
+    level: ic
+    path: IC.supply_current
+    value: {IDDD_typ: 6.5, IDDD_max: 9, IDDA_typ: 7, IDDA_max: 10, IDD_TVDD_typ: 60, IDD_TVDD_max: 100, IDD_PVDD_max: 40, IDD_SVDD_max: 4, hard_power_down_max_uA: 5, soft_power_down_max_uA: 10}
+    unit: mA
+    conditions: "VDD = 3 V; IDD(TVDD) continuous wave, typical value with antenna matched to 40 ohm; IDDA with RcvOff = 0; PVDD current depends on load at digital pins; power-down currents are total for all supplies, in uA"
+    doc: mfrc522-rev3.9
+    locator: "PDF 77 / printed 77, Table 153 current consumption and footnotes [2]-[7] (PDF 78)"
+    quote: "IDD(TVDD) depends on VDD(TVDD) and the external circuit connected to pins TX1 and TX2."
+    transcribed: false
+    related_source: false
+    confidence: found
+    notes: "Ipd uA values: hard power-down max 5 uA, soft power-down (RF level detector on) max 10 uA."
+  - entity: mfrc522
+    level: ic
+    path: IC.reset
+    value: {pin: NRSTPD, behaviour: "LOW = hard power-down; positive edge = reset", note: "no minimum reset pulse width found"}
+    unit: null
+    conditions: "hard power-down: oscillator inhibited, digital inputs separated from pins and clamped (except NRSTPD), outputs frozen HIGH or LOW"
+    doc: mfrc522-rev3.9
+    locator: "PDF 6 / printed 6, Table 3 pin 6; PDF 33 / printed 33, 8.6.1"
+    quote: "Hard power-down is enabled when pin NRSTPD is LOW."
+    transcribed: false
+    related_source: false
+    confidence: found
+    notes: "Table 3: 'reset: enabled by a positive edge'. Interface type and I2C address are latched on reset release."
+  - entity: mfrc522
+    level: ic
+    path: Interface.data_out_when_deselected
+    value: null
+    unit: null
+    conditions: "MISO state when NSS high"
+    doc: mfrc522-rev3.9
+    locator: "grep of MISO / 3-state in whole text: I2C SDA 3-state output stage (PDF 16) only; no statement for MISO"
+    quote: "figure"
+    transcribed: false
+    related_source: false
+    confidence: could-not-verify
+    notes: "MISO tri-state when NSS high is not stated in the datasheet text; only the I2C output stage is stated as 3-state."
+  - entity: rfid-rc522-blue
+    level: breakout
+    path: Breakout.*
+    value: null
+    unit: null
+    conditions: "pin labels, regulator, level_shifter, pullups, hardwired I2C/EA straps, interfaces_exposed, board supply_current"
+    doc: none
+    locator: "no vendor-published document naming this board found (cirkitdesigner, components101, sunfounder and similar are third-party)"
+    quote: "figure"
+    transcribed: false
+    related_source: false
+    confidence: could-not-verify
+    notes: "Whether the board hardwires I2C=0 / EA=1 (SPI only) cannot be verified from vendor documents."

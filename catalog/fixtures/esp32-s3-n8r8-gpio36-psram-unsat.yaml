@@ -1,0 +1,31 @@
+# Golden fixture 23 (negative) - ESP32-S3-DevKitC-1 N8R8 with a signal locked to GPIO36: GPIO35-37 are consumed by the Octal PSRAM.
+id: esp32-s3-n8r8-gpio36-psram-unsat
+board: esp32-s3-devkitc-1@V1.1
+variant: esp32-s3-devkitc-1-n8r8
+project:
+  board: esp32-s3-devkitc-1@V1.1
+  variant: esp32-s3-devkitc-1-n8r8
+  wifi: true
+  modules:
+    - { breakout: push-button, instance: sw1 }
+  locked:
+    - { instance: sw1, role: SW, pad: GPIO36 }
+  reserved: []
+expect:
+  status: unsat
+  minimal_conflict_includes:
+    - "locked:sw1.SW=GPIO36"
+    - "consumed:GPIO36"
+  relaxations_include:
+    - "unlock:sw1.SW"
+    - "different-variant:esp32-s3-devkitc-1-n8"
+evidence:
+  - esp32-s3-wroom-1-ds-v1.8#pins-io35-37-psram
+  - esp32-s3-ds-v2.2#pin-map-gpio36
+  - esp32-s3-devkitc-1-ug-v1.1#octal-note
+  - esp32-s3-wroom-1-ds-v1.8#series-n8r8
+derivations:
+  - "Module footnote b: for modules with Octal SPI PSRAM (N8R8) IO35, IO36, IO37 are connected to the PSRAM and not available for other uses (esp32-s3-wroom-1-ds-v1.8#pins-io35-37-psram); the DevKitC-1 guide repeats it (esp32-s3-devkitc-1-ug-v1.1#octal-note). Module record consumed.GPIO36 = psram (verified, two keys)."
+  - "The pad stays on the header (one connector map for all variants) so only the variant's consumed fact blocks the lock."
+changelog:
+  - "2026-10-23: created (task 2a.7, fixture-author). Conflict/relaxation tokens follow the proposed convention of fixture pico-w-four-pots-no-free-adc-unsat."

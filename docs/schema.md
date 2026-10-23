@@ -81,6 +81,7 @@ A board revision: connectors, labels, rails, onboard parts (catalog/boards/<id>@
 | `connectors[].pins[].kind` | "power" \| "ground" \| "gpio" \| "reset" \| "nc" \| "analog-ref" | yes | Pin kind. |
 | `connectors[].pins[].pad` | string | no | Chip pad (gives the GPIO number); required for gpio pins. |
 | `connectors[].pins[].rail` | string | no | Power rail name for power pins. |
+| `connectors[].pins[].alias_of` | string | no | Reference '<connector-id>:<position>' of the primary pin of this board that shares this pad (Arduino SDA/SCL = A4/A5, ICSP header). |
 | `onboard` | object[] | yes | Onboard hardware attached to pads (LEDs, USB bridge, buttons, dividers…). |
 | `onboard[].part` | string | yes | Onboard part. |
 | `onboard[].uses_pad` | string[] | yes | Pads the part is wired to. |

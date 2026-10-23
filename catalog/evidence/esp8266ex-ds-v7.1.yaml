@@ -1,0 +1,66 @@
+# Evidence record: ESP8266EX Datasheet Version 7.1 (2025.11, NRND), read 2026-10-22 from sources/cache/esp8266ex-ds.pdf.
+# Locators give the printed page number (PDF page = printed + 5). Table 5-1 was also read as a rendered image.
+# The datasheet has no absolute-maximum-ratings table and no strapping table: Appendix A only links to an 'ESP8266 Pin List' (not opened).
+accessed: "2026-10-22"
+claims:
+  - {"id": "esp8266ex-ds-v7.1#gpio-count", "locator": "§4.1, printed p.13", "quote": "ESP8266EX has 17 GPIO pins which can be assigned to various functions by programming the appropriate registers.", "supports": "The chip has 17 GPIO pins (GPIO0-GPIO16)"}
+  - {"id": "esp8266ex-ds-v7.1#pull-config", "locator": "§4.1, printed p.13", "quote": "XPD_DCDC can only be configured with internal pull-down, other GPIO PAD can only be configured with internal pull-up", "supports": "GPIO16 (XPD_DCDC) can only have an internal pull-down; the other GPIO pads only an internal pull-up (software-configurable; the reset-time state is not stated)"}
+  - {"id": "esp8266ex-ds-v7.1#pin-gpio16", "locator": "Table 2-1, printed p.5", "quote": "XPD_DCDC I/O Deep-sleep wakeup (need to be connected to EXT_RSTB); GPIO16", "supports": "Pin 8 XPD_DCDC is GPIO16, type I/O, deep-sleep wakeup function"}
+  - {"id": "esp8266ex-ds-v7.1#pin-gpio14", "locator": "Table 2-1, printed p.5", "quote": "MTMS I/O GPIO 14; HSPI_CLK", "supports": "Pin 9 MTMS is GPIO14 (I/O) with HSPI_CLK"}
+  - {"id": "esp8266ex-ds-v7.1#pin-gpio12", "locator": "Table 2-1, printed p.5", "quote": "MTDI I/O GPIO 12; HSPI_MISO", "supports": "Pin 10 MTDI is GPIO12 (I/O) with HSPI_MISO"}
+  - {"id": "esp8266ex-ds-v7.1#pin-gpio13", "locator": "Table 2-1, printed p.5", "quote": "MTCK I/O GPIO 13; HSPI_MOSI; UART0_CTS", "supports": "Pin 12 MTCK is GPIO13 (I/O) with HSPI_MOSI and UART0_CTS"}
+  - {"id": "esp8266ex-ds-v7.1#pin-gpio15", "locator": "Table 2-1, printed p.5", "quote": "MTDO I/O GPIO 15; HSPI_CS; UART0_RTS", "supports": "Pin 13 MTDO is GPIO15 (I/O) with HSPI_CS and UART0_RTS"}
+  - {"id": "esp8266ex-ds-v7.1#pin-gpio2", "locator": "Table 2-1, printed p.5", "quote": "GPIO2 I/O UART TX during flash programming; GPIO2", "supports": "Pin 14 is GPIO2 (I/O); UART TX during flash programming"}
+  - {"id": "esp8266ex-ds-v7.1#pin-gpio0", "locator": "Table 2-1, printed p.5", "quote": "GPIO0 I/O GPIO0; SPI_CS2", "supports": "Pin 15 is GPIO0 (I/O) with SPI_CS2"}
+  - {"id": "esp8266ex-ds-v7.1#pin-gpio4", "locator": "Table 2-1, printed p.5", "quote": "GPIO4 I/O GPIO4", "supports": "Pin 16 is GPIO4 (I/O)"}
+  - {"id": "esp8266ex-ds-v7.1#pin-gpio9", "locator": "Table 2-1, printed p.5", "quote": "SDIO_DATA_2 I/O Connect to SD_D2 (Series R: 20 Ω); SPIHD; HSPIHD; GPIO9", "supports": "Pin 18 SDIO_DATA_2 is GPIO9 (I/O) with SPIHD and HSPIHD"}
+  - {"id": "esp8266ex-ds-v7.1#pin-gpio10", "locator": "Table 2-1, printed p.5", "quote": "SDIO_DATA_3 I/O Connect to SD_D3 (Series R: 200 Ω); SPIWP; HSPIWP; GPIO10", "supports": "Pin 19 SDIO_DATA_3 is GPIO10 (I/O) with SPIWP and HSPIWP"}
+  - {"id": "esp8266ex-ds-v7.1#pin-gpio11", "locator": "Table 2-1, printed p.5", "quote": "SDIO_CMD I/O Connect to SD_CMD (Series R: 200 Ω); SPI_CS0; GPIO11", "supports": "Pin 20 SDIO_CMD is GPIO11 (I/O) with SPI_CS0"}
+  - {"id": "esp8266ex-ds-v7.1#pin-gpio6", "locator": "Table 2-1, printed p.5", "quote": "SDIO_CLK I/O Connect to SD_CLK (Series R: 200 Ω); SPI_CLK; GPIO6", "supports": "Pin 21 SDIO_CLK is GPIO6 (I/O) with SPI_CLK"}
+  - {"id": "esp8266ex-ds-v7.1#pin-gpio7", "locator": "Table 2-1, printed p.5", "quote": "SDIO_DATA_0 I/O Connect to SD_D0 (Series R: 200 Ω); SPI_MISO; GPIO7", "supports": "Pin 22 SDIO_DATA_0 is GPIO7 (I/O) with SPI_MISO"}
+  - {"id": "esp8266ex-ds-v7.1#pin-gpio8", "locator": "Table 2-1, printed p.5", "quote": "SDIO_DATA_1 I/O Connect to SD_D1 (Series R: 200 Ω); SPI_MOSI; GPIO8", "supports": "Pin 23 SDIO_DATA_1 is GPIO8 (I/O) with SPI_MOSI"}
+  - {"id": "esp8266ex-ds-v7.1#pin-gpio5", "locator": "Table 2-1, printed p.5", "quote": "GPIO5 I/O GPIO5", "supports": "Pin 24 is GPIO5 (I/O)"}
+  - {"id": "esp8266ex-ds-v7.1#pin-gpio3", "locator": "Table 2-1, printed p.5", "quote": "U0RXD I/O UART Rx during flash programming; GPIO3", "supports": "Pin 25 U0RXD is GPIO3 (I/O); UART Rx during flash programming"}
+  - {"id": "esp8266ex-ds-v7.1#pin-gpio1", "locator": "Table 2-1, printed p.5", "quote": "U0TXD I/O UART TX during flash programming; GPIO1; SPI_CS1", "supports": "Pin 26 U0TXD is GPIO1 (I/O) with SPI_CS1; UART TX during flash programming"}
+  - {"id": "esp8266ex-ds-v7.1#pin-tout", "locator": "Table 2-1, printed p.5", "quote": "TOUT I ADC pin.", "supports": "Pin 6 TOUT is the ADC pin, type I (input)"}
+  - {"id": "esp8266ex-ds-v7.1#boot-mode-note", "locator": "Note after Table 2-1, printed p.6", "quote": "GPIO2, GPIO0, and MTDO are used to select booting mode and the SDIO mode;", "supports": "GPIO0, GPIO2 and MTDO (GPIO15) are the boot-mode / SDIO-mode pins; the required levels are not tabulated in this document"}
+  - {"id": "esp8266ex-ds-v7.1#u0txd-powerup", "locator": "Note after Table 2-1, printed p.6", "quote": "U0TXD should not be pulled externally to a low logic level during the powering-up.", "supports": "GPIO1/U0TXD must not be pulled low externally during power-up"}
+  - {"id": "esp8266ex-ds-v7.1#ext-flash", "locator": "§3.1.3 External Flash, printed p.8", "quote": "ESP8266EX uses external SPI flash to store user programs", "supports": "The chip has no internal program flash; an external SPI flash is required"}
+  - {"id": "esp8266ex-ds-v7.1#sdio-table", "locator": "Table 4-1, printed p.13", "quote": "SDIO_CLK 21 IO6 SDIO_CLK SDIO_DATA0 22 IO7 SDIO_DATA0 SDIO_DATA1 23 IO8 SDIO_DATA1", "supports": "IO6, IO7, IO8 carry SDIO_CLK, SDIO_DATA0, SDIO_DATA1"}
+  - {"id": "esp8266ex-ds-v7.1#spi-table", "locator": "Table 4-2, printed p.14", "quote": "SDIO_CLK 21 IO6 SPICLK SDIO_DATA0 22 IO7 SPIQ/MISO SDIO_DATA1 23 IO8 SPID/MOSI SDIO_DATA_2 18 IO9 SPIHD", "supports": "General SPI pins: IO6 SPICLK, IO7 MISO, IO8 MOSI, IO9 SPIHD (IO10 SPIWP, IO11 SPICS0, IO1 SPICS1, IO0 SPICS2 in the same table)"}
+  - {"id": "esp8266ex-ds-v7.1#spi-max", "locator": "Table 4-2 note, printed p.14", "quote": "The clock frequency is 80 MHz at maximum when working as a master, 20 MHz at maximum when working as a slave.", "supports": "General SPI max clock: 80 MHz master, 20 MHz slave"}
+  - {"id": "esp8266ex-ds-v7.1#hspi-table", "locator": "Table 4-3, printed p.14", "quote": "MTMS 9 IO14 HSPICLK MTDI 10 IO12 HSPIQ/MISO MTCK 12 IO13 HSPID/MOSI MTDO 13 IO15 HPSICS", "supports": "HSPI pins: IO14 CLK, IO12 MISO, IO13 MOSI, IO15 CS (the document prints the CS name as HPSICS)"}
+  - {"id": "esp8266ex-ds-v7.1#hspi-max", "locator": "Table 4-3 note, printed p.14", "quote": "SPI mode can be implemented via software programming. The clock frequency is 20 MHz at maximum.", "supports": "HSPI max clock 20 MHz"}
+  - {"id": "esp8266ex-ds-v7.1#i2c-software", "locator": "§4.4, printed p.14", "quote": "ESP8266EX has one I2C, which is realized via software programming", "supports": "I2C is a software implementation"}
+  - {"id": "esp8266ex-ds-v7.1#i2c-scl", "locator": "Table 4-4, printed p.14", "quote": "MTMS 9 IO14 I2C_SCL", "supports": "I2C_SCL is listed on IO14 (GPIO14)"}
+  - {"id": "esp8266ex-ds-v7.1#i2c-sda", "locator": "Table 4-4, printed p.15 (table split across pages)", "quote": "GPIO2 14 IO2 I2C_SDA", "supports": "I2C_SDA is listed on IO2 (GPIO2)"}
+  - {"id": "esp8266ex-ds-v7.1#i2c-max", "locator": "§4.4, printed p.15", "quote": "I2C interface functionality can be realized via software programming, and the clock frequency is 100 kHz at maximum.", "supports": "I2C max clock 100 kHz (software I2C)"}
+  - {"id": "esp8266ex-ds-v7.1#i2s-table", "locator": "Table 4-5, printed p.15", "quote": "MTDI 10 IO12 I2SI_DATA MTCK 12 IO13 I2SI_BCK MTMS 9 IO14 I2SI_WS MTDO 13 IO15 I2SO_BCK U0RXD 25 IO3 I2SO_DATA GPIO2 14 IO2 I2SO_WS", "supports": "I2S pin functions per pad"}
+  - {"id": "esp8266ex-ds-v7.1#uart0-table", "locator": "Table 4-6, printed p.15", "quote": "U0RXD 25 IO3 U0RXD U0TXD 26 IO1 U0TXD MTDO 13 IO15 U0RTS MTCK 12 IO13 U0CTS", "supports": "UART0 pins: IO3 RXD, IO1 TXD, IO15 RTS, IO13 CTS"}
+  - {"id": "esp8266ex-ds-v7.1#uart1-table", "locator": "Table 4-6, printed p.15", "quote": "GPIO2 14 IO2 U1TXD SD_D1 23 IO8 U1RXD", "supports": "UART1 pins: IO2 TXD, IO8 RXD"}
+  - {"id": "esp8266ex-ds-v7.1#pwm-software", "locator": "§4.7, printed p.16", "quote": "The functionality of PWM interfaces can be implemented via software programming.", "supports": "PWM is a software implementation"}
+  - {"id": "esp8266ex-ds-v7.1#pwm-table", "locator": "Table 4-7, printed p.16", "quote": "MTDI 10 IO12 PWM0 MTDO 13 IO15 PWM1 MTMS 9 IO14 PWM2 GPIO4 16 IO4 PWM3", "supports": "PWM0-3 on IO12, IO15, IO14, IO4"}
+  - {"id": "esp8266ex-ds-v7.1#ir-table", "locator": "Table 4-8, printed p.16", "quote": "MTMS 9 IO14 IR TX GPIO5 24 IO 5 IR Rx", "supports": "IR TX on IO14, IR Rx on IO5"}
+  - {"id": "esp8266ex-ds-v7.1#adc-10bit", "locator": "§4.9, printed p.17", "quote": "ESP8266EX is embedded with a 10-bit precision SAR ADC.", "supports": "ADC is 10-bit"}
+  - {"id": "esp8266ex-ds-v7.1#adc-two-uses", "locator": "§4.9, printed p.17", "quote": "However, they cannot be implemented at the same time.", "supports": "TOUT can measure VDD3P3 or the external input voltage, not both at the same time"}
+  - {"id": "esp8266ex-ds-v7.1#adc-range", "locator": "§4.9 Hardware Design (external circuit), printed p.17", "quote": "The input voltage range is 0 to 1.0 V when TOUT is connected to external circuit.", "supports": "TOUT input range 0 to 1.0 V when used as an external ADC input"}
+  - {"id": "esp8266ex-ds-v7.1#adc-floating", "locator": "§4.9 Hardware Design (VDD3P3 measurement), printed p.17", "quote": "TOUT must be floating.", "supports": "TOUT must be left floating when measuring the supply voltage"}
+  - {"id": "esp8266ex-ds-v7.1#el-working-v", "locator": "Table 5-1, printed p.19", "quote": "Working Voltage Value - 2.5 3.3 3.6 V", "supports": "Working voltage min 2.5 V, typ 3.3 V, max 3.6 V"}
+  - {"id": "esp8266ex-ds-v7.1#el-vil", "locator": "Table 5-1 (I/O rows), printed p.19", "quote": "VIL - –0.3 - 0.25 VIO V", "supports": "VIL max = 0.25 VIO (min -0.3 V); row read from the rendered table"}
+  - {"id": "esp8266ex-ds-v7.1#el-vih", "locator": "Table 5-1 (I/O rows), printed p.19", "quote": "VIH 0.75 VIO 3.6", "supports": "VIH min = 0.75 VIO, VIH max = 3.6 V; this is an operating-characteristics row, not an absolute-maximum rating"}
+  - {"id": "esp8266ex-ds-v7.1#el-vol", "locator": "Table 5-1 (I/O rows), printed p.19", "quote": "VOL - - - 0.1 VIO", "supports": "VOL max = 0.1 VIO"}
+  - {"id": "esp8266ex-ds-v7.1#el-voh", "locator": "Table 5-1 (I/O rows), printed p.19", "quote": "VOH 0.8 VIO -", "supports": "VOH min = 0.8 VIO"}
+  - {"id": "esp8266ex-ds-v7.1#el-imax", "locator": "Table 5-1 (I/O rows), printed p.19", "quote": "IMAX - - - 12 mA", "supports": "IMAX max = 12 mA in the I/O group of Table 5-1; the table gives no further condition"}
+  - {"id": "esp8266ex-ds-v7.1#vddpst", "locator": "Table 2-1 pins 11 and 17, printed p.5", "quote": "VDDPST P Digital/IO Power Supply (1.8 V ~ 3.6 V)", "supports": "Digital/IO supply pins VDDPST accept 1.8 V to 3.6 V"}
+doc_number: null
+id: "esp8266ex-ds-v7.1"
+kind: "datasheet"
+manual: false
+publisher: "Espressif Systems"
+revision: "7.1"
+revision_date: "2025.11"
+secondary: false
+sha256: "3a038e2fd3040ad06d95d41b16afc8292090339e9f8e728ce46a83db439cecf1"
+title: "ESP8266EX Datasheet"
+url: "https://documentation.espressif.com/0a-esp8266ex_datasheet_en.pdf"
+url_original: "https://documentation.espressif.com/0a-esp8266ex_datasheet_en.pdf"

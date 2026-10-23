@@ -1,0 +1,94 @@
+accessed: '2026-10-23'
+claims:
+- id: ads1115-ds-sbas444e#pin-alert-rdy
+  locator: §4 Table 4-1 Pin Functions, PDF p.3
+  quote: Comparator output or conversion ready (ADS1114 and ADS1115 only). Open-drain output. Connect to VDD using a pullup resistor.
+  supports: ADS1115 ALERT/RDY (pin 2) is an open-drain digital output (comparator or conversion-ready) needing a pull-up to VDD
+- id: ads1115-ds-sbas444e#pin-scl
+  locator: §4 Table 4-1 Pin Functions, PDF p.3
+  quote: SCL 10 10 10 Digital input Serial clock input. Connect to VDD using a pullup resistor.
+  supports: SCL is a digital input needing an external pull-up to VDD
+- id: ads1115-ds-sbas444e#pin-sda
+  locator: §4 Table 4-1 Pin Functions, PDF p.3
+  quote: SDA 9 9 9 Digital I/O Serial data input and output. Connect to VDD using a pullup resistor.
+  supports: SDA is a bidirectional digital line needing an external pull-up to VDD
+- id: ads1115-ds-sbas444e#pin-addr
+  locator: §4 Table 4-1 Pin Functions, PDF p.3
+  quote: ADDR 1 1 1 Digital input I2C target address select
+  supports: ADDR (pin 1) is the I2C address select input
+- id: ads1115-ds-sbas444e#pin-ain
+  locator: §4 Table 4-1 Pin Functions, PDF p.3
+  quote: AIN3 — — 7 Analog input Analog input 3 (ADS1115 only)
+  supports: ADS1115 has four analog inputs AIN0..AIN3 (AIN2/AIN3 exist on the ADS1115 only)
+- id: ads1115-ds-sbas444e#rec-vdd
+  locator: §5.3 Recommended Operating Conditions, POWER SUPPLY, PDF p.4
+  quote: Power supply (VDD to GND) 2 5.5 V
+  supports: Recommended supply range 2 V to 5.5 V (single supply pin VDD; no separate I/O supply pin in Table 4-1)
+- id: ads1115-ds-sbas444e#absmax-digital
+  locator: §5.1 Absolute Maximum Ratings, PDF p.4
+  quote: Digital input voltage SDA, SCL, ADDR, ALERT/RDY GND - 0.3 5.5 V
+  supports: Absolute maximum voltage on SDA, SCL, ADDR, ALERT/RDY is 5.5 V (independent of VDD in this revision)
+- id: ads1115-ds-sbas444e#absmax-analog
+  locator: §5.1 Absolute Maximum Ratings, PDF p.4
+  quote: Analog input voltage AIN0, AIN1, AIN2, AIN3 GND - 0.3 VDD + 0.3 V
+  supports: Absolute maximum voltage on AIN0..AIN3 is VDD + 0.3 V
+- id: ads1115-ds-sbas444e#rec-fsr
+  locator: §5.3 Recommended Operating Conditions, ANALOG INPUTS, PDF p.4
+  quote: FSR Full-scale input voltage range(2) (VIN = V(AINP) - V(AINN)) ±0.256 ±6.144 V
+  supports: Programmable full-scale differential range is +/-0.256 V to +/-6.144 V
+- id: ads1115-ds-sbas444e#rec-ain-abs
+  locator: §5.3 Recommended Operating Conditions, ANALOG INPUTS, note (2), PDF p.4
+  quote: No more than VDD + 0.3V must be applied to the analog inputs of the device.
+  supports: 'The FSR is a scaling range, not an input limit: AINx must not exceed VDD + 0.3 V; recommended absolute input is GND to VDD'
+- id: ads1115-ds-sbas444e#pga-fsr-list
+  locator: §7.3.3 Full-Scale Range (FSR) and LSB Size, PDF p.15
+  quote: can be set to ±6.144V, ±4.096V, ±2.048V, ±1.024V, ±0.512V, and ±0.256V.
+  supports: 'PGA full-scale ranges: 6.144, 4.096, 2.048, 1.024, 0.512, 0.256 V (+/-)'
+- id: ads1115-ds-sbas444e#elec-vih
+  locator: §5.5 Electrical Characteristics, DIGITAL INPUT/OUTPUT, PDF p.5
+  quote: VIH High-level input voltage 0.7 VDD 5.5 V
+  supports: Digital VIH,min = 0.7 VDD
+- id: ads1115-ds-sbas444e#elec-vil
+  locator: §5.5 Electrical Characteristics, DIGITAL INPUT/OUTPUT, PDF p.5
+  quote: VIL Low-level input voltage GND 0.3 VDD V
+  supports: Digital VIL,max = 0.3 VDD
+- id: ads1115-ds-sbas444e#elec-vol
+  locator: §5.5 Electrical Characteristics, DIGITAL INPUT/OUTPUT, PDF p.5
+  quote: VOL Low-level output voltage IOL = 3mA GND 0.15 0.4 V
+  supports: Open-drain output VOL,max = 0.4 V at IOL = 3 mA (VDD = 3.3 V test conditions)
+- id: ads1115-ds-sbas444e#elec-idd
+  locator: §5.5 Electrical Characteristics (continued), POWER-SUPPLY, PDF p.6
+  quote: Operating TA = 25°C 150 200 300
+  supports: Operating supply current typ 150 uA, max 200 uA at 25 C and 300 uA over temperature (VDD = 3.3 V, 8 SPS, FSR +/-2.048 V)
+- id: ads1115-ds-sbas444e#timing-fscl
+  locator: '§5.6 Timing Requirements: I2C, PDF p.6'
+  quote: fSCL SCL clock frequency 0.01 0.4 0.01 3.4 MHz
+  supports: SCL frequency 0.01 to 0.4 MHz (fast mode) and 0.01 to 3.4 MHz (high-speed mode)
+- id: ads1115-ds-sbas444e#i2c-speed-modes
+  locator: §7.5.1.3 I2C Speed Modes, PDF p.20
+  quote: Standard mode allows a clock frequency of up to 100kHz; fast mode permits a clock frequency of up to 400kHz;
+  supports: Standard mode 100 kHz and fast mode 400 kHz supported without special action
+- id: ads1115-ds-sbas444e#i2c-hs-mode
+  locator: §7.5.1.3 I2C Speed Modes, PDF p.20
+  quote: high-speed mode (also called Hs mode) allows a clock frequency of up to 3.4MHz. The ADS111x are fully compatible with all three modes.
+  supports: High-speed mode up to 3.4 MHz; ADS111x compatible with all three modes (Hs must be activated by an Hs controller code)
+- id: ads1115-ds-sbas444e#i2c-address-table
+  locator: §7.5.1.1 Table 7-2 ADDR Pin Connection and Corresponding Target Address, PDF p.20
+  quote: GND 1001000b VDD 1001001b SDA 1001010b SCL 1001011b
+  supports: ADDR to GND = 0x48, VDD = 0x49, SDA = 0x4A, SCL = 0x4B
+- id: ads1115-ds-sbas444e#i2c-address-sda-note
+  locator: §7.5.1.1 I2C Address Selection, PDF p.20
+  quote: If SDA is used as the device address, hold the SDA line low for at least 100 ns after the SCL line goes low
+  supports: ADDR tied to SDA needs SDA held low >= 100 ns after SCL falls; GND, VDD, SCL addresses should be used first
+doc_number: SBAS444E
+id: ads1115-ds-sbas444e
+kind: datasheet
+manual: false
+publisher: Texas Instruments
+revision: E
+revision_date: 2024-12
+secondary: false
+sha256: eefff4d412ce2dcd7e659f47238edc9b2fa02e5971f2625af730502033701834
+title: ADS111x Ultra-Small, Low-Power, I2C-Compatible, 860SPS, 16-Bit ADCs with Internal Reference, Oscillator, and Programmable Comparator
+url: https://www.ti.com/lit/ds/symlink/ads1115.pdf
+url_original: https://www.ti.com/lit/ds/symlink/ads1115.pdf

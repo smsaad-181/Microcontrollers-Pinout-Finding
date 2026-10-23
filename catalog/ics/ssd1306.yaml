@@ -1,0 +1,174 @@
+# Evidence: Solomon Systech SSD1306 datasheet Rev 1.1 (Apr 2008) only; see catalog/evidence/ssd1306-ds-v1.1.yaml.
+# Researcher draft reconciled with the blind audit (task 2a.4): all stored facts verified by two keys, except i2c.max_hz (missing, derived value not stored).
+# See docs/validation/phase-2a/reconcile-ssd1306-st7735-mfrc522.md. Rev 1.5 (Aug 2010) was not opened by either key.
+# Parallel 6800/8080 buses exist on the IC (Table 7-1) but are not modelled: the schema has no parallel interface kind.
+# SSD1306 has no data-out pin in SPI mode (write-only), so no miso_tristate fact exists; the I2C SDAout state when deselected is not stated (both keys: nothing found).
+id: ssd1306
+input_abs_max:
+  evidence:
+  - ssd1306-ds-v1.1#abs-max
+  note: 'Datasheet: Vin = VSS-0.3 to VDD+0.3 V. The SSD1306 has one logic supply (VDD), so VDDIO means VDD here. Verified: the blind auditor read the same value independently (Table 11-1, p47: Vin VSS-0.3 to VDD+0.3 V; VDD abs max 4 V, VCC 0-16 V). Inputs are not 5 V tolerant.'
+  reviewers:
+  - hardware-researcher
+  - hardware-fact-auditor
+  status: verified
+  unit: V
+  value: VDDIO+0.3
+interfaces:
+- kind: i2c
+  limits:
+    addresses:
+    - strap: SA0=LOW (D/C# pin)
+      value: 60
+    - strap: SA0=HIGH (D/C# pin)
+      value: 61
+    max_hz:
+      evidence: []
+      note: 'No kHz rating is printed. Table 13-6 gives tcycle min 2.5 us (claim ssd1306-ds-v1.1#i2c-timing) and tR/tF max 300 ns; the blind auditor read the same row (p54: tcycle min 2.5 us, tR/tF max 300 ns, tIDLE min 1.3 us) and likewise stored no frequency. The datasheet states a cycle time, not a frequency rating, so no max_hz fact is stored (searched: whole datasheet; no fSCL, no Standard/Fast mode name).'
+      status: missing
+      unit: Hz
+      value: null
+  signals:
+  - dir: io
+    drive: open-drain
+    role: SDA
+    shareable: true
+  - dir: in
+    drive: open-drain
+    role: SCL
+    shareable: true
+- kind: spi
+  limits:
+    tscyc_min_s:
+      conditions:
+        TA: 25 C
+        VDD: 1.65-3.3 V
+        mode: 4-wire serial
+      evidence:
+      - ssd1306-ds-v1.1#spi-4wire-timing
+      note: 'Datasheet value 100 ns (Table 13-4). 3-wire serial is also 100 ns (Table 13-5). Verified: the blind auditor read the same value independently (Table 13-4 p52 and Table 13-5 p53, both 100 ns).'
+      reviewers:
+      - hardware-researcher
+      - hardware-fact-auditor
+      status: verified
+      unit: s
+      value: 1.0e-07
+  signals:
+  - dir: in
+    drive: push-pull
+    role: SCLK
+    shareable: true
+  - dir: in
+    drive: push-pull
+    role: MOSI
+    shareable: true
+  - dir: in
+    drive: push-pull
+    role: CS
+    shareable: false
+  - dir: in
+    drive: push-pull
+    role: DC
+    shareable: false
+  - dir: in
+    drive: push-pull
+    role: RES
+    shareable: false
+logic_levels:
+  vih_min:
+    conditions:
+      TA: 25 C
+      VDD: 1.65-3.3 V
+    evidence:
+    - ssd1306-ds-v1.1#dc-logic-levels
+    note: 'Datasheet: 0.8 x VDD. Verified: the blind auditor read the same value independently (Table 12-1, p48; also VOH min 0.9 x VDD, VOL max 0.1 x VDD at 100 uA).'
+    reviewers:
+    - hardware-researcher
+    - hardware-fact-auditor
+    status: verified
+    unit: V
+    value: VDDIO*0.8
+  vil_max:
+    conditions:
+      TA: 25 C
+      VDD: 1.65-3.3 V
+    evidence:
+    - ssd1306-ds-v1.1#dc-logic-levels
+    note: 'Datasheet: 0.2 x VDD. Verified: the blind auditor read the same value independently (Table 12-1, p48).'
+    reviewers:
+    - hardware-researcher
+    - hardware-fact-auditor
+    status: verified
+    unit: V
+    value: VDDIO*0.2
+part: SSD1306
+select_strap:
+  evidence:
+  - ssd1306-ds-v1.1#bus-select-table
+  pins:
+  - BS0
+  - BS1
+  - BS2
+  table:
+  - selects: i2c
+    value:
+      BS0: 0
+      BS1: 1
+      BS2: 0
+  - selects: spi
+    value:
+      BS0: 0
+      BS1: 0
+      BS2: 0
+  - selects: spi
+    value:
+      BS0: 1
+      BS1: 0
+      BS2: 0
+supply_current:
+  conditions:
+    IREF: 12.5 uA
+    VCC: 12 V
+    VDD: 2.8 V
+    load: no panel load, display ON, all pixels ON
+  evidence:
+  - ssd1306-ds-v1.1#dc-supply-current
+  note: 'This is ICC (the VCC panel supply) of the controller without a panel. IDD (VDD) is separate: typ 0.05 mA, max 0.15 mA. A real panel draws more. Verified: the blind auditor read the same value independently for ICC typ 430 / max 780 uA (Table 12-1, p48). The auditor marked its IDD read (typ 50 / max 150 uA) medium reliability because the row has extra contrast cells (FFh 100, AFh 69 uA); only the ICC pair is stored.'
+  reviewers:
+  - hardware-researcher
+  - hardware-fact-auditor
+  status: verified
+  unit: mA
+  value:
+    max: 0.78
+    typ: 0.43
+vdd_range:
+  conditions:
+    TA: 25 C
+  evidence:
+  - ssd1306-ds-v1.1#dc-supply
+  note: 'VDD logic supply. Panel supply VCC operating 7-15 V (abs max 0-16 V) is not representable in this field. Verified: the blind auditor read the same value independently (Table 12-1, p48).'
+  reviewers:
+  - hardware-researcher
+  - hardware-fact-auditor
+  status: verified
+  unit: V
+  value:
+  - 1.65
+  - 3.3
+vendor: Solomon Systech
+vio_range:
+  conditions:
+    TA: 25 C
+  evidence:
+  - ssd1306-ds-v1.1#dc-supply
+  - ssd1306-ds-v1.1#dc-vdd-condition
+  note: 'No separate VDDIO pin: the single VDD supply (1.65-3.3 V) is also the logic I/O supply. Verified: the blind auditor read the same value independently (condition block ''VDD = 1.65 to 3.3V'' and Table 12-1, p48).'
+  reviewers:
+  - hardware-researcher
+  - hardware-fact-auditor
+  status: verified
+  unit: V
+  value:
+  - 1.65
+  - 3.3

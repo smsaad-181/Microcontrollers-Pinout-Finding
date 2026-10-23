@@ -1,0 +1,38 @@
+accessed: '2026-10-23'
+claims:
+- id: songle-srd-ds-circuitbasics#coil-5v-l-current
+  locator: p.2, 6. COIL DATA CHART (AT 20 C), SRD (High Sensitivity), code 05
+  quote: 05 05 71.4 70 06 06 60 100
+  supports: 'SRD high-sensitivity (L, 0.36 W) 5 V coil: nominal current 71.4 mA, resistance 70 ohm +/-10 % at 20 C (columns: code, nominal voltage, nominal current mA, resistance ohm)'
+- id: songle-srd-ds-circuitbasics#coil-5v-d-current
+  locator: p.2, 6. COIL DATA CHART (AT 20 C), SRD (Standard), code 05
+  quote: 05 05 89.3 55 06 06 75 80
+  supports: 'SRD standard (D, 0.45 W) 5 V coil: nominal current 89.3 mA, resistance 55 ohm +/-10 % at 20 C'
+- id: songle-srd-ds-circuitbasics#coil-l-percentages
+  locator: p.2, 6. COIL DATA CHART, SRD (High Sensitivity)
+  quote: abt. 0.36W 75%Max. 10% Min. 120%
+  supports: 'High-sensitivity (0.36 W) coil: pull-in 75 % max, drop-out 10 % min, max allowable voltage 120 % of nominal'
+- id: songle-srd-ds-circuitbasics#coil-d-percentages
+  locator: p.2, 6. COIL DATA CHART, SRD (Standard)
+  quote: abt. 0.51W 75% Max. 10% Min. 110%
+  supports: 'Standard (0.45 W) coil: max allowable voltage 110 % of nominal (the 0.51 W figure printed beside it is for the 48 V code)'
+- id: songle-srd-ds-circuitbasics#sensitivity-code
+  locator: p.1, 3. ORDERING INFORMATION
+  quote: L:0.36W
+  supports: In the SRD ordering code the L position means 0.36 W coil sensitivity (D means 0.45 W)
+- id: songle-srd-ds-circuitbasics#contact-rating
+  locator: p.2, 7. CONTACT RATING
+  quote: Contact Capacity Resistive Load (cosΦ=1) 7A 28VDC 10A 125VAC 7A 240VAC
+  supports: 'FORM C contact capacity, resistive load: 7 A 28 VDC, 10 A 125 VAC, 7 A 240 VAC'
+doc_number: null
+id: songle-srd-ds-circuitbasics
+kind: datasheet
+manual: false
+publisher: Songle Relay (document hosted by Circuit Basics)
+revision: undated, no revision printed
+revision_date: null
+secondary: true
+sha256: 9967e9a62db84c578fc8dc55f0d76fd95777a4c84ad1f2754477f43dac515e46
+title: SRD relay datasheet, SONGLE RELAY (Songle-branded sheet hosted on circuitbasics.com)
+url: https://www.circuitbasics.com/wp-content/uploads/2015/11/SRD-05VDC-SL-C-Datasheet.pdf
+url_original: https://www.circuitbasics.com/wp-content/uploads/2015/11/SRD-05VDC-SL-C-Datasheet.pdf

@@ -1,0 +1,69 @@
+# Golden fixture 06 - Pico W: GPIO23/24/25/29 belong to the CYW43439 and must never be assigned; three potentiometers use the three exposed ADC pads.
+id: pico-w-reserved-gpio23-24-25-29
+board: raspberry-pi-pico-w@Rev3
+variant: pico-w
+project:
+  board: raspberry-pi-pico-w@Rev3
+  variant: pico-w
+  modules:
+    - { breakout: potentiometer-10k, instance: pot1 }
+    - { breakout: potentiometer-10k, instance: pot2 }
+    - { breakout: potentiometer-10k, instance: pot3 }
+    - { breakout: ssd1306-128x64-i2c-4pin, instance: oled }
+    - { breakout: relay-board-4ch-transistor, instance: relays }
+  locked: []
+  reserved: []
+expect:
+  status: ok
+  properties:
+    - no_pad_in: [GPIO23, GPIO24, GPIO25, GPIO29]
+    # ADC inputs are fixed to GPIO26-29 (rp2040-ds-3184e62#adc-ainsel); GPIO29 is the radio clock, so the three pots fill GPIO26, GPIO27, GPIO28.
+    - signal_pad_set_equals:
+        signals: [pot1.WIPER, pot2.WIPER, pot3.WIPER]
+        pads: [GPIO26, GPIO27, GPIO28]
+    # RP2040 I2C is FUNCSEL per pad: SDA and SCL must be on the same I2C instance (pairs below). GPIO26/27 are taken by the pots, so I2C1 pairs 26/27 are out.
+    - i2c_pair_in:
+        signals: [oled.SDA, oled.SCL]
+        pairs:
+          - { sda: GPIO0, scl: GPIO1 }
+          - { sda: GPIO4, scl: GPIO5 }
+          - { sda: GPIO8, scl: GPIO9 }
+          - { sda: GPIO12, scl: GPIO13 }
+          - { sda: GPIO16, scl: GPIO17 }
+          - { sda: GPIO20, scl: GPIO21 }
+          - { sda: GPIO2, scl: GPIO3 }
+          - { sda: GPIO6, scl: GPIO7 }
+          - { sda: GPIO10, scl: GPIO11 }
+          - { sda: GPIO14, scl: GPIO15 }
+          - { sda: GPIO18, scl: GPIO19 }
+    # No strap pads on GPIO0-29; the only risk items are the 3 ADC pads, each carrying erratum RP2040-E11 (all revisions, not fixed).
+    - risk_tier1_equals: 3
+  warnings_include:
+    - { code: ADC_RANGE_UNKNOWN, level: caution }      # rp2040 ADC peripheral has no effective-range fact; pot swing = supply it is wired to
+    - { code: FLOATING_AT_RESET_LOAD, level: warning } # relay board resting level unknown; RP2040 pads reset to pull-down, see derivations
+    - { code: I2C_PULLUP_UNKNOWN, level: caution }
+evidence:
+  - pico-w-ds-rel7#gpio-exposed
+  - pico-w-ds-rel7#internal-gpio23
+  - pico-w-ds-rel7#internal-gpio24
+  - pico-w-ds-rel7#internal-gpio25
+  - pico-w-ds-rel7#internal-gpio29
+  - pico-w-ds-rel7#clk-shared
+  - pico-w-ds-rel7#vsys-divider
+  - pico-w-ds-rel7#adc-diode
+  - pico-w-ds-rel7#gpio-3v3
+  - rp2040-ds-3184e62#adc-ainsel
+  - rp2040-ds-3184e62#gpio-function-table
+  - rp2040-ds-3184e62#funcsel
+  - rp2040-ds-3184e62#boot-cs-button
+  - rp2040-ds-3184e62#pad-reset
+  - rp2040-ds-3184e62#pin-reset-state
+  - rp2040-ds-3184e62#erratum-e11
+derivations:
+  - "Header exposes 26 GPIO (GPIO0-22, GPIO26-28); GPIO23 (WL_ON), GPIO24 (WL_D), GPIO25 (WL_CS), GPIO29 (WL_CLK, shared with VSYS/3 on ADC3) are wired to the CYW43439 (pico-w-ds-rel7#gpio-exposed, #internal-gpio23..29, #clk-shared). The catalog also lists them in the module `consumed` map with value internal."
+  - "Analog: GPIO26/27/28 = AIN0/AIN1/AIN2, GPIO29 = AIN3 (rp2040-ds-3184e62#adc-ainsel). With GPIO29 reserved only 3 ADC pads remain -> 3 pots use exactly GPIO26, GPIO27, GPIO28. Pico W ADC pad limit is IOVDD + 0.3 V (pico-w-ds-rel7#adc-diode): a pot wired to 3V3 stays <= 3.3 V, so no overvoltage."
+  - "I2C pairs (SDA/SCL on one instance): I2C0 SDA 0,4,8,12,16,20 with SCL 1,5,9,13,17,21; I2C1 SDA 2,6,10,14,18 (26 taken) with SCL 3,7,11,15,19 (27 taken). Read from rp2040-ds-3184e62#gpio-function-table (chip record function lists)."
+  - "RP2040 has no strap pad on the user bank: boot mode is sampled on QSPI_SS (rp2040-ds-3184e62#boot-cs-button); reset state of every GPIO is pull-down (rp2040-ds-3184e62#pad-reset) -> risk comes only from the 3 ADC pads (erratum RP2040-E11 'ADC DNL peaks', rp2040-ds-3184e62#erratum-e11) = 3. The relay board's resting level is missing, so FLOATING_AT_RESET_LOAD stays a warning (pull-down at reset only holds an active-high board OFF if that is its polarity; polarity is only in the notes)."
+  - "SSD1306 module: address unknown (0x3C/0x3D) and pull-ups missing -> caution."
+changelog:
+  - "2026-10-23: created (task 2a.7, fixture-author)."

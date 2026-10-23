@@ -1,0 +1,641 @@
+# Blind second-key audit: ESP32-S3-WROOM-1 (N8, N8R8) + ESP32-S3-DevKitC-1
+auditor: hardware-fact-auditor
+date: 2026-10-23
+blind: true
+contaminated: []
+entities:
+  - esp32-s3-wroom-1-n8
+  - esp32-s3-wroom-1-n8r8
+  - esp32-s3-devkitc-1
+documents:
+  - id: wroom1-ds
+    title: ESP32-S3-WROOM-1 / WROOM-1U Datasheet v1.8 (2026-03-02)
+    url: https://documentation.espressif.com/esp32-s3-wroom-1_wroom-1u_datasheet_en.pdf
+    cache: sources/cache/esp32-s3-wroom-1-ds.pdf
+    sha256: 27d71971da07c280c6068d08c74720d1a25b8f20cf8494dc1765bdd28d40d435
+    sha256_verified: true
+    pages: 53
+    note: PDF page number equals printed page number (cover is page 1).
+  - id: devkitc1-sch-v1.1-20221130
+    title: ESP32-S3-DevKitC-1 schematic V1.1 (file dated 2022-11-30; sheet 2 dated 2022-11-30, sheet 1 dated 2022-04-13)
+    url: https://dl.espressif.com/dl/schematics/SCH_ESP32-S3-DevKitC-1_V1.1_20221130.pdf
+    cache: sources/cache/s3-devkitc-1-sch-20221130.pdf
+    sha256: f116b5d9f1fdce126e9a63d8450388eb11295d8322d831502fbc9729442b72e4
+    sha256_verified: true
+    pages: 2
+    note: Page 1 is a block-diagram sheet, page 2 holds the full circuit (sheet 2 of 2). Rendered to images; pin tables transcribed.
+  - id: s3-ds
+    title: ESP32-S3 Series Datasheet v2.2 (chip-level facts only)
+    cache: sources/cache/esp32-s3-ds.pdf
+    sha256: 2d5a7cb7fd559d8d972bd88db32669c0196d23f22d7afaafb0f63d099b589a3f
+    sha256_verified: true
+    pages: 87
+  - id: guide-v1.1
+    title: ESP32-S3-DevKitC-1 v1.1 user guide (esp-dev-kits, latest)
+    url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32s3/esp32-s3-devkitc-1/user_guide_v1.1.html
+    accessed: 2026-10-23
+    sha256_of_fetched_html: cd06b1114b240ed3613397a0b54966a50679151ff11452797f009b6638d0662c
+    describes_revision: v1.1 (latest)
+  - id: guide-v1.0
+    title: ESP32-S3-DevKitC-1 v1.0 user guide (esp-dev-kits, latest)
+    url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32s3/esp32-s3-devkitc-1/user_guide_v1.0.html
+    accessed: 2026-10-23
+    sha256_of_fetched_html: 1d08f1e4ee825f1243ea864940f5abdbf9a60fc4c38340cc26cc20a5ae937cd6
+    describes_revision: v1.0 (initial release)
+  - id: guide-bare
+    url: https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32s3/esp32-s3-devkitc-1/user_guide.html
+    accessed: 2026-10-23
+    result: HTTP 404 (Page not Found). The unversioned page no longer exists; guide is split into user_guide_v1.1.html and user_guide_v1.0.html.
+  - id: sch-v1.0-20210312
+    title: ESP32-S3-DevKitC-1 schematic V1.0 (sheet date 2021-03-12), linked from guide-v1.0 (additional, not in the assigned list)
+    url: https://dl.espressif.com/dl/SCH_ESP32-S3-DEVKITC-1_V1_20210312C.pdf
+    sha256: a878f5a4c5c52acb649390fcdad181a5776e795d3473e9ef504d222ec8660bd1
+    downloaded: 2026-10-23
+    pages: 2
+  - id: sch-v1.1-20220413
+    title: ESP32-S3-DevKitC-1 schematic V1.1 earlier issue (2022-04-13), linked from guide-v1.1 (additional)
+    url: https://dl.espressif.com/dl/schematics/SCH_ESP32-S3-DevKitC-1_V1.1_20220413.pdf
+    sha256: 5f25ae344dd67b9c1c503570ed4bcb3ffd34e99c6931210fc501a9a26683e496
+    downloaded: 2026-10-23
+newer_or_more_authoritative_sources:
+  - The assigned V1.1 20221130 schematic is the newest schematic listed in guide v1.1. Text diff against the 20220413 V1.1 issue shows only the sheet date and the removal of an IO2 column in the auto-program truth table; all nets identical.
+  - V1.0 schematic (20210312) found and compared: only difference vs V1.1 is RGB_CTRL net GPIO48 (V1.0) vs GPIO38 (V1.1).
+  - The unversioned user_guide.html is gone (404); the v1.1/v1.0 pages replace it.
+  - The module datasheet v1.8 (2026-03-02) is the newest module document; no newer found.
+disagreements:
+  - id: D1
+    topic: RGB LED GPIO depends on board revision (not a document error)
+    readings: [guide-v1.0 and sch V1.0 = GPIO48; guide-v1.1 and sch V1.1 = GPIO38]
+    notes: Guides and schematics agree with each other per revision. Guide v1.1 states both revisions are sold.
+  - id: D2
+    topic: Header pin naming between schematic and guide
+    readings: ["J1-3: schematic net CHIP_PU, guide name RST, module pin EN", "J3-2/J3-3: schematic U0TXD/U0RXD, guide TX/RX, module TXD0(GPIO43)/RXD0(GPIO44)"]
+    notes: Same physical nets, different names. All 44 pin-to-GPIO assignments agree between guide v1.1 tables and schematic V1.1 (checked pin by pin).
+  - id: D3
+    topic: Flash/PSRAM variants on the board
+    readings: ["guide v1.0 ordering table lists only N8R8, N32R16V, 1U-N8R8 (each with SPI voltage 3.3 V for N8R8)", "guide v1.1 ordering table also lists N8, N8R2 (EOL) and drops the SPI Voltage column"]
+    notes: N8 board is marked EOL in guide v1.1 but is in the module datasheet series table.
+  - id: D4
+    topic: Guide says all GPIOs except flash SPI are broken out
+    readings: ["guide: All available GPIO pins (except for the SPI bus for flash) are broken out", "datasheet/schematic: GPIO35-37 are broken out to J3 on every board, but are consumed by octal PSRAM on N8R8 (guide note covers it)"]
+    notes: Consistent once the guide note is applied; flagged so the catalog marks J3-11/12/13 consumed for N8R8.
+  - id: D5
+    topic: Module datasheet does not name the in-module flash VDD_SPI voltage for N8 explicitly
+    notes: Voltage is only inferred (see facts). Chip datasheet gives 3.3 V for ESP32-S3R8; guide v1.0 says SPI Voltage 3.3 V for N8R8.
+  - id: D6
+    topic: Revision/date labelling
+    readings: ["schematic file dated 20221130 contains sheet 1 dated 2022-04-13 and sheet 2 dated 2022-11-30"]
+    notes: Cosmetic.
+
+facts:
+# ------------------------------------------------------------------ MODULE N8
+- entity: esp32-s3-wroom-1-n8
+  level: module
+  path: part_number
+  value: "ESP32-S3-WROOM-1-N8: 8 MB Quad SPI flash, no PSRAM, ambient -40 to 85 C"
+  doc: wroom1-ds
+  locator: PDF p3 / printed p3, Table 1-1
+  quote: "ESP32-S3-WROOM-1-N8 8 MB (Quad SPI) - –40 ~ 85"
+  transcribed: false
+  confidence: found
+- entity: esp32-s3-wroom-1-n8
+  level: module
+  path: bonded_pads
+  value: [GPIO0, GPIO1, GPIO2, GPIO3, GPIO4, GPIO5, GPIO6, GPIO7, GPIO8, GPIO9, GPIO10, GPIO11, GPIO12, GPIO13, GPIO14, GPIO15, GPIO16, GPIO17, GPIO18, GPIO19, GPIO20, GPIO21, GPIO35, GPIO36, GPIO37, GPIO38, GPIO39, GPIO40, GPIO41, GPIO42, GPIO43, GPIO44, GPIO45, GPIO46, GPIO47, GPIO48]
+  conditions: {count: 36}
+  doc: wroom1-ds
+  locator: PDF p11-12 / printed p11-12, Table 3-1 Pin Definitions; PDF p10 Figure 3-1
+  quote: "The module has 41 pins."
+  transcribed: false
+  confidence: found
+  notes: Module pin numbers - IO4=4 IO5=5 IO6=6 IO7=7 IO15=8 IO16=9 IO17=10 IO18=11 IO8=12 IO19=13 IO20=14 IO3=15 IO46=16 IO9=17 IO10=18 IO11=19 IO12=20 IO13=21 IO14=22 IO21=23 IO47=24 IO48=25 IO45=26 IO0=27 IO35=28 IO36=29 IO37=30 IO38=31 IO39=32 IO40=33 IO41=34 IO42=35 RXD0(GPIO44)=36 TXD0(GPIO43)=37 IO2=38 IO1=39. Pins 1,40,41 GND; 2 3V3; 3 EN. 36 GPIO pins agrees with the feature list.
+- entity: esp32-s3-wroom-1-n8
+  level: module
+  path: bonded_pads_count_cross_check
+  value: 36
+  doc: wroom1-ds
+  locator: PDF p2 / printed p2, section 1.1 Features
+  quote: "36 GPIOs – 4 strapping GPIOs"
+  transcribed: false
+  confidence: found
+- entity: esp32-s3-wroom-1-n8
+  level: module
+  path: unbonded_gpios
+  value: "GPIO22-GPIO34 have no module pin"
+  doc: wroom1-ds
+  locator: PDF p11-12 Table 3-1 (absent); PDF p39 Figure 8-1 (module schematic marks chip GPIO33/GPIO34 with no-connect crosses)
+  quote: figure
+  transcribed: true
+  confidence: inferred
+  notes: Absence from Table 3-1 is the evidence. GPIO26-32 are the in-module flash lines per the chip datasheet (GPIO26 SPICS1, GPIO27 SPIHD, GPIO28 SPIWP, GPIO29 SPICS0, GPIO30 SPICLK, GPIO31 SPIQ, GPIO32 SPID; s3-ds PDF p21-22 Table 2-4). GPIO22-25 do not appear in the chip pin list. Module datasheet itself never lists GPIO numbers 22-34.
+- entity: esp32-s3-wroom-1-n8
+  level: module
+  path: consumed
+  value:
+    GPIO27: flash (SPIHD)
+    GPIO28: flash (SPIWP)
+    GPIO29: flash (SPICS0)
+    GPIO30: flash (SPICLK)
+    GPIO31: flash (SPIQ)
+    GPIO32: flash (SPID)
+  conditions: {note: none of these pads is bonded to a module pin; no bonded pad is consumed on N8}
+  doc: wroom1-ds
+  locator: PDF p9 / printed p9, Figure 2-1 block diagram (QSPI flash on SPICS0 SPICLK SPID SPIQ SPIHD SPIWP) plus s3-ds Table 2-4
+  quote: figure
+  transcribed: true
+  confidence: inferred
+  notes: GPIO numbers come from the chip datasheet mapping of the signal names shown in the module figure. Datasheet states no bonded GPIO is unavailable for N8 (footnote b applies only to Octal-PSRAM modules).
+- entity: esp32-s3-wroom-1-n8
+  level: module
+  path: unavailable_bonded_pads
+  value: []
+  doc: wroom1-ds
+  locator: PDF p12, Table 3-1 footnote b
+  quote: "For modules with Octal SPI PSRAM, i.e., modules embedded with ESP32-S3R8 or ESP32-S3R16V"
+  transcribed: false
+  confidence: found
+  notes: N8 has no PSRAM so footnote b does not apply; IO35/IO36/IO37 are free GPIO.
+- entity: esp32-s3-wroom-1-n8
+  level: module
+  path: flash
+  value: "8 MB Quad SPI"
+  doc: wroom1-ds
+  locator: PDF p3 Table 1-1; PDF p2 Features
+  quote: "Up to 16 MB Quad SPI flash"
+  transcribed: false
+  confidence: found
+- entity: esp32-s3-wroom-1-n8
+  level: module
+  path: flash_voltage
+  value: 3.3
+  unit: V
+  conditions: {basis: default VDD_SPI configuration (EFUSE_VDD_SPI_FORCE=0, GPIO45=0 -> VDD3P3_RTC 3.3 V)}
+  doc: wroom1-ds
+  locator: PDF p15 Table 4-4 VDD_SPI Voltage Control; PDF p39 section 8 note
+  quote: "please ensure that GPIO45 is not pulled high when the module is powered up by the external circuit."
+  transcribed: false
+  confidence: inferred
+  notes: Datasheet never states a flash voltage for N8 explicitly; flash chip is specified for 1.8 V or 3.3 V (Table 6-8, PDF p30). 3.3 V follows from Table 4-4 default (bold row not distinguishable in text extraction) and from the warning that GPIO45 high at power-up would select 1.8 V on modules without PSRAM. Only inferred.
+- entity: esp32-s3-wroom-1-n8
+  level: module
+  path: vdd_spi_voltage
+  value: 3.3
+  unit: V
+  conditions: {strap: GPIO45 low at reset, efuse VDD_SPI_FORCE=0}
+  doc: wroom1-ds
+  locator: PDF p15 Table 4-4
+  quote: "Depending on the value of EFUSE_VDD_SPI_FORCE, the voltage can be controlled in two ways."
+  transcribed: false
+  confidence: inferred
+  notes: On N8 (no PSRAM) VDD_SPI can be strap-selected, so it is 3.3 V only with GPIO45 low (weak pull-down default, Table 4-1) or eFuse-set.
+- entity: esp32-s3-wroom-1-n8
+  level: module
+  path: psram
+  value: null
+  doc: wroom1-ds
+  locator: PDF p3 Table 1-1
+  quote: "ESP32-S3-WROOM-1-N8 8 MB (Quad SPI) - –40 ~ 85"
+  transcribed: false
+  confidence: found
+  notes: 'The "-" in the PSRAM column means no PSRAM.'
+- entity: esp32-s3-wroom-1-n8
+  level: module
+  path: strapping_notes
+  value:
+    GPIO0: weak pull-up default (boot mode; low + GPIO46 low = download)
+    GPIO3: floating default; JTAG source select; no internal pull resistors
+    GPIO45: weak pull-down default; VDD_SPI voltage select - must not be pulled high at power-up on N8 (no PSRAM)
+    GPIO46: weak pull-down default; boot mode / ROM message printing
+  doc: wroom1-ds
+  locator: PDF p13 Table 4-1; PDF p14 Table 4-3; PDF p15 section 4.4; PDF p39 section 8
+  quote: "GPIO0 Weak pull-up 1 GPIO3 Floating – GPIO45 Weak pull-down 0 GPIO46 Weak pull-down 0"
+  transcribed: false
+  confidence: found
+- entity: esp32-s3-wroom-1-n8
+  level: module
+  path: strap_gpio45_warning
+  value: "For modules without PSRAM, GPIO45 must not be pulled high when the module is powered up"
+  doc: wroom1-ds
+  locator: PDF p39 / printed p39, section 8 intro
+  quote: "for other modules, please ensure that GPIO45 is not pulled high when the module is powered up by the external circuit."
+  transcribed: false
+  confidence: found
+- entity: esp32-s3-wroom-1-n8
+  level: module
+  path: nc_reserved_pins
+  value: []
+  doc: wroom1-ds
+  locator: PDF p11-12 Table 3-1
+  quote: "The module has 41 pins."
+  transcribed: false
+  confidence: found
+  notes: No pin is marked NC or reserved in the pin table. EN must not float (pin 3). IO47/IO48 are SPICLK_P/N_DIFF capable (voltage differs only on R16V).
+- entity: esp32-s3-wroom-1-n8
+  level: module
+  path: supply_voltage
+  value: [3.0, 3.6]
+  unit: V
+  doc: wroom1-ds
+  locator: PDF p2 section 1.1
+  quote: "Operating voltage/Power supply: 3.0 ~ 3.6 V"
+  transcribed: false
+  confidence: found
+# ------------------------------------------------------------------ MODULE N8R8
+- entity: esp32-s3-wroom-1-n8r8
+  level: module
+  path: part_number
+  value: "ESP32-S3-WROOM-1-N8R8: 8 MB Quad SPI flash, 8 MB Octal SPI PSRAM, ambient -40 to 65 C"
+  doc: wroom1-ds
+  locator: PDF p3 / printed p3, Table 1-1
+  quote: "ESP32-S3-WROOM-1-N8R8 8 MB (Quad SPI) 8 MB (Octal SPI) –40 ~ 65"
+  transcribed: false
+  confidence: found
+- entity: esp32-s3-wroom-1-n8r8
+  level: module
+  path: bonded_pads
+  value: [GPIO0, GPIO1, GPIO2, GPIO3, GPIO4, GPIO5, GPIO6, GPIO7, GPIO8, GPIO9, GPIO10, GPIO11, GPIO12, GPIO13, GPIO14, GPIO15, GPIO16, GPIO17, GPIO18, GPIO19, GPIO20, GPIO21, GPIO35, GPIO36, GPIO37, GPIO38, GPIO39, GPIO40, GPIO41, GPIO42, GPIO43, GPIO44, GPIO45, GPIO46, GPIO47, GPIO48]
+  conditions: {count: 36, note: same physical pin table as N8; GPIO35/36/37 are on pins 28/29/30 but internally tied to the PSRAM}
+  doc: wroom1-ds
+  locator: PDF p11-12 Table 3-1
+  quote: "The module has 41 pins."
+  transcribed: false
+  confidence: found
+- entity: esp32-s3-wroom-1-n8r8
+  level: module
+  path: unavailable_bonded_pads
+  value: [GPIO35, GPIO36, GPIO37]
+  doc: wroom1-ds
+  locator: PDF p12 / printed p12, Table 3-1 footnote b
+  quote: "pins IO35, IO36, and IO37 are connected to the Octal SPI PSRAM and are not available for other uses."
+  transcribed: false
+  confidence: found
+  notes: Footnote applies to modules with ESP32-S3R8 or ESP32-S3R16V; N8R8 uses ESP32-S3R8 (Table 1-1 Octal SPI 8 MB; block diagram lists ESP32-S3R8). Module pins 28, 29, 30.
+- entity: esp32-s3-wroom-1-n8r8
+  level: module
+  path: consumed
+  value:
+    GPIO35: psram (SPIIO6 / DQ6)
+    GPIO36: psram (SPIIO7 / DQ7)
+    GPIO37: psram (SPIDQS)
+    GPIO26: psram (SPICS1, in-package CE#; no module pin)
+    GPIO27: flash+psram (SPIHD, no module pin)
+    GPIO28: flash+psram (SPIWP, no module pin)
+    GPIO29: flash (SPICS0, no module pin)
+    GPIO30: flash+psram (SPICLK, no module pin)
+    GPIO31: flash+psram (SPIQ, no module pin)
+    GPIO32: flash+psram (SPID, no module pin)
+    GPIO33: psram (DQ4, chip pad, no module pin)
+    GPIO34: psram (DQ5, chip pad, no module pin)
+  doc: s3-ds
+  locator: PDF p31 / printed p31, Table 2-14 Pin Mapping Between Chip and Flash or PSRAM (Octal SPI/OPI column); module datasheet PDF p12 footnote b and PDF p9
+  quote: "Do not use the pins connected to in-package flash/PSRAM for any other purposes."
+  transcribed: false
+  confidence: inferred
+  notes: Module datasheet states only GPIO35/36/37 as unavailable bonded pads (found). The in-module lines GPIO26-34 are derived from the chip datasheet octal-mode mapping. Module is Quad flash (CS0, CLK, D, Q, HD, WP) plus Octal PSRAM sharing CLK and DQ0-3 on the same SPIx lines.
+- entity: esp32-s3-wroom-1-n8r8
+  level: module
+  path: flash
+  value: "8 MB Quad SPI (chip pads GPIO27-GPIO32, same as N8)"
+  doc: wroom1-ds
+  locator: PDF p3 Table 1-1
+  quote: "ESP32-S3-WROOM-1-N8R8 8 MB (Quad SPI) 8 MB (Octal SPI) –40 ~ 65"
+  transcribed: false
+  confidence: found
+- entity: esp32-s3-wroom-1-n8r8
+  level: module
+  path: psram
+  value: "8 MB Octal SPI, in the chip package (ESP32-S3R8)"
+  doc: wroom1-ds
+  locator: PDF p4 / printed p4, Table 1-1 footnote 4
+  quote: "The modules use PSRAM integrated in the chip’s package."
+  transcribed: false
+  confidence: found
+- entity: esp32-s3-wroom-1-n8r8
+  level: module
+  path: psram_voltage
+  value: 3.3
+  unit: V
+  doc: s3-ds
+  locator: PDF p13 / printed p13, Table 1-1 ESP32-S3 Series Comparison; wroom1 PDF p4 footnote 7
+  quote: "8 MB (Octal SPI) –40 ∼65 °C 3.3 V"
+  transcribed: false
+  confidence: found
+  notes: Chip datasheet states 3.3 V VDD_SPI for ESP32-S3R8 (1.8 V only for R16V/R8V). Module datasheet footnote 7 says 1.8 V is for the N16R16VA modules only. Module-level N8R8 voltage is therefore derived (chip table + module footnote); module datasheet never prints 3.3 V for N8R8.
+- entity: esp32-s3-wroom-1-n8r8
+  level: module
+  path: flash_voltage
+  value: 3.3
+  unit: V
+  conditions: {basis: VDD_SPI fixed to 3.3 V for ESP32-S3R8 modules}
+  doc: wroom1-ds
+  locator: PDF p39 section 8 intro; PDF p4 footnote 7
+  quote: "For modules with PSRAM, the VDD_SPI voltage is fixed to 3.3 V or 1.8 V via eFuse"
+  transcribed: false
+  confidence: inferred
+  notes: Combined with footnote 7 (1.8 V only on N16R16VA) so N8R8 = 3.3 V. Guide v1.0 ordering table states SPI Voltage 3.3 V for ESP32-S3-WROOM-1-N8R8, which supports it.
+- entity: esp32-s3-wroom-1-n8r8
+  level: module
+  path: vdd_spi_voltage
+  value: 3.3
+  unit: V
+  doc: guide-v1.0
+  locator: "Contents and Packaging > Ordering Information table (v1.0 page)"
+  quote: "ESP32-S3-DevKitC-1-N8R8 ESP32-S3-WROOM-1-N8R8 8 MB QD 8 MB OT 3.3 V"
+  transcribed: false
+  confidence: found
+  notes: GPIO45 level does not affect it for modules with PSRAM (datasheet p39). GPIO47/48 working voltage is 1.8 V only on R16V modules (p12 note c), not N8R8.
+- entity: esp32-s3-wroom-1-n8r8
+  level: module
+  path: strapping_notes
+  value:
+    GPIO0: weak pull-up default
+    GPIO3: floating default; no internal pull
+    GPIO45: weak pull-down default; VDD_SPI strap ignored because voltage is fixed by eFuse on PSRAM modules
+    GPIO46: weak pull-down default
+  doc: wroom1-ds
+  locator: PDF p13 Table 4-1; PDF p39 section 8
+  quote: "the VDD_SPI voltage is fixed to 3.3 V or 1.8 V via eFuse, so their VDD_SPI voltage will not be affected by the GPIO45 level."
+  transcribed: false
+  confidence: found
+- entity: esp32-s3-wroom-1-n8r8
+  level: module
+  path: nc_reserved_pins
+  value: []
+  doc: wroom1-ds
+  locator: PDF p11-12 Table 3-1
+  quote: "The module has 41 pins."
+  transcribed: false
+  confidence: found
+  notes: No NC pins. Pins 28-30 are bonded but not usable (see unavailable_bonded_pads).
+- entity: esp32-s3-wroom-1-n8r8
+  level: module
+  path: ambient_temperature
+  value: [-40, 65]
+  unit: C
+  doc: wroom1-ds
+  locator: PDF p3 Table 1-1; PDF p3 text
+  quote: "R8 and R16V series modules operate at –40 ~ 65 °C ambient temperature"
+  transcribed: false
+  confidence: found
+# ------------------------------------------------------------------ BOARD
+- entity: esp32-s3-devkitc-1
+  level: board
+  path: revisions
+  value:
+    v1.0: initial release; RGB LED on GPIO48; schematic V1.0 dated 2021-03-12
+    v1.1: RGB LED on GPIO38; schematic V1.1 (issues 2022-04-13 and 2022-11-30)
+  doc: guide-v1.1
+  locator: "Hardware Revision Details"
+  quote: "the initial version uses GPIO48, whereas v1.1 uses GPIO38."
+  transcribed: false
+  confidence: found
+  notes: Guide v1.0 says "This is the first revision of this board released." Guide v1.1 says both are sold. Headers J1/J3 are identical in both revisions (schematic V1.0 vs V1.1 text and image compared). Only schematic difference between V1.0 and V1.1 is the RGB_CTRL source GPIO.
+- entity: esp32-s3-devkitc-1
+  level: board
+  path: variants
+  value:
+    - {id: esp32-s3-devkitc-1-n8, module: esp32-s3-wroom-1-n8, status: EOL per guide v1.1}
+    - {id: esp32-s3-devkitc-1-n8r8, module: esp32-s3-wroom-1-n8r8, status: current}
+  doc: guide-v1.1
+  locator: "Contents and Packaging > Ordering Information"
+  quote: "ESP32-S3-DevKitC-1-N8R8 ESP32-S3-WROOM-1-N8R8 8 MB 8 MB PCB on-board antenna"
+  transcribed: false
+  confidence: found
+  notes: Guide v1.1 also lists N8R2 (EOL), 1U-N8R8, 1U-N8 (EOL), 1U-N8R2 (EOL) and N32R16V (WROOM-2). Guide v1.0 lists only N8R8, N32R16V and 1U-N8R8. N8 row quote - ESP32-S3-DevKitC-1-N8 (EOL) ESP32-S3-WROOM-1-N8 8 MB — PCB on-board antenna.
+- entity: esp32-s3-devkitc-1
+  level: board
+  path: logic_voltage
+  value: 3.3
+  unit: V
+  doc: devkitc1-sch-v1.1-20221130
+  locator: PDF p2 sheet 2 of 2, regulator block U2 SGM2212-3.3 output VCC_3V3 -> R24 0 ohm -> ESP_3V3 module supply
+  quote: figure
+  transcribed: true
+  confidence: inferred
+  notes: "No document says logic voltage in words; it follows from the module supply 3.3 V (U2 3.3 V output) and module GPIO levels referenced to 3.3 V (module datasheet Table 6-3 DC characteristics at 3.3 V). Guide: \"Power regulator that converts a 5 V supply into a 3.3 V output.\""
+- entity: esp32-s3-devkitc-1
+  level: board
+  path: rails.3V3.source
+  value: "U2 SGM2212-3.3XKC3G/TR LDO, input VCC_5V, output VCC_3V3; 0 ohm R24 to ESP_3V3 (module supply, J1 pins 1-2)"
+  doc: devkitc1-sch-v1.1-20221130
+  locator: PDF p2 sheet 2, power block (U2, C7-C10, R11, D5)
+  quote: "SGM2212-3.3XKC3G/TR"
+  transcribed: true
+  confidence: found
+- entity: esp32-s3-devkitc-1
+  level: board
+  path: rails.3V3.max_current
+  value: null
+  doc: devkitc1-sch-v1.1-20221130
+  locator: schematic p2; guide v1.1 Hardware Reference
+  quote: figure
+  transcribed: false
+  confidence: could-not-verify
+  notes: Neither schematic nor user guides state a maximum current for the 3V3 rail. Regulator datasheet (SGM2212) was not in the allowed source set.
+- entity: esp32-s3-devkitc-1
+  level: board
+  path: rails.5V
+  value: "5 V from either micro-USB port (J2 USB-UART via VBUS->D1->VCC_5V, J4 native USB VBUSB->D7->VCC_5V) or J1 pin 21 5V pin; voltage value not stated numerically"
+  doc: guide-v1.1
+  locator: "Hardware Reference > Power Supply Options"
+  quote: "5V and G (GND) pins"
+  transcribed: false
+  confidence: found
+  notes: Guide says three mutually exclusive supply options (USB ports, 5V+G pins, 3V3+G pins). Schematic names the net VCC_5V; Schottky diodes 1N5819HW-7-F (D1, D7) between each VBUS and VCC_5V. USB voltage and current not stated.
+- entity: esp32-s3-devkitc-1
+  level: board
+  path: numbering.primary
+  value: gpio
+  doc: guide-v1.1
+  locator: "Hardware Reference > Header Block"
+  quote: "The numbering is the same as in the Board Schematic (PDF)."
+  transcribed: false
+  confidence: found
+  notes: Header position numbers 1-22 match schematic J1/J3. Silkscreen labels are the guide Name column (bare GPIO numbers; 3V3, RST, 5V, G, TX, RX). Chip GPIO number equals label for GPIO pins.
+- entity: esp32-s3-devkitc-1
+  level: board
+  path: connectors.J1
+  value:
+    - {position: 1, label: 3V3, kind: power, rail: 3V3}
+    - {position: 2, label: 3V3, kind: power, rail: 3V3}
+    - {position: 3, label: RST, kind: reset, net: CHIP_PU}
+    - {position: 4, label: "4", kind: gpio, pad: GPIO4}
+    - {position: 5, label: "5", kind: gpio, pad: GPIO5}
+    - {position: 6, label: "6", kind: gpio, pad: GPIO6}
+    - {position: 7, label: "7", kind: gpio, pad: GPIO7}
+    - {position: 8, label: "15", kind: gpio, pad: GPIO15}
+    - {position: 9, label: "16", kind: gpio, pad: GPIO16}
+    - {position: 10, label: "17", kind: gpio, pad: GPIO17}
+    - {position: 11, label: "18", kind: gpio, pad: GPIO18}
+    - {position: 12, label: "8", kind: gpio, pad: GPIO8}
+    - {position: 13, label: "3", kind: gpio, pad: GPIO3}
+    - {position: 14, label: "46", kind: gpio, pad: GPIO46}
+    - {position: 15, label: "9", kind: gpio, pad: GPIO9}
+    - {position: 16, label: "10", kind: gpio, pad: GPIO10}
+    - {position: 17, label: "11", kind: gpio, pad: GPIO11}
+    - {position: 18, label: "12", kind: gpio, pad: GPIO12}
+    - {position: 19, label: "13", kind: gpio, pad: GPIO13}
+    - {position: 20, label: "14", kind: gpio, pad: GPIO14}
+    - {position: 21, label: 5V, kind: power, rail: 5V}
+    - {position: 22, label: G, kind: ground}
+  doc: devkitc1-sch-v1.1-20221130
+  locator: PDF p2 sheet 2 of 2, J1 CON22X1 (zoomed render); guide v1.1 Header Block table J1 (all 22 rows identical)
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: Schematic nets - pins 1 and 2 both ESP_3V3 (tied at a junction), pin 3 CHIP_PU, 21 VCC_5V, 22 GND. Guide J1 table rows 1-22 compared pin by pin - no mismatch. Same list in schematic V1.0 (image compared) and V1.1 20220413.
+- entity: esp32-s3-devkitc-1
+  level: board
+  path: connectors.J3
+  value:
+    - {position: 1, label: G, kind: ground}
+    - {position: 2, label: TX, kind: gpio, pad: GPIO43, net: U0TXD}
+    - {position: 3, label: RX, kind: gpio, pad: GPIO44, net: U0RXD}
+    - {position: 4, label: "1", kind: gpio, pad: GPIO1}
+    - {position: 5, label: "2", kind: gpio, pad: GPIO2}
+    - {position: 6, label: "42", kind: gpio, pad: GPIO42}
+    - {position: 7, label: "41", kind: gpio, pad: GPIO41}
+    - {position: 8, label: "40", kind: gpio, pad: GPIO40}
+    - {position: 9, label: "39", kind: gpio, pad: GPIO39}
+    - {position: 10, label: "38", kind: gpio, pad: GPIO38}
+    - {position: 11, label: "37", kind: gpio, pad: GPIO37}
+    - {position: 12, label: "36", kind: gpio, pad: GPIO36}
+    - {position: 13, label: "35", kind: gpio, pad: GPIO35}
+    - {position: 14, label: "0", kind: gpio, pad: GPIO0}
+    - {position: 15, label: "45", kind: gpio, pad: GPIO45}
+    - {position: 16, label: "48", kind: gpio, pad: GPIO48}
+    - {position: 17, label: "47", kind: gpio, pad: GPIO47}
+    - {position: 18, label: "21", kind: gpio, pad: GPIO21}
+    - {position: 19, label: "20", kind: gpio, pad: GPIO20}
+    - {position: 20, label: "19", kind: gpio, pad: GPIO19}
+    - {position: 21, label: G, kind: ground}
+    - {position: 22, label: G, kind: ground}
+  doc: devkitc1-sch-v1.1-20221130
+  locator: PDF p2 sheet 2 of 2, J3 CON22X1 (zoomed renders); guide v1.1 Header Block table J3
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: Schematic nets - pin 1 GND, 2 U0TXD, 3 U0RXD, pins 21 and 22 both tied to GND. GPIO43/44 mapping of U0TXD/U0RXD comes from module datasheet Table 3-1 (TXD0 = GPIO43, RXD0 = GPIO44) and the guide J3 table (TX=GPIO43, RX=GPIO44). Guide J3 rows compared pin by pin - no mismatch.
+- entity: esp32-s3-devkitc-1
+  level: board
+  path: connectors.unbroken_module_gpios
+  value: "none: all 36 bonded module GPIOs appear on J1/J3 (17 GPIO pins on J1 + 19 on J3 = 36 distinct)"
+  doc: devkitc1-sch-v1.1-20221130
+  locator: PDF p2, J1/J3 versus U4 pins
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: Count of GPIO pins - J1 positions 4-20 = 17 GPIOs (GPIO4,5,6,7,15,16,17,18,8,3,46,9,10,11,12,13,14); J3 positions 2-20 = 19 GPIOs; 17+19 = 36 = module GPIO count.
+- entity: esp32-s3-devkitc-1
+  level: board
+  path: onboard.rgb_led
+  value:
+    v1.1: {part: SK68XXMINI-HS (D6, addressable), pad: GPIO38, via: R17 0 ohm, net: RGB_CTRL}
+    v1.0: {part: SK68XXMINI-HS (D6, addressable), pad: GPIO48, via: R17 0 ohm, net: RGB_CTRL}
+  doc: guide-v1.1
+  corroborating_doc: devkitc1-sch-v1.1-20221130
+  locator: PDF p2 sheet 2, bottom centre block (GPIO38 - R17 - RGB_CTRL - D6 DIN, VDD to VCC_3V3); V1.0 schematic PDF p2 same block with GPIO48
+  quote: "Addressable RGB LED, driven by GPIO38."
+  transcribed: true
+  confidence: found
+  notes: Quote is guide v1.1 Description of Components; guide v1.0 says "Addressable RGB LED, driven by GPIO48." Guide J3 table marks GPIO38 (J3-10) with RGB LED in v1.1 and GPIO48 (J3-16) with RGB LED in v1.0. The LED is on a 0 ohm link (R17) from the pad.
+- entity: esp32-s3-devkitc-1
+  level: board
+  path: onboard.usb_uart_bridge
+  value: {part: CP2102N-A02-GQFN28 (U3), uses_pad: [GPIO43, GPIO44, GPIO0, EN], note: TXD/RXD to U0RXD/U0TXD through R7/R9 0 ohm; DTR/RTS drive auto-program}
+  doc: guide-v1.1
+  corroborating_doc: devkitc1-sch-v1.1-20221130
+  locator: PDF p2 sheet 2, bottom left block (U3, R7, R9) and auto-program block
+  quote: "Single USB-to-UART bridge chip provides transfer rates up to 3 Mbps."
+  transcribed: true
+  confidence: found
+  notes: Quote is guide v1.1 Description of Components. The USB-UART port is J2 micro-USB (D-/D+ to CP2102N). GPIO43/44 are shared with J3-2/J3-3 TX/RX.
+- entity: esp32-s3-devkitc-1
+  level: board
+  path: onboard.native_usb
+  value: {part: J4 micro-USB, uses_pad: [GPIO19, GPIO20], mapping: GPIO19 = D-, GPIO20 = D+, protection: D8/D9/D10 LESD5D5.0CT1G, VBUSB via D7 to VCC_5V}
+  doc: guide-v1.1
+  corroborating_doc: devkitc1-sch-v1.1-20221130
+  locator: PDF p2 sheet 2, "ESP USB" block (nets GPIO19 and GPIO20); module datasheet PDF p11 Table 3-1 (IO19 USB_D-, IO20 USB_D+)
+  quote: "ESP32-S3 full-speed USB OTG interface, compliant with the USB 1.1 specification."
+  transcribed: true
+  confidence: found
+  notes: Quote is guide v1.1 (USB Port row). Schematic shows nets GPIO19 and GPIO20 on D-/D+ lines in the order listed; D-/D+ polarity per module datasheet pin functions. Guide v1.0 names the same port ESP32-S3 USB Port and notes that using it is not fully implemented in software. J3 pins 19 and 20 carry the same GPIOs.
+- entity: esp32-s3-devkitc-1
+  level: board
+  path: onboard.boot_button
+  value: {part: SW1 NTC013-AT1J-A160T, uses_pad: [GPIO0], effect: pulls GPIO0 low to ground when pressed}
+  doc: guide-v1.1
+  corroborating_doc: devkitc1-sch-v1.1-20221130
+  locator: PDF p2 sheet 2, bottom right block (SW1 to GPIO0; C13 0.1 uF not fitted)
+  quote: "Holding down Boot and then pressing Reset initiates Firmware Download mode for downloading firmware through the serial port."
+  transcribed: true
+  confidence: found
+- entity: esp32-s3-devkitc-1
+  level: board
+  path: onboard.reset_button
+  value: {part: SW2 NTC013-AT1J-A160T, uses_pad: [EN/CHIP_PU], effect: pulls CHIP_PU low; CHIP_PU has R5 10K pull-up to ESP_3V3 and C6 1 uF to GND; C14 not fitted}
+  doc: guide-v1.1
+  corroborating_doc: devkitc1-sch-v1.1-20221130
+  locator: PDF p2 sheet 2, bottom right block and CHIP_PU RC block (R5, C6)
+  quote: "Press this button to restart the system."
+  transcribed: true
+  confidence: found
+- entity: esp32-s3-devkitc-1
+  level: board
+  path: onboard.auto_program
+  value: {parts: [Q1 L8050QLT1G, Q2 L8050QLT1G, R10 10K, R12 10K, R8 0 ohm, R13 0 ohm], uses_pad: [GPIO0, EN/CHIP_PU], logic: DTR and RTS from CP2102N via two transistors to CHIP_PU and GPIO0}
+  doc: devkitc1-sch-v1.1-20221130
+  locator: PDF p2 sheet 2, centre bottom block "Auto program" with truth table DTR RTS --> EN IO0
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: Truth table rows (DTR RTS -> EN IO0) - 1 1 -> 1 1; 0 0 -> 1 1; 1 0 -> 0 1; 0 1 -> 1 0. Earlier schematic issues had an extra IO2 column.
+- entity: esp32-s3-devkitc-1
+  level: board
+  path: onboard.power_led
+  value: {part: D5 red LED, uses_pad: [], effect: from VCC_3V3 through R11 5.1K to GND}
+  doc: guide-v1.1
+  locator: "Description of Components > 3.3 V Power On LED; schematic p2 power block"
+  quote: "Turns on when the USB power is connected to the board."
+  transcribed: false
+  confidence: found
+- entity: esp32-s3-devkitc-1
+  level: board
+  path: onboard.solder_jumpers_and_links
+  value: "No solder jumpers in the schematic. Zero-ohm links - R24 (VCC_3V3 to ESP_3V3 module supply), R17 (RGB data), R7/R9 (UART), R8/R13 (auto-program)."
+  doc: devkitc1-sch-v1.1-20221130
+  locator: PDF p2 sheet 2
+  quote: figure
+  transcribed: true
+  confidence: found
+  notes: Guide text mentions no jumpers; the earlier-generation ESP32 boards' USB-to-UART jumpers do not exist here. Not-fitted parts - C13, C14, C15, R14 (all marked NC).
+- entity: esp32-s3-devkitc-1
+  level: board
+  path: onboard.module_pad_consumption_by_variant
+  value:
+    n8: no board-level GPIO consumed except RGB LED GPIO (38 on v1.1, 48 on v1.0) and shared signals GPIO0, EN, GPIO43/44 (UART bridge), GPIO19/20 (native USB)
+    n8r8: GPIO35, GPIO36, GPIO37 unavailable (octal PSRAM) in addition
+  doc: guide-v1.1
+  locator: "Description of Components > Note"
+  quote: "the pins GPIO35, GPIO36 and GPIO37 are used for the internal communication between ESP32-S3 and SPI flash/PSRAM memory, thus not available for external use."
+  transcribed: false
+  confidence: found
+- entity: esp32-s3-devkitc-1
+  level: board
+  path: board_pin_strap_exposure
+  value: "Strapping pins GPIO0 (J3-14, also BOOT button and auto-program), GPIO3 (J1-13), GPIO45 (J3-15), GPIO46 (J1-14) are all on headers"
+  doc: wroom1-ds
+  locator: PDF p13 Table 4-1 with schematic J1/J3
+  quote: "GPIO0 Weak pull-up 1 GPIO3 Floating – GPIO45 Weak pull-down 0 GPIO46 Weak pull-down 0"
+  transcribed: false
+  confidence: found
+- entity: esp32-s3-devkitc-1
+  level: board
+  path: guide_revision_pages
+  value: "guide v1.1 page documents v1.1 (marks the older v1.0); guide v1.0 page documents v1.0 and says latest is v1.1; unversioned user_guide.html is 404"
+  doc: guide-v1.1
+  locator: page header
+  quote: "The older version: ESP32-S3-DevKitC-1 v1.0"
+  transcribed: false
+  confidence: found

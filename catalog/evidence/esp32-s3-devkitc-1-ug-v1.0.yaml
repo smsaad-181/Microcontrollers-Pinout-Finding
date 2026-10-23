@@ -1,0 +1,31 @@
+# Evidence record: ESP32-S3-DevKitC-1 v1.0 User Guide (read 2026-10-22).
+accessed: "2026-10-22"
+claims:
+  - id: "esp32-s3-devkitc-1-ug-v1.0#title-v1-0"
+    locator: "User Guide title"
+    quote: "ESP32-S3-DevKitC-1 v1.0"
+    supports: "The older guide documents the initial board revision v1.0"
+  - id: "esp32-s3-devkitc-1-ug-v1.0#rgb-led-gpio48"
+    locator: "Getting Started, Description of Components table, RGB LED"
+    quote: "Addressable RGB LED, driven by GPIO48."
+    supports: "v1.0 on-board addressable RGB LED is on GPIO48 (v1.1 uses GPIO38)"
+  - id: "esp32-s3-devkitc-1-ug-v1.0#j3-gpio48-rgb"
+    locator: "Hardware Reference, Header Block, table J3"
+    quote: "GPIO48, SPICLK_N, SUBSPICLK_N_DIFF, RGB LED"
+    supports: "v1.0 header J3 pin 16 (GPIO48) is marked RGB LED"
+  - id: "esp32-s3-devkitc-1-ug-v1.0#ordering-n8r8-spi-voltage"
+    locator: "Contents and Packaging, Ordering Information table, SPI Voltage column"
+    quote: "ESP32-S3-DevKitC-1-N8R8 ESP32-S3-WROOM-1-N8R8 8 MB QD 8 MB OT 3.3 V"
+    supports: "v1.0 guide lists the SPI (flash/PSRAM VDD_SPI) voltage of the N8R8 board as 3.3 V (the v1.1 guide dropped this column)"
+doc_number: null
+id: "esp32-s3-devkitc-1-ug-v1.0"
+kind: "board-guide"
+manual: false
+publisher: "Espressif Systems"
+revision: "v1.0"
+revision_date: null
+secondary: false
+sha256: null
+title: "ESP32-S3-DevKitC-1 v1.0 User Guide"
+url: "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32s3/esp32-s3-devkitc-1/user_guide_v1.0.html"
+url_original: null

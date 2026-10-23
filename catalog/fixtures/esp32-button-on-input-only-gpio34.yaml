@@ -1,0 +1,36 @@
+# Golden fixture 20 - push button locked on ESP32 GPIO34: input-only pad with no internal pull resistors, so an external pull-up is required.
+id: esp32-button-on-input-only-gpio34
+board: esp32-devkitc-v4@V4
+variant: esp32-devkitc-32e
+project:
+  board: esp32-devkitc-v4@V4
+  variant: esp32-devkitc-32e
+  wifi: true
+  modules:
+    - { breakout: push-button, instance: sw1 }
+  locked:
+    - { instance: sw1, role: SW, pad: GPIO34 }
+  reserved: []
+expect:
+  status: ok
+  exact:
+    sw1.SW: GPIO34
+  properties:
+    - switches_on: [GPIO34]
+    - no_warning_at_level: [critical]
+  required_parts_include:
+    - { kind: resistor, role: pull-up, count: 1, note: "GPIO34 has no internal pull-up/pull-down; value not asserted by the catalog" }
+evidence:
+  - esp32-trm-v5.8#iomux-gpio34
+  - esp32-trm-v5.8#input-only-34-39
+  - esp32-trm-v5.8#note-input-only
+  - esp32-ds-v5.3#input-only-note
+  - esp32-trm-v5.8#reset-column
+  - esp32-trm-v5.8#reset-legend-0-1
+  - omron-b3f-ds-a070-e1-08#bounce
+derivations:
+  - "GPIO34 is input-only (esp32-trm-v5.8#input-only-34-39) with reset_state 'disabled' (esp32-trm-v5.8#reset-legend-0-1); input-only pads 34-39 have no internal pull-up/pull-down (esp32-trm-v5.8#note-input-only), so a button to GND needs one external pull-up. The value (10 kohm is customary) is a design choice, not a catalog fact (push-button pullups.value_ohm missing)."
+  - "exact is justified only because the pad is locked, not by scoring. The button is an input, so input-only is acceptable; any output role on this pad would be a violation."
+  - "Debounce: Omron B3F bounce 5 ms max (omron-b3f-ds-a070-e1-08#bounce) -> firmware/hardware debounce note only."
+changelog:
+  - "2026-10-23: created (task 2a.7, fixture-author)."

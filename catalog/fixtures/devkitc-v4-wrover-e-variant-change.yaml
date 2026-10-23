@@ -1,0 +1,61 @@
+# Golden fixture 03 - the worked-example project of fixture 02 on the WROVER-E variant (ESP32-DevKitC-VE): GPIO16/GPIO17 are PSRAM lines.
+id: devkitc-v4-wrover-e-variant-change
+board: esp32-devkitc-v4@V4
+variant: esp32-devkitc-ve
+project:
+  board: esp32-devkitc-v4@V4
+  variant: esp32-devkitc-ve
+  wifi: true
+  modules:
+    - { breakout: gy-bme280-6pin, instance: env }
+    - { breakout: rfid-rc522-blue, instance: rfid }
+    - { breakout: st7735s-1.8-spi-tft, instance: tft }
+    - { breakout: relay-board-4ch-transistor, instance: relays }
+    - { breakout: push-button, instance: sw1 }
+    - { breakout: push-button, instance: sw2 }
+    - { breakout: push-button, instance: sw3 }
+    - { breakout: push-button, instance: sw4 }
+  locked: []
+  reserved: []
+expect:
+  status: ok
+  exact:
+    bus.SCK: GPIO18
+    bus.MOSI: GPIO23
+    bus.MISO: GPIO19
+  properties:
+    - no_pad_in: [GPIO16, GPIO17, GPIO6, GPIO7, GPIO8, GPIO9, GPIO10, GPIO11, GPIO1, GPIO3]
+    - outputs_not_in: [GPIO34, GPIO35, GPIO36, GPIO39]
+    - switches_on: [GPIO34, GPIO35, GPIO36, GPIO39]
+    - all_used: [GPIO18, GPIO19, GPIO21, GPIO22, GPIO23, GPIO25, GPIO26, GPIO27, GPIO32, GPIO33]
+    - risk_tier1_equals: 4
+    - risk_pads_subset_of: [GPIO5, GPIO13, GPIO14, GPIO15, GPIO2]
+    # GPIO4 and GPIO2 both carry a strap fact in status `conflict` in the catalog, so each costs 2; GPIO5/13/14/15 cost 1.
+    - no_pad_in: [GPIO4]
+  warnings_include:
+    - { code: FLOATING_AT_RESET_LOAD, level: warning }
+    - { code: ERRATUM_GPIO_3_11, level: caution }
+    - { code: I2C_PULLUP_UNKNOWN, level: caution }
+    - { code: RAIL_BUDGET_UNKNOWN, level: caution }
+evidence:
+  - esp32-devkitc-v4-ug#note-gpio16-17-wrover
+  - esp32-devkitc-v4-ug#ordering-ve
+  - esp32-devkitc-v4-ug#j3-11-14
+  - esp32-wrover-e-ds-v2.4#series-n8r8
+  - esp32-wrover-e-ds-v2.4#sch-gpio16-psram-cs
+  - esp32-wrover-e-ds-v2.4#sch-gpio17-sram-clk
+  - esp32-wrover-e-ds-v2.4#pin-table-27-28-nc
+  - esp32-wrover-e-ds-v2.4#up-to-24-gpios
+  - esp32-ds-v5.3#psram-gpio16-ce
+  - esp32-ds-v5.3#psram-gpio17-sclk
+  - esp32-ds-v5.3#strap-default-config
+  - esp32-trm-v5.8#gpio-strap-reg
+  - esp32-wroom-32e-ds-v2.1#psram-io16-r2
+derivations:
+  - "WROVER-E consumes GPIO16 (PSRAM CS#) and GPIO17 (PSRAM SCLK): esp32-wrover-e-ds-v2.4#sch-gpio16-psram-cs, #sch-gpio17-sram-clk; DevKitC guide: 'boards with ESP32-WROVER modules have the pins reserved' (esp32-devkitc-v4-ug#note-gpio16-17-wrover). The catalog records this in the module `consumed` map (bonded_pads still lists them - schema gap)."
+  - "Clean pads drop from 12 to 10 (18,19,21,22,23,25,26,27,32,33); output-capable signals stay 14 -> 14 - 10 = 4 signals on risk pads -> tier-1 risk 4 (WROOM: 2)."
+  - "Risk cost per candidate: GPIO5 strap (verified) 1; GPIO15 strap 1; GPIO13/GPIO14 JTAG 1; GPIO2 strap with status conflict = 2; GPIO4 strap with status conflict = 2 (esp32 chip facts); so the cheapest 4 are {5,13,14,15}. The plan text (DC/RST to GPIO13 and GPIO2) is NOT asserted: GPIO2 is itself a `conflict` strap in the catalog."
+  - "ASSUMPTION flagged: tier-1 equality 4 holds if reset_state `conflict` on GPIO13/GPIO14 is not counted as 'relied on' for non-load signals (CS/DC/RST are logic inputs, not loads). If the engine counts it, this fixture's number must be re-derived by the auditor, not weakened silently."
+  - "SPI3 IO_MUX pins unchanged: 18/23/19 (esp-idf-spi-master-v6.1#iomux-pins-main)."
+changelog:
+  - "2026-10-23: created (task 2a.7, fixture-author)."

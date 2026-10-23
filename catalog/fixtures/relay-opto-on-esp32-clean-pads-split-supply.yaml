@@ -1,0 +1,44 @@
+# Golden fixture 19 - four opto relay inputs on an ESP32-DevKitC V4 (WROOM-32E): clean pads exist, JD-VCC jumper removed so the coils run from a separate 5 V supply.
+id: relay-opto-on-esp32-clean-pads-split-supply
+board: esp32-devkitc-v4@V4
+variant: esp32-devkitc-32e
+project:
+  board: esp32-devkitc-v4@V4
+  variant: esp32-devkitc-32e
+  wifi: true
+  modules:
+    - { breakout: relay-board-4ch-opto-jdvcc, instance: relays }
+  locked: []
+  reserved: []
+expect:
+  status: ok
+  properties:
+    - no_pad_in: [GPIO6, GPIO7, GPIO8, GPIO9, GPIO10, GPIO11, GPIO1, GPIO3, GPIO0, GPIO2, GPIO5, GPIO12, GPIO15]   # straps, flash, UART0
+    - outputs_not_in: [GPIO34, GPIO35, GPIO36, GPIO39]
+    - signal_pad_in:
+        signals: ["relays.COIL[1]", "relays.COIL[2]", "relays.COIL[3]", "relays.COIL[4]"]
+        pads: [GPIO16, GPIO17, GPIO18, GPIO19, GPIO21, GPIO22, GPIO23, GPIO25, GPIO26, GPIO27, GPIO32, GPIO33]
+    - risk_tier1_equals: 0
+    - supply_split: { module: relays, vcc: "MCU-side 5 V (input LEDs only)", jd_vcc: "separate 5 V supply (coils)", jumper: removed }
+    - no_warning_at_level: [critical]
+  warnings_include:
+    - { code: LEVEL_SHIFTER_UNKNOWN, level: caution }    # 3.3 V pad vs opto LED supplied from VCC; LED Vf not in the catalog, so the OFF state at 3.3 V cannot be proven
+    - { code: FLOATING_AT_RESET_UNKNOWN, level: caution } # relay resting level is inferred (interim) and reset_state of the chosen pad differs per pad
+    - { code: RAIL_BUDGET_UNKNOWN, level: caution }       # DevKitC 5V rail max_current missing
+  required_parts_include:
+    - { kind: supply, role: jd-vcc, note: "separate 5 V coil supply with common GND; value not asserted (coil current missing)" }
+evidence:
+  - sunfounder-ts0011-4ch-relay#sch-channel
+  - sunfounder-ts0011-4ch-relay#pinout-jdvcc
+  - sunfounder-ts0011-4ch-relay#schematic-jdvcc
+  - sunfounder-ts0011-4ch-relay#pinout-in-low
+  - esp32-devkitc-v4-ug#j2-1-4
+  - esp32-devkitc-v4-ug#j3-1-5
+  - esp32-devkitc-v4-ug#note-flash-pins
+  - esp32-ds-v5.3#strap-default-config
+derivations:
+  - "Four COIL signals, output-capable pads without strap/flash/UART0 role on the 32E: GPIO16, 17, 18, 19, 21, 22, 23, 25, 26, 27, 32, 33 (12 >= 4; GPIO13/14 are excluded as risk pads, as in fixture 02), so a risk-free assignment exists and strap pads GPIO0/2/5/12/15 stay unused. Any subset of these satisfies the property; no exact pins are fixed."
+  - "JD-VCC split: with the jumper fitted coils/drivers run from VCC; removing it lets a separate 5 V feed JD-VCC while VCC feeds only the input LEDs (sunfounder-ts0011-4ch-relay#pinout-jdvcc, #schematic-jdvcc). The coil current is not in the catalog (supply_current missing), so the supply value is not asserted."
+  - "Opto input path: VCC -> R1 (1 kohm) -> LED -> IN (sunfounder-ts0011-4ch-relay#sch-channel). A 3.3 V high on IN leaves (VCC-3.3) across the LED path; whether that is below the conduction threshold needs the LED Vf, which the catalog lacks: Caution, not a computed verdict."
+changelog:
+  - "2026-10-23: created (task 2a.7, fixture-author). Weakened: LED Vf, coil current and 5 V rail current missing, so only Cautions; supply_split and required_parts kind 'supply' are proposed property vocabulary."

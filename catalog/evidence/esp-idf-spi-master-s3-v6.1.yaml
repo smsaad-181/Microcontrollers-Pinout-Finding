@@ -1,0 +1,27 @@
+# Evidence record: ESP-IDF Programming Guide v6.1 - SPI Master Driver (ESP32-S3) (read 2026-10-22).
+accessed: "2026-10-22"
+claims:
+  - id: "esp-idf-spi-master-s3-v6.1#matrix-same-below-40mhz"
+    locator: "SPI Master Driver - ESP32-S3, section GPIO Matrix and IO_MUX"
+    quote: "routing SPI pins via the GPIO matrix will behave the same compared to routing them via IOMUX."
+    supports: "GPIO-matrix routing behaves like IO_MUX up to 40 MHz; the page states no separate hard limit above 40 MHz"
+  - id: "esp-idf-spi-master-s3-v6.1#matrix-routing"
+    locator: "SPI Master Driver - ESP32-S3, section GPIO Matrix and IO_MUX"
+    quote: "the signals can also be routed to any other available pins using the less direct GPIO matrix."
+    supports: "SPI signals can be routed to any available pin through the GPIO matrix"
+  - id: "esp-idf-spi-master-s3-v6.1#iomux-pins-spi2"
+    locator: "SPI Master Driver - ESP32-S3, section GPIO Matrix and IO_MUX, IO_MUX pin table (column GPIO Number (SPI2))"
+    quote: "CS0 [1] 10 SCLK 12 MISO 13 MOSI 11 QUADWP 14 QUADHD 9"
+    supports: "SPI2 IO_MUX pins: CS0 GPIO10, SCLK GPIO12, MISO GPIO13, MOSI GPIO11, QUADWP GPIO14, QUADHD GPIO9 (matches datasheet Table 2-4 FSPI F4 functions)"
+doc_number: null
+id: "esp-idf-spi-master-s3-v6.1"
+kind: "api-doc"
+manual: false
+publisher: "Espressif Systems"
+revision: "v6.1"
+revision_date: null
+secondary: false
+sha256: null
+title: "ESP-IDF Programming Guide v6.1 - SPI Master Driver (ESP32-S3)"
+url: "https://docs.espressif.com/projects/esp-idf/en/stable/esp32s3/api-reference/peripherals/spi_master.html"
+url_original: null

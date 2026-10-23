@@ -1,0 +1,41 @@
+hardwired: []
+ic: push-button
+id: push-button
+interfaces_exposed:
+- digital
+level_shifter:
+  evidence: []
+  note: Not applicable to a bare switch; no document states it.
+  status: missing
+  value: null
+notes: 'Bare momentary switch (SPST-NO). Wiring convention, not a datasheet fact: one terminal to GND, the other to an MCU input with a pull-up (internal or external), so the input reads LOW when pressed; the contact is symmetric so terminal A/B naming is arbitrary. The pin resting level is floating when released (open contact). Contact bounce (5 ms max for the Omron B3F, omron-b3f-ds-a070-e1-08#bounce) needs debouncing in firmware or hardware. Electrical limits stored on the IC record come from the Omron B3F datasheet as a representative part only.'
+pins:
+- label: Terminal A
+  maps_to: SW
+- label: Terminal B
+  maps_to: GND
+pullups:
+- line: SW
+  value_ohm:
+    evidence: []
+    note: A bare tactile switch has no pull-up; use the MCU internal pull-up or an external one. Breakout boards with an onboard resistor are not covered.
+    status: missing
+    unit: ohm
+    value: null
+regulator:
+  evidence: []
+  note: Not applicable to a bare switch; no document states it.
+  status: missing
+  value: null
+supply_current:
+  evidence: []
+  note: 'Not applicable: passive contact.'
+  status: missing
+  unit: mA
+  value: null
+variant_names:
+- momentary push button
+- tactile switch
+- push button
+- pushbutton
+vendor: generic

@@ -1,0 +1,3041 @@
+entity: rp2040
+auditor: hardware-fact-auditor
+date: '2026-10-22'
+documents:
+- id: rp2040-ds-3184e62
+  title: RP2040 Datasheet
+  revision: 3184e62-clean
+  sha256: be56fbb75ba0ae9e26558a73c93ac3e75c2ad4e6878d3b6703de2a76d886ea8c
+  sha256_verified: true
+  original_url_download_hash_identical: true
+contaminated: []
+page_convention: PDF page = printed page + 1 (PDF p.302 = printed p.301). Quotes checked programmatically against PyMuPDF text, fallback pdftotext -layout (quote_check field). Table 625/622/341 numbers
+  were read from rendered page images because text extraction scrambles those tables; those quotes are row labels.
+blindness: No catalog/, docs/research, PLAN/STATE/NOW, phase-1 or other auditor files were opened.
+facts:
+- path: pads.GPIO0.functions
+  value:
+  - fn: SPI0 RX
+    funcsel: F1
+    routing: iomux
+  - fn: UART0 TX
+    funcsel: F2
+    routing: iomux
+  - fn: I2C0 SDA
+    funcsel: F3
+    routing: iomux
+  - fn: PWM0 A
+    funcsel: F4
+    routing: iomux
+  - fn: GPIO (SIO)
+    funcsel: F5
+    routing: iomux
+  - fn: PIO0 (any PIO pin role)
+    funcsel: F6
+    routing: matrix
+  - fn: PIO1 (any PIO pin role)
+    funcsel: F7
+    routing: matrix
+  - fn: USB OVCUR DET
+    funcsel: F9
+    routing: iomux
+  doc: rp2040-ds-3184e62
+  locator: PDF p.238 (printed p.237), section 2.19.2 Function Select, Table 279 GPIO User Bank Functions
+  quote: 0 SPI0 RX UART0 TX I2C0 SDA PWM0 A SIO PIO0 PIO1 USB OVCUR DET
+  quote_check: pymupdf
+  confidence: found
+  notes: 'FUNCSEL table F1-F9 (reset FUNCSEL = 0x1f NULL). Routing class is the auditor''s assignment: iomux = one fixed choice per pad from this row; PIO0/PIO1 (F6/F7) = matrix, INFERRED because every
+    one of the 30 pads offers both and the PIO has its own internal pin mapping (Table 280, section 3.1); SIO = software GPIO on every pad. USB OVCUR DET / VBUS DET / VBUS EN are USB-controller signals
+    selectable per pad (iomux). Pad 0 row is split by text extraction; checked by eye on rendered PDF p.238.'
+- path: pads.GPIO0.input_only
+  value: false
+  doc: rp2040-ds-3184e62
+  locator: PDF p.237 (printed p.236), section 2.19.1 Overview
+  quote: All GPIOs support digital input and output
+  quote_check: pymupdf
+  confidence: found
+  notes: All user GPIOs are bidirectional (Table 615 types Digital IO (FT) for GPIO0-25 and Digital IO / Analogue for GPIO26-29).
+- path: pads.GPIO0.reset_state
+  value: pulldown
+  doc: rp2040-ds-3184e62
+  locator: PDF p.303 (printed p.302), section 2.19.6.3 Pad Control - User Bank, Table 341 GPIO0..GPIO29 Registers (PDE reset 0x1)
+  quote: 'PDE: Pull down enable RW 0x1'
+  quote_check: pymupdf
+  confidence: found
+  notes: 'Pin list Table 615 (section 5.5.2.2) also gives Reset State = Pull-Down for this pad. Pad reset: OD=0, IE=1, PUE=0, PDE=1, DRIVE=4mA, SCHMITT=1; FUNCSEL=0x1f (NULL) so output is not driven. =>
+    input with pull-down. Reset values read from rendered PDF p.302-303.'
+- path: pads.GPIO0.strap
+  value: none
+  doc: rp2040-ds-3184e62
+  locator: PDF p.131 (printed p.130), section 2.8.1.1 Bootrom boot sequence
+  quote: Check if SPI CS pin is tied low ("bootrom button"), and skip flash boot if so.
+  quote_check: pymupdf
+  confidence: inferred
+  notes: 'No user-bank GPIO0-29 is sampled at reset or for boot-mode selection anywhere in the boot sequence (2.8.1). Boot mode is sampled on QSPI_SS (flash chip-select, QSPI bank, NOT GPIO0-29): tied low
+    -> skip flash boot / USB boot. The absence of a strap on this pad is INFERRED from the full list of boot-time checks, not stated in one sentence. Default pull = down (reset_state).'
+- path: pads.GPIO0.power_up_glitch
+  value: none
+  doc: rp2040-ds-3184e62
+  locator: PDF p.628 (printed p.627), Appendix B Errata (all of RP2040-E1..E16 checked; full-text search for "glitch")
+  quote: Errata are listed numerically under the relevant block.
+  quote_check: pymupdf
+  confidence: inferred
+  notes: No power-up output glitch is documented for any user pad. Absence inferred from the errata appendix and a text search (only hits concern clock muxes and a SIO register note). Output driver is disabled
+    until software selects a function. E5 (GPIO15) and E6 (GPIO26-29) are not glitch errata. Datasheet gives no glitch duration.
+- path: pads.GPIO0.errata
+  value: []
+  doc: rp2040-ds-3184e62
+  locator: PDF p.628 (printed p.627), Appendix B Errata (all entries checked)
+  quote: Errata are listed numerically under the relevant block.
+  quote_check: pymupdf
+  confidence: inferred
+  notes: No erratum in Appendix B (E1-E16) names this pad.
+- path: pads.GPIO0.adc
+  value: null
+  doc: rp2040-ds-3184e62
+  locator: PDF p.558 (printed p.557), section 4.9 ADC and Temperature Sensor
+  quote: Four inputs that are available on package pins shared with GPIO[29:26]
+  quote_check: pymupdf
+  confidence: found
+  notes: No ADC on this pad (ADC inputs only on GPIO26-29).
+- path: pads.GPIO1.functions
+  value:
+  - fn: SPI0 CSn
+    funcsel: F1
+    routing: iomux
+  - fn: UART0 RX
+    funcsel: F2
+    routing: iomux
+  - fn: I2C0 SCL
+    funcsel: F3
+    routing: iomux
+  - fn: PWM0 B
+    funcsel: F4
+    routing: iomux
+  - fn: GPIO (SIO)
+    funcsel: F5
+    routing: iomux
+  - fn: PIO0 (any PIO pin role)
+    funcsel: F6
+    routing: matrix
+  - fn: PIO1 (any PIO pin role)
+    funcsel: F7
+    routing: matrix
+  - fn: USB VBUS DET
+    funcsel: F9
+    routing: iomux
+  doc: rp2040-ds-3184e62
+  locator: PDF p.238 (printed p.237), section 2.19.2 Function Select, Table 279 GPIO User Bank Functions
+  quote: 1 SPI0 CSn UART0 RX I2C0 SCL PWM0 B SIO PIO0 PIO1 USB VBUS DET
+  quote_check: pymupdf
+  confidence: found
+  notes: 'FUNCSEL table F1-F9 (reset FUNCSEL = 0x1f NULL). Routing class is the auditor''s assignment: iomux = one fixed choice per pad from this row; PIO0/PIO1 (F6/F7) = matrix, INFERRED because every
+    one of the 30 pads offers both and the PIO has its own internal pin mapping (Table 280, section 3.1); SIO = software GPIO on every pad. USB OVCUR DET / VBUS DET / VBUS EN are USB-controller signals
+    selectable per pad (iomux).'
+- path: pads.GPIO1.input_only
+  value: false
+  doc: rp2040-ds-3184e62
+  locator: PDF p.237 (printed p.236), section 2.19.1 Overview
+  quote: All GPIOs support digital input and output
+  quote_check: pymupdf
+  confidence: found
+  notes: All user GPIOs are bidirectional (Table 615 types Digital IO (FT) for GPIO0-25 and Digital IO / Analogue for GPIO26-29).
+- path: pads.GPIO1.reset_state
+  value: pulldown
+  doc: rp2040-ds-3184e62
+  locator: PDF p.303 (printed p.302), section 2.19.6.3 Pad Control - User Bank, Table 341 GPIO0..GPIO29 Registers (PDE reset 0x1)
+  quote: 'PDE: Pull down enable RW 0x1'
+  quote_check: pymupdf
+  confidence: found
+  notes: 'Pin list Table 615 (section 5.5.2.2) also gives Reset State = Pull-Down for this pad. Pad reset: OD=0, IE=1, PUE=0, PDE=1, DRIVE=4mA, SCHMITT=1; FUNCSEL=0x1f (NULL) so output is not driven. =>
+    input with pull-down. Reset values read from rendered PDF p.302-303.'
+- path: pads.GPIO1.strap
+  value: none
+  doc: rp2040-ds-3184e62
+  locator: PDF p.131 (printed p.130), section 2.8.1.1 Bootrom boot sequence
+  quote: Check if SPI CS pin is tied low ("bootrom button"), and skip flash boot if so.
+  quote_check: pymupdf
+  confidence: inferred
+  notes: 'No user-bank GPIO0-29 is sampled at reset or for boot-mode selection anywhere in the boot sequence (2.8.1). Boot mode is sampled on QSPI_SS (flash chip-select, QSPI bank, NOT GPIO0-29): tied low
+    -> skip flash boot / USB boot. The absence of a strap on this pad is INFERRED from the full list of boot-time checks, not stated in one sentence. Default pull = down (reset_state).'
+- path: pads.GPIO1.power_up_glitch
+  value: none
+  doc: rp2040-ds-3184e62
+  locator: PDF p.628 (printed p.627), Appendix B Errata (all of RP2040-E1..E16 checked; full-text search for "glitch")
+  quote: Errata are listed numerically under the relevant block.
+  quote_check: pymupdf
+  confidence: inferred
+  notes: No power-up output glitch is documented for any user pad. Absence inferred from the errata appendix and a text search (only hits concern clock muxes and a SIO register note). Output driver is disabled
+    until software selects a function. E5 (GPIO15) and E6 (GPIO26-29) are not glitch errata. Datasheet gives no glitch duration.
+- path: pads.GPIO1.errata
+  value: []
+  doc: rp2040-ds-3184e62
+  locator: PDF p.628 (printed p.627), Appendix B Errata (all entries checked)
+  quote: Errata are listed numerically under the relevant block.
+  quote_check: pymupdf
+  confidence: inferred
+  notes: No erratum in Appendix B (E1-E16) names this pad.
+- path: pads.GPIO1.adc
+  value: null
+  doc: rp2040-ds-3184e62
+  locator: PDF p.558 (printed p.557), section 4.9 ADC and Temperature Sensor
+  quote: Four inputs that are available on package pins shared with GPIO[29:26]
+  quote_check: pymupdf
+  confidence: found
+  notes: No ADC on this pad (ADC inputs only on GPIO26-29).
+- path: pads.GPIO2.functions
+  value:
+  - fn: SPI0 SCK
+    funcsel: F1
+    routing: iomux
+  - fn: UART0 CTS
+    funcsel: F2
+    routing: iomux
+  - fn: I2C1 SDA
+    funcsel: F3
+    routing: iomux
+  - fn: PWM1 A
+    funcsel: F4
+    routing: iomux
+  - fn: GPIO (SIO)
+    funcsel: F5
+    routing: iomux
+  - fn: PIO0 (any PIO pin role)
+    funcsel: F6
+    routing: matrix
+  - fn: PIO1 (any PIO pin role)
+    funcsel: F7
+    routing: matrix
+  - fn: USB VBUS EN
+    funcsel: F9
+    routing: iomux
+  doc: rp2040-ds-3184e62
+  locator: PDF p.238 (printed p.237), section 2.19.2 Function Select, Table 279 GPIO User Bank Functions
+  quote: 2 SPI0 SCK UART0 CTS I2C1 SDA PWM1 A SIO PIO0 PIO1 USB VBUS EN
+  quote_check: pymupdf
+  confidence: found
+  notes: 'FUNCSEL table F1-F9 (reset FUNCSEL = 0x1f NULL). Routing class is the auditor''s assignment: iomux = one fixed choice per pad from this row; PIO0/PIO1 (F6/F7) = matrix, INFERRED because every
+    one of the 30 pads offers both and the PIO has its own internal pin mapping (Table 280, section 3.1); SIO = software GPIO on every pad. USB OVCUR DET / VBUS DET / VBUS EN are USB-controller signals
+    selectable per pad (iomux).'
+- path: pads.GPIO2.input_only
+  value: false
+  doc: rp2040-ds-3184e62
+  locator: PDF p.237 (printed p.236), section 2.19.1 Overview
+  quote: All GPIOs support digital input and output
+  quote_check: pymupdf
+  confidence: found
+  notes: All user GPIOs are bidirectional (Table 615 types Digital IO (FT) for GPIO0-25 and Digital IO / Analogue for GPIO26-29).
+- path: pads.GPIO2.reset_state
+  value: pulldown
+  doc: rp2040-ds-3184e62
+  locator: PDF p.303 (printed p.302), section 2.19.6.3 Pad Control - User Bank, Table 341 GPIO0..GPIO29 Registers (PDE reset 0x1)
+  quote: 'PDE: Pull down enable RW 0x1'
+  quote_check: pymupdf
+  confidence: found
+  notes: 'Pin list Table 615 (section 5.5.2.2) also gives Reset State = Pull-Down for this pad. Pad reset: OD=0, IE=1, PUE=0, PDE=1, DRIVE=4mA, SCHMITT=1; FUNCSEL=0x1f (NULL) so output is not driven. =>
+    input with pull-down. Reset values read from rendered PDF p.302-303.'
+- path: pads.GPIO2.strap
+  value: none
+  doc: rp2040-ds-3184e62
+  locator: PDF p.131 (printed p.130), section 2.8.1.1 Bootrom boot sequence
+  quote: Check if SPI CS pin is tied low ("bootrom button"), and skip flash boot if so.
+  quote_check: pymupdf
+  confidence: inferred
+  notes: 'No user-bank GPIO0-29 is sampled at reset or for boot-mode selection anywhere in the boot sequence (2.8.1). Boot mode is sampled on QSPI_SS (flash chip-select, QSPI bank, NOT GPIO0-29): tied low
+    -> skip flash boot / USB boot. The absence of a strap on this pad is INFERRED from the full list of boot-time checks, not stated in one sentence. Default pull = down (reset_state).'
+- path: pads.GPIO2.power_up_glitch
+  value: none
+  doc: rp2040-ds-3184e62
+  locator: PDF p.628 (printed p.627), Appendix B Errata (all of RP2040-E1..E16 checked; full-text search for "glitch")
+  quote: Errata are listed numerically under the relevant block.
+  quote_check: pymupdf
+  confidence: inferred
+  notes: No power-up output glitch is documented for any user pad. Absence inferred from the errata appendix and a text search (only hits concern clock muxes and a SIO register note). Output driver is disabled
+    until software selects a function. E5 (GPIO15) and E6 (GPIO26-29) are not glitch errata. Datasheet gives no glitch duration.
+- path: pads.GPIO2.errata
+  value: []
+  doc: rp2040-ds-3184e62
+  locator: PDF p.628 (printed p.627), Appendix B Errata (all entries checked)
+  quote: Errata are listed numerically under the relevant block.
+  quote_check: pymupdf
+  confidence: inferred
+  notes: No erratum in Appendix B (E1-E16) names this pad.
+- path: pads.GPIO2.adc
+  value: null
+  doc: rp2040-ds-3184e62
+  locator: PDF p.558 (printed p.557), section 4.9 ADC and Temperature Sensor
+  quote: Four inputs that are available on package pins shared with GPIO[29:26]
+  quote_check: pymupdf
+  confidence: found
+  notes: No ADC on this pad (ADC inputs only on GPIO26-29).
+- path: pads.GPIO3.functions
+  value:
+  - fn: SPI0 TX
+    funcsel: F1
+    routing: iomux
+  - fn: UART0 RTS
+    funcsel: F2
+    routing: iomux
+  - fn: I2C1 SCL
+    funcsel: F3
+    routing: iomux
+  - fn: PWM1 B
+    funcsel: F4
+    routing: iomux
+  - fn: GPIO (SIO)
+    funcsel: F5
+    routing: iomux
+  - fn: PIO0 (any PIO pin role)
+    funcsel: F6
+    routing: matrix
+  - fn: PIO1 (any PIO pin role)
+    funcsel: F7
+    routing: matrix
+  - fn: USB OVCUR DET
+    funcsel: F9
+    routing: iomux
+  doc: rp2040-ds-3184e62
+  locator: PDF p.238 (printed p.237), section 2.19.2 Function Select, Table 279 GPIO User Bank Functions
+  quote: 3 SPI0 TX UART0 RTS I2C1 SCL PWM1 B SIO PIO0 PIO1 USB OVCUR DET
+  quote_check: pymupdf
+  confidence: found
+  notes: 'FUNCSEL table F1-F9 (reset FUNCSEL = 0x1f NULL). Routing class is the auditor''s assignment: iomux = one fixed choice per pad from this row; PIO0/PIO1 (F6/F7) = matrix, INFERRED because every
+    one of the 30 pads offers both and the PIO has its own internal pin mapping (Table 280, section 3.1); SIO = software GPIO on every pad. USB OVCUR DET / VBUS DET / VBUS EN are USB-controller signals
+    selectable per pad (iomux).'
+- path: pads.GPIO3.input_only
+  value: false
+  doc: rp2040-ds-3184e62
+  locator: PDF p.237 (printed p.236), section 2.19.1 Overview
+  quote: All GPIOs support digital input and output
+  quote_check: pymupdf
+  confidence: found
+  notes: All user GPIOs are bidirectional (Table 615 types Digital IO (FT) for GPIO0-25 and Digital IO / Analogue for GPIO26-29).
+- path: pads.GPIO3.reset_state
+  value: pulldown
+  doc: rp2040-ds-3184e62
+  locator: PDF p.303 (printed p.302), section 2.19.6.3 Pad Control - User Bank, Table 341 GPIO0..GPIO29 Registers (PDE reset 0x1)
+  quote: 'PDE: Pull down enable RW 0x1'
+  quote_check: pymupdf
+  confidence: found
+  notes: 'Pin list Table 615 (section 5.5.2.2) also gives Reset State = Pull-Down for this pad. Pad reset: OD=0, IE=1, PUE=0, PDE=1, DRIVE=4mA, SCHMITT=1; FUNCSEL=0x1f (NULL) so output is not driven. =>
+    input with pull-down. Reset values read from rendered PDF p.302-303.'
+- path: pads.GPIO3.strap
+  value: none
+  doc: rp2040-ds-3184e62
+  locator: PDF p.131 (printed p.130), section 2.8.1.1 Bootrom boot sequence
+  quote: Check if SPI CS pin is tied low ("bootrom button"), and skip flash boot if so.
+  quote_check: pymupdf
+  confidence: inferred
+  notes: 'No user-bank GPIO0-29 is sampled at reset or for boot-mode selection anywhere in the boot sequence (2.8.1). Boot mode is sampled on QSPI_SS (flash chip-select, QSPI bank, NOT GPIO0-29): tied low
+    -> skip flash boot / USB boot. The absence of a strap on this pad is INFERRED from the full list of boot-time checks, not stated in one sentence. Default pull = down (reset_state).'
+- path: pads.GPIO3.power_up_glitch
+  value: none
+  doc: rp2040-ds-3184e62
+  locator: PDF p.628 (printed p.627), Appendix B Errata (all of RP2040-E1..E16 checked; full-text search for "glitch")
+  quote: Errata are listed numerically under the relevant block.
+  quote_check: pymupdf
+  confidence: inferred
+  notes: No power-up output glitch is documented for any user pad. Absence inferred from the errata appendix and a text search (only hits concern clock muxes and a SIO register note). Output driver is disabled
+    until software selects a function. E5 (GPIO15) and E6 (GPIO26-29) are not glitch errata. Datasheet gives no glitch duration.
+- path: pads.GPIO3.errata
+  value: []
+  doc: rp2040-ds-3184e62
+  locator: PDF p.628 (printed p.627), Appendix B Errata (all entries checked)
+  quote: Errata are listed numerically under the relevant block.
+  quote_check: pymupdf
+  confidence: inferred
+  notes: No erratum in Appendix B (E1-E16) names this pad.
+- path: pads.GPIO3.adc
+  value: null
+  doc: rp2040-ds-3184e62
+  locator: PDF p.558 (printed p.557), section 4.9 ADC and Temperature Sensor
+  quote: Four inputs that are available on package pins shared with GPIO[29:26]
+  quote_check: pymupdf
+  confidence: found
+  notes: No ADC on this pad (ADC inputs only on GPIO26-29).
+- path: pads.GPIO4.functions
+  value:
+  - fn: SPI0 RX
+    funcsel: F1
+    routing: iomux
+  - fn: UART1 TX
+    funcsel: F2
+    routing: iomux
+  - fn: I2C0 SDA
+    funcsel: F3
+    routing: iomux
+  - fn: PWM2 A
+    funcsel: F4
+    routing: iomux
+  - fn: GPIO (SIO)
+    funcsel: F5
+    routing: iomux
+  - fn: PIO0 (any PIO pin role)
+    funcsel: F6
+    routing: matrix
+  - fn: PIO1 (any PIO pin role)
+    funcsel: F7
+    routing: matrix
+  - fn: USB VBUS DET
+    funcsel: F9
+    routing: iomux
+  doc: rp2040-ds-3184e62
+  locator: PDF p.238 (printed p.237), section 2.19.2 Function Select, Table 279 GPIO User Bank Functions
+  quote: 4 SPI0 RX UART1 TX I2C0 SDA PWM2 A SIO PIO0 PIO1 USB VBUS DET
+  quote_check: pymupdf
+  confidence: found
+  notes: 'FUNCSEL table F1-F9 (reset FUNCSEL = 0x1f NULL). Routing class is the auditor''s assignment: iomux = one fixed choice per pad from this row; PIO0/PIO1 (F6/F7) = matrix, INFERRED because every
+    one of the 30 pads offers both and the PIO has its own internal pin mapping (Table 280, section 3.1); SIO = software GPIO on every pad. USB OVCUR DET / VBUS DET / VBUS EN are USB-controller signals
+    selectable per pad (iomux).'
+- path: pads.GPIO4.input_only
+  value: false
+  doc: rp2040-ds-3184e62
+  locator: PDF p.237 (printed p.236), section 2.19.1 Overview
+  quote: All GPIOs support digital input and output
+  quote_check: pymupdf
+  confidence: found
+  notes: All user GPIOs are bidirectional (Table 615 types Digital IO (FT) for GPIO0-25 and Digital IO / Analogue for GPIO26-29).
+- path: pads.GPIO4.reset_state
+  value: pulldown
+  doc: rp2040-ds-3184e62
+  locator: PDF p.303 (printed p.302), section 2.19.6.3 Pad Control - User Bank, Table 341 GPIO0..GPIO29 Registers (PDE reset 0x1)
+  quote: 'PDE: Pull down enable RW 0x1'
+  quote_check: pymupdf
+  confidence: found
+  notes: 'Pin list Table 615 (section 5.5.2.2) also gives Reset State = Pull-Down for this pad. Pad reset: OD=0, IE=1, PUE=0, PDE=1, DRIVE=4mA, SCHMITT=1; FUNCSEL=0x1f (NULL) so output is not driven. =>
+    input with pull-down. Reset values read from rendered PDF p.302-303.'
+- path: pads.GPIO4.strap
+  value: none
+  doc: rp2040-ds-3184e62
+  locator: PDF p.131 (printed p.130), section 2.8.1.1 Bootrom boot sequence
+  quote: Check if SPI CS pin is tied low ("bootrom button"), and skip flash boot if so.
+  quote_check: pymupdf
+  confidence: inferred
+  notes: 'No user-bank GPIO0-29 is sampled at reset or for boot-mode selection anywhere in the boot sequence (2.8.1). Boot mode is sampled on QSPI_SS (flash chip-select, QSPI bank, NOT GPIO0-29): tied low
+    -> skip flash boot / USB boot. The absence of a strap on this pad is INFERRED from the full list of boot-time checks, not stated in one sentence. Default pull = down (reset_state).'
+- path: pads.GPIO4.power_up_glitch
+  value: none
+  doc: rp2040-ds-3184e62
+  locator: PDF p.628 (printed p.627), Appendix B Errata (all of RP2040-E1..E16 checked; full-text search for "glitch")
+  quote: Errata are listed numerically under the relevant block.
+  quote_check: pymupdf
+  confidence: inferred
+  notes: No power-up output glitch is documented for any user pad. Absence inferred from the errata appendix and a text search (only hits concern clock muxes and a SIO register note). Output driver is disabled
+    until software selects a function. E5 (GPIO15) and E6 (GPIO26-29) are not glitch errata. Datasheet gives no glitch duration.
+- path: pads.GPIO4.errata
+  value: []
+  doc: rp2040-ds-3184e62
+  locator: PDF p.628 (printed p.627), Appendix B Errata (all entries checked)
+  quote: Errata are listed numerically under the relevant block.
+  quote_check: pymupdf
+  confidence: inferred
+  notes: No erratum in Appendix B (E1-E16) names this pad.
+- path: pads.GPIO4.adc
+  value: null
+  doc: rp2040-ds-3184e62
+  locator: PDF p.558 (printed p.557), section 4.9 ADC and Temperature Sensor
+  quote: Four inputs that are available on package pins shared with GPIO[29:26]
+  quote_check: pymupdf
+  confidence: found
+  notes: No ADC on this pad (ADC inputs only on GPIO26-29).
+- path: pads.GPIO5.functions
+  value:
+  - fn: SPI0 CSn
+    funcsel: F1
+    routing: iomux
+  - fn: UART1 RX
+    funcsel: F2
+    routing: iomux
+  - fn: I2C0 SCL
+    funcsel: F3
+    routing: iomux
+  - fn: PWM2 B
+    funcsel: F4
+    routing: iomux
+  - fn: GPIO (SIO)
+    funcsel: F5
+    routing: iomux
+  - fn: PIO0 (any PIO pin role)
+    funcsel: F6
+    routing: matrix
+  - fn: PIO1 (any PIO pin role)
+    funcsel: F7
+    routing: matrix
+  - fn: USB VBUS EN
+    funcsel: F9
+    routing: iomux
+  doc: rp2040-ds-3184e62
+  locator: PDF p.238 (printed p.237), section 2.19.2 Function Select, Table 279 GPIO User Bank Functions
+  quote: 5 SPI0 CSn UART1 RX I2C0 SCL PWM2 B SIO PIO0 PIO1 USB VBUS EN
+  quote_check: pymupdf
+  confidence: found
+  notes: 'FUNCSEL table F1-F9 (reset FUNCSEL = 0x1f NULL). Routing class is the auditor''s assignment: iomux = one fixed choice per pad from this row; PIO0/PIO1 (F6/F7) = matrix, INFERRED because every
+    one of the 30 pads offers both and the PIO has its own internal pin mapping (Table 280, section 3.1); SIO = software GPIO on every pad. USB OVCUR DET / VBUS DET / VBUS EN are USB-controller signals
+    selectable per pad (iomux).'
+- path: pads.GPIO5.input_only
+  value: false
+  doc: rp2040-ds-3184e62
+  locator: PDF p.237 (printed p.236), section 2.19.1 Overview
+  quote: All GPIOs support digital input and output
+  quote_check: pymupdf
+  confidence: found
+  notes: All user GPIOs are bidirectional (Table 615 types Digital IO (FT) for GPIO0-25 and Digital IO / Analogue for GPIO26-29).
+- path: pads.GPIO5.reset_state
+  value: pulldown
+  doc: rp2040-ds-3184e62
+  locator: PDF p.303 (printed p.302), section 2.19.6.3 Pad Control - User Bank, Table 341 GPIO0..GPIO29 Registers (PDE reset 0x1)
+  quote: 'PDE: Pull down enable RW 0x1'
+  quote_check: pymupdf
+  confidence: found
+  notes: 'Pin list Table 615 (section 5.5.2.2) also gives Reset State = Pull-Down for this pad. Pad reset: OD=0, IE=1, PUE=0, PDE=1, DRIVE=4mA, SCHMITT=1; FUNCSEL=0x1f (NULL) so output is not driven. =>
+    input with pull-down. Reset values read from rendered PDF p.302-303.'
+- path: pads.GPIO5.strap
+  value: none
+  doc: rp2040-ds-3184e62
+  locator: PDF p.131 (printed p.130), section 2.8.1.1 Bootrom boot sequence
+  quote: Check if SPI CS pin is tied low ("bootrom button"), and skip flash boot if so.
+  quote_check: pymupdf
+  confidence: inferred
+  notes: 'No user-bank GPIO0-29 is sampled at reset or for boot-mode selection anywhere in the boot sequence (2.8.1). Boot mode is sampled on QSPI_SS (flash chip-select, QSPI bank, NOT GPIO0-29): tied low
+    -> skip flash boot / USB boot. The absence of a strap on this pad is INFERRED from the full list of boot-time checks, not stated in one sentence. Default pull = down (reset_state).'
+- path: pads.GPIO5.power_up_glitch
+  value: none
+  doc: rp2040-ds-3184e62
+  locator: PDF p.628 (printed p.627), Appendix B Errata (all of RP2040-E1..E16 checked; full-text search for "glitch")
+  quote: Errata are listed numerically under the relevant block.
+  quote_check: pymupdf
+  confidence: inferred
+  notes: No power-up output glitch is documented for any user pad. Absence inferred from the errata appendix and a text search (only hits concern clock muxes and a SIO register note). Output driver is disabled
+    until software selects a function. E5 (GPIO15) and E6 (GPIO26-29) are not glitch errata. Datasheet gives no glitch duration.
+- path: pads.GPIO5.errata
+  value: []
+  doc: rp2040-ds-3184e62
+  locator: PDF p.628 (printed p.627), Appendix B Errata (all entries checked)
+  quote: Errata are listed numerically under the relevant block.
+  quote_check: pymupdf
+  confidence: inferred
+  notes: No erratum in Appendix B (E1-E16) names this pad.
+- path: pads.GPIO5.adc
+  value: null
+  doc: rp2040-ds-3184e62
+  locator: PDF p.558 (printed p.557), section 4.9 ADC and Temperature Sensor
+  quote: Four inputs that are available on package pins shared with GPIO[29:26]
+  quote_check: pymupdf
+  confidence: found
+  notes: No ADC on this pad (ADC inputs only on GPIO26-29).
+- path: pads.GPIO6.functions
+  value:
+  - fn: SPI0 SCK
+    funcsel: F1
+    routing: iomux
+  - fn: UART1 CTS
+    funcsel: F2
+    routing: iomux
+  - fn: I2C1 SDA
+    funcsel: F3
+    routing: iomux
+  - fn: PWM3 A
+    funcsel: F4
+    routing: iomux
+  - fn: GPIO (SIO)
+    funcsel: F5
+    routing: iomux
+  - fn: PIO0 (any PIO pin role)
+    funcsel: F6
+    routing: matrix
+  - fn: PIO1 (any PIO pin role)
+    funcsel: F7
+    routing: matrix
+  - fn: USB OVCUR DET
+    funcsel: F9
+    routing: iomux
+  doc: rp2040-ds-3184e62
+  locator: PDF p.238 (printed p.237), section 2.19.2 Function Select, Table 279 GPIO User Bank Functions
+  quote: 6 SPI0 SCK UART1 CTS I2C1 SDA PWM3 A SIO PIO0 PIO1 USB OVCUR DET
+  quote_check: pymupdf
+  confidence: found
+  notes: 'FUNCSEL table F1-F9 (reset FUNCSEL = 0x1f NULL). Routing class is the auditor''s assignment: iomux = one fixed choice per pad from this row; PIO0/PIO1 (F6/F7) = matrix, INFERRED because every
+    one of the 30 pads offers both and the PIO has its own internal pin mapping (Table 280, section 3.1); SIO = software GPIO on every pad. USB OVCUR DET / VBUS DET / VBUS EN are USB-controller signals
+    selectable per pad (iomux).'
+- path: pads.GPIO6.input_only
+  value: false
+  doc: rp2040-ds-3184e62
+  locator: PDF p.237 (printed p.236), section 2.19.1 Overview
+  quote: All GPIOs support digital input and output
+  quote_check: pymupdf
+  confidence: found
+  notes: All user GPIOs are bidirectional (Table 615 types Digital IO (FT) for GPIO0-25 and Digital IO / Analogue for GPIO26-29).
+- path: pads.GPIO6.reset_state
+  value: pulldown
+  doc: rp2040-ds-3184e62
+  locator: PDF p.303 (printed p.302), section 2.19.6.3 Pad Control - User Bank, Table 341 GPIO0..GPIO29 Registers (PDE reset 0x1)
+  quote: 'PDE: Pull down enable RW 0x1'
+  quote_check: pymupdf
+  confidence: found
+  notes: 'Pin list Table 615 (section 5.5.2.2) also gives Reset State = Pull-Down for this pad. Pad reset: OD=0, IE=1, PUE=0, PDE=1, DRIVE=4mA, SCHMITT=1; FUNCSEL=0x1f (NULL) so output is not driven. =>
+    input with pull-down. Reset values read from rendered PDF p.302-303.'
+- path: pads.GPIO6.strap
+  value: none
+  doc: rp2040-ds-3184e62
+  locator: PDF p.131 (printed p.130), section 2.8.1.1 Bootrom boot sequence
+  quote: Check if SPI CS pin is tied low ("bootrom button"), and skip flash boot if so.
+  quote_check: pymupdf
+  confidence: inferred
+  notes: 'No user-bank GPIO0-29 is sampled at reset or for boot-mode selection anywhere in the boot sequence (2.8.1). Boot mode is sampled on QSPI_SS (flash chip-select, QSPI bank, NOT GPIO0-29): tied low
+    -> skip flash boot / USB boot. The absence of a strap on this pad is INFERRED from the full list of boot-time checks, not stated in one sentence. Default pull = down (reset_state).'
+- path: pads.GPIO6.power_up_glitch
+  value: none
+  doc: rp2040-ds-3184e62
+  locator: PDF p.628 (printed p.627), Appendix B Errata (all of RP2040-E1..E16 checked; full-text search for "glitch")
+  quote: Errata are listed numerically under the relevant block.
+  quote_check: pymupdf
+  confidence: inferred
+  notes: No power-up output glitch is documented for any user pad. Absence inferred from the errata appendix and a text search (only hits concern clock muxes and a SIO register note). Output driver is disabled
+    until software selects a function. E5 (GPIO15) and E6 (GPIO26-29) are not glitch errata. Datasheet gives no glitch duration.
+- path: pads.GPIO6.errata
+  value: []
+  doc: rp2040-ds-3184e62
+  locator: PDF p.628 (printed p.627), Appendix B Errata (all entries checked)
+  quote: Errata are listed numerically under the relevant block.
+  quote_check: pymupdf
+  confidence: inferred
+  notes: No erratum in Appendix B (E1-E16) names this pad.
+- path: pads.GPIO6.adc
+  value: null
+  doc: rp2040-ds-3184e62
+  locator: PDF p.558 (printed p.557), section 4.9 ADC and Temperature Sensor
+  quote: Four inputs that are available on package pins shared with GPIO[29:26]
+  quote_check: pymupdf
+  confidence: found
+  notes: No ADC on this pad (ADC inputs only on GPIO26-29).
+- path: pads.GPIO7.functions
+  value:
+  - fn: SPI0 TX
+    funcsel: F1
+    routing: iomux
+  - fn: UART1 RTS
+    funcsel: F2
+    routing: iomux
+  - fn: I2C1 SCL
+    funcsel: F3
+    routing: iomux
+  - fn: PWM3 B
+    funcsel: F4
+    routing: iomux
+  - fn: GPIO (SIO)
+    funcsel: F5
+    routing: iomux
+  - fn: PIO0 (any PIO pin role)
+    funcsel: F6
+    routing: matrix
+  - fn: PIO1 (any PIO pin role)
+    funcsel: F7
+    routing: matrix
+  - fn: USB VBUS DET
+    funcsel: F9
+    routing: iomux
+  doc: rp2040-ds-3184e62
+  locator: PDF p.238 (printed p.237), section 2.19.2 Function Select, Table 279 GPIO User Bank Functions
+  quote: 7 SPI0 TX UART1 RTS I2C1 SCL PWM3 B SIO PIO0 PIO1 USB VBUS DET
+  quote_check: pymupdf
+  confidence: found
+  notes: 'FUNCSEL table F1-F9 (reset FUNCSEL = 0x1f NULL). Routing class is the auditor''s assignment: iomux = one fixed choice per pad from this row; PIO0/PIO1 (F6/F7) = matrix, INFERRED because every
+    one of the 30 pads offers both and the PIO has its own internal pin mapping (Table 280, section 3.1); SIO = software GPIO on every pad. USB OVCUR DET / VBUS DET / VBUS EN are USB-controller signals
+    selectable per pad (iomux).'
+- path: pads.GPIO7.input_only
+  value: false
+  doc: rp2040-ds-3184e62
+  locator: PDF p.237 (printed p.236), section 2.19.1 Overview
+  quote: All GPIOs support digital input and output
+  quote_check: pymupdf
+  confidence: found
+  notes: All user GPIOs are bidirectional (Table 615 types Digital IO (FT) for GPIO0-25 and Digital IO / Analogue for GPIO26-29).
+- path: pads.GPIO7.reset_state
+  value: pulldown
+  doc: rp2040-ds-3184e62
+  locator: PDF p.303 (printed p.302), section 2.19.6.3 Pad Control - User Bank, Table 341 GPIO0..GPIO29 Registers (PDE reset 0x1)
+  quote: 'PDE: Pull down enable RW 0x1'
+  quote_check: pymupdf
+  confidence: found
+  notes: 'Pin list Table 615 (section 5.5.2.2) also gives Reset State = Pull-Down for this pad. Pad reset: OD=0, IE=1, PUE=0, PDE=1, DRIVE=4mA, SCHMITT=1; FUNCSEL=0x1f (NULL) so output is not driven. =>
+    input with pull-down. Reset values read from rendered PDF p.302-303.'
+- path: pads.GPIO7.strap
+  value: none
+  doc: rp2040-ds-3184e62
+  locator: PDF p.131 (printed p.130), section 2.8.1.1 Bootrom boot sequence
+  quote: Check if SPI CS pin is tied low ("bootrom button"), and skip flash boot if so.
+  quote_check: pymupdf
+  confidence: inferred
+  notes: 'No user-bank GPIO0-29 is sampled at reset or for boot-mode selection anywhere in the boot sequence (2.8.1). Boot mode is sampled on QSPI_SS (flash chip-select, QSPI bank, NOT GPIO0-29): tied low
+    -> skip flash boot / USB boot. The absence of a strap on this pad is INFERRED from the full list of boot-time checks, not stated in one sentence. Default pull = down (reset_state).'
+- path: pads.GPIO7.power_up_glitch
+  value: none
+  doc: rp2040-ds-3184e62
+  locator: PDF p.628 (printed p.627), Appendix B Errata (all of RP2040-E1..E16 checked; full-text search for "glitch")
+  quote: Errata are listed numerically under the relevant block.
+  quote_check: pymupdf
+  confidence: inferred
+  notes: No power-up output glitch is documented for any user pad. Absence inferred from the errata appendix and a text search (only hits concern clock muxes and a SIO register note). Output driver is disabled
+    until software selects a function. E5 (GPIO15) and E6 (GPIO26-29) are not glitch errata. Datasheet gives no glitch duration.
+- path: pads.GPIO7.errata
+  value: []
+  doc: rp2040-ds-3184e62
+  locator: PDF p.628 (printed p.627), Appendix B Errata (all entries checked)
+  quote: Errata are listed numerically under the relevant block.
+  quote_check: pymupdf
+  confidence: inferred
+  notes: No erratum in Appendix B (E1-E16) names this pad.
+- path: pads.GPIO7.adc
+  value: null
+  doc: rp2040-ds-3184e62
+  locator: PDF p.558 (printed p.557), section 4.9 ADC and Temperature Sensor
+  quote: Four inputs that are available on package pins shared with GPIO[29:26]
+  quote_check: pymupdf
+  confidence: found
+  notes: No ADC on this pad (ADC inputs only on GPIO26-29).
+- path: pads.GPIO8.functions
+  value:
+  - fn: SPI1 RX
+    funcsel: F1
+    routing: iomux
+  - fn: UART1 TX
+    funcsel: F2
+    routing: iomux
+  - fn: I2C0 SDA
+    funcsel: F3
+    routing: iomux
+  - fn: PWM4 A
+    funcsel: F4
+    routing: iomux
+  - fn: GPIO (SIO)
+    funcsel: F5
+    routing: iomux
+  - fn: PIO0 (any PIO pin role)
+    funcsel: F6
+    routing: matrix
+  - fn: PIO1 (any PIO pin role)
+    funcsel: F7
+    routing: matrix
+  - fn: USB VBUS EN
+    funcsel: F9
+    routing: iomux
+  doc: rp2040-ds-3184e62
+  locator: PDF p.238 (printed p.237), section 2.19.2 Function Select, Table 279 GPIO User Bank Functions
+  quote: 8 SPI1 RX UART1 TX I2C0 SDA PWM4 A SIO PIO0 PIO1 USB VBUS EN
+  quote_check: pymupdf
+  confidence: found
+  notes: 'FUNCSEL table F1-F9 (reset FUNCSEL = 0x1f NULL). Routing class is the auditor''s assignment: iomux = one fixed choice per pad from this row; PIO0/PIO1 (F6/F7) = matrix, INFERRED because every
+    one of the 30 pads offers both and the PIO has its own internal pin mapping (Table 280, section 3.1); SIO = software GPIO on every pad. USB OVCUR DET / VBUS DET / VBUS EN are USB-controller signals
+    selectable per pad (iomux).'
+- path: pads.GPIO8.input_only
+  value: false
+  doc: rp2040-ds-3184e62
+  locator: PDF p.237 (printed p.236), section 2.19.1 Overview
+  quote: All GPIOs support digital input and output
+  quote_check: pymupdf
+  confidence: found
+  notes: All user GPIOs are bidirectional (Table 615 types Digital IO (FT) for GPIO0-25 and Digital IO / Analogue for GPIO26-29).
+- path: pads.GPIO8.reset_state
+  value: pulldown
+  doc: rp2040-ds-3184e62
+  locator: PDF p.303 (printed p.302), section 2.19.6.3 Pad Control - User Bank, Table 341 GPIO0..GPIO29 Registers (PDE reset 0x1)
+  quote: 'PDE: Pull down enable RW 0x1'
+  quote_check: pymupdf
+  confidence: found
+  notes: 'Pin list Table 615 (section 5.5.2.2) also gives Reset State = Pull-Down for this pad. Pad reset: OD=0, IE=1, PUE=0, PDE=1, DRIVE=4mA, SCHMITT=1; FUNCSEL=0x1f (NULL) so output is not driven. =>
+    input with pull-down. Reset values read from rendered PDF p.302-303.'
+- path: pads.GPIO8.strap
+  value: none
+  doc: rp2040-ds-3184e62
+  locator: PDF p.131 (printed p.130), section 2.8.1.1 Bootrom boot sequence
+  quote: Check if SPI CS pin is tied low ("bootrom button"), and skip flash boot if so.
+  quote_check: pymupdf
+  confidence: inferred
+  notes: 'No user-bank GPIO0-29 is sampled at reset or for boot-mode selection anywhere in the boot sequence (2.8.1). Boot mode is sampled on QSPI_SS (flash chip-select, QSPI bank, NOT GPIO0-29): tied low
+    -> skip flash boot / USB boot. The absence of a strap on this pad is INFERRED from the full list of boot-time checks, not stated in one sentence. Default pull = down (reset_state).'
+- path: pads.GPIO8.power_up_glitch
+  value: none
+  doc: rp2040-ds-3184e62
+  locator: PDF p.628 (printed p.627), Appendix B Errata (all of RP2040-E1..E16 checked; full-text search for "glitch")
+  quote: Errata are listed numerically under the relevant block.
+  quote_check: pymupdf
+  confidence: inferred
+  notes: No power-up output glitch is documented for any user pad. Absence inferred from the errata appendix and a text search (only hits concern clock muxes and a SIO register note). Output driver is disabled
+    until software selects a function. E5 (GPIO15) and E6 (GPIO26-29) are not glitch errata. Datasheet gives no glitch duration.
+- path: pads.GPIO8.errata
+  value: []
+  doc: rp2040-ds-3184e62
+  locator: PDF p.628 (printed p.627), Appendix B Errata (all entries checked)
+  quote: Errata are listed numerically under the relevant block.
+  quote_check: pymupdf
+  confidence: inferred
+  notes: No erratum in Appendix B (E1-E16) names this pad.
+- path: pads.GPIO8.adc
+  value: null
+  doc: rp2040-ds-3184e62
+  locator: PDF p.558 (printed p.557), section 4.9 ADC and Temperature Sensor
+  quote: Four inputs that are available on package pins shared with GPIO[29:26]
+  quote_check: pymupdf
+  confidence: found
+  notes: No ADC on this pad (ADC inputs only on GPIO26-29).
+- path: pads.GPIO9.functions
+  value:
+  - fn: SPI1 CSn
+    funcsel: F1
+    routing: iomux
+  - fn: UART1 RX
+    funcsel: F2
+    routing: iomux
+  - fn: I2C0 SCL
+    funcsel: F3
+    routing: iomux
+  - fn: PWM4 B
+    funcsel: F4
+    routing: iomux
+  - fn: GPIO (SIO)
+    funcsel: F5
+    routing: iomux
+  - fn: PIO0 (any PIO pin role)
+    funcsel: F6
+    routing: matrix
+  - fn: PIO1 (any PIO pin role)
+    funcsel: F7
+    routing: matrix
+  - fn: USB OVCUR DET
+    funcsel: F9
+    routing: iomux
+  doc: rp2040-ds-3184e62
+  locator: PDF p.238 (printed p.237), section 2.19.2 Function Select, Table 279 GPIO User Bank Functions
+  quote: 9 SPI1 CSn UART1 RX I2C0 SCL PWM4 B SIO PIO0 PIO1 USB OVCUR DET
+  quote_check: pymupdf
+  confidence: found
+  notes: 'FUNCSEL table F1-F9 (reset FUNCSEL = 0x1f NULL). Routing class is the auditor''s assignment: iomux = one fixed choice per pad from this row; PIO0/PIO1 (F6/F7) = matrix, INFERRED because every
+    one of the 30 pads offers both and the PIO has its own internal pin mapping (Table 280, section 3.1); SIO = software GPIO on every pad. USB OVCUR DET / VBUS DET / VBUS EN are USB-controller signals
+    selectable per pad (iomux).'
+- path: pads.GPIO9.input_only
+  value: false
+  doc: rp2040-ds-3184e62
+  locator: PDF p.237 (printed p.236), section 2.19.1 Overview
+  quote: All GPIOs support digital input and output
+  quote_check: pymupdf
+  confidence: found
+  notes: All user GPIOs are bidirectional (Table 615 types Digital IO (FT) for GPIO0-25 and Digital IO / Analogue for GPIO26-29).
+- path: pads.GPIO9.reset_state
+  value: pulldown
+  doc: rp2040-ds-3184e62
+  locator: PDF p.303 (printed p.302), section 2.19.6.3 Pad Control - User Bank, Table 341 GPIO0..GPIO29 Registers (PDE reset 0x1)
+  quote: 'PDE: Pull down enable RW 0x1'
+  quote_check: pymupdf
+  confidence: found
+  notes: 'Pin list Table 615 (section 5.5.2.2) also gives Reset State = Pull-Down for this pad. Pad reset: OD=0, IE=1, PUE=0, PDE=1, DRIVE=4mA, SCHMITT=1; FUNCSEL=0x1f (NULL) so output is not driven. =>
+    input with pull-down. Reset values read from rendered PDF p.302-303.'
+- path: pads.GPIO9.strap
+  value: none
+  doc: rp2040-ds-3184e62
+  locator: PDF p.131 (printed p.130), section 2.8.1.1 Bootrom boot sequence
+  quote: Check if SPI CS pin is tied low ("bootrom button"), and skip flash boot if so.
+  quote_check: pymupdf
+  confidence: inferred
+  notes: 'No user-bank GPIO0-29 is sampled at reset or for boot-mode selection anywhere in the boot sequence (2.8.1). Boot mode is sampled on QSPI_SS (flash chip-select, QSPI bank, NOT GPIO0-29): tied low
+    -> skip flash boot / USB boot. The absence of a strap on this pad is INFERRED from the full list of boot-time checks, not stated in one sentence. Default pull = down (reset_state).'
+- path: pads.GPIO9.power_up_glitch
+  value: none
+  doc: rp2040-ds-3184e62
+  locator: PDF p.628 (printed p.627), Appendix B Errata (all of RP2040-E1..E16 checked; full-text search for "glitch")
+  quote: Errata are listed numerically under the relevant block.
+  quote_check: pymupdf
+  confidence: inferred
+  notes: No power-up output glitch is documented for any user pad. Absence inferred from the errata appendix and a text search (only hits concern clock muxes and a SIO register note). Output driver is disabled
+    until software selects a function. E5 (GPIO15) and E6 (GPIO26-29) are not glitch errata. Datasheet gives no glitch duration.
+- path: pads.GPIO9.errata
+  value: []
+  doc: rp2040-ds-3184e62
+  locator: PDF p.628 (printed p.627), Appendix B Errata (all entries checked)
+  quote: Errata are listed numerically under the relevant block.
+  quote_check: pymupdf
+  confidence: inferred
+  notes: No erratum in Appendix B (E1-E16) names this pad.
+- path: pads.GPIO9.adc
+  value: null
+  doc: rp2040-ds-3184e62
+  locator: PDF p.558 (printed p.557), section 4.9 ADC and Temperature Sensor
+  quote: Four inputs that are available on package pins shared with GPIO[29:26]
+  quote_check: pymupdf
+  confidence: found
+  notes: No ADC on this pad (ADC inputs only on GPIO26-29).
+- path: pads.GPIO10.functions
+  value:
+  - fn: SPI1 SCK
+    funcsel: F1
+    routing: iomux
+  - fn: UART1 CTS
+    funcsel: F2
+    routing: iomux
+  - fn: I2C1 SDA
+    funcsel: F3
+    routing: iomux
+  - fn: PWM5 A
+    funcsel: F4
+    routing: iomux
+  - fn: GPIO (SIO)
+    funcsel: F5
+    routing: iomux
+  - fn: PIO0 (any PIO pin role)
+    funcsel: F6
+    routing: matrix
+  - fn: PIO1 (any PIO pin role)
+    funcsel: F7
+    routing: matrix
+  - fn: USB VBUS DET
+    funcsel: F9
+    routing: iomux
+  doc: rp2040-ds-3184e62
+  locator: PDF p.238 (printed p.237), section 2.19.2 Function Select, Table 279 GPIO User Bank Functions
+  quote: 10 SPI1 SCK UART1 CTS I2C1 SDA PWM5 A SIO PIO0 PIO1 USB VBUS DET
+  quote_check: pymupdf
+  confidence: found
+  notes: 'FUNCSEL table F1-F9 (reset FUNCSEL = 0x1f NULL). Routing class is the auditor''s assignment: iomux = one fixed choice per pad from this row; PIO0/PIO1 (F6/F7) = matrix, INFERRED because every
+    one of the 30 pads offers both and the PIO has its own internal pin mapping (Table 280, section 3.1); SIO = software GPIO on every pad. USB OVCUR DET / VBUS DET / VBUS EN are USB-controller signals
+    selectable per pad (iomux).'
+- path: pads.GPIO10.input_only
+  value: false
+  doc: rp2040-ds-3184e62
+  locator: PDF p.237 (printed p.236), section 2.19.1 Overview
+  quote: All GPIOs support digital input and output
+  quote_check: pymupdf
+  confidence: found
+  notes: All user GPIOs are bidirectional (Table 615 types Digital IO (FT) for GPIO0-25 and Digital IO / Analogue for GPIO26-29).
+- path: pads.GPIO10.reset_state
+  value: pulldown
+  doc: rp2040-ds-3184e62
+  locator: PDF p.303 (printed p.302), section 2.19.6.3 Pad Control - User Bank, Table 341 GPIO0..GPIO29 Registers (PDE reset 0x1)
+  quote: 'PDE: Pull down enable RW 0x1'
+  quote_check: pymupdf
+  confidence: found
+  notes: 'Pin list Table 615 (section 5.5.2.2) also gives Reset State = Pull-Down for this pad. Pad reset: OD=0, IE=1, PUE=0, PDE=1, DRIVE=4mA, SCHMITT=1; FUNCSEL=0x1f (NULL) so output is not driven. =>
+    input with pull-down. Reset values read from rendered PDF p.302-303.'
+- path: pads.GPIO10.strap
+  value: none
+  doc: rp2040-ds-3184e62
+  locator: PDF p.131 (printed p.130), section 2.8.1.1 Bootrom boot sequence
+  quote: Check if SPI CS pin is tied low ("bootrom button"), and skip flash boot if so.
+  quote_check: pymupdf
+  confidence: inferred
+  notes: 'No user-bank GPIO0-29 is sampled at reset or for boot-mode selection anywhere in the boot sequence (2.8.1). Boot mode is sampled on QSPI_SS (flash chip-select, QSPI bank, NOT GPIO0-29): tied low
+    -> skip flash boot / USB boot. The absence of a strap on this pad is INFERRED from the full list of boot-time checks, not stated in one sentence. Default pull = down (reset_state).'
+- path: pads.GPIO10.power_up_glitch
+  value: none
+  doc: rp2040-ds-3184e62
+  locator: PDF p.628 (printed p.627), Appendix B Errata (all of RP2040-E1..E16 checked; full-text search for "glitch")
+  quote: Errata are listed numerically under the relevant block.
+  quote_check: pymupdf
+  confidence: inferred
+  notes: No power-up output glitch is documented for any user pad. Absence inferred from the errata appendix and a text search (only hits concern clock muxes and a SIO register note). Output driver is disabled
+    until software selects a function. E5 (GPIO15) and E6 (GPIO26-29) are not glitch errata. Datasheet gives no glitch duration.
+- path: pads.GPIO10.errata
+  value: []
+  doc: rp2040-ds-3184e62
+  locator: PDF p.628 (printed p.627), Appendix B Errata (all entries checked)
+  quote: Errata are listed numerically under the relevant block.
+  quote_check: pymupdf
+  confidence: inferred
+  notes: No erratum in Appendix B (E1-E16) names this pad.
+- path: pads.GPIO10.adc
+  value: null
+  doc: rp2040-ds-3184e62
+  locator: PDF p.558 (printed p.557), section 4.9 ADC and Temperature Sensor
+  quote: Four inputs that are available on package pins shared with GPIO[29:26]
+  quote_check: pymupdf
+  confidence: found
+  notes: No ADC on this pad (ADC inputs only on GPIO26-29).
+- path: pads.GPIO11.functions
+  value:
+  - fn: SPI1 TX
+    funcsel: F1
+    routing: iomux
+  - fn: UART1 RTS
+    funcsel: F2
+    routing: iomux
+  - fn: I2C1 SCL
+    funcsel: F3
+    routing: iomux
+  - fn: PWM5 B
+    funcsel: F4
+    routing: iomux
+  - fn: GPIO (SIO)
+    funcsel: F5
+    routing: iomux
+  - fn: PIO0 (any PIO pin role)
+    funcsel: F6
+    routing: matrix
+  - fn: PIO1 (any PIO pin role)
+    funcsel: F7
+    routing: matrix
+  - fn: USB VBUS EN
+    funcsel: F9
+    routing: iomux
+  doc: rp2040-ds-3184e62
+  locator: PDF p.238 (printed p.237), section 2.19.2 Function Select, Table 279 GPIO User Bank Functions
+  quote: 11 SPI1 TX UART1 RTS I2C1 SCL PWM5 B SIO PIO0 PIO1 USB VBUS EN
+  quote_check: pymupdf
+  confidence: found
+  notes: 'FUNCSEL table F1-F9 (reset FUNCSEL = 0x1f NULL). Routing class is the auditor''s assignment: iomux = one fixed choice per pad from this row; PIO0/PIO1 (F6/F7) = matrix, INFERRED because every
+    one of the 30 pads offers both and the PIO has its own internal pin mapping (Table 280, section 3.1); SIO = software GPIO on every pad. USB OVCUR DET / VBUS DET / VBUS EN are USB-controller signals
+    selectable per pad (iomux).'
+- path: pads.GPIO11.input_only
+  value: false
+  doc: rp2040-ds-3184e62
+  locator: PDF p.237 (printed p.236), section 2.19.1 Overview
+  quote: All GPIOs support digital input and output
+  quote_check: pymupdf
+  confidence: found
+  notes: All user GPIOs are bidirectional (Table 615 types Digital IO (FT) for GPIO0-25 and Digital IO / Analogue for GPIO26-29).
+- path: pads.GPIO11.reset_state
+  value: pulldown
+  doc: rp2040-ds-3184e62
+  locator: PDF p.303 (printed p.302), section 2.19.6.3 Pad Control - User Bank, Table 341 GPIO0..GPIO29 Registers (PDE reset 0x1)
+  quote: 'PDE: Pull down enable RW 0x1'
+  quote_check: pymupdf
+  confidence: found
+  notes: 'Pin list Table 615 (section 5.5.2.2) also gives Reset State = Pull-Down for this pad. Pad reset: OD=0, IE=1, PUE=0, PDE=1, DRIVE=4mA, SCHMITT=1; FUNCSEL=0x1f (NULL) so output is not driven. =>
+    input with pull-down. Reset values read from rendered PDF p.302-303.'
+- path: pads.GPIO11.strap
+  value: none
+  doc: rp2040-ds-3184e62
+  locator: PDF p.131 (printed p.130), section 2.8.1.1 Bootrom boot sequence
+  quote: Check if SPI CS pin is tied low ("bootrom button"), and skip flash boot if so.
+  quote_check: pymupdf
+  confidence: inferred
+  notes: 'No user-bank GPIO0-29 is sampled at reset or for boot-mode selection anywhere in the boot sequence (2.8.1). Boot mode is sampled on QSPI_SS (flash chip-select, QSPI bank, NOT GPIO0-29): tied low
+    -> skip flash boot / USB boot. The absence of a strap on this pad is INFERRED from the full list of boot-time checks, not stated in one sentence. Default pull = down (reset_state).'
+- path: pads.GPIO11.power_up_glitch
+  value: none
+  doc: rp2040-ds-3184e62
+  locator: PDF p.628 (printed p.627), Appendix B Errata (all of RP2040-E1..E16 checked; full-text search for "glitch")
+  quote: Errata are listed numerically under the relevant block.
+  quote_check: pymupdf
+  confidence: inferred
+  notes: No power-up output glitch is documented for any user pad. Absence inferred from the errata appendix and a text search (only hits concern clock muxes and a SIO register note). Output driver is disabled
+    until software selects a function. E5 (GPIO15) and E6 (GPIO26-29) are not glitch errata. Datasheet gives no glitch duration.
+- path: pads.GPIO11.errata
+  value: []
+  doc: rp2040-ds-3184e62
+  locator: PDF p.628 (printed p.627), Appendix B Errata (all entries checked)
+  quote: Errata are listed numerically under the relevant block.
+  quote_check: pymupdf
+  confidence: inferred
+  notes: No erratum in Appendix B (E1-E16) names this pad.
+- path: pads.GPIO11.adc
+  value: null
+  doc: rp2040-ds-3184e62
+  locator: PDF p.558 (printed p.557), section 4.9 ADC and Temperature Sensor
+  quote: Four inputs that are available on package pins shared with GPIO[29:26]
+  quote_check: pymupdf
+  confidence: found
+  notes: No ADC on this pad (ADC inputs only on GPIO26-29).
+- path: pads.GPIO12.functions
+  value:
+  - fn: SPI1 RX
+    funcsel: F1
+    routing: iomux
+  - fn: UART0 TX
+    funcsel: F2
+    routing: iomux
+  - fn: I2C0 SDA
+    funcsel: F3
+    routing: iomux
+  - fn: PWM6 A
+    funcsel: F4
+    routing: iomux
+  - fn: GPIO (SIO)
+    funcsel: F5
+    routing: iomux
+  - fn: PIO0 (any PIO pin role)
+    funcsel: F6
+    routing: matrix
+  - fn: PIO1 (any PIO pin role)
+    funcsel: F7
+    routing: matrix
+  - fn: USB OVCUR DET
+    funcsel: F9
+    routing: iomux
+  doc: rp2040-ds-3184e62
+  locator: PDF p.238 (printed p.237), section 2.19.2 Function Select, Table 279 GPIO User Bank Functions
+  quote: 12 SPI1 RX UART0 TX I2C0 SDA PWM6 A SIO PIO0 PIO1 USB OVCUR DET
+  quote_check: pymupdf
+  confidence: found
+  notes: 'FUNCSEL table F1-F9 (reset FUNCSEL = 0x1f NULL). Routing class is the auditor''s assignment: iomux = one fixed choice per pad from this row; PIO0/PIO1 (F6/F7) = matrix, INFERRED because every
+    one of the 30 pads offers both and the PIO has its own internal pin mapping (Table 280, section 3.1); SIO = software GPIO on every pad. USB OVCUR DET / VBUS DET / VBUS EN are USB-controller signals
+    selectable per pad (iomux).'
+- path: pads.GPIO12.input_only
+  value: false
+  doc: rp2040-ds-3184e62
+  locator: PDF p.237 (printed p.236), section 2.19.1 Overview
+  quote: All GPIOs support digital input and output
+  quote_check: pymupdf
+  confidence: found
+  notes: All user GPIOs are bidirectional (Table 615 types Digital IO (FT) for GPIO0-25 and Digital IO / Analogue for GPIO26-29).
+- path: pads.GPIO12.reset_state
+  value: pulldown
+  doc: rp2040-ds-3184e62
+  locator: PDF p.303 (printed p.302), section 2.19.6.3 Pad Control - User Bank, Table 341 GPIO0..GPIO29 Registers (PDE reset 0x1)
+  quote: 'PDE: Pull down enable RW 0x1'
+  quote_check: pymupdf
+  confidence: found
+  notes: 'Pin list Table 615 (section 5.5.2.2) also gives Reset State = Pull-Down for this pad. Pad reset: OD=0, IE=1, PUE=0, PDE=1, DRIVE=4mA, SCHMITT=1; FUNCSEL=0x1f (NULL) so output is not driven. =>
+    input with pull-down. Reset values read from rendered PDF p.302-303.'
+- path: pads.GPIO12.strap
+  value: none
+  doc: rp2040-ds-3184e62
+  locator: PDF p.131 (printed p.130), section 2.8.1.1 Bootrom boot sequence
+  quote: Check if SPI CS pin is tied low ("bootrom button"), and skip flash boot if so.
+  quote_check: pymupdf
+  confidence: inferred
+  notes: 'No user-bank GPIO0-29 is sampled at reset or for boot-mode selection anywhere in the boot sequence (2.8.1). Boot mode is sampled on QSPI_SS (flash chip-select, QSPI bank, NOT GPIO0-29): tied low
+    -> skip flash boot / USB boot. The absence of a strap on this pad is INFERRED from the full list of boot-time checks, not stated in one sentence. Default pull = down (reset_state).'
+- path: pads.GPIO12.power_up_glitch
+  value: none
+  doc: rp2040-ds-3184e62
+  locator: PDF p.628 (printed p.627), Appendix B Errata (all of RP2040-E1..E16 checked; full-text search for "glitch")
+  quote: Errata are listed numerically under the relevant block.
+  quote_check: pymupdf
+  confidence: inferred
+  notes: No power-up output glitch is documented for any user pad. Absence inferred from the errata appendix and a text search (only hits concern clock muxes and a SIO register note). Output driver is disabled
+    until software selects a function. E5 (GPIO15) and E6 (GPIO26-29) are not glitch errata. Datasheet gives no glitch duration.
+- path: pads.GPIO12.errata
+  value: []
+  doc: rp2040-ds-3184e62
+  locator: PDF p.628 (printed p.627), Appendix B Errata (all entries checked)
+  quote: Errata are listed numerically under the relevant block.
+  quote_check: pymupdf
+  confidence: inferred
+  notes: No erratum in Appendix B (E1-E16) names this pad.
+- path: pads.GPIO12.adc
+  value: null
+  doc: rp2040-ds-3184e62
+  locator: PDF p.558 (printed p.557), section 4.9 ADC and Temperature Sensor
+  quote: Four inputs that are available on package pins shared with GPIO[29:26]
+  quote_check: pymupdf
+  confidence: found
+  notes: No ADC on this pad (ADC inputs only on GPIO26-29).
+- path: pads.GPIO13.functions
+  value:
+  - fn: SPI1 CSn
+    funcsel: F1
+    routing: iomux
+  - fn: UART0 RX
+    funcsel: F2
+    routing: iomux
+  - fn: I2C0 SCL
+    funcsel: F3
+    routing: iomux
+  - fn: PWM6 B
+    funcsel: F4
+    routing: iomux
+  - fn: GPIO (SIO)
+    funcsel: F5
+    routing: iomux
+  - fn: PIO0 (any PIO pin role)
+    funcsel: F6
+    routing: matrix
+  - fn: PIO1 (any PIO pin role)
+    funcsel: F7
+    routing: matrix
+  - fn: USB VBUS DET
+    funcsel: F9
+    routing: iomux
+  doc: rp2040-ds-3184e62
+  locator: PDF p.238 (printed p.237), section 2.19.2 Function Select, Table 279 GPIO User Bank Functions
+  quote: 13 SPI1 CSn UART0 RX I2C0 SCL PWM6 B SIO PIO0 PIO1 USB VBUS DET
+  quote_check: pymupdf
+  confidence: found
+  notes: 'FUNCSEL table F1-F9 (reset FUNCSEL = 0x1f NULL). Routing class is the auditor''s assignment: iomux = one fixed choice per pad from this row; PIO0/PIO1 (F6/F7) = matrix, INFERRED because every
+    one of the 30 pads offers both and the PIO has its own internal pin mapping (Table 280, section 3.1); SIO = software GPIO on every pad. USB OVCUR DET / VBUS DET / VBUS EN are USB-controller signals
+    selectable per pad (iomux).'
+- path: pads.GPIO13.input_only
+  value: false
+  doc: rp2040-ds-3184e62
+  locator: PDF p.237 (printed p.236), section 2.19.1 Overview
+  quote: All GPIOs support digital input and output
+  quote_check: pymupdf
+  confidence: found
+  notes: All user GPIOs are bidirectional (Table 615 types Digital IO (FT) for GPIO0-25 and Digital IO / Analogue for GPIO26-29).
+- path: pads.GPIO13.reset_state
+  value: pulldown
+  doc: rp2040-ds-3184e62
+  locator: PDF p.303 (printed p.302), section 2.19.6.3 Pad Control - User Bank, Table 341 GPIO0..GPIO29 Registers (PDE reset 0x1)
+  quote: 'PDE: Pull down enable RW 0x1'
+  quote_check: pymupdf
+  confidence: found
+  notes: 'Pin list Table 615 (section 5.5.2.2) also gives Reset State = Pull-Down for this pad. Pad reset: OD=0, IE=1, PUE=0, PDE=1, DRIVE=4mA, SCHMITT=1; FUNCSEL=0x1f (NULL) so output is not driven. =>
+    input with pull-down. Reset values read from rendered PDF p.302-303.'
+- path: pads.GPIO13.strap
+  value: none
+  doc: rp2040-ds-3184e62
+  locator: PDF p.131 (printed p.130), section 2.8.1.1 Bootrom boot sequence
+  quote: Check if SPI CS pin is tied low ("bootrom button"), and skip flash boot if so.
+  quote_check: pymupdf
+  confidence: inferred
+  notes: 'No user-bank GPIO0-29 is sampled at reset or for boot-mode selection anywhere in the boot sequence (2.8.1). Boot mode is sampled on QSPI_SS (flash chip-select, QSPI bank, NOT GPIO0-29): tied low
+    -> skip flash boot / USB boot. The absence of a strap on this pad is INFERRED from the full list of boot-time checks, not stated in one sentence. Default pull = down (reset_state).'
+- path: pads.GPIO13.power_up_glitch
+  value: none
+  doc: rp2040-ds-3184e62
+  locator: PDF p.628 (printed p.627), Appendix B Errata (all of RP2040-E1..E16 checked; full-text search for "glitch")
+  quote: Errata are listed numerically under the relevant block.
+  quote_check: pymupdf
+  confidence: inferred
+  notes: No power-up output glitch is documented for any user pad. Absence inferred from the errata appendix and a text search (only hits concern clock muxes and a SIO register note). Output driver is disabled
+    until software selects a function. E5 (GPIO15) and E6 (GPIO26-29) are not glitch errata. Datasheet gives no glitch duration.
+- path: pads.GPIO13.errata
+  value: []
+  doc: rp2040-ds-3184e62
+  locator: PDF p.628 (printed p.627), Appendix B Errata (all entries checked)
+  quote: Errata are listed numerically under the relevant block.
+  quote_check: pymupdf
+  confidence: inferred
+  notes: No erratum in Appendix B (E1-E16) names this pad.
+- path: pads.GPIO13.adc
+  value: null
+  doc: rp2040-ds-3184e62
+  locator: PDF p.558 (printed p.557), section 4.9 ADC and Temperature Sensor
+  quote: Four inputs that are available on package pins shared with GPIO[29:26]
+  quote_check: pymupdf
+  confidence: found
+  notes: No ADC on this pad (ADC inputs only on GPIO26-29).
+- path: pads.GPIO14.functions
+  value:
+  - fn: SPI1 SCK
+    funcsel: F1
+    routing: iomux
+  - fn: UART0 CTS
+    funcsel: F2
+    routing: iomux
+  - fn: I2C1 SDA
+    funcsel: F3
+    routing: iomux
+  - fn: PWM7 A
+    funcsel: F4
+    routing: iomux
+  - fn: GPIO (SIO)
+    funcsel: F5
+    routing: iomux
+  - fn: PIO0 (any PIO pin role)
+    funcsel: F6
+    routing: matrix
+  - fn: PIO1 (any PIO pin role)
+    funcsel: F7
+    routing: matrix
+  - fn: USB VBUS EN
+    funcsel: F9
+    routing: iomux
+  doc: rp2040-ds-3184e62
+  locator: PDF p.238 (printed p.237), section 2.19.2 Function Select, Table 279 GPIO User Bank Functions
+  quote: 14 SPI1 SCK UART0 CTS I2C1 SDA PWM7 A SIO PIO0 PIO1 USB VBUS EN
+  quote_check: pymupdf
+  confidence: found
+  notes: 'FUNCSEL table F1-F9 (reset FUNCSEL = 0x1f NULL). Routing class is the auditor''s assignment: iomux = one fixed choice per pad from this row; PIO0/PIO1 (F6/F7) = matrix, INFERRED because every
+    one of the 30 pads offers both and the PIO has its own internal pin mapping (Table 280, section 3.1); SIO = software GPIO on every pad. USB OVCUR DET / VBUS DET / VBUS EN are USB-controller signals
+    selectable per pad (iomux).'
+- path: pads.GPIO14.input_only
+  value: false
+  doc: rp2040-ds-3184e62
+  locator: PDF p.237 (printed p.236), section 2.19.1 Overview
+  quote: All GPIOs support digital input and output
+  quote_check: pymupdf
+  confidence: found
+  notes: All user GPIOs are bidirectional (Table 615 types Digital IO (FT) for GPIO0-25 and Digital IO / Analogue for GPIO26-29).
+- path: pads.GPIO14.reset_state
+  value: pulldown
+  doc: rp2040-ds-3184e62
+  locator: PDF p.303 (printed p.302), section 2.19.6.3 Pad Control - User Bank, Table 341 GPIO0..GPIO29 Registers (PDE reset 0x1)
+  quote: 'PDE: Pull down enable RW 0x1'
+  quote_check: pymupdf
+  confidence: found
+  notes: 'Pin list Table 615 (section 5.5.2.2) also gives Reset State = Pull-Down for this pad. Pad reset: OD=0, IE=1, PUE=0, PDE=1, DRIVE=4mA, SCHMITT=1; FUNCSEL=0x1f (NULL) so output is not driven. =>
+    input with pull-down. Reset values read from rendered PDF p.302-303.'
+- path: pads.GPIO14.strap
+  value: none
+  doc: rp2040-ds-3184e62
+  locator: PDF p.131 (printed p.130), section 2.8.1.1 Bootrom boot sequence
+  quote: Check if SPI CS pin is tied low ("bootrom button"), and skip flash boot if so.
+  quote_check: pymupdf
+  confidence: inferred
+  notes: 'No user-bank GPIO0-29 is sampled at reset or for boot-mode selection anywhere in the boot sequence (2.8.1). Boot mode is sampled on QSPI_SS (flash chip-select, QSPI bank, NOT GPIO0-29): tied low
+    -> skip flash boot / USB boot. The absence of a strap on this pad is INFERRED from the full list of boot-time checks, not stated in one sentence. Default pull = down (reset_state).'
+- path: pads.GPIO14.power_up_glitch
+  value: none
+  doc: rp2040-ds-3184e62
+  locator: PDF p.628 (printed p.627), Appendix B Errata (all of RP2040-E1..E16 checked; full-text search for "glitch")
+  quote: Errata are listed numerically under the relevant block.
+  quote_check: pymupdf
+  confidence: inferred
+  notes: No power-up output glitch is documented for any user pad. Absence inferred from the errata appendix and a text search (only hits concern clock muxes and a SIO register note). Output driver is disabled
+    until software selects a function. E5 (GPIO15) and E6 (GPIO26-29) are not glitch errata. Datasheet gives no glitch duration.
+- path: pads.GPIO14.errata
+  value: []
+  doc: rp2040-ds-3184e62
+  locator: PDF p.628 (printed p.627), Appendix B Errata (all entries checked)
+  quote: Errata are listed numerically under the relevant block.
+  quote_check: pymupdf
+  confidence: inferred
+  notes: No erratum in Appendix B (E1-E16) names this pad.
+- path: pads.GPIO14.adc
+  value: null
+  doc: rp2040-ds-3184e62
+  locator: PDF p.558 (printed p.557), section 4.9 ADC and Temperature Sensor
+  quote: Four inputs that are available on package pins shared with GPIO[29:26]
+  quote_check: pymupdf
+  confidence: found
+  notes: No ADC on this pad (ADC inputs only on GPIO26-29).
+- path: pads.GPIO15.functions
+  value:
+  - fn: SPI1 TX
+    funcsel: F1
+    routing: iomux
+  - fn: UART0 RTS
+    funcsel: F2
+    routing: iomux
+  - fn: I2C1 SCL
+    funcsel: F3
+    routing: iomux
+  - fn: PWM7 B
+    funcsel: F4
+    routing: iomux
+  - fn: GPIO (SIO)
+    funcsel: F5
+    routing: iomux
+  - fn: PIO0 (any PIO pin role)
+    funcsel: F6
+    routing: matrix
+  - fn: PIO1 (any PIO pin role)
+    funcsel: F7
+    routing: matrix
+  - fn: USB OVCUR DET
+    funcsel: F9
+    routing: iomux
+  doc: rp2040-ds-3184e62
+  locator: PDF p.238 (printed p.237), section 2.19.2 Function Select, Table 279 GPIO User Bank Functions
+  quote: 15 SPI1 TX UART0 RTS I2C1 SCL PWM7 B SIO PIO0 PIO1 USB OVCUR DET
+  quote_check: pymupdf
+  confidence: found
+  notes: 'FUNCSEL table F1-F9 (reset FUNCSEL = 0x1f NULL). Routing class is the auditor''s assignment: iomux = one fixed choice per pad from this row; PIO0/PIO1 (F6/F7) = matrix, INFERRED because every
+    one of the 30 pads offers both and the PIO has its own internal pin mapping (Table 280, section 3.1); SIO = software GPIO on every pad. USB OVCUR DET / VBUS DET / VBUS EN are USB-controller signals
+    selectable per pad (iomux).'
+- path: pads.GPIO15.input_only
+  value: false
+  doc: rp2040-ds-3184e62
+  locator: PDF p.237 (printed p.236), section 2.19.1 Overview
+  quote: All GPIOs support digital input and output
+  quote_check: pymupdf
+  confidence: found
+  notes: All user GPIOs are bidirectional (Table 615 types Digital IO (FT) for GPIO0-25 and Digital IO / Analogue for GPIO26-29).
+- path: pads.GPIO15.reset_state
+  value: pulldown
+  doc: rp2040-ds-3184e62
+  locator: PDF p.303 (printed p.302), section 2.19.6.3 Pad Control - User Bank, Table 341 GPIO0..GPIO29 Registers (PDE reset 0x1)
+  quote: 'PDE: Pull down enable RW 0x1'
+  quote_check: pymupdf
+  confidence: found
+  notes: 'Pin list Table 615 (section 5.5.2.2) also gives Reset State = Pull-Down for this pad. Pad reset: OD=0, IE=1, PUE=0, PDE=1, DRIVE=4mA, SCHMITT=1; FUNCSEL=0x1f (NULL) so output is not driven. =>
+    input with pull-down. Reset values read from rendered PDF p.302-303.'
+- path: pads.GPIO15.strap
+  value: none
+  doc: rp2040-ds-3184e62
+  locator: PDF p.131 (printed p.130), section 2.8.1.1 Bootrom boot sequence
+  quote: Check if SPI CS pin is tied low ("bootrom button"), and skip flash boot if so.
+  quote_check: pymupdf
+  confidence: inferred
+  notes: 'No user-bank GPIO0-29 is sampled at reset or for boot-mode selection anywhere in the boot sequence (2.8.1). Boot mode is sampled on QSPI_SS (flash chip-select, QSPI bank, NOT GPIO0-29): tied low
+    -> skip flash boot / USB boot. The absence of a strap on this pad is INFERRED from the full list of boot-time checks, not stated in one sentence. Default pull = down (reset_state).'
+- path: pads.GPIO15.power_up_glitch
+  value: none
+  doc: rp2040-ds-3184e62
+  locator: PDF p.628 (printed p.627), Appendix B Errata (all of RP2040-E1..E16 checked; full-text search for "glitch")
+  quote: Errata are listed numerically under the relevant block.
+  quote_check: pymupdf
+  confidence: inferred
+  notes: No power-up output glitch is documented for any user pad. Absence inferred from the errata appendix and a text search (only hits concern clock muxes and a SIO register note). Output driver is disabled
+    until software selects a function. E5 (GPIO15) and E6 (GPIO26-29) are not glitch errata. Datasheet gives no glitch duration.
+- path: pads.GPIO15.errata
+  value:
+  - RP2040-E5
+  doc: rp2040-ds-3184e62
+  locator: PDF p.633 (printed p.632), Appendix B Errata, USB, RP2040-E5
+  quote: The workaround takes control of GPIO 15 during a device reset
+  quote_check: pymupdf
+  confidence: found
+  notes: 'RP2040-E5: USB device may fail to leave RESET on a busy bus; the software workaround takes over GPIO15 for ~800us during USB device reset (forces DP=1 via input override). Affects RP2040B0/B1,
+    fixed in B2 hardware. Workaround is off by default in the SDK; no external connection needed on GPIO15.'
+- path: pads.GPIO15.adc
+  value: null
+  doc: rp2040-ds-3184e62
+  locator: PDF p.558 (printed p.557), section 4.9 ADC and Temperature Sensor
+  quote: Four inputs that are available on package pins shared with GPIO[29:26]
+  quote_check: pymupdf
+  confidence: found
+  notes: No ADC on this pad (ADC inputs only on GPIO26-29).
+- path: pads.GPIO16.functions
+  value:
+  - fn: SPI0 RX
+    funcsel: F1
+    routing: iomux
+  - fn: UART0 TX
+    funcsel: F2
+    routing: iomux
+  - fn: I2C0 SDA
+    funcsel: F3
+    routing: iomux
+  - fn: PWM0 A
+    funcsel: F4
+    routing: iomux
+  - fn: GPIO (SIO)
+    funcsel: F5
+    routing: iomux
+  - fn: PIO0 (any PIO pin role)
+    funcsel: F6
+    routing: matrix
+  - fn: PIO1 (any PIO pin role)
+    funcsel: F7
+    routing: matrix
+  - fn: USB VBUS DET
+    funcsel: F9
+    routing: iomux
+  doc: rp2040-ds-3184e62
+  locator: PDF p.238 (printed p.237), section 2.19.2 Function Select, Table 279 GPIO User Bank Functions
+  quote: 16 SPI0 RX UART0 TX I2C0 SDA PWM0 A SIO PIO0 PIO1 USB VBUS DET
+  quote_check: pymupdf
+  confidence: found
+  notes: 'FUNCSEL table F1-F9 (reset FUNCSEL = 0x1f NULL). Routing class is the auditor''s assignment: iomux = one fixed choice per pad from this row; PIO0/PIO1 (F6/F7) = matrix, INFERRED because every
+    one of the 30 pads offers both and the PIO has its own internal pin mapping (Table 280, section 3.1); SIO = software GPIO on every pad. USB OVCUR DET / VBUS DET / VBUS EN are USB-controller signals
+    selectable per pad (iomux).'
+- path: pads.GPIO16.input_only
+  value: false
+  doc: rp2040-ds-3184e62
+  locator: PDF p.237 (printed p.236), section 2.19.1 Overview
+  quote: All GPIOs support digital input and output
+  quote_check: pymupdf
+  confidence: found
+  notes: All user GPIOs are bidirectional (Table 615 types Digital IO (FT) for GPIO0-25 and Digital IO / Analogue for GPIO26-29).
+- path: pads.GPIO16.reset_state
+  value: pulldown
+  doc: rp2040-ds-3184e62
+  locator: PDF p.303 (printed p.302), section 2.19.6.3 Pad Control - User Bank, Table 341 GPIO0..GPIO29 Registers (PDE reset 0x1)
+  quote: 'PDE: Pull down enable RW 0x1'
+  quote_check: pymupdf
+  confidence: found
+  notes: 'Pin list Table 615 (section 5.5.2.2) also gives Reset State = Pull-Down for this pad. Pad reset: OD=0, IE=1, PUE=0, PDE=1, DRIVE=4mA, SCHMITT=1; FUNCSEL=0x1f (NULL) so output is not driven. =>
+    input with pull-down. Reset values read from rendered PDF p.302-303.'
+- path: pads.GPIO16.strap
+  value: none
+  doc: rp2040-ds-3184e62
+  locator: PDF p.131 (printed p.130), section 2.8.1.1 Bootrom boot sequence
+  quote: Check if SPI CS pin is tied low ("bootrom button"), and skip flash boot if so.
+  quote_check: pymupdf
+  confidence: inferred
+  notes: 'No user-bank GPIO0-29 is sampled at reset or for boot-mode selection anywhere in the boot sequence (2.8.1). Boot mode is sampled on QSPI_SS (flash chip-select, QSPI bank, NOT GPIO0-29): tied low
+    -> skip flash boot / USB boot. The absence of a strap on this pad is INFERRED from the full list of boot-time checks, not stated in one sentence. Default pull = down (reset_state).'
+- path: pads.GPIO16.power_up_glitch
+  value: none
+  doc: rp2040-ds-3184e62
+  locator: PDF p.628 (printed p.627), Appendix B Errata (all of RP2040-E1..E16 checked; full-text search for "glitch")
+  quote: Errata are listed numerically under the relevant block.
+  quote_check: pymupdf
+  confidence: inferred
+  notes: No power-up output glitch is documented for any user pad. Absence inferred from the errata appendix and a text search (only hits concern clock muxes and a SIO register note). Output driver is disabled
+    until software selects a function. E5 (GPIO15) and E6 (GPIO26-29) are not glitch errata. Datasheet gives no glitch duration.
+- path: pads.GPIO16.errata
+  value: []
+  doc: rp2040-ds-3184e62
+  locator: PDF p.628 (printed p.627), Appendix B Errata (all entries checked)
+  quote: Errata are listed numerically under the relevant block.
+  quote_check: pymupdf
+  confidence: inferred
+  notes: No erratum in Appendix B (E1-E16) names this pad.
+- path: pads.GPIO16.adc
+  value: null
+  doc: rp2040-ds-3184e62
+  locator: PDF p.558 (printed p.557), section 4.9 ADC and Temperature Sensor
+  quote: Four inputs that are available on package pins shared with GPIO[29:26]
+  quote_check: pymupdf
+  confidence: found
+  notes: No ADC on this pad (ADC inputs only on GPIO26-29).
+- path: pads.GPIO17.functions
+  value:
+  - fn: SPI0 CSn
+    funcsel: F1
+    routing: iomux
+  - fn: UART0 RX
+    funcsel: F2
+    routing: iomux
+  - fn: I2C0 SCL
+    funcsel: F3
+    routing: iomux
+  - fn: PWM0 B
+    funcsel: F4
+    routing: iomux
+  - fn: GPIO (SIO)
+    funcsel: F5
+    routing: iomux
+  - fn: PIO0 (any PIO pin role)
+    funcsel: F6
+    routing: matrix
+  - fn: PIO1 (any PIO pin role)
+    funcsel: F7
+    routing: matrix
+  - fn: USB VBUS EN
+    funcsel: F9
+    routing: iomux
+  doc: rp2040-ds-3184e62
+  locator: PDF p.238 (printed p.237), section 2.19.2 Function Select, Table 279 GPIO User Bank Functions
+  quote: 17 SPI0 CSn UART0 RX I2C0 SCL PWM0 B SIO PIO0 PIO1 USB VBUS EN
+  quote_check: pymupdf
+  confidence: found
+  notes: 'FUNCSEL table F1-F9 (reset FUNCSEL = 0x1f NULL). Routing class is the auditor''s assignment: iomux = one fixed choice per pad from this row; PIO0/PIO1 (F6/F7) = matrix, INFERRED because every
+    one of the 30 pads offers both and the PIO has its own internal pin mapping (Table 280, section 3.1); SIO = software GPIO on every pad. USB OVCUR DET / VBUS DET / VBUS EN are USB-controller signals
+    selectable per pad (iomux).'
+- path: pads.GPIO17.input_only
+  value: false
+  doc: rp2040-ds-3184e62
+  locator: PDF p.237 (printed p.236), section 2.19.1 Overview
+  quote: All GPIOs support digital input and output
+  quote_check: pymupdf
+  confidence: found
+  notes: All user GPIOs are bidirectional (Table 615 types Digital IO (FT) for GPIO0-25 and Digital IO / Analogue for GPIO26-29).
+- path: pads.GPIO17.reset_state
+  value: pulldown
+  doc: rp2040-ds-3184e62
+  locator: PDF p.303 (printed p.302), section 2.19.6.3 Pad Control - User Bank, Table 341 GPIO0..GPIO29 Registers (PDE reset 0x1)
+  quote: 'PDE: Pull down enable RW 0x1'
+  quote_check: pymupdf
+  confidence: found
+  notes: 'Pin list Table 615 (section 5.5.2.2) also gives Reset State = Pull-Down for this pad. Pad reset: OD=0, IE=1, PUE=0, PDE=1, DRIVE=4mA, SCHMITT=1; FUNCSEL=0x1f (NULL) so output is not driven. =>
+    input with pull-down. Reset values read from rendered PDF p.302-303.'
+- path: pads.GPIO17.strap
+  value: none
+  doc: rp2040-ds-3184e62
+  locator: PDF p.131 (printed p.130), section 2.8.1.1 Bootrom boot sequence
+  quote: Check if SPI CS pin is tied low ("bootrom button"), and skip flash boot if so.
+  quote_check: pymupdf
+  confidence: inferred
+  notes: 'No user-bank GPIO0-29 is sampled at reset or for boot-mode selection anywhere in the boot sequence (2.8.1). Boot mode is sampled on QSPI_SS (flash chip-select, QSPI bank, NOT GPIO0-29): tied low
+    -> skip flash boot / USB boot. The absence of a strap on this pad is INFERRED from the full list of boot-time checks, not stated in one sentence. Default pull = down (reset_state).'
+- path: pads.GPIO17.power_up_glitch
+  value: none
+  doc: rp2040-ds-3184e62
+  locator: PDF p.628 (printed p.627), Appendix B Errata (all of RP2040-E1..E16 checked; full-text search for "glitch")
+  quote: Errata are listed numerically under the relevant block.
+  quote_check: pymupdf
+  confidence: inferred
+  notes: No power-up output glitch is documented for any user pad. Absence inferred from the errata appendix and a text search (only hits concern clock muxes and a SIO register note). Output driver is disabled
+    until software selects a function. E5 (GPIO15) and E6 (GPIO26-29) are not glitch errata. Datasheet gives no glitch duration.
+- path: pads.GPIO17.errata
+  value: []
+  doc: rp2040-ds-3184e62
+  locator: PDF p.628 (printed p.627), Appendix B Errata (all entries checked)
+  quote: Errata are listed numerically under the relevant block.
+  quote_check: pymupdf
+  confidence: inferred
+  notes: No erratum in Appendix B (E1-E16) names this pad.
+- path: pads.GPIO17.adc
+  value: null
+  doc: rp2040-ds-3184e62
+  locator: PDF p.558 (printed p.557), section 4.9 ADC and Temperature Sensor
+  quote: Four inputs that are available on package pins shared with GPIO[29:26]
+  quote_check: pymupdf
+  confidence: found
+  notes: No ADC on this pad (ADC inputs only on GPIO26-29).
+- path: pads.GPIO18.functions
+  value:
+  - fn: SPI0 SCK
+    funcsel: F1
+    routing: iomux
+  - fn: UART0 CTS
+    funcsel: F2
+    routing: iomux
+  - fn: I2C1 SDA
+    funcsel: F3
+    routing: iomux
+  - fn: PWM1 A
+    funcsel: F4
+    routing: iomux
+  - fn: GPIO (SIO)
+    funcsel: F5
+    routing: iomux
+  - fn: PIO0 (any PIO pin role)
+    funcsel: F6
+    routing: matrix
+  - fn: PIO1 (any PIO pin role)
+    funcsel: F7
+    routing: matrix
+  - fn: USB OVCUR DET
+    funcsel: F9
+    routing: iomux
+  doc: rp2040-ds-3184e62
+  locator: PDF p.238 (printed p.237), section 2.19.2 Function Select, Table 279 GPIO User Bank Functions
+  quote: 18 SPI0 SCK UART0 CTS I2C1 SDA PWM1 A SIO PIO0 PIO1 USB OVCUR DET
+  quote_check: pymupdf
+  confidence: found
+  notes: 'FUNCSEL table F1-F9 (reset FUNCSEL = 0x1f NULL). Routing class is the auditor''s assignment: iomux = one fixed choice per pad from this row; PIO0/PIO1 (F6/F7) = matrix, INFERRED because every
+    one of the 30 pads offers both and the PIO has its own internal pin mapping (Table 280, section 3.1); SIO = software GPIO on every pad. USB OVCUR DET / VBUS DET / VBUS EN are USB-controller signals
+    selectable per pad (iomux).'
+- path: pads.GPIO18.input_only
+  value: false
+  doc: rp2040-ds-3184e62
+  locator: PDF p.237 (printed p.236), section 2.19.1 Overview
+  quote: All GPIOs support digital input and output
+  quote_check: pymupdf
+  confidence: found
+  notes: All user GPIOs are bidirectional (Table 615 types Digital IO (FT) for GPIO0-25 and Digital IO / Analogue for GPIO26-29).
+- path: pads.GPIO18.reset_state
+  value: pulldown
+  doc: rp2040-ds-3184e62
+  locator: PDF p.303 (printed p.302), section 2.19.6.3 Pad Control - User Bank, Table 341 GPIO0..GPIO29 Registers (PDE reset 0x1)
+  quote: 'PDE: Pull down enable RW 0x1'
+  quote_check: pymupdf
+  confidence: found
+  notes: 'Pin list Table 615 (section 5.5.2.2) also gives Reset State = Pull-Down for this pad. Pad reset: OD=0, IE=1, PUE=0, PDE=1, DRIVE=4mA, SCHMITT=1; FUNCSEL=0x1f (NULL) so output is not driven. =>
+    input with pull-down. Reset values read from rendered PDF p.302-303.'
+- path: pads.GPIO18.strap
+  value: none
+  doc: rp2040-ds-3184e62
+  locator: PDF p.131 (printed p.130), section 2.8.1.1 Bootrom boot sequence
+  quote: Check if SPI CS pin is tied low ("bootrom button"), and skip flash boot if so.
+  quote_check: pymupdf
+  confidence: inferred
+  notes: 'No user-bank GPIO0-29 is sampled at reset or for boot-mode selection anywhere in the boot sequence (2.8.1). Boot mode is sampled on QSPI_SS (flash chip-select, QSPI bank, NOT GPIO0-29): tied low
+    -> skip flash boot / USB boot. The absence of a strap on this pad is INFERRED from the full list of boot-time checks, not stated in one sentence. Default pull = down (reset_state).'
+- path: pads.GPIO18.power_up_glitch
+  value: none
+  doc: rp2040-ds-3184e62
+  locator: PDF p.628 (printed p.627), Appendix B Errata (all of RP2040-E1..E16 checked; full-text search for "glitch")
+  quote: Errata are listed numerically under the relevant block.
+  quote_check: pymupdf
+  confidence: inferred
+  notes: No power-up output glitch is documented for any user pad. Absence inferred from the errata appendix and a text search (only hits concern clock muxes and a SIO register note). Output driver is disabled
+    until software selects a function. E5 (GPIO15) and E6 (GPIO26-29) are not glitch errata. Datasheet gives no glitch duration.
+- path: pads.GPIO18.errata
+  value: []
+  doc: rp2040-ds-3184e62
+  locator: PDF p.628 (printed p.627), Appendix B Errata (all entries checked)
+  quote: Errata are listed numerically under the relevant block.
+  quote_check: pymupdf
+  confidence: inferred
+  notes: No erratum in Appendix B (E1-E16) names this pad.
+- path: pads.GPIO18.adc
+  value: null
+  doc: rp2040-ds-3184e62
+  locator: PDF p.558 (printed p.557), section 4.9 ADC and Temperature Sensor
+  quote: Four inputs that are available on package pins shared with GPIO[29:26]
+  quote_check: pymupdf
+  confidence: found
+  notes: No ADC on this pad (ADC inputs only on GPIO26-29).
+- path: pads.GPIO19.functions
+  value:
+  - fn: SPI0 TX
+    funcsel: F1
+    routing: iomux
+  - fn: UART0 RTS
+    funcsel: F2
+    routing: iomux
+  - fn: I2C1 SCL
+    funcsel: F3
+    routing: iomux
+  - fn: PWM1 B
+    funcsel: F4
+    routing: iomux
+  - fn: GPIO (SIO)
+    funcsel: F5
+    routing: iomux
+  - fn: PIO0 (any PIO pin role)
+    funcsel: F6
+    routing: matrix
+  - fn: PIO1 (any PIO pin role)
+    funcsel: F7
+    routing: matrix
+  - fn: USB VBUS DET
+    funcsel: F9
+    routing: iomux
+  doc: rp2040-ds-3184e62
+  locator: PDF p.238 (printed p.237), section 2.19.2 Function Select, Table 279 GPIO User Bank Functions
+  quote: 19 SPI0 TX UART0 RTS I2C1 SCL PWM1 B SIO PIO0 PIO1 USB VBUS DET
+  quote_check: pymupdf
+  confidence: found
+  notes: 'FUNCSEL table F1-F9 (reset FUNCSEL = 0x1f NULL). Routing class is the auditor''s assignment: iomux = one fixed choice per pad from this row; PIO0/PIO1 (F6/F7) = matrix, INFERRED because every
+    one of the 30 pads offers both and the PIO has its own internal pin mapping (Table 280, section 3.1); SIO = software GPIO on every pad. USB OVCUR DET / VBUS DET / VBUS EN are USB-controller signals
+    selectable per pad (iomux).'
+- path: pads.GPIO19.input_only
+  value: false
+  doc: rp2040-ds-3184e62
+  locator: PDF p.237 (printed p.236), section 2.19.1 Overview
+  quote: All GPIOs support digital input and output
+  quote_check: pymupdf
+  confidence: found
+  notes: All user GPIOs are bidirectional (Table 615 types Digital IO (FT) for GPIO0-25 and Digital IO / Analogue for GPIO26-29).
+- path: pads.GPIO19.reset_state
+  value: pulldown
+  doc: rp2040-ds-3184e62
+  locator: PDF p.303 (printed p.302), section 2.19.6.3 Pad Control - User Bank, Table 341 GPIO0..GPIO29 Registers (PDE reset 0x1)
+  quote: 'PDE: Pull down enable RW 0x1'
+  quote_check: pymupdf
+  confidence: found
+  notes: 'Pin list Table 615 (section 5.5.2.2) also gives Reset State = Pull-Down for this pad. Pad reset: OD=0, IE=1, PUE=0, PDE=1, DRIVE=4mA, SCHMITT=1; FUNCSEL=0x1f (NULL) so output is not driven. =>
+    input with pull-down. Reset values read from rendered PDF p.302-303.'
+- path: pads.GPIO19.strap
+  value: none
+  doc: rp2040-ds-3184e62
+  locator: PDF p.131 (printed p.130), section 2.8.1.1 Bootrom boot sequence
+  quote: Check if SPI CS pin is tied low ("bootrom button"), and skip flash boot if so.
+  quote_check: pymupdf
+  confidence: inferred
+  notes: 'No user-bank GPIO0-29 is sampled at reset or for boot-mode selection anywhere in the boot sequence (2.8.1). Boot mode is sampled on QSPI_SS (flash chip-select, QSPI bank, NOT GPIO0-29): tied low
+    -> skip flash boot / USB boot. The absence of a strap on this pad is INFERRED from the full list of boot-time checks, not stated in one sentence. Default pull = down (reset_state).'
+- path: pads.GPIO19.power_up_glitch
+  value: none
+  doc: rp2040-ds-3184e62
+  locator: PDF p.628 (printed p.627), Appendix B Errata (all of RP2040-E1..E16 checked; full-text search for "glitch")
+  quote: Errata are listed numerically under the relevant block.
+  quote_check: pymupdf
+  confidence: inferred
+  notes: No power-up output glitch is documented for any user pad. Absence inferred from the errata appendix and a text search (only hits concern clock muxes and a SIO register note). Output driver is disabled
+    until software selects a function. E5 (GPIO15) and E6 (GPIO26-29) are not glitch errata. Datasheet gives no glitch duration.
+- path: pads.GPIO19.errata
+  value: []
+  doc: rp2040-ds-3184e62
+  locator: PDF p.628 (printed p.627), Appendix B Errata (all entries checked)
+  quote: Errata are listed numerically under the relevant block.
+  quote_check: pymupdf
+  confidence: inferred
+  notes: No erratum in Appendix B (E1-E16) names this pad.
+- path: pads.GPIO19.adc
+  value: null
+  doc: rp2040-ds-3184e62
+  locator: PDF p.558 (printed p.557), section 4.9 ADC and Temperature Sensor
+  quote: Four inputs that are available on package pins shared with GPIO[29:26]
+  quote_check: pymupdf
+  confidence: found
+  notes: No ADC on this pad (ADC inputs only on GPIO26-29).
+- path: pads.GPIO20.functions
+  value:
+  - fn: SPI0 RX
+    funcsel: F1
+    routing: iomux
+  - fn: UART1 TX
+    funcsel: F2
+    routing: iomux
+  - fn: I2C0 SDA
+    funcsel: F3
+    routing: iomux
+  - fn: PWM2 A
+    funcsel: F4
+    routing: iomux
+  - fn: GPIO (SIO)
+    funcsel: F5
+    routing: iomux
+  - fn: PIO0 (any PIO pin role)
+    funcsel: F6
+    routing: matrix
+  - fn: PIO1 (any PIO pin role)
+    funcsel: F7
+    routing: matrix
+  - fn: CLOCK GPIN0
+    funcsel: F8
+    routing: iomux
+  - fn: USB VBUS EN
+    funcsel: F9
+    routing: iomux
+  doc: rp2040-ds-3184e62
+  locator: PDF p.238 (printed p.237), section 2.19.2 Function Select, Table 279 GPIO User Bank Functions
+  quote: 20 SPI0 RX UART1 TX I2C0 SDA PWM2 A SIO PIO0 PIO1 CLOCK GPIN0 USB VBUS EN
+  quote_check: pymupdf
+  confidence: found
+  notes: 'FUNCSEL table F1-F9 (reset FUNCSEL = 0x1f NULL). Routing class is the auditor''s assignment: iomux = one fixed choice per pad from this row; PIO0/PIO1 (F6/F7) = matrix, INFERRED because every
+    one of the 30 pads offers both and the PIO has its own internal pin mapping (Table 280, section 3.1); SIO = software GPIO on every pad. USB OVCUR DET / VBUS DET / VBUS EN are USB-controller signals
+    selectable per pad (iomux).'
+- path: pads.GPIO20.input_only
+  value: false
+  doc: rp2040-ds-3184e62
+  locator: PDF p.237 (printed p.236), section 2.19.1 Overview
+  quote: All GPIOs support digital input and output
+  quote_check: pymupdf
+  confidence: found
+  notes: All user GPIOs are bidirectional (Table 615 types Digital IO (FT) for GPIO0-25 and Digital IO / Analogue for GPIO26-29).
+- path: pads.GPIO20.reset_state
+  value: pulldown
+  doc: rp2040-ds-3184e62
+  locator: PDF p.303 (printed p.302), section 2.19.6.3 Pad Control - User Bank, Table 341 GPIO0..GPIO29 Registers (PDE reset 0x1)
+  quote: 'PDE: Pull down enable RW 0x1'
+  quote_check: pymupdf
+  confidence: found
+  notes: 'Pin list Table 615 (section 5.5.2.2) also gives Reset State = Pull-Down for this pad. Pad reset: OD=0, IE=1, PUE=0, PDE=1, DRIVE=4mA, SCHMITT=1; FUNCSEL=0x1f (NULL) so output is not driven. =>
+    input with pull-down. Reset values read from rendered PDF p.302-303.'
+- path: pads.GPIO20.strap
+  value: none
+  doc: rp2040-ds-3184e62
+  locator: PDF p.131 (printed p.130), section 2.8.1.1 Bootrom boot sequence
+  quote: Check if SPI CS pin is tied low ("bootrom button"), and skip flash boot if so.
+  quote_check: pymupdf
+  confidence: inferred
+  notes: 'No user-bank GPIO0-29 is sampled at reset or for boot-mode selection anywhere in the boot sequence (2.8.1). Boot mode is sampled on QSPI_SS (flash chip-select, QSPI bank, NOT GPIO0-29): tied low
+    -> skip flash boot / USB boot. The absence of a strap on this pad is INFERRED from the full list of boot-time checks, not stated in one sentence. Default pull = down (reset_state).'
+- path: pads.GPIO20.power_up_glitch
+  value: none
+  doc: rp2040-ds-3184e62
+  locator: PDF p.628 (printed p.627), Appendix B Errata (all of RP2040-E1..E16 checked; full-text search for "glitch")
+  quote: Errata are listed numerically under the relevant block.
+  quote_check: pymupdf
+  confidence: inferred
+  notes: No power-up output glitch is documented for any user pad. Absence inferred from the errata appendix and a text search (only hits concern clock muxes and a SIO register note). Output driver is disabled
+    until software selects a function. E5 (GPIO15) and E6 (GPIO26-29) are not glitch errata. Datasheet gives no glitch duration.
+- path: pads.GPIO20.errata
+  value: []
+  doc: rp2040-ds-3184e62
+  locator: PDF p.628 (printed p.627), Appendix B Errata (all entries checked)
+  quote: Errata are listed numerically under the relevant block.
+  quote_check: pymupdf
+  confidence: inferred
+  notes: No erratum in Appendix B (E1-E16) names this pad.
+- path: pads.GPIO20.adc
+  value: null
+  doc: rp2040-ds-3184e62
+  locator: PDF p.558 (printed p.557), section 4.9 ADC and Temperature Sensor
+  quote: Four inputs that are available on package pins shared with GPIO[29:26]
+  quote_check: pymupdf
+  confidence: found
+  notes: No ADC on this pad (ADC inputs only on GPIO26-29).
+- path: pads.GPIO21.functions
+  value:
+  - fn: SPI0 CSn
+    funcsel: F1
+    routing: iomux
+  - fn: UART1 RX
+    funcsel: F2
+    routing: iomux
+  - fn: I2C0 SCL
+    funcsel: F3
+    routing: iomux
+  - fn: PWM2 B
+    funcsel: F4
+    routing: iomux
+  - fn: GPIO (SIO)
+    funcsel: F5
+    routing: iomux
+  - fn: PIO0 (any PIO pin role)
+    funcsel: F6
+    routing: matrix
+  - fn: PIO1 (any PIO pin role)
+    funcsel: F7
+    routing: matrix
+  - fn: CLOCK GPOUT0
+    funcsel: F8
+    routing: iomux
+  - fn: USB OVCUR DET
+    funcsel: F9
+    routing: iomux
+  doc: rp2040-ds-3184e62
+  locator: PDF p.239 (printed p.238), section 2.19.2 Function Select, Table 279 GPIO User Bank Functions
+  quote: 21 SPI0 CSn UART1 RX I2C0 SCL PWM2 B SIO PIO0 PIO1 CLOCK GPOUT0 USB OVCUR DET
+  quote_check: pymupdf
+  confidence: found
+  notes: 'FUNCSEL table F1-F9 (reset FUNCSEL = 0x1f NULL). Routing class is the auditor''s assignment: iomux = one fixed choice per pad from this row; PIO0/PIO1 (F6/F7) = matrix, INFERRED because every
+    one of the 30 pads offers both and the PIO has its own internal pin mapping (Table 280, section 3.1); SIO = software GPIO on every pad. USB OVCUR DET / VBUS DET / VBUS EN are USB-controller signals
+    selectable per pad (iomux).'
+- path: pads.GPIO21.input_only
+  value: false
+  doc: rp2040-ds-3184e62
+  locator: PDF p.237 (printed p.236), section 2.19.1 Overview
+  quote: All GPIOs support digital input and output
+  quote_check: pymupdf
+  confidence: found
+  notes: All user GPIOs are bidirectional (Table 615 types Digital IO (FT) for GPIO0-25 and Digital IO / Analogue for GPIO26-29).
+- path: pads.GPIO21.reset_state
+  value: pulldown
+  doc: rp2040-ds-3184e62
+  locator: PDF p.303 (printed p.302), section 2.19.6.3 Pad Control - User Bank, Table 341 GPIO0..GPIO29 Registers (PDE reset 0x1)
+  quote: 'PDE: Pull down enable RW 0x1'
+  quote_check: pymupdf
+  confidence: found
+  notes: 'Pin list Table 615 (section 5.5.2.2) also gives Reset State = Pull-Down for this pad. Pad reset: OD=0, IE=1, PUE=0, PDE=1, DRIVE=4mA, SCHMITT=1; FUNCSEL=0x1f (NULL) so output is not driven. =>
+    input with pull-down. Reset values read from rendered PDF p.302-303.'
+- path: pads.GPIO21.strap
+  value: none
+  doc: rp2040-ds-3184e62
+  locator: PDF p.131 (printed p.130), section 2.8.1.1 Bootrom boot sequence
+  quote: Check if SPI CS pin is tied low ("bootrom button"), and skip flash boot if so.
+  quote_check: pymupdf
+  confidence: inferred
+  notes: 'No user-bank GPIO0-29 is sampled at reset or for boot-mode selection anywhere in the boot sequence (2.8.1). Boot mode is sampled on QSPI_SS (flash chip-select, QSPI bank, NOT GPIO0-29): tied low
+    -> skip flash boot / USB boot. The absence of a strap on this pad is INFERRED from the full list of boot-time checks, not stated in one sentence. Default pull = down (reset_state).'
+- path: pads.GPIO21.power_up_glitch
+  value: none
+  doc: rp2040-ds-3184e62
+  locator: PDF p.628 (printed p.627), Appendix B Errata (all of RP2040-E1..E16 checked; full-text search for "glitch")
+  quote: Errata are listed numerically under the relevant block.
+  quote_check: pymupdf
+  confidence: inferred
+  notes: No power-up output glitch is documented for any user pad. Absence inferred from the errata appendix and a text search (only hits concern clock muxes and a SIO register note). Output driver is disabled
+    until software selects a function. E5 (GPIO15) and E6 (GPIO26-29) are not glitch errata. Datasheet gives no glitch duration.
+- path: pads.GPIO21.errata
+  value: []
+  doc: rp2040-ds-3184e62
+  locator: PDF p.628 (printed p.627), Appendix B Errata (all entries checked)
+  quote: Errata are listed numerically under the relevant block.
+  quote_check: pymupdf
+  confidence: inferred
+  notes: No erratum in Appendix B (E1-E16) names this pad.
+- path: pads.GPIO21.adc
+  value: null
+  doc: rp2040-ds-3184e62
+  locator: PDF p.558 (printed p.557), section 4.9 ADC and Temperature Sensor
+  quote: Four inputs that are available on package pins shared with GPIO[29:26]
+  quote_check: pymupdf
+  confidence: found
+  notes: No ADC on this pad (ADC inputs only on GPIO26-29).
+- path: pads.GPIO22.functions
+  value:
+  - fn: SPI0 SCK
+    funcsel: F1
+    routing: iomux
+  - fn: UART1 CTS
+    funcsel: F2
+    routing: iomux
+  - fn: I2C1 SDA
+    funcsel: F3
+    routing: iomux
+  - fn: PWM3 A
+    funcsel: F4
+    routing: iomux
+  - fn: GPIO (SIO)
+    funcsel: F5
+    routing: iomux
+  - fn: PIO0 (any PIO pin role)
+    funcsel: F6
+    routing: matrix
+  - fn: PIO1 (any PIO pin role)
+    funcsel: F7
+    routing: matrix
+  - fn: CLOCK GPIN1
+    funcsel: F8
+    routing: iomux
+  - fn: USB VBUS DET
+    funcsel: F9
+    routing: iomux
+  doc: rp2040-ds-3184e62
+  locator: PDF p.239 (printed p.238), section 2.19.2 Function Select, Table 279 GPIO User Bank Functions
+  quote: 22 SPI0 SCK UART1 CTS I2C1 SDA PWM3 A SIO PIO0 PIO1 CLOCK GPIN1 USB VBUS DET
+  quote_check: pymupdf
+  confidence: found
+  notes: 'FUNCSEL table F1-F9 (reset FUNCSEL = 0x1f NULL). Routing class is the auditor''s assignment: iomux = one fixed choice per pad from this row; PIO0/PIO1 (F6/F7) = matrix, INFERRED because every
+    one of the 30 pads offers both and the PIO has its own internal pin mapping (Table 280, section 3.1); SIO = software GPIO on every pad. USB OVCUR DET / VBUS DET / VBUS EN are USB-controller signals
+    selectable per pad (iomux).'
+- path: pads.GPIO22.input_only
+  value: false
+  doc: rp2040-ds-3184e62
+  locator: PDF p.237 (printed p.236), section 2.19.1 Overview
+  quote: All GPIOs support digital input and output
+  quote_check: pymupdf
+  confidence: found
+  notes: All user GPIOs are bidirectional (Table 615 types Digital IO (FT) for GPIO0-25 and Digital IO / Analogue for GPIO26-29).
+- path: pads.GPIO22.reset_state
+  value: pulldown
+  doc: rp2040-ds-3184e62
+  locator: PDF p.303 (printed p.302), section 2.19.6.3 Pad Control - User Bank, Table 341 GPIO0..GPIO29 Registers (PDE reset 0x1)
+  quote: 'PDE: Pull down enable RW 0x1'
+  quote_check: pymupdf
+  confidence: found
+  notes: 'Pin list Table 615 (section 5.5.2.2) also gives Reset State = Pull-Down for this pad. Pad reset: OD=0, IE=1, PUE=0, PDE=1, DRIVE=4mA, SCHMITT=1; FUNCSEL=0x1f (NULL) so output is not driven. =>
+    input with pull-down. Reset values read from rendered PDF p.302-303.'
+- path: pads.GPIO22.strap
+  value: none
+  doc: rp2040-ds-3184e62
+  locator: PDF p.131 (printed p.130), section 2.8.1.1 Bootrom boot sequence
+  quote: Check if SPI CS pin is tied low ("bootrom button"), and skip flash boot if so.
+  quote_check: pymupdf
+  confidence: inferred
+  notes: 'No user-bank GPIO0-29 is sampled at reset or for boot-mode selection anywhere in the boot sequence (2.8.1). Boot mode is sampled on QSPI_SS (flash chip-select, QSPI bank, NOT GPIO0-29): tied low
+    -> skip flash boot / USB boot. The absence of a strap on this pad is INFERRED from the full list of boot-time checks, not stated in one sentence. Default pull = down (reset_state).'
+- path: pads.GPIO22.power_up_glitch
+  value: none
+  doc: rp2040-ds-3184e62
+  locator: PDF p.628 (printed p.627), Appendix B Errata (all of RP2040-E1..E16 checked; full-text search for "glitch")
+  quote: Errata are listed numerically under the relevant block.
+  quote_check: pymupdf
+  confidence: inferred
+  notes: No power-up output glitch is documented for any user pad. Absence inferred from the errata appendix and a text search (only hits concern clock muxes and a SIO register note). Output driver is disabled
+    until software selects a function. E5 (GPIO15) and E6 (GPIO26-29) are not glitch errata. Datasheet gives no glitch duration.
+- path: pads.GPIO22.errata
+  value: []
+  doc: rp2040-ds-3184e62
+  locator: PDF p.628 (printed p.627), Appendix B Errata (all entries checked)
+  quote: Errata are listed numerically under the relevant block.
+  quote_check: pymupdf
+  confidence: inferred
+  notes: No erratum in Appendix B (E1-E16) names this pad.
+- path: pads.GPIO22.adc
+  value: null
+  doc: rp2040-ds-3184e62
+  locator: PDF p.558 (printed p.557), section 4.9 ADC and Temperature Sensor
+  quote: Four inputs that are available on package pins shared with GPIO[29:26]
+  quote_check: pymupdf
+  confidence: found
+  notes: No ADC on this pad (ADC inputs only on GPIO26-29).
+- path: pads.GPIO23.functions
+  value:
+  - fn: SPI0 TX
+    funcsel: F1
+    routing: iomux
+  - fn: UART1 RTS
+    funcsel: F2
+    routing: iomux
+  - fn: I2C1 SCL
+    funcsel: F3
+    routing: iomux
+  - fn: PWM3 B
+    funcsel: F4
+    routing: iomux
+  - fn: GPIO (SIO)
+    funcsel: F5
+    routing: iomux
+  - fn: PIO0 (any PIO pin role)
+    funcsel: F6
+    routing: matrix
+  - fn: PIO1 (any PIO pin role)
+    funcsel: F7
+    routing: matrix
+  - fn: CLOCK GPOUT1
+    funcsel: F8
+    routing: iomux
+  - fn: USB VBUS EN
+    funcsel: F9
+    routing: iomux
+  doc: rp2040-ds-3184e62
+  locator: PDF p.239 (printed p.238), section 2.19.2 Function Select, Table 279 GPIO User Bank Functions
+  quote: 23 SPI0 TX UART1 RTS I2C1 SCL PWM3 B SIO PIO0 PIO1 CLOCK GPOUT1 USB VBUS EN
+  quote_check: pymupdf
+  confidence: found
+  notes: 'FUNCSEL table F1-F9 (reset FUNCSEL = 0x1f NULL). Routing class is the auditor''s assignment: iomux = one fixed choice per pad from this row; PIO0/PIO1 (F6/F7) = matrix, INFERRED because every
+    one of the 30 pads offers both and the PIO has its own internal pin mapping (Table 280, section 3.1); SIO = software GPIO on every pad. USB OVCUR DET / VBUS DET / VBUS EN are USB-controller signals
+    selectable per pad (iomux).'
+- path: pads.GPIO23.input_only
+  value: false
+  doc: rp2040-ds-3184e62
+  locator: PDF p.237 (printed p.236), section 2.19.1 Overview
+  quote: All GPIOs support digital input and output
+  quote_check: pymupdf
+  confidence: found
+  notes: All user GPIOs are bidirectional (Table 615 types Digital IO (FT) for GPIO0-25 and Digital IO / Analogue for GPIO26-29).
+- path: pads.GPIO23.reset_state
+  value: pulldown
+  doc: rp2040-ds-3184e62
+  locator: PDF p.303 (printed p.302), section 2.19.6.3 Pad Control - User Bank, Table 341 GPIO0..GPIO29 Registers (PDE reset 0x1)
+  quote: 'PDE: Pull down enable RW 0x1'
+  quote_check: pymupdf
+  confidence: found
+  notes: 'Pin list Table 615 (section 5.5.2.2) also gives Reset State = Pull-Down for this pad. Pad reset: OD=0, IE=1, PUE=0, PDE=1, DRIVE=4mA, SCHMITT=1; FUNCSEL=0x1f (NULL) so output is not driven. =>
+    input with pull-down. Reset values read from rendered PDF p.302-303.'
+- path: pads.GPIO23.strap
+  value: none
+  doc: rp2040-ds-3184e62
+  locator: PDF p.131 (printed p.130), section 2.8.1.1 Bootrom boot sequence
+  quote: Check if SPI CS pin is tied low ("bootrom button"), and skip flash boot if so.
+  quote_check: pymupdf
+  confidence: inferred
+  notes: 'No user-bank GPIO0-29 is sampled at reset or for boot-mode selection anywhere in the boot sequence (2.8.1). Boot mode is sampled on QSPI_SS (flash chip-select, QSPI bank, NOT GPIO0-29): tied low
+    -> skip flash boot / USB boot. The absence of a strap on this pad is INFERRED from the full list of boot-time checks, not stated in one sentence. Default pull = down (reset_state).'
+- path: pads.GPIO23.power_up_glitch
+  value: none
+  doc: rp2040-ds-3184e62
+  locator: PDF p.628 (printed p.627), Appendix B Errata (all of RP2040-E1..E16 checked; full-text search for "glitch")
+  quote: Errata are listed numerically under the relevant block.
+  quote_check: pymupdf
+  confidence: inferred
+  notes: No power-up output glitch is documented for any user pad. Absence inferred from the errata appendix and a text search (only hits concern clock muxes and a SIO register note). Output driver is disabled
+    until software selects a function. E5 (GPIO15) and E6 (GPIO26-29) are not glitch errata. Datasheet gives no glitch duration.
+- path: pads.GPIO23.errata
+  value: []
+  doc: rp2040-ds-3184e62
+  locator: PDF p.628 (printed p.627), Appendix B Errata (all entries checked)
+  quote: Errata are listed numerically under the relevant block.
+  quote_check: pymupdf
+  confidence: inferred
+  notes: No erratum in Appendix B (E1-E16) names this pad.
+- path: pads.GPIO23.adc
+  value: null
+  doc: rp2040-ds-3184e62
+  locator: PDF p.558 (printed p.557), section 4.9 ADC and Temperature Sensor
+  quote: Four inputs that are available on package pins shared with GPIO[29:26]
+  quote_check: pymupdf
+  confidence: found
+  notes: No ADC on this pad (ADC inputs only on GPIO26-29).
+- path: pads.GPIO24.functions
+  value:
+  - fn: SPI1 RX
+    funcsel: F1
+    routing: iomux
+  - fn: UART1 TX
+    funcsel: F2
+    routing: iomux
+  - fn: I2C0 SDA
+    funcsel: F3
+    routing: iomux
+  - fn: PWM4 A
+    funcsel: F4
+    routing: iomux
+  - fn: GPIO (SIO)
+    funcsel: F5
+    routing: iomux
+  - fn: PIO0 (any PIO pin role)
+    funcsel: F6
+    routing: matrix
+  - fn: PIO1 (any PIO pin role)
+    funcsel: F7
+    routing: matrix
+  - fn: CLOCK GPOUT2
+    funcsel: F8
+    routing: iomux
+  - fn: USB OVCUR DET
+    funcsel: F9
+    routing: iomux
+  doc: rp2040-ds-3184e62
+  locator: PDF p.239 (printed p.238), section 2.19.2 Function Select, Table 279 GPIO User Bank Functions
+  quote: 24 SPI1 RX UART1 TX I2C0 SDA PWM4 A SIO PIO0 PIO1 CLOCK GPOUT2 USB OVCUR DET
+  quote_check: pymupdf
+  confidence: found
+  notes: 'FUNCSEL table F1-F9 (reset FUNCSEL = 0x1f NULL). Routing class is the auditor''s assignment: iomux = one fixed choice per pad from this row; PIO0/PIO1 (F6/F7) = matrix, INFERRED because every
+    one of the 30 pads offers both and the PIO has its own internal pin mapping (Table 280, section 3.1); SIO = software GPIO on every pad. USB OVCUR DET / VBUS DET / VBUS EN are USB-controller signals
+    selectable per pad (iomux).'
+- path: pads.GPIO24.input_only
+  value: false
+  doc: rp2040-ds-3184e62
+  locator: PDF p.237 (printed p.236), section 2.19.1 Overview
+  quote: All GPIOs support digital input and output
+  quote_check: pymupdf
+  confidence: found
+  notes: All user GPIOs are bidirectional (Table 615 types Digital IO (FT) for GPIO0-25 and Digital IO / Analogue for GPIO26-29).
+- path: pads.GPIO24.reset_state
+  value: pulldown
+  doc: rp2040-ds-3184e62
+  locator: PDF p.303 (printed p.302), section 2.19.6.3 Pad Control - User Bank, Table 341 GPIO0..GPIO29 Registers (PDE reset 0x1)
+  quote: 'PDE: Pull down enable RW 0x1'
+  quote_check: pymupdf
+  confidence: found
+  notes: 'Pin list Table 615 (section 5.5.2.2) also gives Reset State = Pull-Down for this pad. Pad reset: OD=0, IE=1, PUE=0, PDE=1, DRIVE=4mA, SCHMITT=1; FUNCSEL=0x1f (NULL) so output is not driven. =>
+    input with pull-down. Reset values read from rendered PDF p.302-303.'
+- path: pads.GPIO24.strap
+  value: none
+  doc: rp2040-ds-3184e62
+  locator: PDF p.131 (printed p.130), section 2.8.1.1 Bootrom boot sequence
+  quote: Check if SPI CS pin is tied low ("bootrom button"), and skip flash boot if so.
+  quote_check: pymupdf
+  confidence: inferred
+  notes: 'No user-bank GPIO0-29 is sampled at reset or for boot-mode selection anywhere in the boot sequence (2.8.1). Boot mode is sampled on QSPI_SS (flash chip-select, QSPI bank, NOT GPIO0-29): tied low
+    -> skip flash boot / USB boot. The absence of a strap on this pad is INFERRED from the full list of boot-time checks, not stated in one sentence. Default pull = down (reset_state).'
+- path: pads.GPIO24.power_up_glitch
+  value: none
+  doc: rp2040-ds-3184e62
+  locator: PDF p.628 (printed p.627), Appendix B Errata (all of RP2040-E1..E16 checked; full-text search for "glitch")
+  quote: Errata are listed numerically under the relevant block.
+  quote_check: pymupdf
+  confidence: inferred
+  notes: No power-up output glitch is documented for any user pad. Absence inferred from the errata appendix and a text search (only hits concern clock muxes and a SIO register note). Output driver is disabled
+    until software selects a function. E5 (GPIO15) and E6 (GPIO26-29) are not glitch errata. Datasheet gives no glitch duration.
+- path: pads.GPIO24.errata
+  value: []
+  doc: rp2040-ds-3184e62
+  locator: PDF p.628 (printed p.627), Appendix B Errata (all entries checked)
+  quote: Errata are listed numerically under the relevant block.
+  quote_check: pymupdf
+  confidence: inferred
+  notes: No erratum in Appendix B (E1-E16) names this pad.
+- path: pads.GPIO24.adc
+  value: null
+  doc: rp2040-ds-3184e62
+  locator: PDF p.558 (printed p.557), section 4.9 ADC and Temperature Sensor
+  quote: Four inputs that are available on package pins shared with GPIO[29:26]
+  quote_check: pymupdf
+  confidence: found
+  notes: No ADC on this pad (ADC inputs only on GPIO26-29).
+- path: pads.GPIO25.functions
+  value:
+  - fn: SPI1 CSn
+    funcsel: F1
+    routing: iomux
+  - fn: UART1 RX
+    funcsel: F2
+    routing: iomux
+  - fn: I2C0 SCL
+    funcsel: F3
+    routing: iomux
+  - fn: PWM4 B
+    funcsel: F4
+    routing: iomux
+  - fn: GPIO (SIO)
+    funcsel: F5
+    routing: iomux
+  - fn: PIO0 (any PIO pin role)
+    funcsel: F6
+    routing: matrix
+  - fn: PIO1 (any PIO pin role)
+    funcsel: F7
+    routing: matrix
+  - fn: CLOCK GPOUT3
+    funcsel: F8
+    routing: iomux
+  - fn: USB VBUS DET
+    funcsel: F9
+    routing: iomux
+  doc: rp2040-ds-3184e62
+  locator: PDF p.239 (printed p.238), section 2.19.2 Function Select, Table 279 GPIO User Bank Functions
+  quote: 25 SPI1 CSn UART1 RX I2C0 SCL PWM4 B SIO PIO0 PIO1 CLOCK GPOUT3 USB VBUS DET
+  quote_check: pymupdf
+  confidence: found
+  notes: 'FUNCSEL table F1-F9 (reset FUNCSEL = 0x1f NULL). Routing class is the auditor''s assignment: iomux = one fixed choice per pad from this row; PIO0/PIO1 (F6/F7) = matrix, INFERRED because every
+    one of the 30 pads offers both and the PIO has its own internal pin mapping (Table 280, section 3.1); SIO = software GPIO on every pad. USB OVCUR DET / VBUS DET / VBUS EN are USB-controller signals
+    selectable per pad (iomux).'
+- path: pads.GPIO25.input_only
+  value: false
+  doc: rp2040-ds-3184e62
+  locator: PDF p.237 (printed p.236), section 2.19.1 Overview
+  quote: All GPIOs support digital input and output
+  quote_check: pymupdf
+  confidence: found
+  notes: All user GPIOs are bidirectional (Table 615 types Digital IO (FT) for GPIO0-25 and Digital IO / Analogue for GPIO26-29).
+- path: pads.GPIO25.reset_state
+  value: pulldown
+  doc: rp2040-ds-3184e62
+  locator: PDF p.303 (printed p.302), section 2.19.6.3 Pad Control - User Bank, Table 341 GPIO0..GPIO29 Registers (PDE reset 0x1)
+  quote: 'PDE: Pull down enable RW 0x1'
+  quote_check: pymupdf
+  confidence: found
+  notes: 'Pin list Table 615 (section 5.5.2.2) also gives Reset State = Pull-Down for this pad. Pad reset: OD=0, IE=1, PUE=0, PDE=1, DRIVE=4mA, SCHMITT=1; FUNCSEL=0x1f (NULL) so output is not driven. =>
+    input with pull-down. Reset values read from rendered PDF p.302-303.'
+- path: pads.GPIO25.strap
+  value: none
+  doc: rp2040-ds-3184e62
+  locator: PDF p.131 (printed p.130), section 2.8.1.1 Bootrom boot sequence
+  quote: Check if SPI CS pin is tied low ("bootrom button"), and skip flash boot if so.
+  quote_check: pymupdf
+  confidence: inferred
+  notes: 'No user-bank GPIO0-29 is sampled at reset or for boot-mode selection anywhere in the boot sequence (2.8.1). Boot mode is sampled on QSPI_SS (flash chip-select, QSPI bank, NOT GPIO0-29): tied low
+    -> skip flash boot / USB boot. The absence of a strap on this pad is INFERRED from the full list of boot-time checks, not stated in one sentence. Default pull = down (reset_state).'
+- path: pads.GPIO25.power_up_glitch
+  value: none
+  doc: rp2040-ds-3184e62
+  locator: PDF p.628 (printed p.627), Appendix B Errata (all of RP2040-E1..E16 checked; full-text search for "glitch")
+  quote: Errata are listed numerically under the relevant block.
+  quote_check: pymupdf
+  confidence: inferred
+  notes: No power-up output glitch is documented for any user pad. Absence inferred from the errata appendix and a text search (only hits concern clock muxes and a SIO register note). Output driver is disabled
+    until software selects a function. E5 (GPIO15) and E6 (GPIO26-29) are not glitch errata. Datasheet gives no glitch duration.
+- path: pads.GPIO25.errata
+  value: []
+  doc: rp2040-ds-3184e62
+  locator: PDF p.628 (printed p.627), Appendix B Errata (all entries checked)
+  quote: Errata are listed numerically under the relevant block.
+  quote_check: pymupdf
+  confidence: inferred
+  notes: No erratum in Appendix B (E1-E16) names this pad.
+- path: pads.GPIO25.adc
+  value: null
+  doc: rp2040-ds-3184e62
+  locator: PDF p.558 (printed p.557), section 4.9 ADC and Temperature Sensor
+  quote: Four inputs that are available on package pins shared with GPIO[29:26]
+  quote_check: pymupdf
+  confidence: found
+  notes: No ADC on this pad (ADC inputs only on GPIO26-29).
+- path: pads.GPIO26.functions
+  value:
+  - fn: SPI1 SCK
+    funcsel: F1
+    routing: iomux
+  - fn: UART1 CTS
+    funcsel: F2
+    routing: iomux
+  - fn: I2C1 SDA
+    funcsel: F3
+    routing: iomux
+  - fn: PWM5 A
+    funcsel: F4
+    routing: iomux
+  - fn: GPIO (SIO)
+    funcsel: F5
+    routing: iomux
+  - fn: PIO0 (any PIO pin role)
+    funcsel: F6
+    routing: matrix
+  - fn: PIO1 (any PIO pin role)
+    funcsel: F7
+    routing: matrix
+  - fn: USB VBUS EN
+    funcsel: F9
+    routing: iomux
+  - fn: ADC0 (AIN0)
+    funcsel: none (analogue path; disable digital via IE=0, OD=1)
+    routing: fixed
+  doc: rp2040-ds-3184e62
+  locator: PDF p.239 (printed p.238), section 2.19.2 Function Select, Table 279 GPIO User Bank Functions
+  quote: 26 SPI1 SCK UART1 CTS I2C1 SDA PWM5 A SIO PIO0 PIO1 USB VBUS EN
+  quote_check: pymupdf
+  confidence: found
+  notes: 'FUNCSEL table F1-F9 (reset FUNCSEL = 0x1f NULL). Routing class is the auditor''s assignment: iomux = one fixed choice per pad from this row; PIO0/PIO1 (F6/F7) = matrix, INFERRED because every
+    one of the 30 pads offers both and the PIO has its own internal pin mapping (Table 280, section 3.1); SIO = software GPIO on every pad. USB OVCUR DET / VBUS DET / VBUS EN are USB-controller signals
+    selectable per pad (iomux). ADC is not a FUNCSEL value: the pad is ''Digital IO / Analogue'' with an always-present analogue path -> fixed.'
+- path: pads.GPIO26.input_only
+  value: false
+  doc: rp2040-ds-3184e62
+  locator: PDF p.237 (printed p.236), section 2.19.1 Overview
+  quote: All GPIOs support digital input and output
+  quote_check: pymupdf
+  confidence: found
+  notes: All user GPIOs are bidirectional (Table 615 types Digital IO (FT) for GPIO0-25 and Digital IO / Analogue for GPIO26-29).
+- path: pads.GPIO26.reset_state
+  value: pulldown
+  doc: rp2040-ds-3184e62
+  locator: PDF p.303 (printed p.302), section 2.19.6.3 Pad Control - User Bank, Table 341 GPIO0..GPIO29 Registers (PDE reset 0x1)
+  quote: 'PDE: Pull down enable RW 0x1'
+  quote_check: pymupdf
+  confidence: found
+  notes: 'Pin list Table 615 (section 5.5.2.2) also gives Reset State = Pull-Down for this pad. Pad reset: OD=0, IE=1, PUE=0, PDE=1, DRIVE=4mA, SCHMITT=1; FUNCSEL=0x1f (NULL) so output is not driven. =>
+    input with pull-down. Reset values read from rendered PDF p.302-303.'
+- path: pads.GPIO26.strap
+  value: none
+  doc: rp2040-ds-3184e62
+  locator: PDF p.131 (printed p.130), section 2.8.1.1 Bootrom boot sequence
+  quote: Check if SPI CS pin is tied low ("bootrom button"), and skip flash boot if so.
+  quote_check: pymupdf
+  confidence: inferred
+  notes: 'No user-bank GPIO0-29 is sampled at reset or for boot-mode selection anywhere in the boot sequence (2.8.1). Boot mode is sampled on QSPI_SS (flash chip-select, QSPI bank, NOT GPIO0-29): tied low
+    -> skip flash boot / USB boot. The absence of a strap on this pad is INFERRED from the full list of boot-time checks, not stated in one sentence. Default pull = down (reset_state).'
+- path: pads.GPIO26.power_up_glitch
+  value: none
+  doc: rp2040-ds-3184e62
+  locator: PDF p.628 (printed p.627), Appendix B Errata (all of RP2040-E1..E16 checked; full-text search for "glitch")
+  quote: Errata are listed numerically under the relevant block.
+  quote_check: pymupdf
+  confidence: inferred
+  notes: No power-up output glitch is documented for any user pad. Absence inferred from the errata appendix and a text search (only hits concern clock muxes and a SIO register note). Output driver is disabled
+    until software selects a function. E5 (GPIO15) and E6 (GPIO26-29) are not glitch errata. Datasheet gives no glitch duration.
+- path: pads.GPIO26.errata
+  value:
+  - RP2040-E6
+  doc: rp2040-ds-3184e62
+  locator: PDF p.631 (printed p.630), Appendix B Errata, GPIO / ADC, RP2040-E6
+  quote: GPIO26-29 are shared with ADC inputs AIN0-3
+  quote_check: pymupdf
+  confidence: found
+  notes: 'RP2040-E6: GPIO digital inputs not disabled for ADC pins by default (input enabled after RUN released). Affects B0/B1; fixed in B2 bootrom. (RP2040-E11, ADC DNL peaks, applies to the ADC as a
+    whole and names no pad; not listed.)'
+- path: pads.GPIO26.adc
+  value:
+    unit: ADC
+    channel: 0
+    radio_conflict: false
+    radio_conflict_basis: inference
+  doc: rp2040-ds-3184e62
+  locator: PDF p.560 (printed p.559), section 4.9.2.1 One-shot Sample
+  quote: An AINSEL value of 0...3 selects the ADC input on GPIO 26...29.
+  quote_check: pdftotext-layout
+  confidence: found
+  notes: 'ADC input AIN0 (CS.AINSEL=0) on GPIO26; AINSEL=4 is the internal temperature sensor (no pad). Unit/channel: found. radio_conflict=false is ONLY an inference: RP2040 has no radio and a text search
+    for radio/Wi-Fi/Bluetooth in the datasheet returns nothing; board-level couplings (e.g. Pico W) are outside this document. Digital function must be disabled (IE low, OD high); max ADC input voltage
+    is set by IOVDD, not ADC_AVDD.'
+- path: pads.GPIO27.functions
+  value:
+  - fn: SPI1 TX
+    funcsel: F1
+    routing: iomux
+  - fn: UART1 RTS
+    funcsel: F2
+    routing: iomux
+  - fn: I2C1 SCL
+    funcsel: F3
+    routing: iomux
+  - fn: PWM5 B
+    funcsel: F4
+    routing: iomux
+  - fn: GPIO (SIO)
+    funcsel: F5
+    routing: iomux
+  - fn: PIO0 (any PIO pin role)
+    funcsel: F6
+    routing: matrix
+  - fn: PIO1 (any PIO pin role)
+    funcsel: F7
+    routing: matrix
+  - fn: USB OVCUR DET
+    funcsel: F9
+    routing: iomux
+  - fn: ADC1 (AIN1)
+    funcsel: none (analogue path; disable digital via IE=0, OD=1)
+    routing: fixed
+  doc: rp2040-ds-3184e62
+  locator: PDF p.239 (printed p.238), section 2.19.2 Function Select, Table 279 GPIO User Bank Functions
+  quote: 27 SPI1 TX UART1 RTS I2C1 SCL PWM5 B SIO PIO0 PIO1 USB OVCUR DET
+  quote_check: pymupdf
+  confidence: found
+  notes: 'FUNCSEL table F1-F9 (reset FUNCSEL = 0x1f NULL). Routing class is the auditor''s assignment: iomux = one fixed choice per pad from this row; PIO0/PIO1 (F6/F7) = matrix, INFERRED because every
+    one of the 30 pads offers both and the PIO has its own internal pin mapping (Table 280, section 3.1); SIO = software GPIO on every pad. USB OVCUR DET / VBUS DET / VBUS EN are USB-controller signals
+    selectable per pad (iomux). ADC is not a FUNCSEL value: the pad is ''Digital IO / Analogue'' with an always-present analogue path -> fixed.'
+- path: pads.GPIO27.input_only
+  value: false
+  doc: rp2040-ds-3184e62
+  locator: PDF p.237 (printed p.236), section 2.19.1 Overview
+  quote: All GPIOs support digital input and output
+  quote_check: pymupdf
+  confidence: found
+  notes: All user GPIOs are bidirectional (Table 615 types Digital IO (FT) for GPIO0-25 and Digital IO / Analogue for GPIO26-29).
+- path: pads.GPIO27.reset_state
+  value: pulldown
+  doc: rp2040-ds-3184e62
+  locator: PDF p.303 (printed p.302), section 2.19.6.3 Pad Control - User Bank, Table 341 GPIO0..GPIO29 Registers (PDE reset 0x1)
+  quote: 'PDE: Pull down enable RW 0x1'
+  quote_check: pymupdf
+  confidence: found
+  notes: 'Pin list Table 615 (section 5.5.2.2) also gives Reset State = Pull-Down for this pad. Pad reset: OD=0, IE=1, PUE=0, PDE=1, DRIVE=4mA, SCHMITT=1; FUNCSEL=0x1f (NULL) so output is not driven. =>
+    input with pull-down. Reset values read from rendered PDF p.302-303.'
+- path: pads.GPIO27.strap
+  value: none
+  doc: rp2040-ds-3184e62
+  locator: PDF p.131 (printed p.130), section 2.8.1.1 Bootrom boot sequence
+  quote: Check if SPI CS pin is tied low ("bootrom button"), and skip flash boot if so.
+  quote_check: pymupdf
+  confidence: inferred
+  notes: 'No user-bank GPIO0-29 is sampled at reset or for boot-mode selection anywhere in the boot sequence (2.8.1). Boot mode is sampled on QSPI_SS (flash chip-select, QSPI bank, NOT GPIO0-29): tied low
+    -> skip flash boot / USB boot. The absence of a strap on this pad is INFERRED from the full list of boot-time checks, not stated in one sentence. Default pull = down (reset_state).'
+- path: pads.GPIO27.power_up_glitch
+  value: none
+  doc: rp2040-ds-3184e62
+  locator: PDF p.628 (printed p.627), Appendix B Errata (all of RP2040-E1..E16 checked; full-text search for "glitch")
+  quote: Errata are listed numerically under the relevant block.
+  quote_check: pymupdf
+  confidence: inferred
+  notes: No power-up output glitch is documented for any user pad. Absence inferred from the errata appendix and a text search (only hits concern clock muxes and a SIO register note). Output driver is disabled
+    until software selects a function. E5 (GPIO15) and E6 (GPIO26-29) are not glitch errata. Datasheet gives no glitch duration.
+- path: pads.GPIO27.errata
+  value:
+  - RP2040-E6
+  doc: rp2040-ds-3184e62
+  locator: PDF p.631 (printed p.630), Appendix B Errata, GPIO / ADC, RP2040-E6
+  quote: GPIO26-29 are shared with ADC inputs AIN0-3
+  quote_check: pymupdf
+  confidence: found
+  notes: 'RP2040-E6: GPIO digital inputs not disabled for ADC pins by default (input enabled after RUN released). Affects B0/B1; fixed in B2 bootrom. (RP2040-E11, ADC DNL peaks, applies to the ADC as a
+    whole and names no pad; not listed.)'
+- path: pads.GPIO27.adc
+  value:
+    unit: ADC
+    channel: 1
+    radio_conflict: false
+    radio_conflict_basis: inference
+  doc: rp2040-ds-3184e62
+  locator: PDF p.560 (printed p.559), section 4.9.2.1 One-shot Sample
+  quote: An AINSEL value of 0...3 selects the ADC input on GPIO 26...29.
+  quote_check: pdftotext-layout
+  confidence: found
+  notes: 'ADC input AIN1 (CS.AINSEL=1) on GPIO27; AINSEL=4 is the internal temperature sensor (no pad). Unit/channel: found. radio_conflict=false is ONLY an inference: RP2040 has no radio and a text search
+    for radio/Wi-Fi/Bluetooth in the datasheet returns nothing; board-level couplings (e.g. Pico W) are outside this document. Digital function must be disabled (IE low, OD high); max ADC input voltage
+    is set by IOVDD, not ADC_AVDD.'
+- path: pads.GPIO28.functions
+  value:
+  - fn: SPI1 RX
+    funcsel: F1
+    routing: iomux
+  - fn: UART0 TX
+    funcsel: F2
+    routing: iomux
+  - fn: I2C0 SDA
+    funcsel: F3
+    routing: iomux
+  - fn: PWM6 A
+    funcsel: F4
+    routing: iomux
+  - fn: GPIO (SIO)
+    funcsel: F5
+    routing: iomux
+  - fn: PIO0 (any PIO pin role)
+    funcsel: F6
+    routing: matrix
+  - fn: PIO1 (any PIO pin role)
+    funcsel: F7
+    routing: matrix
+  - fn: USB VBUS DET
+    funcsel: F9
+    routing: iomux
+  - fn: ADC2 (AIN2)
+    funcsel: none (analogue path; disable digital via IE=0, OD=1)
+    routing: fixed
+  doc: rp2040-ds-3184e62
+  locator: PDF p.239 (printed p.238), section 2.19.2 Function Select, Table 279 GPIO User Bank Functions
+  quote: 28 SPI1 RX UART0 TX I2C0 SDA PWM6 A SIO PIO0 PIO1 USB VBUS DET
+  quote_check: pymupdf
+  confidence: found
+  notes: 'FUNCSEL table F1-F9 (reset FUNCSEL = 0x1f NULL). Routing class is the auditor''s assignment: iomux = one fixed choice per pad from this row; PIO0/PIO1 (F6/F7) = matrix, INFERRED because every
+    one of the 30 pads offers both and the PIO has its own internal pin mapping (Table 280, section 3.1); SIO = software GPIO on every pad. USB OVCUR DET / VBUS DET / VBUS EN are USB-controller signals
+    selectable per pad (iomux). ADC is not a FUNCSEL value: the pad is ''Digital IO / Analogue'' with an always-present analogue path -> fixed.'
+- path: pads.GPIO28.input_only
+  value: false
+  doc: rp2040-ds-3184e62
+  locator: PDF p.237 (printed p.236), section 2.19.1 Overview
+  quote: All GPIOs support digital input and output
+  quote_check: pymupdf
+  confidence: found
+  notes: All user GPIOs are bidirectional (Table 615 types Digital IO (FT) for GPIO0-25 and Digital IO / Analogue for GPIO26-29).
+- path: pads.GPIO28.reset_state
+  value: pulldown
+  doc: rp2040-ds-3184e62
+  locator: PDF p.303 (printed p.302), section 2.19.6.3 Pad Control - User Bank, Table 341 GPIO0..GPIO29 Registers (PDE reset 0x1)
+  quote: 'PDE: Pull down enable RW 0x1'
+  quote_check: pymupdf
+  confidence: found
+  notes: 'Pin list Table 615 (section 5.5.2.2) also gives Reset State = Pull-Down for this pad. Pad reset: OD=0, IE=1, PUE=0, PDE=1, DRIVE=4mA, SCHMITT=1; FUNCSEL=0x1f (NULL) so output is not driven. =>
+    input with pull-down. Reset values read from rendered PDF p.302-303.'
+- path: pads.GPIO28.strap
+  value: none
+  doc: rp2040-ds-3184e62
+  locator: PDF p.131 (printed p.130), section 2.8.1.1 Bootrom boot sequence
+  quote: Check if SPI CS pin is tied low ("bootrom button"), and skip flash boot if so.
+  quote_check: pymupdf
+  confidence: inferred
+  notes: 'No user-bank GPIO0-29 is sampled at reset or for boot-mode selection anywhere in the boot sequence (2.8.1). Boot mode is sampled on QSPI_SS (flash chip-select, QSPI bank, NOT GPIO0-29): tied low
+    -> skip flash boot / USB boot. The absence of a strap on this pad is INFERRED from the full list of boot-time checks, not stated in one sentence. Default pull = down (reset_state).'
+- path: pads.GPIO28.power_up_glitch
+  value: none
+  doc: rp2040-ds-3184e62
+  locator: PDF p.628 (printed p.627), Appendix B Errata (all of RP2040-E1..E16 checked; full-text search for "glitch")
+  quote: Errata are listed numerically under the relevant block.
+  quote_check: pymupdf
+  confidence: inferred
+  notes: No power-up output glitch is documented for any user pad. Absence inferred from the errata appendix and a text search (only hits concern clock muxes and a SIO register note). Output driver is disabled
+    until software selects a function. E5 (GPIO15) and E6 (GPIO26-29) are not glitch errata. Datasheet gives no glitch duration.
+- path: pads.GPIO28.errata
+  value:
+  - RP2040-E6
+  doc: rp2040-ds-3184e62
+  locator: PDF p.631 (printed p.630), Appendix B Errata, GPIO / ADC, RP2040-E6
+  quote: GPIO26-29 are shared with ADC inputs AIN0-3
+  quote_check: pymupdf
+  confidence: found
+  notes: 'RP2040-E6: GPIO digital inputs not disabled for ADC pins by default (input enabled after RUN released). Affects B0/B1; fixed in B2 bootrom. (RP2040-E11, ADC DNL peaks, applies to the ADC as a
+    whole and names no pad; not listed.)'
+- path: pads.GPIO28.adc
+  value:
+    unit: ADC
+    channel: 2
+    radio_conflict: false
+    radio_conflict_basis: inference
+  doc: rp2040-ds-3184e62
+  locator: PDF p.560 (printed p.559), section 4.9.2.1 One-shot Sample
+  quote: An AINSEL value of 0...3 selects the ADC input on GPIO 26...29.
+  quote_check: pdftotext-layout
+  confidence: found
+  notes: 'ADC input AIN2 (CS.AINSEL=2) on GPIO28; AINSEL=4 is the internal temperature sensor (no pad). Unit/channel: found. radio_conflict=false is ONLY an inference: RP2040 has no radio and a text search
+    for radio/Wi-Fi/Bluetooth in the datasheet returns nothing; board-level couplings (e.g. Pico W) are outside this document. Digital function must be disabled (IE low, OD high); max ADC input voltage
+    is set by IOVDD, not ADC_AVDD.'
+- path: pads.GPIO29.functions
+  value:
+  - fn: SPI1 CSn
+    funcsel: F1
+    routing: iomux
+  - fn: UART0 RX
+    funcsel: F2
+    routing: iomux
+  - fn: I2C0 SCL
+    funcsel: F3
+    routing: iomux
+  - fn: PWM6 B
+    funcsel: F4
+    routing: iomux
+  - fn: GPIO (SIO)
+    funcsel: F5
+    routing: iomux
+  - fn: PIO0 (any PIO pin role)
+    funcsel: F6
+    routing: matrix
+  - fn: PIO1 (any PIO pin role)
+    funcsel: F7
+    routing: matrix
+  - fn: USB VBUS EN
+    funcsel: F9
+    routing: iomux
+  - fn: ADC3 (AIN3)
+    funcsel: none (analogue path; disable digital via IE=0, OD=1)
+    routing: fixed
+  doc: rp2040-ds-3184e62
+  locator: PDF p.239 (printed p.238), section 2.19.2 Function Select, Table 279 GPIO User Bank Functions
+  quote: 29 SPI1 CSn UART0 RX I2C0 SCL PWM6 B SIO PIO0 PIO1 USB VBUS EN
+  quote_check: pymupdf
+  confidence: found
+  notes: 'FUNCSEL table F1-F9 (reset FUNCSEL = 0x1f NULL). Routing class is the auditor''s assignment: iomux = one fixed choice per pad from this row; PIO0/PIO1 (F6/F7) = matrix, INFERRED because every
+    one of the 30 pads offers both and the PIO has its own internal pin mapping (Table 280, section 3.1); SIO = software GPIO on every pad. USB OVCUR DET / VBUS DET / VBUS EN are USB-controller signals
+    selectable per pad (iomux). ADC is not a FUNCSEL value: the pad is ''Digital IO / Analogue'' with an always-present analogue path -> fixed.'
+- path: pads.GPIO29.input_only
+  value: false
+  doc: rp2040-ds-3184e62
+  locator: PDF p.237 (printed p.236), section 2.19.1 Overview
+  quote: All GPIOs support digital input and output
+  quote_check: pymupdf
+  confidence: found
+  notes: All user GPIOs are bidirectional (Table 615 types Digital IO (FT) for GPIO0-25 and Digital IO / Analogue for GPIO26-29).
+- path: pads.GPIO29.reset_state
+  value: pulldown
+  doc: rp2040-ds-3184e62
+  locator: PDF p.303 (printed p.302), section 2.19.6.3 Pad Control - User Bank, Table 341 GPIO0..GPIO29 Registers (PDE reset 0x1)
+  quote: 'PDE: Pull down enable RW 0x1'
+  quote_check: pymupdf
+  confidence: found
+  notes: 'Pin list Table 615 (section 5.5.2.2) also gives Reset State = Pull-Down for this pad. Pad reset: OD=0, IE=1, PUE=0, PDE=1, DRIVE=4mA, SCHMITT=1; FUNCSEL=0x1f (NULL) so output is not driven. =>
+    input with pull-down. Reset values read from rendered PDF p.302-303.'
+- path: pads.GPIO29.strap
+  value: none
+  doc: rp2040-ds-3184e62
+  locator: PDF p.131 (printed p.130), section 2.8.1.1 Bootrom boot sequence
+  quote: Check if SPI CS pin is tied low ("bootrom button"), and skip flash boot if so.
+  quote_check: pymupdf
+  confidence: inferred
+  notes: 'No user-bank GPIO0-29 is sampled at reset or for boot-mode selection anywhere in the boot sequence (2.8.1). Boot mode is sampled on QSPI_SS (flash chip-select, QSPI bank, NOT GPIO0-29): tied low
+    -> skip flash boot / USB boot. The absence of a strap on this pad is INFERRED from the full list of boot-time checks, not stated in one sentence. Default pull = down (reset_state).'
+- path: pads.GPIO29.power_up_glitch
+  value: none
+  doc: rp2040-ds-3184e62
+  locator: PDF p.628 (printed p.627), Appendix B Errata (all of RP2040-E1..E16 checked; full-text search for "glitch")
+  quote: Errata are listed numerically under the relevant block.
+  quote_check: pymupdf
+  confidence: inferred
+  notes: No power-up output glitch is documented for any user pad. Absence inferred from the errata appendix and a text search (only hits concern clock muxes and a SIO register note). Output driver is disabled
+    until software selects a function. E5 (GPIO15) and E6 (GPIO26-29) are not glitch errata. Datasheet gives no glitch duration.
+- path: pads.GPIO29.errata
+  value:
+  - RP2040-E6
+  doc: rp2040-ds-3184e62
+  locator: PDF p.631 (printed p.630), Appendix B Errata, GPIO / ADC, RP2040-E6
+  quote: GPIO26-29 are shared with ADC inputs AIN0-3
+  quote_check: pymupdf
+  confidence: found
+  notes: 'RP2040-E6: GPIO digital inputs not disabled for ADC pins by default (input enabled after RUN released). Affects B0/B1; fixed in B2 bootrom. (RP2040-E11, ADC DNL peaks, applies to the ADC as a
+    whole and names no pad; not listed.)'
+- path: pads.GPIO29.adc
+  value:
+    unit: ADC
+    channel: 3
+    radio_conflict: false
+    radio_conflict_basis: inference
+  doc: rp2040-ds-3184e62
+  locator: PDF p.560 (printed p.559), section 4.9.2.1 One-shot Sample
+  quote: An AINSEL value of 0...3 selects the ADC input on GPIO 26...29.
+  quote_check: pdftotext-layout
+  confidence: found
+  notes: 'ADC input AIN3 (CS.AINSEL=3) on GPIO29; AINSEL=4 is the internal temperature sensor (no pad). Unit/channel: found. radio_conflict=false is ONLY an inference: RP2040 has no radio and a text search
+    for radio/Wi-Fi/Bluetooth in the datasheet returns nothing; board-level couplings (e.g. Pico W) are outside this document. Digital function must be disabled (IE low, OD high); max ADC input voltage
+    is set by IOVDD, not ADC_AVDD.'
+- path: chip.boot_mode_sample_pad
+  value: QSPI_SS (flash chip select), not a user GPIO
+  doc: rp2040-ds-3184e62
+  locator: PDF p.131 (printed p.130), section 2.8.1.1 Bootrom boot sequence
+  quote: Check if SPI CS pin is tied low ("bootrom button"), and skip flash boot if so.
+  quote_check: pymupdf
+  confidence: found
+  notes: Where boot mode is sampled; backs every pads.*.strap=none. If no valid flash image after 0.5 s the bootrom drops to USB device boot.
+- path: electrical.vdd_io
+  value:
+    nominal_min: 1.8
+    nominal_max: 3.3
+    operating_min: 1.62
+    operating_max: 3.63
+    typ: 1.8 or 3.3
+  unit: V
+  doc: rp2040-ds-3184e62
+  locator: PDF p.152 (printed p.151), section 2.9.1 Digital IO Supply (IOVDD); section 5.6 Table 634 Power Supply Specifications (IOVDD min 1.62, typ 1.8/3.3, max 3.63)
+  quote: should be powered at a nominal voltage between 1.8V and 3.3V
+  quote_check: pymupdf
+  confidence: found
+  notes: Schema vdd_io is a single number; the datasheet gives a range (Table 634 read from rendered/extracted text). If IOVDD < 2.5 V set VOLTAGE_SELECT. Board-level IOVDD (3.3 V on Pico) is not in this
+    document.
+- path: electrical.vih_min
+  value: 2.0
+  unit: V
+  conditions:
+    IOVDD: 3.3 V (default pad thresholds valid for 2.5-3.3 V)
+  doc: rp2040-ds-3184e62
+  locator: PDF p.616 (printed p.615), section 5.5.3.4 IO Electrical Characteristics, Table 625
+  quote: Input Voltage High @ IOVDD=3.3V
+  quote_check: pymupdf
+  confidence: found
+  notes: 'VIH min: 0.65*IOVDD @1.8V (1.17 V); 1.7 V @2.5V; 2 V @3.3V; max IOVDD+0.3. Numbers read from rendered PDF p.616 (extractor scrambles table; quote is row label).'
+- path: electrical.vil_max
+  value: 0.8
+  unit: V
+  conditions:
+    IOVDD: 3.3 V
+  doc: rp2040-ds-3184e62
+  locator: PDF p.616 (printed p.615), Table 625
+  quote: Input Voltage Low @ IOVDD=3.3V
+  quote_check: pymupdf
+  confidence: found
+  notes: 'VIL max: 0.35*IOVDD @1.8V; 0.7 V @2.5V; 0.8 V @3.3V; min -0.3 V. Hysteresis 0.1*IOVDD @1.8V, 0.2 V @2.5/3.3V (Schmitt enabled).'
+- path: electrical.voh_min
+  value: 2.62
+  unit: V
+  conditions:
+    IOVDD: 3.3 V
+    IOH: 2, 4, 8 or 12 mA depending on drive-strength setting (default 4 mA)
+  doc: rp2040-ds-3184e62
+  locator: PDF p.617 (printed p.616), Table 625 (continued)
+  quote: Output Voltage High @ IOVDD=3.3V
+  quote_check: pymupdf
+  confidence: found
+  notes: VOH min 1.24 V @1.8V, 1.78 V @2.5V, 2.62 V @3.3V. Read from rendered PDF p.616-617.
+- path: electrical.vol_max
+  value: 0.5
+  unit: V
+  conditions:
+    IOVDD: 3.3 V
+    IOL: 2, 4, 8 or 12 mA depending on drive-strength setting (default 4 mA)
+  doc: rp2040-ds-3184e62
+  locator: PDF p.617 (printed p.616), Table 625 (continued)
+  quote: Output Voltage Low @ IOVDD=3.3V
+  quote_check: pymupdf
+  confidence: found
+  notes: VOL max 0.3 V @1.8V, 0.4 V @2.5V, 0.5 V @3.3V.
+- path: electrical.abs_max_vin
+  value: VDDIO+0.5
+  unit: V
+  conditions:
+    applies_to: digital IO, Standard and Fault Tolerant
+    min_V: -0.5
+    IOVDD_abs_max_V: 3.63
+  doc: rp2040-ds-3184e62
+  locator: PDF p.615 (printed p.614), section 5.5.3.1 Absolute Maximum Ratings, Table 622
+  quote: Voltage at IO
+  quote_check: pymupdf
+  confidence: found
+  notes: 'VPIN max = IOVDD + 0.5 V (min -0.5 V); IOVDD abs max 3.63 V. At IOVDD=3.3 V the limit is 3.8 V: pins are NOT 5 V tolerant. "Fault tolerant" (GPIO0-25 only) means very little current flows into
+    the pin below 3.63 V while IOVDD is 0 V (Table 614); GPIO26-29 are not FT. ADC inputs must not exceed IOVDD. No Pico-specific lower limit appears in this datasheet. Numbers read from rendered PDF p.615.'
+- path: electrical.pin_current_max
+  value: null
+  unit: mA
+  conditions:
+    drive_strength_settings_mA:
+    - 2
+    - 4
+    - 8
+    - 12
+    default_mA: 4
+  doc: rp2040-ds-3184e62
+  locator: PDF p.618 (printed p.617), section 5.5.3.5 Interpreting GPIO output voltage specifications
+  quote: These are not hard limits, nor do they mean that they will always be sourcing
+  quote_check: pymupdf
+  confidence: could-not-verify
+  notes: The datasheet gives NO hard per-pin absolute maximum source/sink current. It defines 2/4/8/12 mA drive-strength modes, says they "are not hard limits", and only specifies VOH/VOL at those currents;
+    it adds that sourcing more needs experimentation "outside the scope of this specification". A catalog value of 12 mA would be the highest drive-strength setting, not a documented absolute maximum.
+- path: electrical.pin_drive_strength_default
+  value: 4
+  unit: mA
+  doc: rp2040-ds-3184e62
+  locator: PDF p.613 (printed p.612), section 5.5.2.1 Table 614 Pin Types
+  quote: Default Drive Strength is 4mA.
+  quote_check: pymupdf
+  confidence: found
+  notes: Options 2/4/8/12 mA (PADS DRIVE field 0x0..0x3, reset 0x1 = 4MA).
+- path: electrical.cumulative_current_max
+  value:
+    source_total: 50
+    sink_total: 50
+  unit: mA
+  doc: rp2040-ds-3184e62
+  locator: PDF p.617 (printed p.616), section 5.5.3.4 Table 625 (IIOVDD_MAX, IIOVSS_MAX); section 5.5.3.5
+  quote: Sum of all current being sourced by GPIO and QSPI pins
+  quote_check: pymupdf
+  confidence: found
+  notes: IIOVDD_MAX = 50 mA max total sourced (GPIO + QSPI pins); IIOVSS_MAX = 50 mA max total sunk. "must not exceed". Numbers read from rendered PDF p.617; quote is the comment cell.
+- path: electrical.internal_pull_ohm
+  value:
+    min: 50000
+    typ: null
+    max: 80000
+  unit: ohm
+  doc: rp2040-ds-3184e62
+  locator: PDF p.617 (printed p.616), Table 625 (RPU, RPD rows)
+  quote: Pull-Up Resistance
+  quote_check: pymupdf
+  confidence: found
+  notes: Pull-up RPU and pull-down RPD both 50 kOhm min, 80 kOhm max, no typical given (table unit kOhm). Setting PUE and PDE together enables bus-keeper (2.19.4.1). Read from rendered PDF p.617.
+- path: electrical.input_leakage_max
+  value: 1
+  unit: uA
+  doc: rp2040-ds-3184e62
+  locator: PDF p.616 (printed p.615), Table 625
+  quote: Pin Input Leakage Current
+  quote_check: pymupdf
+  confidence: found
+  notes: 'Extra fact (not in schema): 1 uA max.'
+- path: peripherals.SPI0
+  value:
+    kind: spi
+    iomux_pins:
+      RX:
+      - GPIO0
+      - GPIO4
+      - GPIO16
+      - GPIO20
+      CSn:
+      - GPIO1
+      - GPIO5
+      - GPIO17
+      - GPIO21
+      SCK:
+      - GPIO2
+      - GPIO6
+      - GPIO18
+      - GPIO22
+      TX:
+      - GPIO3
+      - GPIO7
+      - GPIO19
+      - GPIO23
+    matrix_routable: false
+    max_clock_note: 'PL022. SSPCLK = clk_peri max 133 MHz: master max 62.5 Mbit/s (SSPCLK/2), slave 133/12 = ~11.083 Mbit/s.'
+  doc: rp2040-ds-3184e62
+  locator: 'PDF p.506 (printed p.505), pins: section 2.19.2 Table 279; limit: section 4.4.3.4'
+  quote: at the maximum SSPCLK (clk_peri) frequency on RP2040 of 133MHz, the maximum peak bit rate in master mode is 62.5Mbps
+  quote_check: pymupdf
+  confidence: found
+  notes: Pins derived from Table 279 (several pads per role; schema Record<role,PadId> cannot hold lists - schema limitation). A peripheral input should be selected on one GPIO only (else logical OR). No
+    per-pad-class clock limit is documented (only IO delays, Tables 629-633); limit is chip-wide (clk_peri max 133 MHz).
+- path: peripherals.SPI1
+  value:
+    kind: spi
+    iomux_pins:
+      RX:
+      - GPIO8
+      - GPIO12
+      - GPIO24
+      - GPIO28
+      CSn:
+      - GPIO9
+      - GPIO13
+      - GPIO25
+      - GPIO29
+      SCK:
+      - GPIO10
+      - GPIO14
+      - GPIO26
+      TX:
+      - GPIO11
+      - GPIO15
+      - GPIO27
+    matrix_routable: false
+    max_clock_note: 'PL022. SSPCLK = clk_peri max 133 MHz: master max 62.5 Mbit/s (SSPCLK/2), slave 133/12 = ~11.083 Mbit/s.'
+  doc: rp2040-ds-3184e62
+  locator: 'PDF p.506 (printed p.505), pins: section 2.19.2 Table 279; limit: section 4.4.3.4'
+  quote: at the maximum SSPCLK (clk_peri) frequency on RP2040 of 133MHz, the maximum peak bit rate in master mode is 62.5Mbps
+  quote_check: pymupdf
+  confidence: found
+  notes: Pins derived from Table 279 (several pads per role; schema Record<role,PadId> cannot hold lists - schema limitation). A peripheral input should be selected on one GPIO only (else logical OR). No
+    per-pad-class clock limit is documented (only IO delays, Tables 629-633); limit is chip-wide (clk_peri max 133 MHz).
+- path: peripherals.I2C0
+  value:
+    kind: i2c
+    iomux_pins:
+      SDA:
+      - GPIO0
+      - GPIO4
+      - GPIO8
+      - GPIO12
+      - GPIO16
+      - GPIO20
+      - GPIO24
+      - GPIO28
+      SCL:
+      - GPIO1
+      - GPIO5
+      - GPIO9
+      - GPIO13
+      - GPIO17
+      - GPIO21
+      - GPIO25
+      - GPIO29
+    matrix_routable: false
+    max_clock_note: 'DW_apb_i2c: standard 100 kbit/s, fast 400 kbit/s, fast mode plus 1000 kbit/s; High-speed (3.4 Mbit/s) NOT supported.'
+  doc: rp2040-ds-3184e62
+  locator: 'PDF p.442 (printed p.441), pins: section 2.19.2 Table 279; limit: section 4.3 I2C overview'
+  quote: Supports Standard mode, Fast mode or Fast mode plus (not High speed)
+  quote_check: pymupdf
+  confidence: found
+  notes: Pins derived from Table 279 (several pads per role; schema Record<role,PadId> cannot hold lists - schema limitation). A peripheral input should be selected on one GPIO only (else logical OR). No
+    per-pad-class clock limit is documented (only IO delays, Tables 629-633); limit is chip-wide (clk_peri max 133 MHz).
+- path: peripherals.I2C1
+  value:
+    kind: i2c
+    iomux_pins:
+      SDA:
+      - GPIO2
+      - GPIO6
+      - GPIO10
+      - GPIO14
+      - GPIO18
+      - GPIO22
+      - GPIO26
+      SCL:
+      - GPIO3
+      - GPIO7
+      - GPIO11
+      - GPIO15
+      - GPIO19
+      - GPIO23
+      - GPIO27
+    matrix_routable: false
+    max_clock_note: 'DW_apb_i2c: standard 100 kbit/s, fast 400 kbit/s, fast mode plus 1000 kbit/s; High-speed (3.4 Mbit/s) NOT supported.'
+  doc: rp2040-ds-3184e62
+  locator: 'PDF p.442 (printed p.441), pins: section 2.19.2 Table 279; limit: section 4.3 I2C overview'
+  quote: Supports Standard mode, Fast mode or Fast mode plus (not High speed)
+  quote_check: pymupdf
+  confidence: found
+  notes: Pins derived from Table 279 (several pads per role; schema Record<role,PadId> cannot hold lists - schema limitation). A peripheral input should be selected on one GPIO only (else logical OR). No
+    per-pad-class clock limit is documented (only IO delays, Tables 629-633); limit is chip-wide (clk_peri max 133 MHz).
+- path: peripherals.UART0
+  value:
+    kind: uart
+    iomux_pins:
+      TX:
+      - GPIO0
+      - GPIO12
+      - GPIO16
+      - GPIO28
+      RX:
+      - GPIO1
+      - GPIO13
+      - GPIO17
+      - GPIO29
+      CTS:
+      - GPIO2
+      - GPIO14
+      - GPIO18
+      RTS:
+      - GPIO3
+      - GPIO15
+      - GPIO19
+    matrix_routable: false
+    max_clock_note: 'PL011: max baud = UARTCLK/16 (7.8 Mbaud at 125 MHz).'
+  doc: rp2040-ds-3184e62
+  locator: 'PDF p.419 (printed p.418), pins: section 2.19.2 Table 279; limit: section 4.2 UART overview'
+  quote: Supports a maximum baud rate of UARTCLK / 16 in UART mode (7.8 Mbaud at 125MHz)
+  quote_check: pymupdf
+  confidence: found
+  notes: Pins derived from Table 279 (several pads per role; schema Record<role,PadId> cannot hold lists - schema limitation). A peripheral input should be selected on one GPIO only (else logical OR). No
+    per-pad-class clock limit is documented (only IO delays, Tables 629-633); limit is chip-wide (clk_peri max 133 MHz).
+- path: peripherals.UART1
+  value:
+    kind: uart
+    iomux_pins:
+      TX:
+      - GPIO4
+      - GPIO8
+      - GPIO20
+      - GPIO24
+      RX:
+      - GPIO5
+      - GPIO9
+      - GPIO21
+      - GPIO25
+      CTS:
+      - GPIO6
+      - GPIO10
+      - GPIO22
+      - GPIO26
+      RTS:
+      - GPIO7
+      - GPIO11
+      - GPIO23
+      - GPIO27
+    matrix_routable: false
+    max_clock_note: 'PL011: max baud = UARTCLK/16 (7.8 Mbaud at 125 MHz).'
+  doc: rp2040-ds-3184e62
+  locator: 'PDF p.419 (printed p.418), pins: section 2.19.2 Table 279; limit: section 4.2 UART overview'
+  quote: Supports a maximum baud rate of UARTCLK / 16 in UART mode (7.8 Mbaud at 125MHz)
+  quote_check: pymupdf
+  confidence: found
+  notes: Pins derived from Table 279 (several pads per role; schema Record<role,PadId> cannot hold lists - schema limitation). A peripheral input should be selected on one GPIO only (else logical OR). No
+    per-pad-class clock limit is documented (only IO delays, Tables 629-633); limit is chip-wide (clk_peri max 133 MHz).
+- path: peripherals.ADC
+  value:
+    kind: adc
+    inputs:
+      ADC0: GPIO26
+      ADC1: GPIO27
+      ADC2: GPIO28
+      ADC3: GPIO29
+      CH4: internal temperature sensor (no pad)
+    matrix_routable: false
+    resolution: 12-bit, ENOB 8.7 measured
+    max_rate_ksps: 500
+    range_v: 0 to ADC_AVDD (but see notes)
+  doc: rp2040-ds-3184e62
+  locator: PDF p.558 (printed p.557), section 4.9 ADC and Temperature Sensor
+  quote: Four inputs that are available on package pins shared with GPIO[29:26]
+  quote_check: pymupdf
+  confidence: found
+  notes: '500 ksps with 48 MHz clk_adc; effective input impedance >100 kOhm. DISAGREEMENT inside the datasheet: Table 627 gives ADC input range 0..ADC_AVDD, while the section 4.9 note says the max ADC input
+    is set by IOVDD, not ADC_AVDD (above IOVDD leaks through ESD diodes). Most restrictive reading: min(IOVDD, ADC_AVDD).'
+- path: peripherals.PWM
+  value:
+    kind: pwm
+    matrix_routable: false
+    slices: 8
+    channels_per_slice: 2
+    mapping: slice = (GPIO/2) mod 8; channel A = even GPIO, B = odd GPIO
+    pads: all GPIO0-GPIO29
+  doc: rp2040-ds-3184e62
+  locator: PDF p.523 (printed p.522), section 4.5.2 Programmer's Model, Table 515
+  quote: 'All 30 GPIO pins on RP2040 can be used for PWM:'
+  quote_check: pymupdf
+  confidence: found
+  notes: Each pad has exactly one slice/channel (F4); slices repeat after GPIO15, so e.g. GPIO0 and GPIO16 share PWM0 A (same output). B can be an input.
+- path: peripherals.PIO0
+  value:
+    kind: pio
+    matrix_routable: true
+    pads: all GPIO0-GPIO29 via FUNCSEL F6
+  doc: rp2040-ds-3184e62
+  locator: PDF p.313 (printed p.312), Chapter 3 PIO overview; Table 279 F6
+  quote: State machines' inputs and outputs are mapped to up to 32 GPIOs (limited to 30 GPIOs for RP2040)
+  quote_check: pymupdf
+  confidence: found
+  notes: matrix_routable=true is an auditor inference (every pad offers F6/F7 + PIO internal pin mapping). Input synchronisers add 2 cycles latency (bypassable). No per-pad frequency limit documented.
+- path: peripherals.PIO1
+  value:
+    kind: pio
+    matrix_routable: true
+    pads: all GPIO0-GPIO29 via FUNCSEL F7
+  doc: rp2040-ds-3184e62
+  locator: PDF p.239 (printed p.238), section 2.19.2 Table 280
+  quote: The PIO function (F6, F7) must be selected for PIO to drive a GPIO
+  quote_check: pymupdf
+  confidence: found
+  notes: Same as PIO0 (F7).
+- path: peripherals.clk_peri_max
+  value: 133
+  unit: MHz
+  doc: rp2040-ds-3184e62
+  locator: PDF p.184 (printed p.183), section 2.15 Clocks (note)
+  quote: clk_sys (and clk_peri) have a maximum frequency of 133MHz across all process, voltage and temperature variations.
+  quote_check: pymupdf
+  confidence: found
+  notes: 'QUALIFICATION inside datasheet: the feature list says "up to 133MHz (or 200MHz at 1.15V, see Section 2.15.3)"; the note says 200 MHz needs elevated DVDD 1.15 V and is outside the 133 MHz guaranteed
+    spec.'
+- path: disagreements.voltage_select_reference
+  value: VOLTAGE_SELECT enum text says "DVDD >= 2V5 / DVDD <= 1V8" while 2.19.4 and Table 634 note a say IOVDD
+  doc: rp2040-ds-3184e62
+  locator: PDF p.302 (printed p.301), section 2.19.6.3 Table 340 PADS_BANK0 VOLTAGE_SELECT vs section 2.19.4
+  quote: Set voltage to 3.3V (DVDD >= 2V5)
+  quote_check: pymupdf
+  confidence: found
+  notes: 'Apparent typo (DVDD vs IOVDD). Also: IOVDD absolute max (Table 622, 3.63 V) equals the recommended operating max (Table 634, 3.63 V), i.e. no margin. Pico-level IOVDD not read here.'
+- path: sources.newer_or_more_authoritative
+  value: No newer revision found. Original URL returns byte-identical file (same sha256). Hardware design guide hardware-design-with-rp2040.pdf downloaded (sha256 51c4f430153fcdbf3209d9b3b41662c8527ff0150bc25777e3fcd6f5221a1c19);
+    keyword search found no pad current/voltage limit; not used for any value.
+  doc: rp2040-ds-3184e62
+  locator: PDF p.8 (printed p.7), external; Documentation Release History (last entry)
+  quote: 20 February 2025
+  quote_check: pymupdf
+  confidence: could-not-verify
+  notes: Design guide only keyword-searched (absolute max / 5V / mA), not read in depth.

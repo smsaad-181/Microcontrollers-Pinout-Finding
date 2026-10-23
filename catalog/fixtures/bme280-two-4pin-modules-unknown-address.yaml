@@ -1,0 +1,53 @@
+# Golden fixture 14 - two generic 4-pin GY-BME280 modules: no SDO pin is exposed and the tie is undocumented, so the engine cannot prove distinct addresses on one bus.
+id: bme280-two-4pin-modules-unknown-address
+board: raspberry-pi-pico@Rev3
+variant: pico
+project:
+  board: raspberry-pi-pico@Rev3
+  variant: pico
+  modules:
+    - { breakout: gy-bme280-4pin, instance: env1 }
+    - { breakout: gy-bme280-4pin, instance: env2 }
+  locked: []
+  reserved: []
+expect:
+  status: ok
+  properties:
+    # Never assume distinct addresses: the safe answer separates the two modules onto different I2C controllers (RP2040 has I2C0 and I2C1).
+    - separate_i2c_instances: [env1, env2]
+    - i2c_pair_in:
+        signals: [env1.SDA, env1.SCL]
+        pairs:
+          - { sda: GPIO0, scl: GPIO1 }
+          - { sda: GPIO4, scl: GPIO5 }
+          - { sda: GPIO8, scl: GPIO9 }
+          - { sda: GPIO12, scl: GPIO13 }
+          - { sda: GPIO16, scl: GPIO17 }
+          - { sda: GPIO20, scl: GPIO21 }
+    - i2c_pair_in:
+        signals: [env2.SDA, env2.SCL]
+        pairs:
+          - { sda: GPIO2, scl: GPIO3 }
+          - { sda: GPIO6, scl: GPIO7 }
+          - { sda: GPIO10, scl: GPIO11 }
+          - { sda: GPIO14, scl: GPIO15 }
+          - { sda: GPIO18, scl: GPIO19 }
+    - interface_of: { env1: i2c, env2: i2c }
+  warnings_include:
+    - { code: I2C_ADDRESS_UNKNOWN, level: caution }
+    - { code: I2C_PULLUP_UNKNOWN, level: caution }
+    - { code: MODULE_REGULATOR_UNKNOWN, level: caution }
+evidence:
+  - bme280-ds-1.24#i2c-address
+  - bme280-ds-1.24#i2c-sdo-float
+  - bme280-ds-1.24#pinout
+  - rp2040-ds-3184e62#gpio-function-table
+  - rp2040-ds-3184e62#funcsel
+  - pico-ds-rel21#gpio-exposed
+derivations:
+  - "gy-bme280-4pin: pins VIN, GND, SCL, SDA only; SDO tie, CSB tie, pull-ups, regulator are all `missing` (vendor never published a schematic). The BME280 address is 0x76 or 0x77 depending on SDO (bme280-ds-1.24#i2c-address) and SDO must not float (#i2c-sdo-float), so each module has a fixed but UNDOCUMENTED address; two modules may well collide."
+  - "Rule: unknown never assumed. The engine therefore may not put both on one bus as 'distinct' - it either uses two I2C controllers (RP2040 I2C0 on GPIO0/1.. and I2C1 on GPIO2/3..) or reports a Caution; this fixture requires the two-controller answer, which exists, so status is ok. (A 4-pin module has no SPI.)"
+  - "Pad sets: I2C0 SDA 0,4,8,12,16,20 / SCL 1,5,9,13,17,21 and I2C1 SDA 2,6,10,14,18 / SCL 3,7,11,15,19 (RP2040 function table); one instance per module."
+  - "Which instance env1/env2 gets is a tie-break; the two pair lists above are the hard constraint when env1 takes I2C0 and env2 I2C1. The swapped assignment is also valid (properties then hold with env1/env2 exchanged)."
+changelog:
+  - "2026-10-23: created (task 2a.7, fixture-author)."

@@ -1,0 +1,141 @@
+# RP2040 Datasheet, build-version 3184e62-clean (build-date 2025-02-20), read from the PDF in
+# sources/cache/rp2040-ds-3184e62.pdf. Locators give the printed page number (PDF page = printed + 1).
+# Table cells are quoted in reading order (column values separated by spaces).
+accessed: "2026-10-22"
+claims:
+  - id: rp2040-ds-3184e62#key-features
+    locator: "Chapter 1 Introduction, Key features list, p. 8"
+    quote: "30 GPIO pins, 4 of which can be used as analogue inputs"
+    supports: "RP2040 has 30 user GPIO (GPIO0-GPIO29), 4 analogue-capable; no radio appears in the key-feature or peripheral list (basis for adc.radio_conflict = false)"
+  - id: rp2040-ds-3184e62#iovdd-nominal
+    locator: "§1.4.2 Pin Descriptions, Table 1, p. 11"
+    quote: "IOVDD Power supply for digital GPIOs, nominal voltage 1.8V to 3.3V"
+    supports: "vdd_io: IOVDD nominal 1.8 V to 3.3 V (3.3 V on Pico / Pico W)"
+  - id: rp2040-ds-3184e62#sio-pio-all-pins
+    locator: "§1.4.3 GPIO Functions, p. 12"
+    quote: "SIO, PIO0 and PIO1 can connect to all GPIO pins and are controlled by software (or software controlled state machines)"
+    supports: "GPIO (SIO), PIO0 and PIO1 functions exist on every pad GPIO0-GPIO29"
+  - id: rp2040-ds-3184e62#gpio-function-table
+    locator: "§1.4.3 GPIO Functions, Table 2 (GPIO Bank 0 Functions F1-F9), pp. 12-13"
+    quote: "Each individual GPIO pin can be connected to an internal peripheral via the GPIO functions defined below."
+    supports: "Per-pad function list F1-F9 (SPI, UART, I2C, PWM, SIO, PIO0, PIO1, CLOCK GPIN/GPOUT, USB OVCUR/VBUS) for GPIO0-GPIO29 as transcribed into chips/rp2040.yaml"
+  - id: rp2040-ds-3184e62#bootrom-revisions
+    locator: "§2.8 Bootrom, Bootrom Source Code box, p. 129"
+    quote: "This includes versions 1, 2 and 3 of the bootrom, which correspond to the B0, B1 and B2 silicon revisions, respectively."
+    supports: "RP2040 silicon revisions B0, B1, B2"
+  - id: rp2040-ds-3184e62#boot-cs-button
+    locator: "§2.8.1 Processor Controlled Boot Sequence, p. 130"
+    quote: "Check if SPI CS pin is tied low (\"bootrom button\"), and skip flash boot if so."
+    supports: "Boot-mode selection is sampled on the QSPI chip-select pin (QSPI_SS), not on any user-bank GPIO; GPIO0-GPIO29 have no strap role"
+  - id: rp2040-ds-3184e62#gpio-overview
+    locator: "§2.19.1 GPIO Overview, p. 236"
+    quote: "All GPIOs support digital input and output, but GPIO26 to GPIO29 can also be used as inputs to the chip’s Analogue to Digital Converter (ADC)."
+    supports: "input_only = false for GPIO0-GPIO29; GPIO26-GPIO29 are the ADC inputs"
+  - id: rp2040-ds-3184e62#qspi-bank
+    locator: "§2.19.1 GPIO Overview, p. 236"
+    quote: "the pins in the QSPI bank (QSPI_SS, QSPI_SCLK and QSPI_SD0 to QSPI_SD3) are used to execute code from an external flash device"
+    supports: "External flash uses the separate QSPI bank, not GPIO0-GPIO29 (no user GPIO consumed by flash)"
+  - id: rp2040-ds-3184e62#funcsel
+    locator: "§2.19.2 Function Select, p. 237"
+    quote: "The function allocated to each GPIO is selected by writing to the FUNCSEL field in the GPIO’s CTRL register."
+    supports: "Routing class: each function is selected per pad from a fixed per-pad list (FUNCSEL); there is no free peripheral-to-pin matrix"
+  - id: rp2040-ds-3184e62#one-function
+    locator: "§2.19.2 Function Select, p. 238"
+    quote: "Each GPIO can have one function selected at a time."
+    supports: "One function per pad at a time (routing class mapping)"
+  - id: rp2040-ds-3184e62#drive-strength
+    locator: "§2.19.4 Pads, p. 240"
+    quote: "Output drive strength can be set to 2mA, 4mA, 8mA or 12mA"
+    supports: "Per-pin drive-strength settings 2/4/8/12 mA (pin_current_max = highest setting, 12 mA)"
+  - id: rp2040-ds-3184e62#iovdd-supply-section
+    locator: "§2.9.1 Digital IO Supply (IOVDD), p. 151"
+    quote: "IOVDD supplies the chip’s digital IO, and should be powered at a nominal voltage between 1.8V and 3.3V."
+    supports: "vdd_io: IOVDD nominal 1.8 V to 3.3 V (independent re-read by the blind auditor, who also cites Table 634 typ 1.8 / 3.3 V)"
+  - id: rp2040-ds-3184e62#input-thresholds-default
+    locator: "§2.19.4 Pads, p. 240"
+    quote: "By default the pad input thresholds are valid for an IOVDD voltage between 2.5V and 3.3V."
+    supports: "Default pad threshold setting is valid at IOVDD = 3.3 V (condition of the electrical facts)"
+  - id: rp2040-ds-3184e62#funcsel-reset
+    locator: "§2.19.6.1 IO - User Bank, Table 285 GPIO0_CTRL..GPIO29_CTRL, bits 4:0, p. 249"
+    quote: "FUNCSEL: Function select. 31 == NULL. See GPIO function table for available functions. RW 0x1f"
+    supports: "At reset no function (NULL) is selected on GPIO0-GPIO29, so no peripheral drives the pad"
+  - id: rp2040-ds-3184e62#pad-reset
+    locator: "§2.19.6.3 Pad Control - User Bank, Table 341 GPIO0..GPIO29 registers, bits 3 and 2, p. 302"
+    quote: "PUE: Pull up enable RW 0x0 2 PDE: Pull down enable RW 0x1"
+    supports: "Pad reset values: pull-up disabled, pull-down enabled (reset_state = pulldown)"
+  - id: rp2040-ds-3184e62#adc-ainsel
+    locator: "§4.9.1 ADC controller, p. 559"
+    quote: "An AINSEL value of 0…3 selects the ADC input on GPIO 26…29. AINSEL of 4 selects the internal temperature sensor."
+    supports: "ADC channels: GPIO26 = AIN0, GPIO27 = AIN1, GPIO28 = AIN2, GPIO29 = AIN3"
+  - id: rp2040-ds-3184e62#pin-reset-state
+    locator: "§5.5.2.2 Pin List, Table 615 GPIO pins, pp. 612-613"
+    quote: "GPIO0 2 Digital IO (FT) IOVDD Pull-Down User IO"
+    supports: "Reset state Pull-Down listed for every user GPIO (GPIO0-GPIO25 Digital IO (FT); GPIO26-GPIO29 Digital IO / Analogue, also Pull-Down)"
+  - id: rp2040-ds-3184e62#pin-reset-state-adc
+    locator: "§5.5.2.2 Pin List, Table 615 GPIO pins, p. 613"
+    quote: "GPIO26 / ADC0 38 Digital IO / Analogue IOVDD / ADC_AVDD Pull-Down User IO or ADC input"
+    supports: "GPIO26-GPIO29 are bidirectional digital IO with ADC input, reset state Pull-Down"
+  - id: rp2040-ds-3184e62#abs-max-vpin
+    locator: "§5.5.3.1 Absolute Maximum Ratings, Table 622, p. 614"
+    quote: "Voltage at IO VPIN -0.5 IOVDD + 0.5 V"
+    supports: "Absolute maximum voltage at an IO pin: IOVDD + 0.5 V (digital IO, standard and fault tolerant)"
+  - id: rp2040-ds-3184e62#vih-3v3
+    locator: "§5.5.3.4 IO Electrical Characteristics, Table 625, p. 615"
+    quote: "Input Voltage High @ IOVDD=3.3V VIH 2 IOVDD + 0.3 V"
+    supports: "VIH min 2 V at IOVDD = 3.3 V (max IOVDD + 0.3 V)"
+  - id: rp2040-ds-3184e62#vil-3v3
+    locator: "§5.5.3.4 IO Electrical Characteristics, Table 625, p. 615"
+    quote: "Input Voltage Low @ IOVDD=3.3V VIL -0.3 0.8 V"
+    supports: "VIL max 0.8 V at IOVDD = 3.3 V"
+  - id: rp2040-ds-3184e62#voh-3v3
+    locator: "§5.5.3.4 IO Electrical Characteristics, Table 625, p. 616"
+    quote: "Output Voltage High @ IOVDD=3.3V VOH 2.62 IOVDD V IOH = 2, 4, 8 or 12mA depending on setting"
+    supports: "VOH min 2.62 V at IOVDD = 3.3 V with IOH equal to the selected drive strength"
+  - id: rp2040-ds-3184e62#vol-3v3
+    locator: "§5.5.3.4 IO Electrical Characteristics, Table 625, p. 616"
+    quote: "Output Voltage Low @ IOVDD=3.3V VOL 0 0.5 V IOL = 2, 4, 8 or 12mA depending on setting"
+    supports: "VOL max 0.5 V at IOVDD = 3.3 V with IOL equal to the selected drive strength"
+  - id: rp2040-ds-3184e62#pull-resistance
+    locator: "§5.5.3.4 IO Electrical Characteristics, Table 625, p. 616"
+    quote: "Pull-Up Resistance RPU 50 80 kΩ Pull-Down Resistance RPD 50 80 kΩ"
+    supports: "Internal pull-up and pull-down resistance 50 kΩ min, 80 kΩ max"
+  - id: rp2040-ds-3184e62#iovdd-total-current
+    locator: "§5.5.3.4 IO Electrical Characteristics, Table 625, p. 616"
+    quote: "Maximum Total IOVDD current IIOVDD_MAX 50 mA Sum of all current being sourced by GPIO and QSPI pins"
+    supports: "Cumulative source current of all GPIO and QSPI pins: 50 mA max"
+  - id: rp2040-ds-3184e62#iovss-total-current
+    locator: "§5.5.3.4 IO Electrical Characteristics, Table 625, p. 616"
+    quote: "Maximum Total VSS current due to IO (IOVSS) IIOVSS_MAX 50 mA Sum of all current being sunk into GPIO and QSPI pins"
+    supports: "Cumulative sink current of all GPIO and QSPI pins: 50 mA max"
+  - id: rp2040-ds-3184e62#drive-not-hard-limit
+    locator: "§5.5.3.5 Interpreting GPIO output voltage specifications, p. 617"
+    quote: "The GPIOs on RP2040 have four different output drive strengths, which are nominally called 2, 4, 8 and 12mA modes. These are not hard limits"
+    supports: "The 2/4/8/12 mA settings are drive modes at which VOH/VOL are specified, not absolute per-pin maxima"
+  - id: rp2040-ds-3184e62#errata-intro
+    locator: "Appendix B: Errata, p. 627 (whole appendix, pp. 627-635, read)"
+    quote: "Hardware blocks are listed alphabetically. Errata are listed numerically under the relevant block."
+    supports: "Errata appendix checked: no power-up glitch erratum for any GPIO; pad-related errata are RP2040-E5 (GPIO15), RP2040-E6 and RP2040-E11 (GPIO26-29)"
+  - id: rp2040-ds-3184e62#erratum-e5-gpio15
+    locator: "Appendix B: Errata, USB, RP2040-E5, p. 632"
+    quote: "The workaround takes control of GPIO 15 during a device reset, so you need to be sure that you are not using GPIO 15"
+    supports: "RP2040-E5 (affects B0, B1) software workaround uses GPIO15 during USB bus reset"
+  - id: rp2040-ds-3184e62#erratum-e6
+    locator: "Appendix B: Errata, GPIO / ADC, RP2040-E6, p. 630"
+    quote: "GPIO26-29 are shared with ADC inputs AIN0-3. The GPIO digital input is enabled after RUN is released."
+    supports: "RP2040-E6 (affects B0, B1; fixed in B2 bootrom) applies to GPIO26-GPIO29"
+  - id: rp2040-ds-3184e62#erratum-e11
+    locator: "Appendix B: Errata, GPIO / ADC, RP2040-E11, p. 630"
+    quote: "However at four values — 512, 1,536, 2,560, and 3,584 — the ADC’s DNL error peaks above this value."
+    supports: "RP2040-E11 (affects B0, B1, B2; not fixed) ADC DNL peaks apply to ADC inputs GPIO26-GPIO29"
+doc_number: null
+id: rp2040-ds-3184e62
+kind: datasheet
+manual: false
+publisher: Raspberry Pi Ltd
+revision: "3184e62-clean"
+revision_date: "2025-02-20"
+secondary: false
+sha256: "be56fbb75ba0ae9e26558a73c93ac3e75c2ad4e6878d3b6703de2a76d886ea8c"
+title: RP2040 Datasheet
+url: https://pip-assets.raspberrypi.com/categories/814-rp2040/documents/RP-008371-DS-1-rp2040-datasheet.pdf
+url_original: https://datasheets.raspberrypi.com/rp2040/rp2040-datasheet.pdf

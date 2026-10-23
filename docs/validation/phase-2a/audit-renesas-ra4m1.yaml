@@ -1,0 +1,3202 @@
+entity: renesas-ra4m1
+auditor: hardware-fact-auditor
+date: '2026-10-22'
+documents:
+  ds:
+    title: Renesas RA4M1 Group Datasheet R01DS0355EJ0110 Rev 1.10 (29 Sep 2023)
+    file: sources/cache/ra4m1-ds-r01ds0355ej0110.pdf
+    sha256: b96fe3862d2d91d910b04a662631d41dfd3ce02d026fbb80c09aefb853933dbf
+    sha256_verified: true
+    pdf_pages: 131
+  um:
+    title: 'Renesas RA4M1 Group User''s Manual: Hardware R01UH0887EJ0110 Rev 1.10'
+    file: sources/cache/ra4m1-um-r01uh0887ej0110.pdf
+    sha256: 06281c67da6e7b79d5c2cfb5756d0fab578ba576115528043744efe2b8fcda77
+    sha256_verified: true
+    pdf_pages: 1454
+  abx:
+    title: Arduino UNO R4 Minima User Manual ABX00080 rev 6
+    file: sources/cache/abx00080-ds.pdf
+    sha256: 49f5fda615856efe43b880ed6196376191896f686216c10fcbc05a5f15c19fe3
+    sha256_verified: true
+    pdf_pages: 19
+contaminated: []
+notes: 'Blind audit; no catalog/research/state files opened. Page numbers: printed == PDF page for all three documents.'
+facts:
+- path: pads.P400.functions
+  value:
+    lqfp64_pin: 1
+    functions:
+    - fn: GPIO
+      routing: iomux
+    - fn: Power:CACREF
+      routing: iomux
+    - fn: IRQ:IRQ0
+      routing: iomux
+    - fn: AGT:AGTIO1
+      routing: iomux
+    - fn: GPT:GTIOC6A
+      routing: iomux
+    - fn: SCI:SCK0
+      routing: iomux
+    - fn: SCI:SCK1
+      routing: iomux
+    - fn: IIC:SCL0
+      routing: iomux
+    - fn: SSIE:AUDIO_CLK
+      routing: iomux
+    - fn: SLCDC:SEG04
+      routing: iomux
+    - fn: CTSU:TS20
+      routing: iomux
+  unit: null
+  conditions:
+    package: LQFP64 (R7FA4M1AB3CFM)
+  doc: ds
+  locator:
+    pdf_page: 23
+    printed_page: 23
+    section: 1.7 Pin Lists, LQFP64 column
+  quote: P400
+  confidence: found
+  notes: Coordinate-based extraction of the rotated pin-list table, rendered to an image and checked visually. Column prefix = table column header. Items joined with '/' in one cell are alternates shown
+    in the same cell; separate tokens are separate functions. routing class is inferred (PSEL/ASEL selection per UM 19.6; dedicated analog/debug/USB/clock = fixed).
+  figure_read: true
+- path: pads.P400.touch
+  value: TS20
+  unit: null
+  conditions: null
+  doc: ds
+  locator:
+    pdf_page: 23
+    printed_page: 23
+    section: 1.7 Pin Lists (CTSU column)
+  quote: P400
+  confidence: found
+  notes: CTSU capacitive touch sensor channel/pin
+  figure_read: true
+- path: pads.P401.functions
+  value:
+    lqfp64_pin: 2
+    functions:
+    - fn: GPIO
+      routing: iomux
+    - fn: IRQ:IRQ5
+      routing: iomux
+    - fn: GPT_OPS:GTETRGA
+      routing: iomux
+    - fn: GPT:GTIOC6B
+      routing: iomux
+    - fn: USB_CAN:CTX0
+      routing: iomux
+    - fn: SCI:CTS0_RTS0/SS0
+      routing: iomux
+    - fn: SCI:TXD1/MOSI1/SDA1
+      routing: iomux
+    - fn: IIC:SDA0
+      routing: iomux
+    - fn: SLCDC:SEG05
+      routing: iomux
+    - fn: CTSU:TS19
+      routing: iomux
+  unit: null
+  conditions:
+    package: LQFP64 (R7FA4M1AB3CFM)
+  doc: ds
+  locator:
+    pdf_page: 23
+    printed_page: 23
+    section: 1.7 Pin Lists, LQFP64 column
+  quote: P401
+  confidence: found
+  notes: Coordinate-based extraction of the rotated pin-list table, rendered to an image and checked visually. Column prefix = table column header. Items joined with '/' in one cell are alternates shown
+    in the same cell; separate tokens are separate functions. routing class is inferred (PSEL/ASEL selection per UM 19.6; dedicated analog/debug/USB/clock = fixed).
+  figure_read: true
+- path: pads.P401.touch
+  value: TS19
+  unit: null
+  conditions: null
+  doc: ds
+  locator:
+    pdf_page: 23
+    printed_page: 23
+    section: 1.7 Pin Lists (CTSU column)
+  quote: P401
+  confidence: found
+  notes: CTSU capacitive touch sensor channel/pin
+  figure_read: true
+- path: pads.P402.functions
+  value:
+    lqfp64_pin: 3
+    functions:
+    - fn: GPIO
+      routing: iomux
+    - fn: Power:VBATWIO0
+      routing: iomux
+    - fn: IRQ:IRQ4
+      routing: iomux
+    - fn: AGT:AGTIO0/AGTIO1
+      routing: iomux
+    - fn: RTC:RTCIC0
+      routing: iomux
+    - fn: USB_CAN:CRX0
+      routing: iomux
+    - fn: SCI:RXD1/MISO1/SCL1
+      routing: iomux
+    - fn: SLCDC:SEG06
+      routing: iomux
+    - fn: CTSU:TS18
+      routing: iomux
+  unit: null
+  conditions:
+    package: LQFP64 (R7FA4M1AB3CFM)
+  doc: ds
+  locator:
+    pdf_page: 23
+    printed_page: 23
+    section: 1.7 Pin Lists, LQFP64 column
+  quote: P402
+  confidence: found
+  notes: Coordinate-based extraction of the rotated pin-list table, rendered to an image and checked visually. Column prefix = table column header. Items joined with '/' in one cell are alternates shown
+    in the same cell; separate tokens are separate functions. routing class is inferred (PSEL/ASEL selection per UM 19.6; dedicated analog/debug/USB/clock = fixed).
+  figure_read: true
+- path: pads.P402.touch
+  value: TS18
+  unit: null
+  conditions: null
+  doc: ds
+  locator:
+    pdf_page: 23
+    printed_page: 23
+    section: 1.7 Pin Lists (CTSU column)
+  quote: P402
+  confidence: found
+  notes: CTSU capacitive touch sensor channel/pin
+  figure_read: true
+- path: pads.P215.functions
+  value:
+    lqfp64_pin: 6
+    functions:
+    - fn: GPIO
+      routing: iomux
+    - fn: Power:XCIN
+      routing: fixed
+  unit: null
+  conditions:
+    package: LQFP64 (R7FA4M1AB3CFM)
+  doc: ds
+  locator:
+    pdf_page: 23
+    printed_page: 23
+    section: 1.7 Pin Lists, LQFP64 column
+  quote: P215
+  confidence: found
+  notes: Coordinate-based extraction of the rotated pin-list table, rendered to an image and checked visually. Column prefix = table column header. Items joined with '/' in one cell are alternates shown
+    in the same cell; separate tokens are separate functions. routing class is inferred (PSEL/ASEL selection per UM 19.6; dedicated analog/debug/USB/clock = fixed).
+  figure_read: true
+- path: pads.P214.functions
+  value:
+    lqfp64_pin: 7
+    functions:
+    - fn: GPIO
+      routing: iomux
+    - fn: Power:XCOUT
+      routing: fixed
+  unit: null
+  conditions:
+    package: LQFP64 (R7FA4M1AB3CFM)
+  doc: ds
+  locator:
+    pdf_page: 23
+    printed_page: 23
+    section: 1.7 Pin Lists, LQFP64 column
+  quote: P214
+  confidence: found
+  notes: Coordinate-based extraction of the rotated pin-list table, rendered to an image and checked visually. Column prefix = table column header. Items joined with '/' in one cell are alternates shown
+    in the same cell; separate tokens are separate functions. routing class is inferred (PSEL/ASEL selection per UM 19.6; dedicated analog/debug/USB/clock = fixed).
+  figure_read: true
+- path: pads.P213.functions
+  value:
+    lqfp64_pin: 9
+    functions:
+    - fn: GPIO
+      routing: iomux
+    - fn: Power:XTAL
+      routing: fixed
+    - fn: IRQ:IRQ2
+      routing: iomux
+    - fn: GPT_OPS:GTETRGA
+      routing: iomux
+    - fn: GPT:GTIOC0A
+      routing: iomux
+    - fn: SCI:TXD1/MOSI1/SDA1
+      routing: iomux
+  unit: null
+  conditions:
+    package: LQFP64 (R7FA4M1AB3CFM)
+  doc: ds
+  locator:
+    pdf_page: 23
+    printed_page: 23
+    section: 1.7 Pin Lists, LQFP64 column
+  quote: P213
+  confidence: found
+  notes: Coordinate-based extraction of the rotated pin-list table, rendered to an image and checked visually. Column prefix = table column header. Items joined with '/' in one cell are alternates shown
+    in the same cell; separate tokens are separate functions. routing class is inferred (PSEL/ASEL selection per UM 19.6; dedicated analog/debug/USB/clock = fixed).
+  figure_read: true
+- path: pads.P212.functions
+  value:
+    lqfp64_pin: 10
+    functions:
+    - fn: GPIO
+      routing: iomux
+    - fn: Power:EXTAL
+      routing: fixed
+    - fn: IRQ:IRQ3
+      routing: iomux
+    - fn: AGT:AGTEE1
+      routing: iomux
+    - fn: GPT_OPS:GTETRGB
+      routing: iomux
+    - fn: GPT:GTIOC0B
+      routing: iomux
+    - fn: SCI:RXD1/MISO1/SCL1
+      routing: iomux
+  unit: null
+  conditions:
+    package: LQFP64 (R7FA4M1AB3CFM)
+  doc: ds
+  locator:
+    pdf_page: 23
+    printed_page: 23
+    section: 1.7 Pin Lists, LQFP64 column
+  quote: P212
+  confidence: found
+  notes: Coordinate-based extraction of the rotated pin-list table, rendered to an image and checked visually. Column prefix = table column header. Items joined with '/' in one cell are alternates shown
+    in the same cell; separate tokens are separate functions. routing class is inferred (PSEL/ASEL selection per UM 19.6; dedicated analog/debug/USB/clock = fixed).
+  figure_read: true
+- path: pads.P411.functions
+  value:
+    lqfp64_pin: 12
+    functions:
+    - fn: GPIO
+      routing: iomux
+    - fn: IRQ:IRQ4
+      routing: iomux
+    - fn: AGT:AGTOA1
+      routing: iomux
+    - fn: GPT_OPS:GTOVUP
+      routing: iomux
+    - fn: GPT:GTIOC6A
+      routing: iomux
+    - fn: SCI:TXD0/MOSI0/SDA0
+      routing: iomux
+    - fn: SPI:MOSIA
+      routing: iomux
+    - fn: SLCDC:SEG07
+      routing: iomux
+    - fn: CTSU:TS07
+      routing: iomux
+  unit: null
+  conditions:
+    package: LQFP64 (R7FA4M1AB3CFM)
+  doc: ds
+  locator:
+    pdf_page: 23
+    printed_page: 23
+    section: 1.7 Pin Lists, LQFP64 column
+  quote: P411
+  confidence: found
+  notes: Coordinate-based extraction of the rotated pin-list table, rendered to an image and checked visually. Column prefix = table column header. Items joined with '/' in one cell are alternates shown
+    in the same cell; separate tokens are separate functions. routing class is inferred (PSEL/ASEL selection per UM 19.6; dedicated analog/debug/USB/clock = fixed).
+  figure_read: true
+- path: pads.P411.touch
+  value: TS07
+  unit: null
+  conditions: null
+  doc: ds
+  locator:
+    pdf_page: 23
+    printed_page: 23
+    section: 1.7 Pin Lists (CTSU column)
+  quote: P411
+  confidence: found
+  notes: CTSU capacitive touch sensor channel/pin
+  figure_read: true
+- path: pads.P410.functions
+  value:
+    lqfp64_pin: 13
+    functions:
+    - fn: GPIO
+      routing: iomux
+    - fn: IRQ:IRQ5
+      routing: iomux
+    - fn: AGT:AGTOB1
+      routing: iomux
+    - fn: GPT_OPS:GTOVLO
+      routing: iomux
+    - fn: GPT:GTIOC6B
+      routing: iomux
+    - fn: SCI:RXD0/MISO0/SCL0
+      routing: iomux
+    - fn: SPI:MISOA
+      routing: iomux
+    - fn: SLCDC:SEG08
+      routing: iomux
+    - fn: CTSU:TS06
+      routing: iomux
+  unit: null
+  conditions:
+    package: LQFP64 (R7FA4M1AB3CFM)
+  doc: ds
+  locator:
+    pdf_page: 23
+    printed_page: 23
+    section: 1.7 Pin Lists, LQFP64 column
+  quote: P410
+  confidence: found
+  notes: Coordinate-based extraction of the rotated pin-list table, rendered to an image and checked visually. Column prefix = table column header. Items joined with '/' in one cell are alternates shown
+    in the same cell; separate tokens are separate functions. routing class is inferred (PSEL/ASEL selection per UM 19.6; dedicated analog/debug/USB/clock = fixed).
+  figure_read: true
+- path: pads.P410.touch
+  value: TS06
+  unit: null
+  conditions: null
+  doc: ds
+  locator:
+    pdf_page: 23
+    printed_page: 23
+    section: 1.7 Pin Lists (CTSU column)
+  quote: P410
+  confidence: found
+  notes: CTSU capacitive touch sensor channel/pin
+  figure_read: true
+- path: pads.P409.functions
+  value:
+    lqfp64_pin: 14
+    functions:
+    - fn: GPIO
+      routing: iomux
+    - fn: IRQ:IRQ6
+      routing: iomux
+    - fn: GPT_OPS:GTOWUP
+      routing: iomux
+    - fn: GPT:GTIOC5A
+      routing: iomux
+    - fn: USB_CAN:USB_EXICEN
+      routing: iomux
+    - fn: SCI:TXD9/MOSI9/SDA9
+      routing: iomux
+    - fn: SLCDC:SEG09
+      routing: iomux
+    - fn: CTSU:TS05
+      routing: iomux
+  unit: null
+  conditions:
+    package: LQFP64 (R7FA4M1AB3CFM)
+  doc: ds
+  locator:
+    pdf_page: 23
+    printed_page: 23
+    section: 1.7 Pin Lists, LQFP64 column
+  quote: P409
+  confidence: found
+  notes: Coordinate-based extraction of the rotated pin-list table, rendered to an image and checked visually. Column prefix = table column header. Items joined with '/' in one cell are alternates shown
+    in the same cell; separate tokens are separate functions. routing class is inferred (PSEL/ASEL selection per UM 19.6; dedicated analog/debug/USB/clock = fixed).
+  figure_read: true
+- path: pads.P409.touch
+  value: TS05
+  unit: null
+  conditions: null
+  doc: ds
+  locator:
+    pdf_page: 23
+    printed_page: 23
+    section: 1.7 Pin Lists (CTSU column)
+  quote: P409
+  confidence: found
+  notes: CTSU capacitive touch sensor channel/pin
+  figure_read: true
+- path: pads.P408.functions
+  value:
+    lqfp64_pin: 15
+    functions:
+    - fn: GPIO
+      routing: iomux
+    - fn: IRQ:IRQ7
+      routing: iomux
+    - fn: GPT_OPS:GTOWLO
+      routing: iomux
+    - fn: GPT:GTIOC5B
+      routing: iomux
+    - fn: USB_CAN:USB_ID
+      routing: iomux
+    - fn: SCI:CTS1_RTS1/SS1
+      routing: iomux
+    - fn: SCI:RXD9/MISO9/SCL9
+      routing: iomux
+    - fn: IIC:SCL0
+      routing: iomux
+    - fn: SLCDC:SEG10
+      routing: iomux
+    - fn: CTSU:TS04
+      routing: iomux
+  unit: null
+  conditions:
+    package: LQFP64 (R7FA4M1AB3CFM)
+  doc: ds
+  locator:
+    pdf_page: 23
+    printed_page: 23
+    section: 1.7 Pin Lists, LQFP64 column
+  quote: P408
+  confidence: found
+  notes: Coordinate-based extraction of the rotated pin-list table, rendered to an image and checked visually. Column prefix = table column header. Items joined with '/' in one cell are alternates shown
+    in the same cell; separate tokens are separate functions. routing class is inferred (PSEL/ASEL selection per UM 19.6; dedicated analog/debug/USB/clock = fixed).
+  figure_read: true
+- path: pads.P408.touch
+  value: TS04
+  unit: null
+  conditions: null
+  doc: ds
+  locator:
+    pdf_page: 23
+    printed_page: 23
+    section: 1.7 Pin Lists (CTSU column)
+  quote: P408
+  confidence: found
+  notes: CTSU capacitive touch sensor channel/pin
+  figure_read: true
+- path: pads.P407.functions
+  value:
+    lqfp64_pin: 16
+    functions:
+    - fn: GPIO
+      routing: iomux
+    - fn: AGT:AGTIO0
+      routing: iomux
+    - fn: RTC:RTCOUT
+      routing: iomux
+    - fn: USB_CAN:USB_VBUS
+      routing: iomux
+    - fn: SCI:CTS0_RTS0/SS0
+      routing: iomux
+    - fn: IIC:SDA0
+      routing: iomux
+    - fn: SPI:SSLB3
+      routing: iomux
+    - fn: ADC14:ADTRG0
+      routing: iomux
+    - fn: SLCDC:SEG11
+      routing: iomux
+    - fn: CTSU:TS03
+      routing: iomux
+  unit: null
+  conditions:
+    package: LQFP64 (R7FA4M1AB3CFM)
+  doc: ds
+  locator:
+    pdf_page: 23
+    printed_page: 23
+    section: 1.7 Pin Lists, LQFP64 column
+  quote: P407
+  confidence: found
+  notes: Coordinate-based extraction of the rotated pin-list table, rendered to an image and checked visually. Column prefix = table column header. Items joined with '/' in one cell are alternates shown
+    in the same cell; separate tokens are separate functions. routing class is inferred (PSEL/ASEL selection per UM 19.6; dedicated analog/debug/USB/clock = fixed).
+  figure_read: true
+- path: pads.P407.adc
+  value:
+    unit: ADC14 (single unit)
+    channel_pin_text: ADTRG0
+  unit: null
+  conditions:
+    restriction: AN000-AN014 = high-precision channels on AVCC0 domain, cannot be used as GPIO/IRQ2/IRQ3/TS while A/D in use; AN016-AN025 = normal-precision on VCC domain
+  doc: ds
+  locator:
+    pdf_page: 23
+    printed_page: 23
+    section: 1.7 Pin Lists (ADC14 column); 2.x Table 2.49
+  quote: P407
+  confidence: found
+  notes: null
+  figure_read: true
+- path: pads.P407.touch
+  value: TS03
+  unit: null
+  conditions: null
+  doc: ds
+  locator:
+    pdf_page: 23
+    printed_page: 23
+    section: 1.7 Pin Lists (CTSU column)
+  quote: P407
+  confidence: found
+  notes: CTSU capacitive touch sensor channel/pin
+  figure_read: true
+- path: pads.P915.functions
+  value:
+    lqfp64_pin: 18
+    functions:
+    - fn: GPIO
+      routing: iomux
+    - fn: USB_CAN:USB_DM
+      routing: fixed
+  unit: null
+  conditions:
+    package: LQFP64 (R7FA4M1AB3CFM)
+  doc: ds
+  locator:
+    pdf_page: 23
+    printed_page: 23
+    section: 1.7 Pin Lists, LQFP64 column
+  quote: P915
+  confidence: found
+  notes: Coordinate-based extraction of the rotated pin-list table, rendered to an image and checked visually. Column prefix = table column header. Items joined with '/' in one cell are alternates shown
+    in the same cell; separate tokens are separate functions. routing class is inferred (PSEL/ASEL selection per UM 19.6; dedicated analog/debug/USB/clock = fixed).
+  figure_read: true
+- path: pads.P914.functions
+  value:
+    lqfp64_pin: 19
+    functions:
+    - fn: GPIO
+      routing: iomux
+    - fn: USB_CAN:USB_DP
+      routing: fixed
+  unit: null
+  conditions:
+    package: LQFP64 (R7FA4M1AB3CFM)
+  doc: ds
+  locator:
+    pdf_page: 23
+    printed_page: 23
+    section: 1.7 Pin Lists, LQFP64 column
+  quote: P914
+  confidence: found
+  notes: Coordinate-based extraction of the rotated pin-list table, rendered to an image and checked visually. Column prefix = table column header. Items joined with '/' in one cell are alternates shown
+    in the same cell; separate tokens are separate functions. routing class is inferred (PSEL/ASEL selection per UM 19.6; dedicated analog/debug/USB/clock = fixed).
+  figure_read: true
+- path: pads.P206.functions
+  value:
+    lqfp64_pin: 22
+    functions:
+    - fn: GPIO
+      routing: iomux
+    - fn: IRQ:IRQ0
+      routing: iomux
+    - fn: GPT_OPS:GTIU
+      routing: iomux
+    - fn: USB_CAN:USB_VBUSEN
+      routing: iomux
+    - fn: SCI:RXD0/MISO0/SCL0
+      routing: iomux
+    - fn: IIC:SDA1
+      routing: iomux
+    - fn: SPI:SSLB1
+      routing: iomux
+    - fn: SLCDC:SEG12
+      routing: iomux
+    - fn: CTSU:TS01
+      routing: iomux
+  unit: null
+  conditions:
+    package: LQFP64 (R7FA4M1AB3CFM)
+  doc: ds
+  locator:
+    pdf_page: 24
+    printed_page: 24
+    section: 1.7 Pin Lists, LQFP64 column
+  quote: P206
+  confidence: found
+  notes: Coordinate-based extraction of the rotated pin-list table, rendered to an image and checked visually. Column prefix = table column header. Items joined with '/' in one cell are alternates shown
+    in the same cell; separate tokens are separate functions. routing class is inferred (PSEL/ASEL selection per UM 19.6; dedicated analog/debug/USB/clock = fixed).
+  figure_read: true
+- path: pads.P206.touch
+  value: TS01
+  unit: null
+  conditions: null
+  doc: ds
+  locator:
+    pdf_page: 24
+    printed_page: 24
+    section: 1.7 Pin Lists (CTSU column)
+  quote: P206
+  confidence: found
+  notes: CTSU capacitive touch sensor channel/pin
+  figure_read: true
+- path: pads.P205.functions
+  value:
+    lqfp64_pin: 23
+    functions:
+    - fn: GPIO
+      routing: iomux
+    - fn: Power:CLKOUT
+      routing: iomux
+    - fn: IRQ:IRQ1
+      routing: iomux
+    - fn: AGT:AGTO1
+      routing: iomux
+    - fn: GPT_OPS:GTIV
+      routing: iomux
+    - fn: GPT:GTIOC4A
+      routing: iomux
+    - fn: USB_CAN:USB_OVRCURA
+      routing: iomux
+    - fn: SCI:TXD0/MOSI0/SDA0
+      routing: iomux
+    - fn: SCI:CTS9_RTS9/SS9
+      routing: iomux
+    - fn: IIC:SCL1
+      routing: iomux
+    - fn: SPI:SSLB0
+      routing: iomux
+    - fn: SLCDC:SEG13
+      routing: iomux
+    - fn: CTSU:TSCAP
+      routing: iomux
+  unit: null
+  conditions:
+    package: LQFP64 (R7FA4M1AB3CFM)
+  doc: ds
+  locator:
+    pdf_page: 24
+    printed_page: 24
+    section: 1.7 Pin Lists, LQFP64 column
+  quote: P205
+  confidence: found
+  notes: Coordinate-based extraction of the rotated pin-list table, rendered to an image and checked visually. Column prefix = table column header. Items joined with '/' in one cell are alternates shown
+    in the same cell; separate tokens are separate functions. routing class is inferred (PSEL/ASEL selection per UM 19.6; dedicated analog/debug/USB/clock = fixed).
+  figure_read: true
+- path: pads.P205.touch
+  value: TSCAP
+  unit: null
+  conditions: null
+  doc: ds
+  locator:
+    pdf_page: 24
+    printed_page: 24
+    section: 1.7 Pin Lists (CTSU column)
+  quote: P205
+  confidence: found
+  notes: CTSU capacitive touch sensor channel/pin
+  figure_read: true
+- path: pads.P204.functions
+  value:
+    lqfp64_pin: 24
+    functions:
+    - fn: GPIO
+      routing: iomux
+    - fn: Power:CACREF
+      routing: iomux
+    - fn: AGT:AGTIO1
+      routing: iomux
+    - fn: GPT_OPS:GTIW
+      routing: iomux
+    - fn: GPT:GTIOC4B
+      routing: iomux
+    - fn: USB_CAN:USB_OVRCURB
+      routing: iomux
+    - fn: SCI:SCK0
+      routing: iomux
+    - fn: SCI:SCK9
+      routing: iomux
+    - fn: IIC:SCL0
+      routing: iomux
+    - fn: SPI:RSPCKB
+      routing: iomux
+    - fn: SLCDC:SEG14
+      routing: iomux
+    - fn: CTSU:TS00
+      routing: iomux
+  unit: null
+  conditions:
+    package: LQFP64 (R7FA4M1AB3CFM)
+  doc: ds
+  locator:
+    pdf_page: 24
+    printed_page: 24
+    section: 1.7 Pin Lists, LQFP64 column
+  quote: P204
+  confidence: found
+  notes: Coordinate-based extraction of the rotated pin-list table, rendered to an image and checked visually. Column prefix = table column header. Items joined with '/' in one cell are alternates shown
+    in the same cell; separate tokens are separate functions. routing class is inferred (PSEL/ASEL selection per UM 19.6; dedicated analog/debug/USB/clock = fixed).
+  figure_read: true
+- path: pads.P204.touch
+  value: TS00
+  unit: null
+  conditions: null
+  doc: ds
+  locator:
+    pdf_page: 24
+    printed_page: 24
+    section: 1.7 Pin Lists (CTSU column)
+  quote: P204
+  confidence: found
+  notes: CTSU capacitive touch sensor channel/pin
+  figure_read: true
+- path: pads.P201.functions
+  value:
+    lqfp64_pin: 26
+    functions:
+    - fn: GPIO
+      routing: iomux
+    - fn: Power:MD
+      routing: fixed
+  unit: null
+  conditions:
+    package: LQFP64 (R7FA4M1AB3CFM)
+  doc: ds
+  locator:
+    pdf_page: 24
+    printed_page: 24
+    section: 1.7 Pin Lists, LQFP64 column
+  quote: P201
+  confidence: found
+  notes: Coordinate-based extraction of the rotated pin-list table, rendered to an image and checked visually. Column prefix = table column header. Items joined with '/' in one cell are alternates shown
+    in the same cell; separate tokens are separate functions. routing class is inferred (PSEL/ASEL selection per UM 19.6; dedicated analog/debug/USB/clock = fixed).
+  figure_read: true
+- path: pads.P200.functions
+  value:
+    lqfp64_pin: 27
+    functions:
+    - fn: GPIO
+      routing: iomux
+    - fn: IRQ:NMI
+      routing: fixed
+  unit: null
+  conditions:
+    package: LQFP64 (R7FA4M1AB3CFM)
+  doc: ds
+  locator:
+    pdf_page: 24
+    printed_page: 24
+    section: 1.7 Pin Lists, LQFP64 column
+  quote: P200
+  confidence: found
+  notes: Coordinate-based extraction of the rotated pin-list table, rendered to an image and checked visually. Column prefix = table column header. Items joined with '/' in one cell are alternates shown
+    in the same cell; separate tokens are separate functions. routing class is inferred (PSEL/ASEL selection per UM 19.6; dedicated analog/debug/USB/clock = fixed).
+  figure_read: true
+- path: pads.P304.functions
+  value:
+    lqfp64_pin: 28
+    functions:
+    - fn: GPIO
+      routing: iomux
+    - fn: IRQ:IRQ9
+      routing: iomux
+    - fn: GPT:GTIOC7A
+      routing: iomux
+    - fn: SLCDC:SEG20
+      routing: iomux
+    - fn: CTSU:TS11
+      routing: iomux
+  unit: null
+  conditions:
+    package: LQFP64 (R7FA4M1AB3CFM)
+  doc: ds
+  locator:
+    pdf_page: 24
+    printed_page: 24
+    section: 1.7 Pin Lists, LQFP64 column
+  quote: P304
+  confidence: found
+  notes: Coordinate-based extraction of the rotated pin-list table, rendered to an image and checked visually. Column prefix = table column header. Items joined with '/' in one cell are alternates shown
+    in the same cell; separate tokens are separate functions. routing class is inferred (PSEL/ASEL selection per UM 19.6; dedicated analog/debug/USB/clock = fixed).
+  figure_read: true
+- path: pads.P304.touch
+  value: TS11
+  unit: null
+  conditions: null
+  doc: ds
+  locator:
+    pdf_page: 24
+    printed_page: 24
+    section: 1.7 Pin Lists (CTSU column)
+  quote: P304
+  confidence: found
+  notes: CTSU capacitive touch sensor channel/pin
+  figure_read: true
+- path: pads.P303.functions
+  value:
+    lqfp64_pin: 29
+    functions:
+    - fn: GPIO
+      routing: iomux
+    - fn: GPT:GTIOC7B
+      routing: iomux
+    - fn: SLCDC:SEG03/COM7
+      routing: iomux
+    - fn: CTSU:TS02
+      routing: iomux
+  unit: null
+  conditions:
+    package: LQFP64 (R7FA4M1AB3CFM)
+  doc: ds
+  locator:
+    pdf_page: 24
+    printed_page: 24
+    section: 1.7 Pin Lists, LQFP64 column
+  quote: P303
+  confidence: found
+  notes: Coordinate-based extraction of the rotated pin-list table, rendered to an image and checked visually. Column prefix = table column header. Items joined with '/' in one cell are alternates shown
+    in the same cell; separate tokens are separate functions. routing class is inferred (PSEL/ASEL selection per UM 19.6; dedicated analog/debug/USB/clock = fixed).
+  figure_read: true
+- path: pads.P303.touch
+  value: TS02
+  unit: null
+  conditions: null
+  doc: ds
+  locator:
+    pdf_page: 24
+    printed_page: 24
+    section: 1.7 Pin Lists (CTSU column)
+  quote: P303
+  confidence: found
+  notes: CTSU capacitive touch sensor channel/pin
+  figure_read: true
+- path: pads.P302.functions
+  value:
+    lqfp64_pin: 30
+    functions:
+    - fn: GPIO
+      routing: iomux
+    - fn: IRQ:IRQ5
+      routing: iomux
+    - fn: GPT_OPS:GTOUUP
+      routing: iomux
+    - fn: GPT:GTIOC4A
+      routing: iomux
+    - fn: SCI:TXD2/MOSI2/SDA2
+      routing: iomux
+    - fn: SPI:SSLB3
+      routing: iomux
+    - fn: SLCDC:SEG02/COM6
+      routing: iomux
+    - fn: CTSU:TS08
+      routing: iomux
+  unit: null
+  conditions:
+    package: LQFP64 (R7FA4M1AB3CFM)
+  doc: ds
+  locator:
+    pdf_page: 24
+    printed_page: 24
+    section: 1.7 Pin Lists, LQFP64 column
+  quote: P302
+  confidence: found
+  notes: Coordinate-based extraction of the rotated pin-list table, rendered to an image and checked visually. Column prefix = table column header. Items joined with '/' in one cell are alternates shown
+    in the same cell; separate tokens are separate functions. routing class is inferred (PSEL/ASEL selection per UM 19.6; dedicated analog/debug/USB/clock = fixed).
+  figure_read: true
+- path: pads.P302.touch
+  value: TS08
+  unit: null
+  conditions: null
+  doc: ds
+  locator:
+    pdf_page: 24
+    printed_page: 24
+    section: 1.7 Pin Lists (CTSU column)
+  quote: P302
+  confidence: found
+  notes: CTSU capacitive touch sensor channel/pin
+  figure_read: true
+- path: pads.P301.functions
+  value:
+    lqfp64_pin: 31
+    functions:
+    - fn: GPIO
+      routing: iomux
+    - fn: IRQ:IRQ6
+      routing: iomux
+    - fn: AGT:AGTIO0
+      routing: iomux
+    - fn: GPT_OPS:GTOULO
+      routing: iomux
+    - fn: GPT:GTIOC4B
+      routing: iomux
+    - fn: SCI:RXD2/MISO2/SCL2
+      routing: iomux
+    - fn: SCI:CTS9_RTS9/SS9
+      routing: iomux
+    - fn: SPI:SSLB2
+      routing: iomux
+    - fn: SLCDC:SEG01/COM5
+      routing: iomux
+    - fn: CTSU:TS09
+      routing: iomux
+  unit: null
+  conditions:
+    package: LQFP64 (R7FA4M1AB3CFM)
+  doc: ds
+  locator:
+    pdf_page: 24
+    printed_page: 24
+    section: 1.7 Pin Lists, LQFP64 column
+  quote: P301
+  confidence: found
+  notes: Coordinate-based extraction of the rotated pin-list table, rendered to an image and checked visually. Column prefix = table column header. Items joined with '/' in one cell are alternates shown
+    in the same cell; separate tokens are separate functions. routing class is inferred (PSEL/ASEL selection per UM 19.6; dedicated analog/debug/USB/clock = fixed).
+  figure_read: true
+- path: pads.P301.touch
+  value: TS09
+  unit: null
+  conditions: null
+  doc: ds
+  locator:
+    pdf_page: 24
+    printed_page: 24
+    section: 1.7 Pin Lists (CTSU column)
+  quote: P301
+  confidence: found
+  notes: CTSU capacitive touch sensor channel/pin
+  figure_read: true
+- path: pads.P300.functions
+  value:
+    lqfp64_pin: 32
+    functions:
+    - fn: GPIO
+      routing: iomux
+    - fn: Power:TCK/SWCLK
+      routing: fixed
+    - fn: GPT_OPS:GTOUUP
+      routing: iomux
+    - fn: GPT:GTIOC0A
+      routing: iomux
+    - fn: SPI:SSLB1
+      routing: iomux
+  unit: null
+  conditions:
+    package: LQFP64 (R7FA4M1AB3CFM)
+  doc: ds
+  locator:
+    pdf_page: 24
+    printed_page: 24
+    section: 1.7 Pin Lists, LQFP64 column
+  quote: P300
+  confidence: found
+  notes: Coordinate-based extraction of the rotated pin-list table, rendered to an image and checked visually. Column prefix = table column header. Items joined with '/' in one cell are alternates shown
+    in the same cell; separate tokens are separate functions. routing class is inferred (PSEL/ASEL selection per UM 19.6; dedicated analog/debug/USB/clock = fixed).
+  figure_read: true
+- path: pads.P108.functions
+  value:
+    lqfp64_pin: 33
+    functions:
+    - fn: GPIO
+      routing: iomux
+    - fn: Power:TMS/SWDIO
+      routing: fixed
+    - fn: GPT_OPS:GTOULO
+      routing: iomux
+    - fn: GPT:GTIOC0B
+      routing: iomux
+    - fn: SCI:CTS9_RTS9/SS9
+      routing: iomux
+    - fn: SPI:SSLB0
+      routing: iomux
+  unit: null
+  conditions:
+    package: LQFP64 (R7FA4M1AB3CFM)
+  doc: ds
+  locator:
+    pdf_page: 24
+    printed_page: 24
+    section: 1.7 Pin Lists, LQFP64 column
+  quote: P108
+  confidence: found
+  notes: Coordinate-based extraction of the rotated pin-list table, rendered to an image and checked visually. Column prefix = table column header. Items joined with '/' in one cell are alternates shown
+    in the same cell; separate tokens are separate functions. routing class is inferred (PSEL/ASEL selection per UM 19.6; dedicated analog/debug/USB/clock = fixed).
+  figure_read: true
+- path: pads.P109.functions
+  value:
+    lqfp64_pin: 34
+    functions:
+    - fn: GPIO
+      routing: iomux
+    - fn: Power:TDO/SWO/CLKOUT
+      routing: fixed
+    - fn: GPT_OPS:GTOVUP
+      routing: iomux
+    - fn: GPT:GTIOC1A
+      routing: iomux
+    - fn: USB_CAN:CTX0
+      routing: iomux
+    - fn: SCI:SCK1
+      routing: iomux
+    - fn: SCI:TXD9/MOSI9/SDA9
+      routing: iomux
+    - fn: SPI:MOSIB
+      routing: iomux
+    - fn: SLCDC:SEG23
+      routing: iomux
+    - fn: CTSU:TS10
+      routing: iomux
+  unit: null
+  conditions:
+    package: LQFP64 (R7FA4M1AB3CFM)
+  doc: ds
+  locator:
+    pdf_page: 24
+    printed_page: 24
+    section: 1.7 Pin Lists, LQFP64 column
+  quote: P109
+  confidence: found
+  notes: Coordinate-based extraction of the rotated pin-list table, rendered to an image and checked visually. Column prefix = table column header. Items joined with '/' in one cell are alternates shown
+    in the same cell; separate tokens are separate functions. routing class is inferred (PSEL/ASEL selection per UM 19.6; dedicated analog/debug/USB/clock = fixed).
+  figure_read: true
+- path: pads.P109.touch
+  value: TS10
+  unit: null
+  conditions: null
+  doc: ds
+  locator:
+    pdf_page: 24
+    printed_page: 24
+    section: 1.7 Pin Lists (CTSU column)
+  quote: P109
+  confidence: found
+  notes: CTSU capacitive touch sensor channel/pin
+  figure_read: true
+- path: pads.P110.functions
+  value:
+    lqfp64_pin: 35
+    functions:
+    - fn: GPIO
+      routing: iomux
+    - fn: Power:TDI
+      routing: fixed
+    - fn: IRQ:IRQ3
+      routing: iomux
+    - fn: GPT_OPS:GTOVLO
+      routing: iomux
+    - fn: GPT:GTIOC1B
+      routing: iomux
+    - fn: USB_CAN:CRX0
+      routing: iomux
+    - fn: SCI:CTS2_RTS2/SS2
+      routing: iomux
+    - fn: SCI:RXD9/MISO9/SCL9
+      routing: iomux
+    - fn: SPI:MISOB
+      routing: iomux
+    - fn: ACMPLP:VCOUT
+      routing: iomux
+    - fn: SLCDC:SEG24
+      routing: iomux
+  unit: null
+  conditions:
+    package: LQFP64 (R7FA4M1AB3CFM)
+  doc: ds
+  locator:
+    pdf_page: 24
+    printed_page: 24
+    section: 1.7 Pin Lists, LQFP64 column
+  quote: P110
+  confidence: found
+  notes: Coordinate-based extraction of the rotated pin-list table, rendered to an image and checked visually. Column prefix = table column header. Items joined with '/' in one cell are alternates shown
+    in the same cell; separate tokens are separate functions. routing class is inferred (PSEL/ASEL selection per UM 19.6; dedicated analog/debug/USB/clock = fixed).
+  figure_read: true
+- path: pads.P111.functions
+  value:
+    lqfp64_pin: 36
+    functions:
+    - fn: GPIO
+      routing: iomux
+    - fn: IRQ:IRQ4
+      routing: iomux
+    - fn: GPT:GTIOC3A
+      routing: iomux
+    - fn: SCI:SCK2
+      routing: iomux
+    - fn: SCI:SCK9
+      routing: iomux
+    - fn: SPI:RSPCKB
+      routing: iomux
+    - fn: SLCDC:CAPH
+      routing: iomux
+    - fn: CTSU:TS12
+      routing: iomux
+  unit: null
+  conditions:
+    package: LQFP64 (R7FA4M1AB3CFM)
+  doc: ds
+  locator:
+    pdf_page: 25
+    printed_page: 25
+    section: 1.7 Pin Lists, LQFP64 column
+  quote: P111
+  confidence: found
+  notes: Coordinate-based extraction of the rotated pin-list table, rendered to an image and checked visually. Column prefix = table column header. Items joined with '/' in one cell are alternates shown
+    in the same cell; separate tokens are separate functions. routing class is inferred (PSEL/ASEL selection per UM 19.6; dedicated analog/debug/USB/clock = fixed).
+  figure_read: true
+- path: pads.P111.touch
+  value: TS12
+  unit: null
+  conditions: null
+  doc: ds
+  locator:
+    pdf_page: 25
+    printed_page: 25
+    section: 1.7 Pin Lists (CTSU column)
+  quote: P111
+  confidence: found
+  notes: CTSU capacitive touch sensor channel/pin
+  figure_read: true
+- path: pads.P112.functions
+  value:
+    lqfp64_pin: 37
+    functions:
+    - fn: GPIO
+      routing: iomux
+    - fn: GPT:GTIOC3B
+      routing: iomux
+    - fn: SCI:TXD2/MOSI2/SDA2
+      routing: iomux
+    - fn: SCI:SCK1
+      routing: iomux
+    - fn: SPI:SSLB0
+      routing: iomux
+    - fn: SSIE:SSIBCK0
+      routing: iomux
+    - fn: SLCDC:CAPL
+      routing: iomux
+    - fn: CTSU:TSCAP
+      routing: iomux
+  unit: null
+  conditions:
+    package: LQFP64 (R7FA4M1AB3CFM)
+  doc: ds
+  locator:
+    pdf_page: 25
+    printed_page: 25
+    section: 1.7 Pin Lists, LQFP64 column
+  quote: P112
+  confidence: found
+  notes: Coordinate-based extraction of the rotated pin-list table, rendered to an image and checked visually. Column prefix = table column header. Items joined with '/' in one cell are alternates shown
+    in the same cell; separate tokens are separate functions. routing class is inferred (PSEL/ASEL selection per UM 19.6; dedicated analog/debug/USB/clock = fixed).
+  figure_read: true
+- path: pads.P112.touch
+  value: TSCAP
+  unit: null
+  conditions: null
+  doc: ds
+  locator:
+    pdf_page: 25
+    printed_page: 25
+    section: 1.7 Pin Lists (CTSU column)
+  quote: P112
+  confidence: found
+  notes: CTSU capacitive touch sensor channel/pin
+  figure_read: true
+- path: pads.P113.functions
+  value:
+    lqfp64_pin: 38
+    functions:
+    - fn: GPIO
+      routing: iomux
+    - fn: GPT:GTIOC2A
+      routing: iomux
+    - fn: SSIE:SSILRCK0/SSIFS0
+      routing: iomux
+    - fn: SLCDC:SEG00/COM4
+      routing: iomux
+    - fn: CTSU:TS27
+      routing: iomux
+  unit: null
+  conditions:
+    package: LQFP64 (R7FA4M1AB3CFM)
+  doc: ds
+  locator:
+    pdf_page: 25
+    printed_page: 25
+    section: 1.7 Pin Lists, LQFP64 column
+  quote: P113
+  confidence: found
+  notes: Coordinate-based extraction of the rotated pin-list table, rendered to an image and checked visually. Column prefix = table column header. Items joined with '/' in one cell are alternates shown
+    in the same cell; separate tokens are separate functions. routing class is inferred (PSEL/ASEL selection per UM 19.6; dedicated analog/debug/USB/clock = fixed).
+  figure_read: true
+- path: pads.P113.touch
+  value: TS27
+  unit: null
+  conditions: null
+  doc: ds
+  locator:
+    pdf_page: 25
+    printed_page: 25
+    section: 1.7 Pin Lists (CTSU column)
+  quote: P113
+  confidence: found
+  notes: CTSU capacitive touch sensor channel/pin
+  figure_read: true
+- path: pads.P107.functions
+  value:
+    lqfp64_pin: 41
+    functions:
+    - fn: GPIO
+      routing: iomux
+    - fn: IRQ:KR07
+      routing: iomux
+    - fn: GPT:GTIOC0A
+      routing: iomux
+    - fn: SLCDC:COM3
+      routing: iomux
+  unit: null
+  conditions:
+    package: LQFP64 (R7FA4M1AB3CFM)
+  doc: ds
+  locator:
+    pdf_page: 25
+    printed_page: 25
+    section: 1.7 Pin Lists, LQFP64 column
+  quote: P107
+  confidence: found
+  notes: Coordinate-based extraction of the rotated pin-list table, rendered to an image and checked visually. Column prefix = table column header. Items joined with '/' in one cell are alternates shown
+    in the same cell; separate tokens are separate functions. routing class is inferred (PSEL/ASEL selection per UM 19.6; dedicated analog/debug/USB/clock = fixed).
+  figure_read: true
+- path: pads.P106.functions
+  value:
+    lqfp64_pin: 42
+    functions:
+    - fn: GPIO
+      routing: iomux
+    - fn: IRQ:KR06
+      routing: iomux
+    - fn: GPT:GTIOC0B
+      routing: iomux
+    - fn: SPI:SSLA3
+      routing: iomux
+    - fn: SLCDC:COM2
+      routing: iomux
+  unit: null
+  conditions:
+    package: LQFP64 (R7FA4M1AB3CFM)
+  doc: ds
+  locator:
+    pdf_page: 25
+    printed_page: 25
+    section: 1.7 Pin Lists, LQFP64 column
+  quote: P106
+  confidence: found
+  notes: Coordinate-based extraction of the rotated pin-list table, rendered to an image and checked visually. Column prefix = table column header. Items joined with '/' in one cell are alternates shown
+    in the same cell; separate tokens are separate functions. routing class is inferred (PSEL/ASEL selection per UM 19.6; dedicated analog/debug/USB/clock = fixed).
+  figure_read: true
+- path: pads.P105.functions
+  value:
+    lqfp64_pin: 43
+    functions:
+    - fn: GPIO
+      routing: iomux
+    - fn: IRQ:KR05/IRQ0
+      routing: iomux
+    - fn: GPT_OPS:GTETRGA
+      routing: iomux
+    - fn: GPT:GTIOC1A
+      routing: iomux
+    - fn: SPI:SSLA2
+      routing: iomux
+    - fn: SLCDC:COM1
+      routing: iomux
+    - fn: CTSU:TS34
+      routing: iomux
+  unit: null
+  conditions:
+    package: LQFP64 (R7FA4M1AB3CFM)
+  doc: ds
+  locator:
+    pdf_page: 25
+    printed_page: 25
+    section: 1.7 Pin Lists, LQFP64 column
+  quote: P105
+  confidence: found
+  notes: Coordinate-based extraction of the rotated pin-list table, rendered to an image and checked visually. Column prefix = table column header. Items joined with '/' in one cell are alternates shown
+    in the same cell; separate tokens are separate functions. routing class is inferred (PSEL/ASEL selection per UM 19.6; dedicated analog/debug/USB/clock = fixed).
+  figure_read: true
+- path: pads.P105.touch
+  value: TS34
+  unit: null
+  conditions: null
+  doc: ds
+  locator:
+    pdf_page: 25
+    printed_page: 25
+    section: 1.7 Pin Lists (CTSU column)
+  quote: P105
+  confidence: found
+  notes: CTSU capacitive touch sensor channel/pin
+  figure_read: true
+- path: pads.P104.functions
+  value:
+    lqfp64_pin: 44
+    functions:
+    - fn: GPIO
+      routing: iomux
+    - fn: IRQ:KR04/IRQ1
+      routing: iomux
+    - fn: GPT_OPS:GTETRGB
+      routing: iomux
+    - fn: GPT:GTIOC1B
+      routing: iomux
+    - fn: SCI:RXD0/MISO0/SCL0
+      routing: iomux
+    - fn: SPI:SSLA1
+      routing: iomux
+    - fn: SLCDC:COM0
+      routing: iomux
+    - fn: CTSU:TS13
+      routing: iomux
+  unit: null
+  conditions:
+    package: LQFP64 (R7FA4M1AB3CFM)
+  doc: ds
+  locator:
+    pdf_page: 25
+    printed_page: 25
+    section: 1.7 Pin Lists, LQFP64 column
+  quote: P104
+  confidence: found
+  notes: Coordinate-based extraction of the rotated pin-list table, rendered to an image and checked visually. Column prefix = table column header. Items joined with '/' in one cell are alternates shown
+    in the same cell; separate tokens are separate functions. routing class is inferred (PSEL/ASEL selection per UM 19.6; dedicated analog/debug/USB/clock = fixed).
+  figure_read: true
+- path: pads.P104.touch
+  value: TS13
+  unit: null
+  conditions: null
+  doc: ds
+  locator:
+    pdf_page: 25
+    printed_page: 25
+    section: 1.7 Pin Lists (CTSU column)
+  quote: P104
+  confidence: found
+  notes: CTSU capacitive touch sensor channel/pin
+  figure_read: true
+- path: pads.P103.functions
+  value:
+    lqfp64_pin: 45
+    functions:
+    - fn: GPIO
+      routing: iomux
+    - fn: IRQ:KR03
+      routing: iomux
+    - fn: GPT_OPS:GTOWUP
+      routing: iomux
+    - fn: GPT:GTIOC2A
+      routing: iomux
+    - fn: USB_CAN:CTX0
+      routing: iomux
+    - fn: SCI:CTS0_RTS0/SS0
+      routing: iomux
+    - fn: SPI:SSLA0
+      routing: iomux
+    - fn: ADC14:AN019
+      routing: fixed
+    - fn: ACMPLP:CMPREF1
+      routing: fixed
+    - fn: SLCDC:VL4
+      routing: iomux
+  unit: null
+  conditions:
+    package: LQFP64 (R7FA4M1AB3CFM)
+  doc: ds
+  locator:
+    pdf_page: 25
+    printed_page: 25
+    section: 1.7 Pin Lists, LQFP64 column
+  quote: P103
+  confidence: found
+  notes: Coordinate-based extraction of the rotated pin-list table, rendered to an image and checked visually. Column prefix = table column header. Items joined with '/' in one cell are alternates shown
+    in the same cell; separate tokens are separate functions. routing class is inferred (PSEL/ASEL selection per UM 19.6; dedicated analog/debug/USB/clock = fixed).
+  figure_read: true
+- path: pads.P103.adc
+  value:
+    unit: ADC14 (single unit)
+    channel_pin_text: AN019
+  unit: null
+  conditions:
+    restriction: AN000-AN014 = high-precision channels on AVCC0 domain, cannot be used as GPIO/IRQ2/IRQ3/TS while A/D in use; AN016-AN025 = normal-precision on VCC domain
+  doc: ds
+  locator:
+    pdf_page: 25
+    printed_page: 25
+    section: 1.7 Pin Lists (ADC14 column); 2.x Table 2.49
+  quote: P103
+  confidence: found
+  notes: null
+  figure_read: true
+- path: pads.P102.functions
+  value:
+    lqfp64_pin: 46
+    functions:
+    - fn: GPIO
+      routing: iomux
+    - fn: IRQ:KR02
+      routing: iomux
+    - fn: AGT:AGTO0
+      routing: iomux
+    - fn: GPT_OPS:GTOWLO
+      routing: iomux
+    - fn: GPT:GTIOC2B
+      routing: iomux
+    - fn: USB_CAN:CRX0
+      routing: iomux
+    - fn: SCI:SCK0
+      routing: iomux
+    - fn: SCI:TXD2/MOSI2/SDA2
+      routing: iomux
+    - fn: SPI:RSPCKA
+      routing: iomux
+    - fn: ADC14:AN020/ADTRG0
+      routing: fixed
+    - fn: ACMPLP:CMPIN1
+      routing: fixed
+    - fn: SLCDC:VL3
+      routing: iomux
+  unit: null
+  conditions:
+    package: LQFP64 (R7FA4M1AB3CFM)
+  doc: ds
+  locator:
+    pdf_page: 25
+    printed_page: 25
+    section: 1.7 Pin Lists, LQFP64 column
+  quote: P102
+  confidence: found
+  notes: Coordinate-based extraction of the rotated pin-list table, rendered to an image and checked visually. Column prefix = table column header. Items joined with '/' in one cell are alternates shown
+    in the same cell; separate tokens are separate functions. routing class is inferred (PSEL/ASEL selection per UM 19.6; dedicated analog/debug/USB/clock = fixed).
+  figure_read: true
+- path: pads.P102.adc
+  value:
+    unit: ADC14 (single unit)
+    channel_pin_text: AN020/ ADTRG0
+  unit: null
+  conditions:
+    restriction: AN000-AN014 = high-precision channels on AVCC0 domain, cannot be used as GPIO/IRQ2/IRQ3/TS while A/D in use; AN016-AN025 = normal-precision on VCC domain
+  doc: ds
+  locator:
+    pdf_page: 25
+    printed_page: 25
+    section: 1.7 Pin Lists (ADC14 column); 2.x Table 2.49
+  quote: P102
+  confidence: found
+  notes: null
+  figure_read: true
+- path: pads.P101.functions
+  value:
+    lqfp64_pin: 47
+    functions:
+    - fn: GPIO
+      routing: iomux
+    - fn: IRQ:KR01/IRQ1
+      routing: iomux
+    - fn: AGT:AGTEE0
+      routing: iomux
+    - fn: GPT_OPS:GTETRGB
+      routing: iomux
+    - fn: GPT:GTIOC5A
+      routing: iomux
+    - fn: SCI:TXD0/MOSI0/SDA0
+      routing: iomux
+    - fn: SCI:CTS1_RTS1/SS1
+      routing: iomux
+    - fn: IIC:SDA1
+      routing: iomux
+    - fn: SPI:MOSIA
+      routing: iomux
+    - fn: ADC14:AN021
+      routing: fixed
+    - fn: ACMPLP:CMPREF0
+      routing: fixed
+    - fn: SLCDC:VL2
+      routing: iomux
+  unit: null
+  conditions:
+    package: LQFP64 (R7FA4M1AB3CFM)
+  doc: ds
+  locator:
+    pdf_page: 25
+    printed_page: 25
+    section: 1.7 Pin Lists, LQFP64 column
+  quote: P101
+  confidence: found
+  notes: Coordinate-based extraction of the rotated pin-list table, rendered to an image and checked visually. Column prefix = table column header. Items joined with '/' in one cell are alternates shown
+    in the same cell; separate tokens are separate functions. routing class is inferred (PSEL/ASEL selection per UM 19.6; dedicated analog/debug/USB/clock = fixed).
+  figure_read: true
+- path: pads.P101.adc
+  value:
+    unit: ADC14 (single unit)
+    channel_pin_text: AN021
+  unit: null
+  conditions:
+    restriction: AN000-AN014 = high-precision channels on AVCC0 domain, cannot be used as GPIO/IRQ2/IRQ3/TS while A/D in use; AN016-AN025 = normal-precision on VCC domain
+  doc: ds
+  locator:
+    pdf_page: 25
+    printed_page: 25
+    section: 1.7 Pin Lists (ADC14 column); 2.x Table 2.49
+  quote: P101
+  confidence: found
+  notes: null
+  figure_read: true
+- path: pads.P100.functions
+  value:
+    lqfp64_pin: 48
+    functions:
+    - fn: GPIO
+      routing: iomux
+    - fn: IRQ:KR00/IRQ2
+      routing: iomux
+    - fn: AGT:AGTIO0
+      routing: iomux
+    - fn: GPT_OPS:GTETRGA
+      routing: iomux
+    - fn: GPT:GTIOC5B
+      routing: iomux
+    - fn: SCI:RXD0/MISO0/SCL0
+      routing: iomux
+    - fn: SCI:SCK1
+      routing: iomux
+    - fn: IIC:SCL1
+      routing: iomux
+    - fn: SPI:MISOA
+      routing: iomux
+    - fn: ADC14:AN022
+      routing: fixed
+    - fn: ACMPLP:CMPIN0
+      routing: fixed
+    - fn: SLCDC:VL1
+      routing: iomux
+  unit: null
+  conditions:
+    package: LQFP64 (R7FA4M1AB3CFM)
+  doc: ds
+  locator:
+    pdf_page: 25
+    printed_page: 25
+    section: 1.7 Pin Lists, LQFP64 column
+  quote: P100
+  confidence: found
+  notes: Coordinate-based extraction of the rotated pin-list table, rendered to an image and checked visually. Column prefix = table column header. Items joined with '/' in one cell are alternates shown
+    in the same cell; separate tokens are separate functions. routing class is inferred (PSEL/ASEL selection per UM 19.6; dedicated analog/debug/USB/clock = fixed).
+  figure_read: true
+- path: pads.P100.adc
+  value:
+    unit: ADC14 (single unit)
+    channel_pin_text: AN022
+  unit: null
+  conditions:
+    restriction: AN000-AN014 = high-precision channels on AVCC0 domain, cannot be used as GPIO/IRQ2/IRQ3/TS while A/D in use; AN016-AN025 = normal-precision on VCC domain
+  doc: ds
+  locator:
+    pdf_page: 25
+    printed_page: 25
+    section: 1.7 Pin Lists (ADC14 column); 2.x Table 2.49
+  quote: P100
+  confidence: found
+  notes: null
+  figure_read: true
+- path: pads.P500.functions
+  value:
+    lqfp64_pin: 49
+    functions:
+    - fn: GPIO
+      routing: iomux
+    - fn: AGT:AGTOA0
+      routing: iomux
+    - fn: GPT_OPS:GTIU
+      routing: iomux
+    - fn: GPT:GTIOC2A
+      routing: iomux
+    - fn: USB_CAN:USB_VBUSEN
+      routing: iomux
+    - fn: ADC14:AN016
+      routing: fixed
+    - fn: ACMPLP:CMPREF1
+      routing: fixed
+    - fn: SLCDC:SEG34
+      routing: iomux
+  unit: null
+  conditions:
+    package: LQFP64 (R7FA4M1AB3CFM)
+  doc: ds
+  locator:
+    pdf_page: 25
+    printed_page: 25
+    section: 1.7 Pin Lists, LQFP64 column
+  quote: P500
+  confidence: found
+  notes: Coordinate-based extraction of the rotated pin-list table, rendered to an image and checked visually. Column prefix = table column header. Items joined with '/' in one cell are alternates shown
+    in the same cell; separate tokens are separate functions. routing class is inferred (PSEL/ASEL selection per UM 19.6; dedicated analog/debug/USB/clock = fixed).
+  figure_read: true
+- path: pads.P500.adc
+  value:
+    unit: ADC14 (single unit)
+    channel_pin_text: AN016
+  unit: null
+  conditions:
+    restriction: AN000-AN014 = high-precision channels on AVCC0 domain, cannot be used as GPIO/IRQ2/IRQ3/TS while A/D in use; AN016-AN025 = normal-precision on VCC domain
+  doc: ds
+  locator:
+    pdf_page: 25
+    printed_page: 25
+    section: 1.7 Pin Lists (ADC14 column); 2.x Table 2.49
+  quote: P500
+  confidence: found
+  notes: null
+  figure_read: true
+- path: pads.P501.functions
+  value:
+    lqfp64_pin: 50
+    functions:
+    - fn: GPIO
+      routing: iomux
+    - fn: IRQ:IRQ11
+      routing: iomux
+    - fn: AGT:AGTOB0
+      routing: iomux
+    - fn: GPT_OPS:GTIV
+      routing: iomux
+    - fn: GPT:GTIOC2B
+      routing: iomux
+    - fn: USB_CAN:USB_OVRCURA
+      routing: iomux
+    - fn: SCI:TXD1/MOSI1/SDA1
+      routing: iomux
+    - fn: ADC14:AN017
+      routing: fixed
+    - fn: ACMPLP:CMPIN1
+      routing: fixed
+    - fn: SLCDC:SEG35
+      routing: iomux
+  unit: null
+  conditions:
+    package: LQFP64 (R7FA4M1AB3CFM)
+  doc: ds
+  locator:
+    pdf_page: 25
+    printed_page: 25
+    section: 1.7 Pin Lists, LQFP64 column
+  quote: P501
+  confidence: found
+  notes: Coordinate-based extraction of the rotated pin-list table, rendered to an image and checked visually. Column prefix = table column header. Items joined with '/' in one cell are alternates shown
+    in the same cell; separate tokens are separate functions. routing class is inferred (PSEL/ASEL selection per UM 19.6; dedicated analog/debug/USB/clock = fixed).
+  figure_read: true
+- path: pads.P501.adc
+  value:
+    unit: ADC14 (single unit)
+    channel_pin_text: AN017
+  unit: null
+  conditions:
+    restriction: AN000-AN014 = high-precision channels on AVCC0 domain, cannot be used as GPIO/IRQ2/IRQ3/TS while A/D in use; AN016-AN025 = normal-precision on VCC domain
+  doc: ds
+  locator:
+    pdf_page: 25
+    printed_page: 25
+    section: 1.7 Pin Lists (ADC14 column); 2.x Table 2.49
+  quote: P501
+  confidence: found
+  notes: null
+  figure_read: true
+- path: pads.P502.functions
+  value:
+    lqfp64_pin: 51
+    functions:
+    - fn: GPIO
+      routing: iomux
+    - fn: IRQ:IRQ12
+      routing: iomux
+    - fn: GPT_OPS:GTIW
+      routing: iomux
+    - fn: GPT:GTIOC3B
+      routing: iomux
+    - fn: USB_CAN:USB_OVRCURB
+      routing: iomux
+    - fn: SCI:RXD1/MISO1/SCL1
+      routing: iomux
+    - fn: ADC14:AN018
+      routing: fixed
+    - fn: ACMPLP:CMPREF0
+      routing: fixed
+    - fn: SLCDC:SEG36
+      routing: iomux
+  unit: null
+  conditions:
+    package: LQFP64 (R7FA4M1AB3CFM)
+  doc: ds
+  locator:
+    pdf_page: 25
+    printed_page: 25
+    section: 1.7 Pin Lists, LQFP64 column
+  quote: P502
+  confidence: found
+  notes: Coordinate-based extraction of the rotated pin-list table, rendered to an image and checked visually. Column prefix = table column header. Items joined with '/' in one cell are alternates shown
+    in the same cell; separate tokens are separate functions. routing class is inferred (PSEL/ASEL selection per UM 19.6; dedicated analog/debug/USB/clock = fixed).
+  figure_read: true
+- path: pads.P502.adc
+  value:
+    unit: ADC14 (single unit)
+    channel_pin_text: AN018
+  unit: null
+  conditions:
+    restriction: AN000-AN014 = high-precision channels on AVCC0 domain, cannot be used as GPIO/IRQ2/IRQ3/TS while A/D in use; AN016-AN025 = normal-precision on VCC domain
+  doc: ds
+  locator:
+    pdf_page: 25
+    printed_page: 25
+    section: 1.7 Pin Lists (ADC14 column); 2.x Table 2.49
+  quote: P502
+  confidence: found
+  notes: null
+  figure_read: true
+- path: pads.P015.functions
+  value:
+    lqfp64_pin: 52
+    functions:
+    - fn: GPIO
+      routing: iomux
+    - fn: IRQ:IRQ7
+      routing: iomux
+    - fn: ADC14:AN010
+      routing: fixed
+    - fn: CTSU:TS28
+      routing: iomux
+  unit: null
+  conditions:
+    package: LQFP64 (R7FA4M1AB3CFM)
+  doc: ds
+  locator:
+    pdf_page: 26
+    printed_page: 26
+    section: 1.7 Pin Lists, LQFP64 column
+  quote: P015
+  confidence: found
+  notes: Coordinate-based extraction of the rotated pin-list table, rendered to an image and checked visually. Column prefix = table column header. Items joined with '/' in one cell are alternates shown
+    in the same cell; separate tokens are separate functions. routing class is inferred (PSEL/ASEL selection per UM 19.6; dedicated analog/debug/USB/clock = fixed).
+  figure_read: true
+- path: pads.P015.adc
+  value:
+    unit: ADC14 (single unit)
+    channel_pin_text: AN010
+  unit: null
+  conditions:
+    restriction: AN000-AN014 = high-precision channels on AVCC0 domain, cannot be used as GPIO/IRQ2/IRQ3/TS while A/D in use; AN016-AN025 = normal-precision on VCC domain
+  doc: ds
+  locator:
+    pdf_page: 26
+    printed_page: 26
+    section: 1.7 Pin Lists (ADC14 column); 2.x Table 2.49
+  quote: P015
+  confidence: found
+  notes: null
+  figure_read: true
+- path: pads.P015.touch
+  value: TS28
+  unit: null
+  conditions: null
+  doc: ds
+  locator:
+    pdf_page: 26
+    printed_page: 26
+    section: 1.7 Pin Lists (CTSU column)
+  quote: P015
+  confidence: found
+  notes: CTSU capacitive touch sensor channel/pin
+  figure_read: true
+- path: pads.P014.functions
+  value:
+    lqfp64_pin: 53
+    functions:
+    - fn: GPIO
+      routing: iomux
+    - fn: ADC14:AN009
+      routing: fixed
+    - fn: DAC12:DA0
+      routing: fixed
+  unit: null
+  conditions:
+    package: LQFP64 (R7FA4M1AB3CFM)
+  doc: ds
+  locator:
+    pdf_page: 26
+    printed_page: 26
+    section: 1.7 Pin Lists, LQFP64 column
+  quote: P014
+  confidence: found
+  notes: Coordinate-based extraction of the rotated pin-list table, rendered to an image and checked visually. Column prefix = table column header. Items joined with '/' in one cell are alternates shown
+    in the same cell; separate tokens are separate functions. routing class is inferred (PSEL/ASEL selection per UM 19.6; dedicated analog/debug/USB/clock = fixed).
+  figure_read: true
+- path: pads.P014.adc
+  value:
+    unit: ADC14 (single unit)
+    channel_pin_text: AN009
+  unit: null
+  conditions:
+    restriction: AN000-AN014 = high-precision channels on AVCC0 domain, cannot be used as GPIO/IRQ2/IRQ3/TS while A/D in use; AN016-AN025 = normal-precision on VCC domain
+  doc: ds
+  locator:
+    pdf_page: 26
+    printed_page: 26
+    section: 1.7 Pin Lists (ADC14 column); 2.x Table 2.49
+  quote: P014
+  confidence: found
+  notes: null
+  figure_read: true
+- path: pads.P014.dac_opamp
+  value: DA0
+  unit: null
+  conditions: null
+  doc: ds
+  locator:
+    pdf_page: 26
+    printed_page: 26
+    section: 1.7 Pin Lists (DAC12, OPAMP column)
+  quote: P014
+  confidence: found
+  notes: DA0 = DAC12 output; AMPn* = OPAMP pins (not DAC).
+  figure_read: true
+- path: pads.P013.functions
+  value:
+    lqfp64_pin: 54
+    functions:
+    - fn: GPIO
+      routing: iomux
+    - fn: Power:VREFL
+      routing: fixed
+    - fn: ADC14:AN008
+      routing: fixed
+    - fn: DAC12:AMP1+
+      routing: fixed
+  unit: null
+  conditions:
+    package: LQFP64 (R7FA4M1AB3CFM)
+  doc: ds
+  locator:
+    pdf_page: 26
+    printed_page: 26
+    section: 1.7 Pin Lists, LQFP64 column
+  quote: P013
+  confidence: found
+  notes: Coordinate-based extraction of the rotated pin-list table, rendered to an image and checked visually. Column prefix = table column header. Items joined with '/' in one cell are alternates shown
+    in the same cell; separate tokens are separate functions. routing class is inferred (PSEL/ASEL selection per UM 19.6; dedicated analog/debug/USB/clock = fixed).
+  figure_read: true
+- path: pads.P013.adc
+  value:
+    unit: ADC14 (single unit)
+    channel_pin_text: AN008
+  unit: null
+  conditions:
+    restriction: AN000-AN014 = high-precision channels on AVCC0 domain, cannot be used as GPIO/IRQ2/IRQ3/TS while A/D in use; AN016-AN025 = normal-precision on VCC domain
+  doc: ds
+  locator:
+    pdf_page: 26
+    printed_page: 26
+    section: 1.7 Pin Lists (ADC14 column); 2.x Table 2.49
+  quote: P013
+  confidence: found
+  notes: null
+  figure_read: true
+- path: pads.P013.dac_opamp
+  value: AMP1+
+  unit: null
+  conditions: null
+  doc: ds
+  locator:
+    pdf_page: 26
+    printed_page: 26
+    section: 1.7 Pin Lists (DAC12, OPAMP column)
+  quote: P013
+  confidence: found
+  notes: OPAMP pin, not a DAC output.
+  figure_read: true
+- path: pads.P012.functions
+  value:
+    lqfp64_pin: 55
+    functions:
+    - fn: GPIO
+      routing: iomux
+    - fn: Power:VREFH
+      routing: fixed
+    - fn: ADC14:AN007
+      routing: fixed
+    - fn: DAC12:AMP1-
+      routing: fixed
+  unit: null
+  conditions:
+    package: LQFP64 (R7FA4M1AB3CFM)
+  doc: ds
+  locator:
+    pdf_page: 26
+    printed_page: 26
+    section: 1.7 Pin Lists, LQFP64 column
+  quote: P012
+  confidence: found
+  notes: Coordinate-based extraction of the rotated pin-list table, rendered to an image and checked visually. Column prefix = table column header. Items joined with '/' in one cell are alternates shown
+    in the same cell; separate tokens are separate functions. routing class is inferred (PSEL/ASEL selection per UM 19.6; dedicated analog/debug/USB/clock = fixed).
+  figure_read: true
+- path: pads.P012.adc
+  value:
+    unit: ADC14 (single unit)
+    channel_pin_text: AN007
+  unit: null
+  conditions:
+    restriction: AN000-AN014 = high-precision channels on AVCC0 domain, cannot be used as GPIO/IRQ2/IRQ3/TS while A/D in use; AN016-AN025 = normal-precision on VCC domain
+  doc: ds
+  locator:
+    pdf_page: 26
+    printed_page: 26
+    section: 1.7 Pin Lists (ADC14 column); 2.x Table 2.49
+  quote: P012
+  confidence: found
+  notes: null
+  figure_read: true
+- path: pads.P012.dac_opamp
+  value: AMP1-
+  unit: null
+  conditions: null
+  doc: ds
+  locator:
+    pdf_page: 26
+    printed_page: 26
+    section: 1.7 Pin Lists (DAC12, OPAMP column)
+  quote: P012
+  confidence: found
+  notes: OPAMP pin, not a DAC output.
+  figure_read: true
+- path: pads.P011.functions
+  value:
+    lqfp64_pin: 58
+    functions:
+    - fn: GPIO
+      routing: iomux
+    - fn: Power:VREFL0
+      routing: fixed
+    - fn: IRQ:IRQ15
+      routing: iomux
+    - fn: ADC14:AN006
+      routing: fixed
+    - fn: DAC12:AMP2+
+      routing: fixed
+    - fn: CTSU:TS31
+      routing: iomux
+  unit: null
+  conditions:
+    package: LQFP64 (R7FA4M1AB3CFM)
+  doc: ds
+  locator:
+    pdf_page: 26
+    printed_page: 26
+    section: 1.7 Pin Lists, LQFP64 column
+  quote: P011
+  confidence: found
+  notes: Coordinate-based extraction of the rotated pin-list table, rendered to an image and checked visually. Column prefix = table column header. Items joined with '/' in one cell are alternates shown
+    in the same cell; separate tokens are separate functions. routing class is inferred (PSEL/ASEL selection per UM 19.6; dedicated analog/debug/USB/clock = fixed).
+  figure_read: true
+- path: pads.P011.adc
+  value:
+    unit: ADC14 (single unit)
+    channel_pin_text: AN006
+  unit: null
+  conditions:
+    restriction: AN000-AN014 = high-precision channels on AVCC0 domain, cannot be used as GPIO/IRQ2/IRQ3/TS while A/D in use; AN016-AN025 = normal-precision on VCC domain
+  doc: ds
+  locator:
+    pdf_page: 26
+    printed_page: 26
+    section: 1.7 Pin Lists (ADC14 column); 2.x Table 2.49
+  quote: P011
+  confidence: found
+  notes: null
+  figure_read: true
+- path: pads.P011.dac_opamp
+  value: AMP2+
+  unit: null
+  conditions: null
+  doc: ds
+  locator:
+    pdf_page: 26
+    printed_page: 26
+    section: 1.7 Pin Lists (DAC12, OPAMP column)
+  quote: P011
+  confidence: found
+  notes: OPAMP pin, not a DAC output.
+  figure_read: true
+- path: pads.P011.touch
+  value: TS31
+  unit: null
+  conditions: null
+  doc: ds
+  locator:
+    pdf_page: 26
+    printed_page: 26
+    section: 1.7 Pin Lists (CTSU column)
+  quote: P011
+  confidence: found
+  notes: CTSU capacitive touch sensor channel/pin
+  figure_read: true
+- path: pads.P010.functions
+  value:
+    lqfp64_pin: 59
+    functions:
+    - fn: GPIO
+      routing: iomux
+    - fn: Power:VREFH0
+      routing: fixed
+    - fn: ADC14:AN005
+      routing: fixed
+    - fn: DAC12:AMP2-
+      routing: fixed
+    - fn: CTSU:TS30
+      routing: iomux
+  unit: null
+  conditions:
+    package: LQFP64 (R7FA4M1AB3CFM)
+  doc: ds
+  locator:
+    pdf_page: 26
+    printed_page: 26
+    section: 1.7 Pin Lists, LQFP64 column
+  quote: P010
+  confidence: found
+  notes: Coordinate-based extraction of the rotated pin-list table, rendered to an image and checked visually. Column prefix = table column header. Items joined with '/' in one cell are alternates shown
+    in the same cell; separate tokens are separate functions. routing class is inferred (PSEL/ASEL selection per UM 19.6; dedicated analog/debug/USB/clock = fixed).
+  figure_read: true
+- path: pads.P010.adc
+  value:
+    unit: ADC14 (single unit)
+    channel_pin_text: AN005
+  unit: null
+  conditions:
+    restriction: AN000-AN014 = high-precision channels on AVCC0 domain, cannot be used as GPIO/IRQ2/IRQ3/TS while A/D in use; AN016-AN025 = normal-precision on VCC domain
+  doc: ds
+  locator:
+    pdf_page: 26
+    printed_page: 26
+    section: 1.7 Pin Lists (ADC14 column); 2.x Table 2.49
+  quote: P010
+  confidence: found
+  notes: null
+  figure_read: true
+- path: pads.P010.dac_opamp
+  value: AMP2-
+  unit: null
+  conditions: null
+  doc: ds
+  locator:
+    pdf_page: 26
+    printed_page: 26
+    section: 1.7 Pin Lists (DAC12, OPAMP column)
+  quote: P010
+  confidence: found
+  notes: OPAMP pin, not a DAC output.
+  figure_read: true
+- path: pads.P010.touch
+  value: TS30
+  unit: null
+  conditions: null
+  doc: ds
+  locator:
+    pdf_page: 26
+    printed_page: 26
+    section: 1.7 Pin Lists (CTSU column)
+  quote: P010
+  confidence: found
+  notes: CTSU capacitive touch sensor channel/pin
+  figure_read: true
+- path: pads.P004.functions
+  value:
+    lqfp64_pin: 60
+    functions:
+    - fn: GPIO
+      routing: iomux
+    - fn: IRQ:IRQ3
+      routing: iomux
+    - fn: ADC14:AN004
+      routing: fixed
+    - fn: DAC12:AMP2O
+      routing: fixed
+  unit: null
+  conditions:
+    package: LQFP64 (R7FA4M1AB3CFM)
+  doc: ds
+  locator:
+    pdf_page: 26
+    printed_page: 26
+    section: 1.7 Pin Lists, LQFP64 column
+  quote: P004
+  confidence: found
+  notes: Coordinate-based extraction of the rotated pin-list table, rendered to an image and checked visually. Column prefix = table column header. Items joined with '/' in one cell are alternates shown
+    in the same cell; separate tokens are separate functions. routing class is inferred (PSEL/ASEL selection per UM 19.6; dedicated analog/debug/USB/clock = fixed).
+  figure_read: true
+- path: pads.P004.adc
+  value:
+    unit: ADC14 (single unit)
+    channel_pin_text: AN004
+  unit: null
+  conditions:
+    restriction: AN000-AN014 = high-precision channels on AVCC0 domain, cannot be used as GPIO/IRQ2/IRQ3/TS while A/D in use; AN016-AN025 = normal-precision on VCC domain
+  doc: ds
+  locator:
+    pdf_page: 26
+    printed_page: 26
+    section: 1.7 Pin Lists (ADC14 column); 2.x Table 2.49
+  quote: P004
+  confidence: found
+  notes: null
+  figure_read: true
+- path: pads.P004.dac_opamp
+  value: AMP2O
+  unit: null
+  conditions: null
+  doc: ds
+  locator:
+    pdf_page: 26
+    printed_page: 26
+    section: 1.7 Pin Lists (DAC12, OPAMP column)
+  quote: P004
+  confidence: found
+  notes: OPAMP pin, not a DAC output.
+  figure_read: true
+- path: pads.P003.functions
+  value:
+    lqfp64_pin: 61
+    functions:
+    - fn: GPIO
+      routing: iomux
+    - fn: ADC14:AN003
+      routing: fixed
+    - fn: DAC12:AMP1O
+      routing: fixed
+  unit: null
+  conditions:
+    package: LQFP64 (R7FA4M1AB3CFM)
+  doc: ds
+  locator:
+    pdf_page: 26
+    printed_page: 26
+    section: 1.7 Pin Lists, LQFP64 column
+  quote: P003
+  confidence: found
+  notes: Coordinate-based extraction of the rotated pin-list table, rendered to an image and checked visually. Column prefix = table column header. Items joined with '/' in one cell are alternates shown
+    in the same cell; separate tokens are separate functions. routing class is inferred (PSEL/ASEL selection per UM 19.6; dedicated analog/debug/USB/clock = fixed).
+  figure_read: true
+- path: pads.P003.adc
+  value:
+    unit: ADC14 (single unit)
+    channel_pin_text: AN003
+  unit: null
+  conditions:
+    restriction: AN000-AN014 = high-precision channels on AVCC0 domain, cannot be used as GPIO/IRQ2/IRQ3/TS while A/D in use; AN016-AN025 = normal-precision on VCC domain
+  doc: ds
+  locator:
+    pdf_page: 26
+    printed_page: 26
+    section: 1.7 Pin Lists (ADC14 column); 2.x Table 2.49
+  quote: P003
+  confidence: found
+  notes: null
+  figure_read: true
+- path: pads.P003.dac_opamp
+  value: AMP1O
+  unit: null
+  conditions: null
+  doc: ds
+  locator:
+    pdf_page: 26
+    printed_page: 26
+    section: 1.7 Pin Lists (DAC12, OPAMP column)
+  quote: P003
+  confidence: found
+  notes: OPAMP pin, not a DAC output.
+  figure_read: true
+- path: pads.P002.functions
+  value:
+    lqfp64_pin: 62
+    functions:
+    - fn: GPIO
+      routing: iomux
+    - fn: IRQ:IRQ2
+      routing: iomux
+    - fn: ADC14:AN002
+      routing: fixed
+    - fn: DAC12:AMP0O
+      routing: fixed
+  unit: null
+  conditions:
+    package: LQFP64 (R7FA4M1AB3CFM)
+  doc: ds
+  locator:
+    pdf_page: 26
+    printed_page: 26
+    section: 1.7 Pin Lists, LQFP64 column
+  quote: P002
+  confidence: found
+  notes: Coordinate-based extraction of the rotated pin-list table, rendered to an image and checked visually. Column prefix = table column header. Items joined with '/' in one cell are alternates shown
+    in the same cell; separate tokens are separate functions. routing class is inferred (PSEL/ASEL selection per UM 19.6; dedicated analog/debug/USB/clock = fixed).
+  figure_read: true
+- path: pads.P002.adc
+  value:
+    unit: ADC14 (single unit)
+    channel_pin_text: AN002
+  unit: null
+  conditions:
+    restriction: AN000-AN014 = high-precision channels on AVCC0 domain, cannot be used as GPIO/IRQ2/IRQ3/TS while A/D in use; AN016-AN025 = normal-precision on VCC domain
+  doc: ds
+  locator:
+    pdf_page: 26
+    printed_page: 26
+    section: 1.7 Pin Lists (ADC14 column); 2.x Table 2.49
+  quote: P002
+  confidence: found
+  notes: null
+  figure_read: true
+- path: pads.P002.dac_opamp
+  value: AMP0O
+  unit: null
+  conditions: null
+  doc: ds
+  locator:
+    pdf_page: 26
+    printed_page: 26
+    section: 1.7 Pin Lists (DAC12, OPAMP column)
+  quote: P002
+  confidence: found
+  notes: OPAMP pin, not a DAC output.
+  figure_read: true
+- path: pads.P001.functions
+  value:
+    lqfp64_pin: 63
+    functions:
+    - fn: GPIO
+      routing: iomux
+    - fn: IRQ:IRQ7
+      routing: iomux
+    - fn: ADC14:AN001
+      routing: fixed
+    - fn: DAC12:AMP0-
+      routing: fixed
+    - fn: CTSU:TS22
+      routing: iomux
+  unit: null
+  conditions:
+    package: LQFP64 (R7FA4M1AB3CFM)
+  doc: ds
+  locator:
+    pdf_page: 26
+    printed_page: 26
+    section: 1.7 Pin Lists, LQFP64 column
+  quote: P001
+  confidence: found
+  notes: Coordinate-based extraction of the rotated pin-list table, rendered to an image and checked visually. Column prefix = table column header. Items joined with '/' in one cell are alternates shown
+    in the same cell; separate tokens are separate functions. routing class is inferred (PSEL/ASEL selection per UM 19.6; dedicated analog/debug/USB/clock = fixed).
+  figure_read: true
+- path: pads.P001.adc
+  value:
+    unit: ADC14 (single unit)
+    channel_pin_text: AN001
+  unit: null
+  conditions:
+    restriction: AN000-AN014 = high-precision channels on AVCC0 domain, cannot be used as GPIO/IRQ2/IRQ3/TS while A/D in use; AN016-AN025 = normal-precision on VCC domain
+  doc: ds
+  locator:
+    pdf_page: 26
+    printed_page: 26
+    section: 1.7 Pin Lists (ADC14 column); 2.x Table 2.49
+  quote: P001
+  confidence: found
+  notes: null
+  figure_read: true
+- path: pads.P001.dac_opamp
+  value: AMP0-
+  unit: null
+  conditions: null
+  doc: ds
+  locator:
+    pdf_page: 26
+    printed_page: 26
+    section: 1.7 Pin Lists (DAC12, OPAMP column)
+  quote: P001
+  confidence: found
+  notes: OPAMP pin, not a DAC output.
+  figure_read: true
+- path: pads.P001.touch
+  value: TS22
+  unit: null
+  conditions: null
+  doc: ds
+  locator:
+    pdf_page: 26
+    printed_page: 26
+    section: 1.7 Pin Lists (CTSU column)
+  quote: P001
+  confidence: found
+  notes: CTSU capacitive touch sensor channel/pin
+  figure_read: true
+- path: pads.P000.functions
+  value:
+    lqfp64_pin: 64
+    functions:
+    - fn: GPIO
+      routing: iomux
+    - fn: IRQ:IRQ6
+      routing: iomux
+    - fn: ADC14:AN000
+      routing: fixed
+    - fn: DAC12:AMP0+
+      routing: fixed
+    - fn: CTSU:TS21
+      routing: iomux
+  unit: null
+  conditions:
+    package: LQFP64 (R7FA4M1AB3CFM)
+  doc: ds
+  locator:
+    pdf_page: 26
+    printed_page: 26
+    section: 1.7 Pin Lists, LQFP64 column
+  quote: P000
+  confidence: found
+  notes: Coordinate-based extraction of the rotated pin-list table, rendered to an image and checked visually. Column prefix = table column header. Items joined with '/' in one cell are alternates shown
+    in the same cell; separate tokens are separate functions. routing class is inferred (PSEL/ASEL selection per UM 19.6; dedicated analog/debug/USB/clock = fixed).
+  figure_read: true
+- path: pads.P000.adc
+  value:
+    unit: ADC14 (single unit)
+    channel_pin_text: AN000
+  unit: null
+  conditions:
+    restriction: AN000-AN014 = high-precision channels on AVCC0 domain, cannot be used as GPIO/IRQ2/IRQ3/TS while A/D in use; AN016-AN025 = normal-precision on VCC domain
+  doc: ds
+  locator:
+    pdf_page: 26
+    printed_page: 26
+    section: 1.7 Pin Lists (ADC14 column); 2.x Table 2.49
+  quote: P000
+  confidence: found
+  notes: null
+  figure_read: true
+- path: pads.P000.dac_opamp
+  value: AMP0+
+  unit: null
+  conditions: null
+  doc: ds
+  locator:
+    pdf_page: 26
+    printed_page: 26
+    section: 1.7 Pin Lists (DAC12, OPAMP column)
+  quote: P000
+  confidence: found
+  notes: OPAMP pin, not a DAC output.
+  figure_read: true
+- path: pads.P000.touch
+  value: TS21
+  unit: null
+  conditions: null
+  doc: ds
+  locator:
+    pdf_page: 26
+    printed_page: 26
+    section: 1.7 Pin Lists (CTSU column)
+  quote: P000
+  confidence: found
+  notes: CTSU capacitive touch sensor channel/pin
+  figure_read: true
+- path: pads.input_only
+  value:
+  - P200
+  - P214
+  - P215
+  unit: null
+  conditions: null
+  doc: ds
+  locator:
+    pdf_page: 33
+    printed_page: 33
+    section: 2.2.3 Table 2.6 Note 3
+  quote: Except for ports P200, P214, P215, which are input ports.
+  confidence: found
+  notes: UM Table 19.2 (p356) also shows P200,P214,P215 without pull-up/open-drain/drive switching. All other bonded port pads are I/O. RES is a dedicated input (not a port). Hardware pull-up not available
+    on P200/P214/P215 (DS Table 2.10 excludes them).
+- path: pads.input_only.um
+  value:
+  - P200
+  - P214
+  - P215
+  unit: null
+  conditions: null
+  doc: um
+  locator:
+    pdf_page: 356
+    printed_page: 356
+    section: 19.1 Table 19.2 I/O port functions
+  quote: P200, P214, P215
+  confidence: found
+  notes: Row shows '—' in all columns (no pull-up, open-drain, drive switching, 5 V tolerant)
+  figure_read: true
+- path: pads.reset_state.default
+  value: input
+  unit: null
+  conditions:
+    register: PmnPFS reset value 0000 0000h (PDR=0 input, PMR=0 GPIO, PCR=0 no pull-up, ASEL=0, DSCR=0 low drive)
+  doc: um
+  locator:
+    pdf_page: 362
+    printed_page: 362
+    section: 19.2.5 PmnPFS register
+  quote: The pull-up resistor is also disabled in the reset state.
+  confidence: found
+  notes: Pin tables 19.5ff (UM p369+) label PSEL 00000b (value after reset) as 'Hi-Z/JTAG/SWD' => high-impedance input without pull-up for ordinary pads. PmnPFS 'Value after reset' row is all 0 except as
+    in Note 2.
+- path: pads.reset_state.hiz_table
+  value: Hi-Z
+  unit: null
+  conditions: null
+  doc: um
+  locator:
+    pdf_page: 369
+    printed_page: 369
+    section: 19.6 Table 19.5 (PORT0) and following
+  quote: 00000b (value after reset)
+  confidence: found
+  notes: Quote is the row label; the cell reads 'Hi-Z/JTAG/SWD' (figure_read from table text order).
+  figure_read: true
+- path: pads.reset_state.exceptions
+  value:
+    P108: pullup (PMR=1 SWDIO, PCR=1; PmnPFS=0001 0010h)
+    P110: pullup (PMR=1 TDI, PCR=1; 0001 0010h)
+    P300: pullup (PMR=1 SWCLK, PCR=1; 0001 0010h)
+    P109: peripheral output TDO/SWO (PMR=1; 0001 0000h); level not stated
+    P201: pullup (MD pin, PCR=1; 0000 0010h)
+    P914: 'disabled for GPIO: PMR=1 USB_DM/DP dedicated (0001 0000h)'
+    P915: same as P914
+  unit: null
+  conditions: null
+  doc: um
+  locator:
+    pdf_page: 362
+    printed_page: 362
+    section: 19.2.5 PmnPFS Note 2
+  quote: P108 is 0001 0010h, P109 is 0001 0000h, P110 is 0001 0010h, P201 is 0000 0010h, P300 is 0001 0010h,
+  confidence: found
+  notes: 'Hex: bit16=PMR, bit4=PCR. UM 19.4 Note 2 (p367) confirms P108, P110, P300 are input pull-up enabled from initial value; Note 3: P109 is output from the initial value. DISAGREEMENT inside UM: p362
+    says ''pull-up is also disabled in the reset state'' while P201/P108/P110/P300 reset value has PCR=1; the register value table is more specific.'
+- path: pads.reset_state.pullup_exceptions_note
+  value: P108,P110,P300 pull-up enabled from reset
+  unit: null
+  conditions: null
+  doc: um
+  locator:
+    pdf_page: 367
+    printed_page: 367
+    section: 19.4 Table 19.3 Note 2
+  quote: these pins are input pull-up enabled from initial value (PmnPFS.PCR = 1).
+  confidence: found
+  notes: null
+- path: pads.P201.strap
+  value:
+    role: 'MD (operating mode: boot mode select)'
+    required_at_reset: high for normal single-chip start; low (held low on release of reset) selects SCI/USB boot
+    default_pull: up (PmnPFS.PCR=1 at reset per P201 initial value 0000 0010h; not independently stated as a strap pull)
+  unit: null
+  conditions:
+    pad: P201/MD pin 26
+  doc: um
+  locator:
+    pdf_page: 91
+    printed_page: 91
+    section: 3.2 Operating Mode Details / Table 3.1
+  quote: When a reset is released while the MD pin is high, the MCU starts in single-chip mode
+  confidence: found
+  notes: 'SCI boot and USB boot both: ''if the MD pin is held low on release from the reset state''. Table 3.1: MD=1 single-chip, MD=0 SCI/USB boot. DS Table 1.15 (p12): levels must not change during mode
+    transition on release from reset.'
+- path: pads.P201.strap.ds
+  value: MD
+  unit: null
+  conditions: null
+  doc: ds
+  locator:
+    pdf_page: 12
+    printed_page: 12
+    section: 1.6 Table 1.15 Pin functions
+  quote: The signal levels on these pins must not
+  confidence: found
+  notes: null
+- path: pads.strap.sci_boot_pins
+  value:
+    P109: TXD9 (output)
+    P110: RXD9 (input)
+    MD: mode select
+  unit: null
+  conditions:
+    mode: SCI boot (SCI9)
+  doc: um
+  locator:
+    pdf_page: 1257
+    printed_page: 1257
+    section: 44.11 Serial Programming Mode Table 44.11
+  quote: P110/RXD9
+  confidence: found
+  notes: Pins used only after entering boot mode; they are not strap levels. USB boot uses USBFS (P914/P915).
+  figure_read: true
+- path: pads.strap.others
+  value: none
+  unit: null
+  conditions: null
+  doc: um
+  locator:
+    pdf_page: 91
+    printed_page: 91
+    section: 3 Operating Modes Table 3.1
+  quote: Mode-setting pin
+  confidence: found
+  notes: Table 3.1 has only the MD pin as mode-setting pin; no other pad is sampled at reset. Debug pins P108/P300/P110 are pulled up at reset but are not mode straps.
+- path: pads.power_up_glitch
+  value: null
+  unit: null
+  conditions: null
+  doc: ds
+  locator:
+    pdf_page: null
+    printed_page: null
+    section: searched DS (131 p) and UM (1454 p) text for glitch/spurious/unstable/Hi-Z
+  quote: null
+  confidence: could-not-verify
+  notes: Neither document states any power-up output glitch for GPIO. UM only mentions a clock-output glitch on CKOSEL change (UM clock section) and states pins are Hi-Z after reset. Renesas Technical Updates/errata
+    could not be opened (product page lists none; Documentation tab not retrievable) so a documented 'none' cannot be claimed.
+- path: pads.errata
+  value: null
+  unit: null
+  conditions: null
+  doc: ds
+  locator:
+    pdf_page: null
+    printed_page: null
+    section: Renesas product page https://www.renesas.com/en/products/ra4m1 (WebFetch)
+  quote: null
+  confidence: could-not-verify
+  notes: Product page content returned no errata/technical-update list; did not work around. Datasheet p130 refers to 'technical updates that have been issued' (text only).
+- path: pads.errata.ds_ref
+  value: technical updates exist as separate documents
+  unit: null
+  conditions: null
+  doc: ds
+  locator:
+    pdf_page: 130
+    printed_page: 130
+    section: Notice
+  quote: any technical updates that have been issued for the products.
+  confidence: found
+  notes: null
+- path: electrical.vdd_io
+  value:
+  - 1.6
+  - 5.5
+  unit: V
+  conditions:
+    parameter: VCC, USBFS not used
+    note: '5 V operation: 4.0-5.5 V'
+  doc: ds
+  locator:
+    pdf_page: 29
+    printed_page: 29
+    section: 2.1 Table 2.2 Recommended operating conditions
+  quote: VCC*1, *2
+  confidence: found
+  notes: 'Row layout: ''When USBFS is not used 1.6 - 5.5 V''. With USBFS and regulator enabled VCC_USB_LDO 3.8-5.5 V; regulator disabled VCC_USB 3.0-3.6 V. Abs max VCC -0.5 to +6.5 V (Table 2.1).'
+  figure_read: true
+- path: electrical.vih_min
+  value:
+    general_input_non_schmitt_and_peripheral_schmitt: VCC*0.8
+    IIC (except SMBus) pins P205,P206,P400,P401,P407,P408: VCC*0.7
+    RES,NMI: VCC*0.8
+    5V-tolerant ports: VCC*0.8 (max 5.8 V)
+    P000-P008,P010-P015: AVCC0*0.8
+  unit: V
+  conditions:
+    VCC: 2.7-5.5 V (single column; no separate 4.0-5.5 column)
+    at 5.0 V: 4.0 V (x0.8) / 3.5 V (x0.7)
+    at 3.3 V: 2.64 V / 2.31 V
+  doc: ds
+  locator:
+    pdf_page: 30
+    printed_page: 30
+    section: 2.2.2 Table 2.4 I/O VIH, VIL (1)
+  quote: Other peripheral input pins excluding IIC
+  confidence: found
+  notes: 'Table also: VCC 1.6-2.7 V (Table 2.5, p31) uses VCC*0.8 for all non-IIC.'
+  figure_read: true
+- path: electrical.vil_max
+  value:
+    general: VCC*0.2
+    IIC (except SMBus): VCC*0.3
+    RES,NMI,peripheral Schmitt: VCC*0.2
+    5V-tolerant ports: VCC*0.2
+    P000-P015: AVCC0*0.2
+  unit: V
+  conditions:
+    VCC: 2.7-5.5 V
+    at 5.0 V: 1.0 V (x0.2) / 1.5 V (x0.3)
+    at 3.3 V: 0.66 V / 0.99 V
+  doc: ds
+  locator:
+    pdf_page: 30
+    printed_page: 30
+    section: 2.2.2 Table 2.4
+  quote: VCC × 0.2
+  confidence: found
+  notes: null
+  figure_read: true
+- path: electrical.voh_min
+  value:
+    other output pins low drive: VCC-0.8 @ IOH=-2.0 mA
+    other output pins middle drive: VCC-0.8 @ IOH=-4.0 mA
+    P408,P409 middle drive: VCC-1.0 @ IOH=-20 mA
+    P000-P008,P010-P015 low: AVCC0-0.8 @ -2.0 mA
+    P000-P015 middle: AVCC0-0.8 @ -4.0 mA
+    P914,P915: VCC_USB-0.8 @ -2.0 mA
+  unit: V
+  conditions:
+    VCC: 4.0-5.5 V (Table 2.7)
+  doc: ds
+  locator:
+    pdf_page: 34
+    printed_page: 34
+    section: 2.2.4 Table 2.7 I/O VOH, VOL (1)
+  quote: Other output pins*4
+  confidence: found
+  notes: null
+  figure_read: true
+- path: electrical.voh_min.vcc_2v7_4v0
+  value:
+    other low drive: VCC-0.5 @ -1.0 mA
+    other middle: VCC-0.5 @ -2.0 mA
+    P408,P409: VCC-1.0 @ -20 mA (VCC=3.3 V)
+    P000-P015 low/middle: AVCC0-0.5 @ -1.0/-2.0 mA
+  unit: V
+  conditions:
+    VCC: 2.7-4.0 V (Table 2.8)
+  doc: ds
+  locator:
+    pdf_page: 34
+    printed_page: 34
+    section: 2.2.4 Table 2.8
+  quote: Other output pins*4
+  confidence: found
+  notes: null
+  figure_read: true
+- path: electrical.vol_max
+  value:
+    other low drive: 0.8 @ IOL=2.0 mA
+    other middle drive: 0.8 @ IOL=4.0 mA
+    P408,P409 middle: 1.0 @ IOL=20 mA
+    IIC pins: 0.4 @ 3.0 mA; 0.6 @ 6.0 mA (middle drive for IIC on P408)
+    P000-P015: 0.8 @ 2.0/4.0 mA
+  unit: V
+  conditions:
+    VCC: '4.0-5.5 V (Table 2.7); 2.7-4.0 V (Table 2.8): 0.5 V @ 1.0/2.0 mA; 1.0 V @ 20 mA at 3.3 V'
+  doc: ds
+  locator:
+    pdf_page: 34
+    printed_page: 34
+    section: 2.2.4 Table 2.7/2.8
+  quote: Ports P408, P409*2, *3
+  confidence: found
+  notes: null
+  figure_read: true
+- path: electrical.abs_max_vin
+  value:
+    '5V-tolerant ports (64-pin: P205,P206,P400,P401,P402,P407,P408)': -0.3 to +6.5 V
+    P000-P008,P010-P015: -0.3 to AVCC0+0.3 V
+    others: -0.3 to VCC+0.3 V
+  unit: V
+  conditions:
+    VCC abs max: -0.5 to +6.5 V
+  doc: ds
+  locator:
+    pdf_page: 28
+    printed_page: 28
+    section: 2.1 Table 2.1 Absolute maximum ratings
+  quote: Ports P205, P206, P400 to P404, P407, P408 are 5 V tolerant.
+  confidence: found
+  notes: 'Operating VIH max for 5V-tolerant ports is 5.8 V (Table 2.4). 64-pin package has 7 5V-tolerant pins (Table 1.14 p11, ''for 5V tolerance 7''). Caution: ''Do not input signals ... while the device
+    is not powered.'''
+- path: electrical.pin_current_max
+  value:
+    source_of_truth: Table 2.6 'Permissible output current (average value per pin)' and '(Max value per pin)' give identical values; 'average value measured during 100 us'
+    reset_default_drive: Low drive (PmnPFS DSCR=0 at reset; P408 DSCR1/DSCR=00 low)
+    41-pin group (P100-P115,P201-P204,P300-P307,P500-P503,...):
+      low: IOH -4.0 / IOL 4.0 mA
+      middle: IOH -4.0 / IOL 8.0 mA
+    other output pins (P000-P015, P205,P206,P400-P402,P407,P410,P411, ...):
+      low: -4.0 / 4.0 mA
+      middle: -8.0 / 8.0 mA
+    P212,P213: -4.0 / 4.0 mA (no drive switching)
+    P914,P915: -4.0 / 4.0 mA
+    P408:
+      low: -4.0/4.0
+      middle IIC fast-mode (VCC 2.7-5.5): -8.0/8.0
+      middle (VCC 3.0-5.5): -20.0/20.0
+    P409:
+      low: -4.0/4.0
+      middle (2.7-3.0 V): -8.0/8.0
+      middle (3.0-5.5 V): -20.0/20.0
+  unit: mA
+  conditions:
+    VCC: 1.6-5.5 V
+    type: absolute maximum permissible (rating), not typical
+  doc: ds
+  locator:
+    pdf_page: 33
+    printed_page: 33
+    section: 2.2.3 Table 2.6 I/O IOH, IOL (2 of 2); p32 (1 of 2)
+  quote: To protect the reliability of the MCU, the output current values should not exceed the values in this table.
+  confidence: found
+  notes: 'Column ''Max'' of the table. Drive reset default: UM p361-362 PmnPFS ''Value after reset'' 0 and DSCR ''b10 0: Low drive''. VOH/VOL spec points are at 2/4 mA (low/middle) at 4.0-5.5 V.'
+  figure_read: true
+- path: electrical.pin_current_max.um_drive_default
+  value: Low drive
+  unit: null
+  conditions: null
+  doc: um
+  locator:
+    pdf_page: 361
+    printed_page: 361
+    section: 19.2.5 PmnPFS b11,b10 DSCR1/DSCR
+  quote: '0: Low drive'
+  confidence: found
+  notes: Value after reset for DSCR = 0 (bits b11/b10).
+- path: electrical.port_current_max
+  value:
+    P000-P008,P010-P015 total: IOH -30 / IOL 30 mA
+    P914,P915 total: IOH -2.0 / IOL 2.0 mA
+  unit: mA
+  conditions:
+    VCC: 1.6-5.5 V
+  doc: ds
+  locator:
+    pdf_page: 33
+    printed_page: 33
+    section: 2.2.3 Table 2.6 (2 of 2)
+  quote: Total of ports P000 to P008, P010 to P015
+  confidence: found
+  notes: Table row labelled 'ΣIOL (min)' for P914/P915 appears to be a typo for max. No per-port (PORT1..) group limit given beyond the total.
+  figure_read: true
+- path: electrical.cumulative_current_max
+  value:
+    IOH: -60
+    IOL: 60
+  unit: mA
+  conditions:
+    scope: total of all output pins; CTSU see 2.11
+  doc: ds
+  locator:
+    pdf_page: 33
+    printed_page: 33
+    section: 2.2.3 Table 2.6 (2 of 2)
+  quote: Total of all output pin*5
+  confidence: found
+  notes: null
+  figure_read: true
+- path: electrical.vcc_pin_current_max
+  value: null
+  unit: null
+  conditions: null
+  doc: ds
+  locator:
+    pdf_page: null
+    printed_page: null
+    section: searched Table 2.x/2.1
+  quote: null
+  confidence: could-not-verify
+  notes: No per-supply-pin current rating found in the tables read (2.1, 2.2.3).
+- path: electrical.internal_pull_ohm
+  value:
+    min: 10000
+    typ: 20000
+    max: 50000
+  unit: ohm
+  conditions:
+    VCC: 1.6-5.5 V
+    Vin: 0 V
+    ports: all except P200,P214,P215,P914,P915
+  doc: ds
+  locator:
+    pdf_page: 35
+    printed_page: 35
+    section: 2.2.4 Table 2.10 I/O other characteristics
+  quote: RU 10 20 50
+  confidence: found
+  notes: null
+  figure_read: true
+- path: electrical.input_leakage
+  value:
+    RES,P200,P214,P215: 1.0 uA max (Vin=0 or VCC)
+    tristate leakage 5V tolerant: 1.0 uA max (Vin=0 / 5.8 V)
+    other ports: 1.0 uA max
+  unit: uA
+  conditions: null
+  doc: ds
+  locator:
+    pdf_page: 35
+    printed_page: 35
+    section: 2.2.4 Table 2.10
+  quote: Input leakage current
+  confidence: found
+  notes: null
+  figure_read: true
+- path: electrical.input_capacitance
+  value:
+    P914,P915,P100-P103,P111,P112,P200: 30 pF max
+    others: 15 pF max
+  unit: pF
+  conditions:
+    f: 1 MHz, Ta=25C
+  doc: ds
+  locator:
+    pdf_page: 35
+    printed_page: 35
+    section: 2.2.4 Table 2.10
+  quote: Input capacitance
+  confidence: found
+  notes: null
+  figure_read: true
+- path: electrical.arduino_gpio_current
+  value: 8 mA
+  unit: mA
+  conditions:
+    board: UNO R4 Minima
+  doc: abx
+  locator:
+    pdf_page: 11
+    printed_page: 11
+    section: 9.3 Pin Current
+  quote: The GPIOs on the R7FA4M1AB3CFM#AA0 microcontroller can handle up to 8 mA.
+  confidence: found
+  notes: 'Board-level statement, no drive setting named. DISAGREES with DS: 8 mA is the ''middle drive'' IOL/IOH only for ''other output pins'' (and IOL only for the 41-pin group, IOH -4 mA); at reset default
+    low drive it is 4 mA. Treat the DS values as authoritative.'
+- path: package.part
+  value: R7FA4M1AB3CFM = PLQP0064KB-C, LQFP 64 pins, -40 to +105 C
+  unit: null
+  conditions: null
+  doc: ds
+  locator:
+    pdf_page: 10
+    printed_page: 10
+    section: 1.3 Table 1.13 Product list
+  quote: R7FA4M1AB3CFM
+  confidence: found
+  notes: 'Part numbering: FM = LQFP 64 pins (p9). Table 1.14 (p11): 49 I/O pins + 3 input pins, 47 pull-ups, 36 N-ch open-drain, 7 5V-tolerant, ADC14 18 channels, DAC12 1, SCI 4, IIC 2, SPI 2, CAN 1, USBFS,
+    SSIE 1, CTSU 24.'
+  figure_read: true
+- path: package.port_set
+  value:
+    PORT0: P000-P004,P010-P015 (11)
+    PORT1: P100-P113 (14)
+    PORT2: P200,P201,P204-P206,P212-P215 (9)
+    PORT3: P300-P304 (5)
+    PORT4: P400-P402,P407-P411 (8)
+    PORT5: P500-P502 (3)
+    PORT9: P914,P915 (2)
+    total: 52
+  unit: null
+  conditions: null
+  doc: um
+  locator:
+    pdf_page: 356
+    printed_page: 356
+    section: 19.1 Table 19.1 I/O Ports specifications (2 of 2), 64 pins
+  quote: Total of pins
+  confidence: found
+  notes: Matches the 52 port pads extracted from the DS pin list (verified by count).
+  figure_read: true
+- path: package.nonport_pins
+  value:
+    4: VBATT
+    5: VCL
+    8: VSS
+    11: VCC
+    17: VSS_USB
+    20: VCC_USB
+    21: VCC_USB_LDO
+    25: RES
+    39: VCC
+    40: VSS
+    56: AVCC0
+    57: AVSS0
+  unit: null
+  conditions: null
+  doc: ds
+  locator:
+    pdf_page: 23
+    printed_page: 23
+    section: 1.7 Pin Lists, LQFP64 non-port pins
+  quote: VBATT
+  confidence: found
+  notes: Non-port pins only; P-pads (incl. 6 P215, 7 P214, 9 P213, 10 P212, 26 P201) are in pads.*.functions.
+  figure_read: true
+- path: peripherals.SCI
+  value:
+    channels: SCI0, SCI1, SCI2, SCI9 (4 channels)
+    pin_groups_to_pads:
+      SCK0:
+      - P400
+      - P204
+      - P102
+      SCK1:
+      - P400
+      - P109
+      - P112
+      - P100
+      CTS0_RTS0/SS0:
+      - P401
+      - P407
+      - P103
+      TXD1/MOSI1/SDA1:
+      - P401
+      - P213
+      - P501
+      RXD1/MISO1/SCL1:
+      - P402
+      - P212
+      - P502
+      TXD0/MOSI0/SDA0:
+      - P411
+      - P205
+      - P101
+      RXD0/MISO0/SCL0:
+      - P410
+      - P206
+      - P104
+      - P100
+      TXD9/MOSI9/SDA9:
+      - P409
+      - P109
+      CTS1_RTS1/SS1:
+      - P408
+      - P101
+      RXD9/MISO9/SCL9:
+      - P408
+      - P110
+      CTS9_RTS9/SS9:
+      - P205
+      - P301
+      - P108
+      SCK9:
+      - P204
+      - P111
+      TXD2/MOSI2/SDA2:
+      - P302
+      - P112
+      - P102
+      RXD2/MISO2/SCL2:
+      - P301
+      CTS2_RTS2/SS2:
+      - P110
+      SCK2:
+      - P111
+  unit: null
+  conditions: null
+  doc: ds
+  locator:
+    pdf_page: 23
+    printed_page: 23
+    section: 1.7 Pin Lists (SCI column) + Table 1.14 (p11)
+  quote: SCI
+  confidence: found
+  notes: 'Each pad can carry only the SCI group(s) listed in its cell (selected by PSEL). UART roles: TXDn/RXDn/CTSn_RTSn/SCKn. Simple SPI/IIC share the same pad via MOSIn/MISOn/SDAn/SCLn. SCI boot uses
+    SCI9 on P109/P110 (UM p1257). Async min clock cycle: input 4 tPcyc, output 6 tPcyc (Table 2.33 p69).'
+  figure_read: true
+- path: peripherals.IIC
+  value:
+    I2C0/IIC0:
+      SCL0:
+      - P400
+      - P408
+      - P204
+      SDA0:
+      - P401
+      - P407
+    I2C1/IIC1:
+      SCL1:
+      - P205
+      - P100
+      SDA1:
+      - P206
+      - P101
+  unit: null
+  conditions:
+    IIC pads: 5V tolerant 'IIC' VIH 0.7 VCC for P205,P206,P400,P401,P407,P408
+  doc: ds
+  locator:
+    pdf_page: 23
+    printed_page: 23
+    section: 1.7 Pin Lists (IIC column)
+  quote: IIC
+  confidence: found
+  notes: 'DISAGREEMENT within DS: Table 1.7 (p5) text says ''The 3-channel I2C Bus Interface (IIC)'' but Table 1.14 (p11) says IIC = 2 and pin list/UM p61 list only SCL0,SCL1/SDA0,SDA1 (UM overview also
+    says ''3-channel'' while its block diagram says IIC x 2). Fast mode tSCL = 6(12)*tIICcyc+600 ns (Table 2.37 p81); standard 6(12)*tIICcyc+1300 ns.'
+  figure_read: true
+- path: peripherals.SPI
+  value:
+    RSPI A:
+      MOSIA:
+      - P411
+      - P101
+      MISOA:
+      - P410
+      - P100
+      RSPCKA:
+      - P102
+    RSPI B:
+      RSPCKB:
+      - P204
+      - P111
+      MOSIB:
+      - P109
+      MISOB:
+      - P110
+  unit: null
+  conditions:
+    channels: 2 (SPI0 'A', SPI1 'B' naming in pin list)
+  doc: ds
+  locator:
+    pdf_page: 23
+    printed_page: 23
+    section: 1.7 Pin Lists (SPI column)
+  quote: SPI
+  confidence: found
+  notes: Master RSPCK min cycle 2 tPcyc (Table 2.36 p75, middle drive selected); PCLKA max 48 MHz at 2.7-5.5 V (Table 2.17 p55) -> inferred 24 MHz max SPI master clock.
+  figure_read: true
+- path: peripherals.ADC14
+  value:
+    channels_on_64pin: 18
+    map:
+      P407: ADTRG0
+      P103: AN019
+      P102: AN020/ ADTRG0
+      P101: AN021
+      P100: AN022
+      P500: AN016
+      P501: AN017
+      P502: AN018
+      P015: AN010
+      P014: AN009
+      P013: AN008
+      P012: AN007
+      P011: AN006
+      P010: AN005
+      P004: AN004
+      P003: AN003
+      P002: AN002
+      P001: AN001
+      P000: AN000
+    high_precision: AN000-AN014 (AVCC0 domain)
+    normal_precision: AN016-AN025 (VCC domain)
+  unit: null
+  conditions:
+    restriction: AN000-AN014 cannot be used as general I/O, IRQ2, IRQ3 inputs and TS while A/D in use; AN0xx pin Vin max AVCC0+0.3 (AN000-AN014) / VCC+0.3 (AN016-AN025)
+  doc: ds
+  locator:
+    pdf_page: 95
+    printed_page: 95
+    section: 2.x Table 2.49 14-Bit A/D converter channel classification
+  quote: High-precision channel
+  confidence: found
+  notes: 'Table 1.14 (p11) lists ADC14 = 18 channels for 64-pin. ADC conversion clock PCLKC max 64 MHz (4.5-5.5 V). UM ADC14 usage note (PDF text near section ''A/D converter'' notes): do not use PORT0
+    as GPIO/IRQ2/IRQ3/TS when using high-precision channels.'
+  figure_read: true
+- path: peripherals.DAC12
+  value:
+    channel: DA0 on P014 (pin 53)
+    channels: 1
+    load: '>=30 kohm, <=50 pF; output 0.35 to AVCC0-0.47 V'
+  unit: null
+  conditions: null
+  doc: ds
+  locator:
+    pdf_page: 97
+    printed_page: 97
+    section: 2.x Table 2.51 D/A conversion characteristics (1)
+  quote: Resistive load
+  confidence: found
+  notes: DAC8 x2 is listed in Table 1.14 but no DAC8 pins appear in the pin list. P014 also carries AN009.
+- path: peripherals.CAN
+  value:
+    channels: 1
+    CTX0:
+    - P401
+    - P109
+    - P103
+    CRX0:
+    - P402
+    - P110
+    - P102
+  unit: null
+  conditions: null
+  doc: ds
+  locator:
+    pdf_page: 23
+    printed_page: 23
+    section: 1.7 Pin Lists (USBFS,CAN column) + Table 1.14
+  quote: CAN
+  confidence: found
+  notes: 'Mapping read from USB_CAN column: CTX0 on pins 2 (P401), 34 (P109), 45 (P103); CRX0 on 3 (P402), 35 (P110), 46 (P102). ISO 11898-1; transceiver external.'
+  figure_read: true
+- path: peripherals.USBFS
+  value:
+    USB_DP: P914 (pin 19)
+    USB_DM: P915 (pin 18)
+    VCC_USB_LDO: pin 21
+    VCC_USB: pin 20
+    VSS_USB: pin 17
+    USB_VBUS: P407
+    USB_ID: P408
+    USB_EXICEN: P409
+    USB_VBUSEN:
+    - P206
+    - P500
+    USB_OVRCURA:
+    - P205
+    - P501
+    USB_OVRCURB:
+    - P204
+    - P502
+  unit: null
+  conditions: null
+  doc: ds
+  locator:
+    pdf_page: 23
+    printed_page: 23
+    section: 1.7 Pin Lists
+  quote: USB_DP
+  confidence: found
+  notes: USB 2.0 full-speed; low-speed host only. VCC_USB_LDO 3.8-5.5 V with regulator.
+  figure_read: true
+- path: peripherals.clock_limits
+  value:
+    ICLK: 48 MHz max (2.7-5.5 V)
+    PCLKA: 48 MHz
+    PCLKB: 32 MHz
+    PCLKC: 64 MHz
+    PCLKD: 64 MHz
+    FCLK: 32 MHz
+  unit: MHz
+  conditions:
+    mode: high-speed, VCC 2.7-5.5 V
+  doc: ds
+  locator:
+    pdf_page: 55
+    printed_page: 55
+    section: 2.3.1 Table 2.17 Operation frequency value in high-speed operating mode
+  quote: Peripheral module clock (PCLKA)*4
+  confidence: found
+  notes: Row labels quoted; PCLKC 64 MHz needs fclk >= 4 MHz for ADC.
+  figure_read: true
+- path: sources.newer_revision_check
+  value: none found by automated access
+  unit: null
+  conditions: null
+  doc: ds
+  locator:
+    pdf_page: null
+    printed_page: null
+    section: Renesas product page (WebFetch)
+  quote: null
+  confidence: could-not-verify
+  notes: Product page lists only the same datasheet/UM links; no revision/date info; Documentation tab not retrievable. Do not treat as proof that no newer revision/technical update exists.

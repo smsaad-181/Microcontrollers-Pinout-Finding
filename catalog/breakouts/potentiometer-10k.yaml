@@ -1,0 +1,37 @@
+hardwired: []
+ic: potentiometer-10k
+id: potentiometer-10k
+interfaces_exposed:
+- analog
+level_shifter:
+  evidence: []
+  note: Not applicable to a bare potentiometer; no document states it.
+  status: missing
+  value: null
+notes: 'Bare three-terminal potentiometer used as a voltage divider: end terminals to the supply and GND, wiper to an ADC input; the wiper voltage lies between the end-terminal voltages, so the ADC pin sees at most the supply it is wired to (use the MCU 3.3 V rail for a 3.3 V ADC). Which end is GND vs VCC only sets the rotation direction (Bourns 3386 wiring diagram: terminals 1 and 3 are the ends (CCW/CW), 2 is the wiper, bourns-3386-ds-rev-12-24#terminals). The wiper source impedance depends on rotor position and can be a sizeable fraction of the element resistance (circuit behaviour, not a datasheet rating); it may exceed an ADC''s recommended source impedance. The Bourns 3386 is a TRIMMER (3/8 in square trimpot, rotational life 200 cycles, bourns-3386-ds-rev-12-24#trimmer-life), not a knob/panel potentiometer: it is only a representative part. Resistance value, power and voltage figures are from that trimmer sheet; no taper or wiper-current rating is stated there.'
+pins:
+- label: End A
+  maps_to: GND
+- label: Wiper
+  maps_to: WIPER
+- label: End B
+  maps_to: VCC
+pullups: []
+regulator:
+  evidence: []
+  note: Not applicable to a bare potentiometer; no document states it.
+  status: missing
+  value: null
+supply_current:
+  evidence: []
+  note: 'Passive part: end-to-end current = supply voltage / element resistance (user-chosen resistance); no document states a rating.'
+  status: missing
+  unit: mA
+  value: null
+variant_names:
+- potentiometer
+- 10k potentiometer
+- 10 kohm potentiometer
+- trimpot
+- rotary potentiometer
+vendor: generic

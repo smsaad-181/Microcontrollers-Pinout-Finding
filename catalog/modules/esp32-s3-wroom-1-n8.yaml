@@ -1,0 +1,53 @@
+# ESP32-S3-WROOM-1-N8 module (8 MB Quad SPI flash, no PSRAM) - facts reconciled with the blind audit (task 2a.4: verified, two keys).
+# Source: ESP32-S3-WROOM-1 & ESP32-S3-WROOM-1U Datasheet v1.8 (+ ESP32-S3 Series Datasheet v2.2 Table 2-14, DevKitC-1 v1.1 user guide).
+# bonded_pads = the 36 GPIOs led out to module pins (module Table 3-1, 41 pins): IO0-IO21, IO35-IO42, TXD0 (GPIO43), RXD0 (GPIO44), IO45-IO48. GPIO22-GPIO34 have no module pin.
+# consumed: GPIO27-GPIO32 (SPIHD, SPIWP, SPICS0, SPICLK, SPIQ, SPID) are wired inside the module to the QSPI flash (block diagram Figure 2-1, schematic Figure 8-1) and are not led out.
+#   GPIO26 (SPICS1) is the PSRAM chip select; it has no module pin and the N8 has no PSRAM, so it is not listed. GPIO35-GPIO37 are plain GPIOs on this part (no Octal PSRAM).
+# flash_voltage is a verified inference (both keys, same value): the datasheet states VDD_SPI = 1.8 V only for the N16R16VA modules, it never prints '3.3 V' for the N8 (see the note).
+bonded_pads:
+  - "GPIO0"
+  - "GPIO1"
+  - "GPIO2"
+  - "GPIO3"
+  - "GPIO4"
+  - "GPIO5"
+  - "GPIO6"
+  - "GPIO7"
+  - "GPIO8"
+  - "GPIO9"
+  - "GPIO10"
+  - "GPIO11"
+  - "GPIO12"
+  - "GPIO13"
+  - "GPIO14"
+  - "GPIO15"
+  - "GPIO16"
+  - "GPIO17"
+  - "GPIO18"
+  - "GPIO19"
+  - "GPIO20"
+  - "GPIO21"
+  - "GPIO35"
+  - "GPIO36"
+  - "GPIO37"
+  - "GPIO38"
+  - "GPIO39"
+  - "GPIO40"
+  - "GPIO41"
+  - "GPIO42"
+  - "GPIO43"
+  - "GPIO44"
+  - "GPIO45"
+  - "GPIO46"
+  - "GPIO47"
+  - "GPIO48"
+chip: "esp32-s3"
+consumed:
+  GPIO27: {"evidence": ["esp32-s3-wroom-1-ds-v1.8#block-diagram-flash-bus", "esp32-s3-wroom-1-ds-v1.8#sch-flash-pins", "esp32-s3-ds-v2.2#pin-map-spihd"], "note": "GPIO27 = SPIHD: the module's QSPI flash is wired to SPICS0, SPICLK, SPID, SPIQ, SPIHD, SPIWP (module block diagram and schematic); no module pin is led out for GPIO26-GPIO34 (module Table 3-1 lists no pins for them). Second key (blind audit, same value): read the flash signal names from Figure 2-1 and the GPIO numbers from the chip datasheet pin mapping (Table 2-4); the module datasheet itself never prints GPIO27-GPIO32, so both keys derived the GPIO numbers from the figure plus the chip table (inference, figure-based, hence transcribed).", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "transcribed": true, "value": "flash"}
+  GPIO28: {"evidence": ["esp32-s3-wroom-1-ds-v1.8#block-diagram-flash-bus", "esp32-s3-wroom-1-ds-v1.8#sch-flash-pins", "esp32-s3-ds-v2.2#pin-map-spiwp"], "note": "GPIO28 = SPIWP: the module's QSPI flash is wired to SPICS0, SPICLK, SPID, SPIQ, SPIHD, SPIWP (module block diagram and schematic); no module pin is led out for GPIO26-GPIO34 (module Table 3-1 lists no pins for them). Second key (blind audit, same value): read the flash signal names from Figure 2-1 and the GPIO numbers from the chip datasheet pin mapping (Table 2-4); the module datasheet itself never prints GPIO27-GPIO32, so both keys derived the GPIO numbers from the figure plus the chip table (inference, figure-based, hence transcribed).", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "transcribed": true, "value": "flash"}
+  GPIO29: {"evidence": ["esp32-s3-wroom-1-ds-v1.8#block-diagram-flash-bus", "esp32-s3-wroom-1-ds-v1.8#sch-flash-pins", "esp32-s3-ds-v2.2#pin-map-spics0"], "note": "GPIO29 = SPICS0: the module's QSPI flash is wired to SPICS0, SPICLK, SPID, SPIQ, SPIHD, SPIWP (module block diagram and schematic); no module pin is led out for GPIO26-GPIO34 (module Table 3-1 lists no pins for them). Second key (blind audit, same value): read the flash signal names from Figure 2-1 and the GPIO numbers from the chip datasheet pin mapping (Table 2-4); the module datasheet itself never prints GPIO27-GPIO32, so both keys derived the GPIO numbers from the figure plus the chip table (inference, figure-based, hence transcribed).", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "transcribed": true, "value": "flash"}
+  GPIO30: {"evidence": ["esp32-s3-wroom-1-ds-v1.8#block-diagram-flash-bus", "esp32-s3-wroom-1-ds-v1.8#sch-flash-pins", "esp32-s3-ds-v2.2#pin-map-spiclk"], "note": "GPIO30 = SPICLK: the module's QSPI flash is wired to SPICS0, SPICLK, SPID, SPIQ, SPIHD, SPIWP (module block diagram and schematic); no module pin is led out for GPIO26-GPIO34 (module Table 3-1 lists no pins for them). Second key (blind audit, same value): read the flash signal names from Figure 2-1 and the GPIO numbers from the chip datasheet pin mapping (Table 2-4); the module datasheet itself never prints GPIO27-GPIO32, so both keys derived the GPIO numbers from the figure plus the chip table (inference, figure-based, hence transcribed).", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "transcribed": true, "value": "flash"}
+  GPIO31: {"evidence": ["esp32-s3-wroom-1-ds-v1.8#block-diagram-flash-bus", "esp32-s3-wroom-1-ds-v1.8#sch-flash-pins", "esp32-s3-ds-v2.2#pin-map-spiq"], "note": "GPIO31 = SPIQ: the module's QSPI flash is wired to SPICS0, SPICLK, SPID, SPIQ, SPIHD, SPIWP (module block diagram and schematic); no module pin is led out for GPIO26-GPIO34 (module Table 3-1 lists no pins for them). Second key (blind audit, same value): read the flash signal names from Figure 2-1 and the GPIO numbers from the chip datasheet pin mapping (Table 2-4); the module datasheet itself never prints GPIO27-GPIO32, so both keys derived the GPIO numbers from the figure plus the chip table (inference, figure-based, hence transcribed).", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "transcribed": true, "value": "flash"}
+  GPIO32: {"evidence": ["esp32-s3-wroom-1-ds-v1.8#block-diagram-flash-bus", "esp32-s3-wroom-1-ds-v1.8#sch-flash-pins", "esp32-s3-ds-v2.2#pin-map-spid"], "note": "GPIO32 = SPID: the module's QSPI flash is wired to SPICS0, SPICLK, SPID, SPIQ, SPIHD, SPIWP (module block diagram and schematic); no module pin is led out for GPIO26-GPIO34 (module Table 3-1 lists no pins for them). Second key (blind audit, same value): read the flash signal names from Figure 2-1 and the GPIO numbers from the chip datasheet pin mapping (Table 2-4); the module datasheet itself never prints GPIO27-GPIO32, so both keys derived the GPIO numbers from the figure plus the chip table (inference, figure-based, hence transcribed).", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "transcribed": true, "value": "flash"}
+flash_voltage: {"evidence": ["esp32-s3-wroom-1-ds-v1.8#vdd-spi-1v8-only-n16r16va", "esp32-s3-wroom-1-ds-v1.8#flash-vcc-3v3", "esp32-s3-ds-v2.2#table-1-1-s3-3v3-or-1v8", "esp32-s3-wroom-1-ds-v1.8#sch-other-modules-gpio45", "esp32-s3-wroom-1-ds-v1.8#vdd-spi-control-table", "esp32-s3-wroom-1-ds-v1.8#efuse-defaults-zero", "esp32-s3-wroom-1-ds-v1.8#strap-defaults-table"], "note": "Not stated for the N8 in so many words: module datasheet Table 1-1 footnote 7 says the VDD_SPI voltage is 1.8 V for the N16R16VA modules only, Table 6-8 lists flash supply options of 1.8 V and 3.3 V, and chip Table 1-1 gives the plain ESP32-S3 3.3 V/1.8 V selectable by the GPIO45 strap (default 3.3 V). Module schematic note (section 8): for modules WITHOUT PSRAM make sure GPIO45 is not pulled high when the module is powered up (a high GPIO45 selects the 1.8 V regulator). 3.3 V is therefore the inferred flash supply. INFERENCE, not a stated value: both keys independently reached 3.3 V from the module datasheet alone (researcher: footnote 7 by exclusion plus Table 6-8 and the section 8 GPIO45 warning; auditor: Table 4-4 default row, EFUSE_VDD_SPI_FORCE = 0 and GPIO45 = 0 selects VDD3P3_RTC at 3.3 V, plus the same warning). The default row is bold in the figure only (not distinguishable in the text layer), hence transcribed. CAVEAT: on the N8 (no PSRAM) VDD_SPI is strap-selected, so 3.3 V holds only while GPIO45 is low at power-up (weak pull-down default); GPIO45 pulled high would select 1.8 V.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "transcribed": true, "unit": "V", "value": 3.3}
+id: "esp32-s3-wroom-1-n8"

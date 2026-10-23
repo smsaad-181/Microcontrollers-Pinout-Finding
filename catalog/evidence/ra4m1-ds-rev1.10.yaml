@@ -1,0 +1,142 @@
+id: ra4m1-ds-rev1.10
+title: "RA4M1 Group Datasheet"
+publisher: "Renesas Electronics Corporation"
+doc_number: "R01DS0355EJ0110"
+revision: "1.10"
+revision_date: "2023-09-29"
+url: https://www.renesas.com/en/document/dst/ra4m1-group-datasheet
+url_original: null
+accessed: "2026-10-22"
+sha256: "b96fe3862d2d91d910b04a662631d41dfd3ce02d026fbb80c09aefb853933dbf"
+kind: datasheet
+secondary: false
+manual: false
+claims:
+  - id: ra4m1-ds-rev1.10#package-lqfp64
+    locator: "§1.3 Part Numbering, Table 1.13, p. 10"
+    quote: "R7FA4M1AB3CFM PLQP0064KB-C"
+    supports: "R7FA4M1AB3CFM is the 64-pin LQFP (PLQP0064KB-C) part"
+  - id: ra4m1-ds-rev1.10#io-pin-count
+    locator: "§1.4 Function Comparison, Table 1.14, p. 11"
+    quote: "I/O ports I/O pins 81 49 33 25 Input pins 3 3 3 3"
+    supports: "The 64-pin package has 49 I/O pins plus 3 input pins"
+  - id: ra4m1-ds-rev1.10#pin-list-p23
+    locator: "§1.7 Pin Lists, p. 23 (LQFP64 column; transcribed)"
+    quote: "P400 AGTIO1 GTIOC6A SCK0 SCK1 SCL0 TS20 P401 GTETRGA GTIOC6B CTX0 CTS0_ RTS0/ SS0 TXD1/ MOSI1/ SDA1 SDA0 TS19"
+    supports: "Function lists of pads P400-P402, P215, P214, P213, P212, P411-P407, P915, P914 (LQFP64 pins 1-19) as transcribed from the pin table"
+  - id: ra4m1-ds-rev1.10#pin-list-p24
+    locator: "§1.7 Pin Lists, p. 24 (LQFP64 column; transcribed)"
+    quote: "P206 USB_VB USEN RXD0/ MISO0/ SCL0 SDA1 SSLB1 SEG12 TS01 P205 AGTO1 GTIV GTIOC4A"
+    supports: "Function lists of pads P206-P108, P109, P110, RES, MD/P201, NMI/P200 (LQFP64 pins 22-35) as transcribed from the pin table"
+  - id: ra4m1-ds-rev1.10#pin-list-p25
+    locator: "§1.7 Pin Lists, p. 25 (LQFP64 column; transcribed)"
+    quote: "P111 GTIOC3A SCK2 SCK9 RSPCKB CAPH TS12 P112 GTIOC3B TXD2/ MOSI2/ SDA2 SCK1 SSLB0 SSIBCK0"
+    supports: "Function lists of pads P111-P113, P107-P100, P500-P502 (LQFP64 pins 36-51) as transcribed from the pin table"
+  - id: ra4m1-ds-rev1.10#pin-list-p26
+    locator: "§1.7 Pin Lists, p. 26 (LQFP64 column; transcribed)"
+    quote: "P014 AN009 DA0 P013 VREFL AN008 AMP1+ P012 VREFH AN007 AMP1-"
+    supports: "Function lists of pads P015-P000 (LQFP64 pins 52-64) as transcribed from the pin table, incl. DA0 on P014 and AN000-AN010"
+  - id: ra4m1-ds-rev1.10#input-ports
+    locator: "§2.2.3 Table 2.6 note 3, p. 33"
+    quote: "Except for ports P200, P214, P215, which are input ports."
+    supports: "P200, P214 and P215 are input-only ports"
+  - id: ra4m1-ds-rev1.10#abs-max-others
+    locator: "§2.1 Table 2.1, p. 28"
+    quote: "Others Vin -0.3 to VCC + 0.3 V"
+    supports: "Absolute maximum input voltage for ordinary pins is VCC + 0.3 V"
+  - id: ra4m1-ds-rev1.10#abs-max-p0
+    locator: "§2.1 Table 2.1, p. 28"
+    quote: "P000 to P008, P010 to P015 Vin -0.3 to AVCC0 + 0.3 V"
+    supports: "Absolute maximum input voltage for P000-P015 is AVCC0 + 0.3 V"
+  - id: ra4m1-ds-rev1.10#abs-max-5v-tol
+    locator: "§2.1 Table 2.1 and note 1, p. 28"
+    quote: "Ports P205, P206, P400 to P404, P407, P408 are 5 V tolerant."
+    supports: "Only these ports accept up to 6.5 V (7 of them are bonded on the 64-pin package: P205, P206, P400, P401, P402, P407, P408)"
+  - id: ra4m1-ds-rev1.10#vcc-range
+    locator: "§2.3 Table 2.2, p. 29"
+    quote: "When USBFS is not used 1.6 - 5.5 V"
+    supports: "RA4M1 VCC operating range 1.6-5.5 V"
+  - id: ra4m1-ds-rev1.10#vih-vil-5v
+    locator: "§2.2.2 Table 2.4, p. 30"
+    quote: "Input ports pins except for P000 to P008, P010 to P015, P914, P915 VIH VCC × 0.8 - VIL - - VCC × 0.2"
+    supports: "VIH min = 0.8 x VCC and VIL max = 0.2 x VCC (VCC 2.7-5.5 V) for ordinary input pins"
+  - id: ra4m1-ds-rev1.10#vih-vil-schmitt
+    locator: "§2.2.2 Table 2.4, p. 30"
+    quote: "IIC*1 (except for SMBus) VIH VCC × 0.7 - 5.8 VIL - - VCC × 0.3"
+    supports: "IIC (except SMBus) pads P205, P206, P400, P401, P407, P408 use Schmitt thresholds 0.7 x VCC / 0.3 x VCC"
+  - id: ra4m1-ds-rev1.10#voh-vol-5v
+    locator: "§2.2.4 Table 2.7, p. 34"
+    quote: "Other output pins*4 Low drive VOH VCC - 0.8 - - IOH = -2.0 mA VOL - - 0.8 IOL = 2.0 mA"
+    supports: "VOH min VCC - 0.8 V at IOH -2 mA and VOL max 0.8 V at IOL 2 mA, low drive, VCC 4.0-5.5 V"
+  - id: ra4m1-ds-rev1.10#voh-vol-5v-mid
+    locator: "§2.2.4 Table 2.7, p. 34"
+    quote: "Middle drive*6 VOH VCC - 0.8 - - IOH = -4.0 mA VOL - - 0.8 IOL = 4.0 mA"
+    supports: "VOH min VCC - 0.8 V at IOH -4 mA and VOL max 0.8 V at IOL 4 mA, middle drive, VCC 4.0-5.5 V"
+  - id: ra4m1-ds-rev1.10#ioh-iol-low
+    locator: "§2.2.3 Table 2.6 (1 of 2), p. 32"
+    quote: "Ports P100 to P115, P201 to P204, P300 to P307, P500 to P503 Low drive IOH -4.0 mA IOL 4.0 mA"
+    supports: "Permissible output current per pin with low drive selected: 4 mA (pads of the UNO R4 headers)"
+  - id: ra4m1-ds-rev1.10#ioh-iol-mid
+    locator: "§2.2.3 Table 2.6 (1 of 2), p. 32"
+    quote: "Middle drive*2 IOH -4.0 mA IOL 8.0 mA"
+    supports: "Permissible output current with middle drive selected: sink 8 mA (source value printed -4.0 mA)"
+  - id: ra4m1-ds-rev1.10#ioh-iol-caution
+    locator: "§2.2.3 Table 2.6 (2 of 2), p. 33"
+    quote: "To protect the reliability of the MCU, the output current values should not exceed the values in this table."
+    supports: "The Table 2.6 currents are limits, not just settings"
+  - id: ra4m1-ds-rev1.10#ioh-total-p0
+    locator: "§2.2.3 Table 2.6 (2 of 2), p. 33"
+    quote: "Total of ports P000 to P008, P010 to P015 ΣIOH (max) - - -30 mA ΣIOL (max) - - 30 mA"
+    supports: "Total current of ports P000-P015 is limited to 30 mA"
+  - id: ra4m1-ds-rev1.10#ioh-total-all
+    locator: "§2.2.3 Table 2.6 (2 of 2), p. 33"
+    quote: "Total of all output pin*5 ΣIOH (max) - - -60 mA ΣIOL (max) - - 60 mA"
+    supports: "Total output current of all pins is limited to 60 mA source and 60 mA sink"
+  - id: ra4m1-ds-rev1.10#pull-up-ru
+    locator: "§2.2.4 Table 2.10, p. 35"
+    quote: "Input pull-up resistor All ports (except for ports P200, P214, P215, P914, P915) RU 10 20 50 kΩ"
+    supports: "Internal pull-up resistor 10-50 kohm (typ 20) for all ports except P200, P214, P215, P914, P915"
+  - id: ra4m1-ds-rev1.10#usb-regulator
+    locator: "§2.4.2 Table 2.41, p. 86"
+    quote: "VCC_USB supply current VCC_USB_LDO ≥ 3.8V - - 50 mA - VCC_USB_LDO ≥ 4.5V - - 100 mA"
+    supports: "USB regulator VCC_USB supply current limit 50 mA / 100 mA; not stated as an external load rating"
+  - id: ra4m1-ds-rev1.10#usb-ldo-3v3
+    locator: "§1.2 Table 1.7 (USB), p. 6"
+    quote: "Because the MCU can be powered at 5 V, the USB LDO regulator provides the internal USB transceiver power supply at 3.3 V."
+    supports: "USB LDO output is 3.3 V"
+  - id: ra4m1-ds-rev1.10#ioh-iol-other-pins
+    locator: "§2.2.3 Table 2.6 (1 of 2), p. 32"
+    quote: "Other output pin*3 Low drive*1 IOH -4.0 mA IOL 4.0 mA Middle drive*2 IOH -8.0 mA IOL 8.0 mA"
+    supports: "Pads outside the 41-pin group (P000-P015, P205, P206, P400-P402, P407, P410, P411): 4 mA low drive, 8 mA source and sink at middle drive"
+  - id: ra4m1-ds-rev1.10#ioh-iol-p212-p213
+    locator: "§2.2.3 Table 2.6 (1 of 2), p. 32"
+    quote: "Ports P212, P213 IOH -4.0 mA IOL 4.0 mA"
+    supports: "P212 and P213 have a fixed 4 mA per-pin limit (no drive switching)"
+  - id: ra4m1-ds-rev1.10#ioh-iol-p914-p915
+    locator: "§2.2.3 Table 2.6 (1 of 2), p. 32"
+    quote: "Ports P914, P915 IOH -4.0 mA IOL 4.0 mA"
+    supports: "P914 and P915 (USB pads) have a fixed 4 mA per-pin limit"
+  - id: ra4m1-ds-rev1.10#ioh-iol-p408-p409
+    locator: "§2.2.3 Table 2.6 (1 of 2), p. 32"
+    quote: "Middle drive*2 VCC = 3.0 to 5.5 V IOH -20.0 mA IOL 20.0 mA"
+    supports: "P408 and P409 allow 20 mA at middle drive (VCC 3.0-5.5 V); low drive is 4 mA; P408 IIC fast-mode middle drive 8 mA"
+  - id: ra4m1-ds-rev1.10#ioh-iol-max-per-pin
+    locator: "§2.2.3 Table 2.6 (2 of 2), p. 33"
+    quote: "Permissible output current (Max value per pin)"
+    supports: "Table 2.6 gives the same per-pin currents as an average and as a maximum value per pin"
+  - id: ra4m1-ds-rev1.10#ioh-total-p914-p915
+    locator: "§2.2.3 Table 2.6 (2 of 2), p. 33"
+    quote: "Ports P914, P915 ΣIOH (max) -2.0 mA ΣIOL (min) 2.0 mA"
+    supports: "Total current of P914 and P915 is limited to 2 mA (row label prints ΣIOL (min), apparently a typo for max)"
+  - id: ra4m1-ds-rev1.10#iic-schmitt-pads
+    locator: "§2.2.2 Table 2.4 note 1, p. 30"
+    quote: "P205, P206, P400, P401, P407, P408 (total 6 pins)."
+    supports: "The IIC (except SMBus) Schmitt thresholds 0.7 x VCC / 0.3 x VCC apply to these six pads"
+  - id: ra4m1-ds-rev1.10#vih-vil-smbus
+    locator: "§2.2.2 Table 2.4, p. 30"
+    quote: "IIC (SMBus)*2 VIH 2.2 VCC = 3.6 to 5.5 V"
+    supports: "SMBus-mode IIC pads (P100, P101, P204-P206, P400, P401, P407, P408) have VIH min 2.2 V (2.0 V at 2.7-3.6 V) and VIL max 0.8 V"
+  - id: ra4m1-ds-rev1.10#table-2-4-conditions
+    locator: "§2.2.2 Table 2.4, p. 30"
+    quote: "Conditions: VCC = AVCC0 = VCC_USB = VCC_USB_LDO = 2.7 to 5.5V"
+    supports: "Table 2.4 has a single VCC 2.7-5.5 V column for input levels (no separate 4.0-5.5 V column)"

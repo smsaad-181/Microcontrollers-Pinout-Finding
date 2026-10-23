@@ -1,0 +1,191 @@
+# Bosch Sensortec BME280, from datasheet BST-BME280-DS001-24 rev 1.24. Researcher draft reconciled with the blind audit (task 2a.4): facts verified by two keys,
+# except spi.miso_tristate_when_deselected (missing). See docs/validation/phase-2a/reconcile-bme280-mpu6050.md.
+id: bme280
+input_abs_max:
+  evidence:
+  - bme280-ds-1.24#abs-max-interface
+  - bme280-ds-1.24#abs-max-supply
+  note: 'Table 5 (PDF p13): any interface pin -0.3 V to VDDIO + 0.3 V, so the pins are NOT 5 V tolerant (3.9 V at VDDIO 3.6 V). The VDD and VDDIO supply pins themselves: -0.3 V to 4.25 V (claim bme280-ds-1.24#abs-max-supply; the schema has one slot, the interface-pin limit is stored). Verified: the blind auditor read the same two rows of Table 5 (interface_pins and supply_pins).'
+  reviewers:
+  - hardware-researcher
+  - hardware-fact-auditor
+  status: verified
+  unit: V
+  value: VDDIO+0.3
+interfaces:
+- kind: i2c
+  limits:
+    addresses:
+    - strap: SDO=GND
+      value: 118
+    - strap: SDO=VDDIO
+      value: 119
+    i2c_modes:
+    - sm
+    - fm
+    - hs
+    max_hz:
+      evidence:
+      - bme280-ds-1.24#i2c-max-speed
+      note: '3.4 MHz is the high-speed-mode ceiling and is stated ONLY in the Key features list (PDF p2: ''I2C (up to 3.4 MHz) and SPI (3 and 4 wire, up to 10 MHz)''). Table 33 (PDF p36) lists setup/hold/low-pulse timings but has no fSCL row, and 100 kHz / 400 kHz are not stated numerically. Verified as a document statement: both keys found 3.4 MHz at that one place (the auditor says the same). It is the bus limit for the schema''s max_hz.'
+      reviewers:
+      - hardware-researcher
+      - hardware-fact-auditor
+      status: verified
+      unit: Hz
+      value: 3400000
+  signals:
+  - dir: io
+    drive: open-drain
+    role: SDA
+    shareable: true
+  - dir: in
+    drive: open-drain
+    role: SCL
+    shareable: true
+- kind: spi
+  limits:
+    max_hz:
+      evidence:
+      - bme280-ds-1.24#spi-fspi
+      note: 'Table 34 (PDF p37): F_spi 0 to 10 MHz; also in Key features (p2). Applies to 4-wire and 3-wire SPI (datasheet 6.4.3). 3-wire mode is enabled by register spi3w_en and uses SDI as the bidirectional data pin. Verified: the blind auditor read the same value from the same table.'
+      reviewers:
+      - hardware-researcher
+      - hardware-fact-auditor
+      status: verified
+      unit: Hz
+      value: 10000000
+    miso_tristate_when_deselected:
+      evidence: []
+      note: 'Not stated as a sentence. Figure 11 (PDF p34) labels SDO ''tri-state'' outside the data phase and the text only says ''hi-Z in 3-wire mode'' (blind auditor: could-not-verify; the researcher recorded nothing). Not recorded as a fact, so the engine shows a Caution before the MISO line is shared with another SPI device; the MISO signal below keeps shareable: true from the researcher''s draft (no cited statement supports or denies it).'
+      status: missing
+      value: null
+    spi_modes:
+    - 0
+    - 3
+  signals:
+  - dir: in
+    drive: push-pull
+    role: SCK
+    shareable: true
+  - dir: in
+    drive: push-pull
+    role: MOSI
+    shareable: true
+  - dir: out
+    drive: push-pull
+    role: MISO
+    shareable: true
+  - dir: in
+    drive: push-pull
+    role: CS
+    shareable: false
+logic_levels:
+  vih_min:
+    conditions:
+      VDDIO: 1.2 V to 3.6 V
+    evidence:
+    - bme280-ds-1.24#logic-levels
+    note: 'Table 32 (PDF p35): Vih_si min 80 %VDDIO for VDDIO 1.2 V to 3.6 V. Verified: the blind auditor read the same value from the same table.'
+    reviewers:
+    - hardware-researcher
+    - hardware-fact-auditor
+    status: verified
+    unit: V
+    value: VDDIO*0.8
+  vil_max:
+    conditions:
+      VDDIO: 1.2 V to 3.6 V
+    evidence:
+    - bme280-ds-1.24#logic-levels
+    note: 'Table 32 (PDF p35): Vil_si max 20 %VDDIO for VDDIO 1.2 V to 3.6 V (the condition cell prints a typo ''3. 6V''). Verified: the blind auditor read the same value from the same table.'
+    reviewers:
+    - hardware-researcher
+    - hardware-fact-auditor
+    status: verified
+    unit: V
+    value: VDDIO*0.2
+  voh_min:
+    conditions:
+      Ioh_mA: 1
+      VDDIO: 1.62 V
+    evidence:
+    - bme280-ds-1.24#output-levels
+    note: 'Table 32 (PDF p35): Voh min 80 %VDDIO for SDO/SDI at VDDIO 1.62 V, Ioh 1 mA; 60 %VDDIO at VDDIO 1.2 V (Voh_1.2), so the stored 80 % holds only from 1.62 V. Verified: the blind auditor read the same value from the same table.'
+    reviewers:
+    - hardware-researcher
+    - hardware-fact-auditor
+    status: verified
+    unit: V
+    value: VDDIO*0.8
+  vol_max:
+    conditions:
+      Iol_mA: 3
+      VDDIO: 1.62 V
+    evidence:
+    - bme280-ds-1.24#output-low-i2c
+    - bme280-ds-1.24#output-low-spi
+    note: 'Table 32 (PDF p35): Vol_SDI (I2C SDA) max 20 %VDDIO at VDDIO 1.62 V, Iol 3 mA; 23 % at VDDIO 1.2 V (Vol_SDI_1.2). The SPI output SDO has the same 20 % / 23 % at Iol 1 mA (Vol_SDO, claim output-low-spi). The table gives conditions only at 1.62 V and 1.2 V; the 20 % figure is not stated for VDDIO up to 3.6 V (auditor''s remark). Verified: the blind auditor read the same value from the same table.'
+    reviewers:
+    - hardware-researcher
+    - hardware-fact-auditor
+    status: verified
+    unit: V
+    value: VDDIO*0.2
+part: BME280
+select_strap:
+  evidence:
+  - bme280-ds-1.24#iface-selection-csb
+  - bme280-ds-1.24#iface-lockout-csb
+  pins:
+  - CSB
+  table:
+  - selects: i2c
+    value:
+      CSB: 1
+  - selects: spi
+    value:
+      CSB: 0
+supply_current:
+  conditions:
+    max: Table 1 IDDP pressure measurement phase, max value at -40 C
+    typ: average at 1 Hz humidity+pressure+temperature sampling
+  evidence:
+  - bme280-ds-1.24#current-consumption-1hz
+  - bme280-ds-1.24#current-pressure-meas
+  - bme280-ds-1.24#current-humidity-meas
+  - bme280-ds-1.24#current-temperature-meas
+  note: 'Two different quantities, both found by both keys. typ 0.0036 mA = 3.6 uA is the AVERAGE current at 1 Hz sampling of humidity, pressure and temperature (Key features, PDF p2; duty-cycled, not a continuous draw). max 0.714 mA = 714 uA is the PEAK current during a pressure-measurement phase (Table 1 IDDP, PDF p8); it is NOT a continuous rating and NOT an average. Table 1 prints IDDH 340 uA, IDDP 714 uA and IDDT 350 uA in the Typ column while the Condition column reads ''Max value at 85 C'' (IDDH, IDDT) / ''Max value at -40 C'' (IDDP): the datasheet is itself ambiguous whether these are typical or worst-case. They are the humidity/pressure/temperature measurement-phase peaks and 714 is the highest, so it is stored in the max slot as the conservative worst case. Sleep typ 0.1 / max 0.3 uA (IDDSL); standby typ 0.2 / max 0.5 uA (IDDSB). The datasheet gives no maximum for continuous operation. The blind auditor recorded the same numbers (typ 3.6 uA; 340/714/350 uA in the Typ column) and describes the typ-vs-max wording as the datasheet''s own ambiguity.'
+  reviewers:
+  - hardware-researcher
+  - hardware-fact-auditor
+  status: verified
+  unit: mA
+  value:
+    max: 0.714
+    typ: 0.0036
+vdd_range:
+  evidence:
+  - bme280-ds-1.24#supply-voltage
+  note: 'Table 1 (PDF p8): VDD 1.71 V min, 1.8 V typ, 3.6 V max (ripple max 50 mVpp). Verified: the blind auditor read the same value from the same table.'
+  reviewers:
+  - hardware-researcher
+  - hardware-fact-auditor
+  status: verified
+  unit: V
+  value:
+  - 1.71
+  - 3.6
+vendor: Bosch Sensortec
+vio_range:
+  evidence:
+  - bme280-ds-1.24#supply-voltage
+  note: 'Table 1 (PDF p8): VDDIO 1.2 V min, 1.8 V typ, 3.6 V max. Verified: the blind auditor read the same value from the same table.'
+  reviewers:
+  - hardware-researcher
+  - hardware-fact-auditor
+  status: verified
+  unit: V
+  value:
+  - 1.2
+  - 3.6
