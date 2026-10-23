@@ -1,0 +1,985 @@
+audit:
+  entities: [ads1115, ads1115-breakout, srd-05vdc-sl-c, relay-board-4ch-transistor, relay-board-4ch-opto-jdvcc]
+  auditor: hardware-fact-auditor
+  date: 2026-10-23
+  blind: true
+  contaminated: []
+  notes: >
+    Blind re-derivation. No catalog/, docs/research/, PLAN/STATE/NOW, phase-1 or other phase-2a files were opened.
+    Board-type assignment decided from the documents: SunFounder TS0011 and the SainSmart schematic both show an
+    optocoupler (817C) + JD-VCC jumper + NPN transistor + flyback diode per channel and are ACTIVE LOW, so both
+    document the opto/JD-VCC type (relay-board-4ch-opto-jdvcc). The only document offered for the transistor type is the
+    Keyestudio KS0058 wiki page, whose text says "Active at HIGH level" but which contains NO schematic; the
+    schematic PDF is on a host scripts cannot use (could-not-verify, not worked around). Its photos show hints
+    (a jumper cap, DIP-4 footprints) that it may not be a plain transistor-only board; see facts and contradictions.
+  documents:
+    - id: ti-ads111x-sbas444e
+      title: ADS1113, ADS1114, ADS1115 datasheet
+      publisher: Texas Instruments
+      doc_number: SBAS444
+      revision: "E (printed: SBAS444E - MAY 2009 - REVISED DECEMBER 2024)"
+      url: https://www.ti.com/lit/ds/symlink/ads1115.pdf
+      sha256: eefff4d412ce2dcd7e659f47238edc9b2fa02e5971f2625af730502033701834
+      pages: 57
+      opened: true
+      note: this is the current revision served at the symlink URL on 2026-10-23; pdf page number equals printed page number
+    - id: adafruit-adc-guide-pinouts
+      title: Adafruit 4-Channel ADC Breakouts - Pinouts
+      publisher: Adafruit
+      url: https://learn.adafruit.com/adafruit-4-channel-adc-breakouts/pinouts
+      sha256: 46425c47722a88ef353ad0eb772ae307fa12d013416d72f5bb7c88eb57a39219
+      opened: true
+      note: "page footer says Page last edited March 08, 2024; header says last edited August 19, 2026. The address table on the page is an image (not read)."
+    - id: adafruit-ads1115-stemma-eagle-sch
+      title: Adafruit ADS1115 ADC STEMMA QT.sch (Eagle 9.6.2 XML, parsed)
+      publisher: Adafruit
+      url: https://github.com/adafruit/ADS1X15-Breakout-Board-PCBs (master zip, codeload.github.com)
+      sha256: 688028449e956a43698f2611d99fe95f0387ab9215d0b29c5c39edc7fb6832e1
+      opened: true
+      note: archive sha256 f6a32a349e970e6809073eee65052a0e850da11410758342b687a80757d4c743; board file Adafruit ADS1115 ADC STEMMA QT.brd used for silkscreen text
+    - id: adafruit-ads1115-legacy-eagle-sch
+      title: Adafruit_ADS1115_16Bit_I2C_ADC.sch (Eagle 6.2 XML, parsed; pre-STEMMA board)
+      publisher: Adafruit
+      url: https://github.com/adafruit/ADS1X15-Breakout-Board-PCBs (same archive)
+      sha256: 29995c25215dbe9f64f84418c988a2071af83bb6f61b3642c4edc7569aa56a09
+      opened: true
+    - id: songle-srd-t73
+      title: SRD(T73) Series datasheet (image-only PDF, rendered)
+      publisher: Songle Relay
+      url: https://www.songlerelay.com/upload/8670/srd-t73-relay-290486.pdf
+      sha256: 239c43809674f185b9fde2786361545a37398585ec14767d8e3d5633b62ee9b0
+      pages: 3
+      opened: true
+      note: "version V1; printed pages 30-32 = pdf pages 1-3; no text layer, all facts transcribed from rendered images"
+    - id: srd-old-circuitbasics
+      title: SRD-05VDC-SL-C datasheet (older, secondary host)
+      publisher: unknown manufacturer sheet hosted by circuitbasics.com
+      url: https://www.circuitbasics.com/wp-content/uploads/2015/11/SRD-05VDC-SL-C-Datasheet.pdf
+      sha256: 9967e9a62db84c578fc8dc55f0d76fd95777a4c84ad1f2754477f43dac515e46
+      pages: 2
+      secondary: true
+      opened: true
+    - id: sunfounder-ts0011
+      title: 4 Channel 5V Relay Module (TS0011)
+      publisher: SunFounder (hosted on mm.digikey.com)
+      url: https://mm.digikey.com/Volume0/opasdata/d220001/medias/docus/5727/TS0011.pdf
+      sha256: 58fbef9cd91b2a290371b717bbf5084d68520f24deb5259129396df274178a96
+      pages: 9
+      opened: true
+      note: "no revision/date printed; the schematic on pdf p3 is an image"
+    - id: sainsmart-product-page
+      title: SainSmart 4-Channel 5V Relay Module product page
+      publisher: SainSmart
+      url: https://www.sainsmart.com/products/4-channel-5v-relay-module
+      sha256: 62298223616b5c1855095bbebf5da9770a297fe506b3ce2caec32e416a5bf4cc
+      opened: true
+      note: vendor product page (spec bullets); weaker than a datasheet, used only as the vendor's own statement
+    - id: sainsmart-schematic-pdf
+      title: 4 channel relay.pdf (schematic, dated 5-May-2011) inside 4+Relay+Module.rar
+      publisher: SainSmart
+      url: http://s3.amazonaws.com/s3.image.smart/download/101-70-101/4%2BRelay%2BModule.rar
+      sha256: 035e521f3cc48e371d0e49560a8b47a75a01e24f4ea115ab530bab7e4e0830cd
+      opened: true
+      note: "archive sha256 a36a9ba07497d297850c1669031eb2652e91877b6ad8f86046a5b9b32d78470c; RAR v4 extracted with Windows tar.exe (bsdtar/libarchive); inner readme.txt says '4 relay size: 75*55*20mm'; resistor values and part numbers are NOT printed on this schematic"
+    - id: keyestudio-ks0058-wiki
+      title: Ks0058 keyestudio 4-channel Relay Module (wiki, revision oldid=30731, last edited 8 January 2021)
+      publisher: Keyestudio
+      url: https://wiki.keyestudio.com/Ks0058_keyestudio_4-channel_Relay_Module
+      sha256: 3b06969d7b987b23e8f76fe9f450d7bd230b37f4ede87a92a478701986895aec
+      opened: true
+    - id: keyestudio-ks0058-wiki-images
+      title: Ks0058-1.png (photo) and Ks0058-2.png (connection diagram), embedded on the wiki page, same host
+      publisher: Keyestudio
+      url: https://wiki.keyestudio.com/images/f/fa/Ks0058-1.png and https://wiki.keyestudio.com/images/0/09/Ks0058-2.png
+      sha256: "39350166b8c614ca90a6fbedd211369396470bb593c01f0f46e5fca39f442d72 (Ks0058-1.png); 06e379e98b5e586fc8e75d09a73a5083ff9c4a3e411bf36b6ae822beb72cd259 (Ks0058-2.png)"
+      opened: true
+  unreachable:
+    - id: keyestudio-ks0058-pdf
+      url: https://fs.keyestudio.com/KS0058
+      why: "Linked from the wiki 'PDF and Code' (task brief says the folder is on Dropbox, scripts cannot fetch it). Not fetched, no workaround attempted. Needed for the KS0058 schematic: input circuit, resting level, jumper, parts."
+    - id: keyestudio-ks0058-video
+      url: http://video.keyestudio.com/ks0058/
+      why: not needed, not opened
+  newer_or_more_authoritative:
+    - "TI datasheet is revision E (Dec 2024) - the current one; no newer found."
+    - "Songle SRD(T73) V1 sheet (manufacturer, image-only) is the more authoritative SRD source than the older circuitbasics-hosted sheet; the two differ on coil resistance, overdrive voltage, temperature range and contact ratings (see contradictions)."
+    - "No Keyestudio or SainSmart schematic with part values was reachable; a manual download of the KS0058 PDF is required for the transistor-type board."
+
+contradictions:
+  - id: C1
+    entity: relay-board-4ch-opto-jdvcc
+    topic: TS0011 trigger polarity text
+    a: "TS0011 pdf p1 Features: 'When input is at low level, the relay is off, and the indicator light is on.'"
+    b: "TS0011 pdf p2 Pinout: 'When a low-level signal is input, the Normally Open (NO) contact of the relay connects with the Common (COM) terminal.' and pdf p7 code: LOW activates, HIGH = off; p1 intro 'LOW Level 5V'. The schematic (pdf p3) is also consistent with active LOW."
+    resolution: "Active LOW is supported by 3 locations plus the schematic; the p1 feature line is an internal error (or an inverted description of the indicator)."
+  - id: C2
+    entity: relay-board-4ch-opto-jdvcc
+    topic: TS0011 supply voltage and current text
+    a: "TS0011 pdf p1: 'Power Supply Voltage: 5VDC, 12VDC' and 'Current: Greater than 100mA'"
+    b: "Title '4 Channel 5V Relay Module', and the relay fitted is not identified (a 5 V SRD coil is 70-90 mA each). No 12 V variant is described elsewhere in the document."
+    resolution: unresolved - supply range of the board cannot be taken from this document without ambiguity
+  - id: C3
+    entity: relay-board-4ch-opto-jdvcc
+    topic: Input (driver) current vs schematic resistors
+    a: "TS0011 pdf p1 and SainSmart product page: 'each channel needs/requires 15-20mA driver current'"
+    b: "TS0011 pdf p3 schematic labels the series resistor in the input path (VCC to opto-LED anode) as 1K; with a 5 V supply a 1 k series resistor cannot carry 15-20 mA (it would be a few mA). Not computed further because the 817C datasheet was not opened."
+    resolution: "unresolved - record the stated 15-20 mA as the vendor claim, flagged as not consistent with the drawn circuit"
+  - id: C4
+    entity: srd-05vdc-sl-c
+    topic: Coil resistance / current / overdrive between the two SRD datasheets
+    a: "Songle SRD(T73) V1 (pdf p2, printed 31, at 23 C): 5 V, 0.36 W(L) coil 69.4 ohm; 0.45 W(D) 55 ohm; max overdrive 130% for both; no coil current column"
+    b: "Older sheet (pdf p2, at 20 C): 5 V high sensitivity 71.4 mA, 70 ohm, abt 0.36 W, max allowable 120%; standard 89.3 mA, 55 ohm, abt 0.45 W, max allowable 110%"
+    resolution: "Both versions agree on 75% pick-up max / 10% drop-out min. 69.4 vs 70 ohm is a revision/temperature difference. Which coil sensitivity is fitted to a given board is not stated by either sheet (SL = L = 0.36 W per the ordering code)."
+  - id: C5
+    entity: srd-05vdc-sl-c
+    topic: Ambient temperature and contact limits
+    a: "Songle V1: ambient -40 to +85 C (p2) with features line '-40 C to +85 C/+105 C' (p1); max switching voltage 277VAC/30VDC; max switching power 2770VA/300W; contact rating 7A/10A/15A 250VAC/28VDC, 10A 125VAC"
+    b: "Older sheet: ambient -25 to +70 C; max allowable voltage 250VAC/110VDC; FORM C 7A 28VDC, 10A 125VAC, 7A 240VAC; max power 800VAC/240W (FORM C); contact material AgCdO"
+    resolution: unresolved - report both; the V1 sheet does not split ratings per form (A/B/C) in the image text
+  - id: C6
+    entity: ads1115-breakout
+    topic: Adafruit repository schematic file contents
+    a: "'Adafruit ADS1115 ADC STEMMA QT.sch' part U1 has value ADS1015IDGST (deviceset ADC_ADS1015)"
+    b: "legacy file 'Adafruit_ADS1115_16Bit_I2C_ADC.sch' has value ADS1115IDGST on the same ADS1015 deviceset; README says the PCB serves both ADS1015 and ADS1115"
+    resolution: "the PCB is shared; the fitted IC is chosen by BOM, not by the schematic value; do not read the IC type from the schematic part value"
+  - id: C7
+    entity: ads1115-breakout
+    topic: Legacy schematic has no supply input
+    a: "Legacy sch JP1 (1x10) pins: 1-4 AIN3..AIN0, 5 ALERT, 6 ADDR, 7 SDA, 8 SCL, 9/10 ferrite-filtered outputs"
+    b: "No connector pin is connected to the VDD net (and no supply pin for GND input) in the legacy netlist; the guide describes VIN and GND"
+    resolution: "legacy schematic looks incomplete for power input; the current STEMMA QT schematic (JP2 pin 1 VCC, pin 2 GND) and guide are used"
+  - id: C8
+    entity: relay-board-4ch-transistor
+    topic: KS0058 wiki text vs images
+    a: "Wiki text lists only: control pins 1-4, power supply (VCC), ground (GND); control signal TTL, active at HIGH level"
+    b: "Photo Ks0058-1.png shows a 6-pin header plus a separate 2-pin block with a jumper cap; connection diagram Ks0058-2.png shows DIP-4 footprints beside each relay and a 2-pin block labelled COM/GND, and draws the relay as SRD-06VDC-SL-C while the photo shows SRD-05VDC-SL-C on the cases"
+    resolution: "unresolved - cannot tell whether KS0058 is transistor-only or has opto stages and a jumper without the unreachable schematic"
+  - id: C9
+    entity: relay-board-4ch-opto-jdvcc
+    topic: Polarity of the two vendor families
+    a: "TS0011 and SainSmart (schematic + page 'TTL logic active low'): active LOW"
+    b: "KS0058 wiki: 'Active at HIGH level'"
+    resolution: "not a contradiction within one board; confirms polarity is board specific and must be stored per board"
+
+facts:
+  # ------------------------------------------------------------------ ADS1115 IC
+  - entity: ads1115
+    level: ic
+    path: document.revision
+    value: "SBAS444E, REVISED DECEMBER 2024"
+    unit: null
+    conditions: current revision at https://www.ti.com/lit/ds/symlink/ads1115.pdf on 2026-10-23
+    doc: ti-ads111x-sbas444e
+    locator: "pdf p1 / printed p1, footer"
+    quote: "REVISED DECEMBER 2024"
+    transcribed: false
+    confidence: found
+    notes: "datasheet covers ADS1113/4/5; ADS1115 columns used throughout"
+  - entity: ads1115
+    level: ic
+    path: interface.type
+    value: "I2C (two-wire, open-drain, target-only; does not clock-stretch; bus idle timeout 25 ms)"
+    unit: null
+    conditions: null
+    doc: ti-ads111x-sbas444e
+    locator: "pdf p19 / printed p19, section 7.5.1; clock stretching: pdf p28 section 9.1.1"
+    quote: "but the ADS111x can only act as a target device."
+    transcribed: false
+    confidence: found
+    notes: "Clock-stretching statement p28: The ADS111x does not perform clock-stretching. Supports 7-bit addressing."
+  - entity: ads1115
+    level: ic
+    path: interface.address.ADDR=GND
+    value: "0x48 (1001000b)"
+    unit: 7-bit address
+    conditions: ADDR pin tied to GND
+    doc: ti-ads111x-sbas444e
+    locator: "pdf p20 / printed p20, section 7.5.1.1, Table 7-2"
+    quote: "GND 1001000b"
+    transcribed: false
+    confidence: found
+    notes: "Pin state is sampled continuously. Use GND, VDD and SCL addresses first."
+  - entity: ads1115
+    level: ic
+    path: interface.address.ADDR=VDD
+    value: "0x49 (1001001b)"
+    unit: 7-bit address
+    conditions: ADDR pin tied to VDD
+    doc: ti-ads111x-sbas444e
+    locator: "pdf p20 / printed p20, Table 7-2"
+    quote: "VDD 1001001b"
+    transcribed: false
+    confidence: found
+    notes: null
+  - entity: ads1115
+    level: ic
+    path: interface.address.ADDR=SDA
+    value: "0x4A (1001010b)"
+    unit: 7-bit address
+    conditions: "ADDR pin tied to SDA; hold SDA low at least 100 ns after SCL goes low"
+    doc: ti-ads111x-sbas444e
+    locator: "pdf p20 / printed p20, section 7.5.1.1, Table 7-2"
+    quote: "SDA 1001010b"
+    transcribed: false
+    confidence: found
+    notes: "Datasheet: 'If SDA is used as the device address, hold the SDA line low for at least 100 ns after the SCL line goes low'."
+  - entity: ads1115
+    level: ic
+    path: interface.address.ADDR=SCL
+    value: "0x4B (1001011b)"
+    unit: 7-bit address
+    conditions: ADDR pin tied to SCL
+    doc: ti-ads111x-sbas444e
+    locator: "pdf p20 / printed p20, Table 7-2"
+    quote: "SCL 1001011b"
+    transcribed: false
+    confidence: found
+    notes: null
+  - entity: ads1115
+    level: ic
+    path: interface.address.ADDR=floating
+    value: null
+    unit: null
+    conditions: ADDR pin unconnected
+    doc: ti-ads111x-sbas444e
+    locator: "searched pdf p3 (Table 4-1), p20 (7.5.1.1), p29 (9.1.4 unused pins)"
+    quote: figure
+    transcribed: false
+    confidence: could-not-verify
+    notes: "The datasheet only defines connection to GND, VDD, SDA or SCL; behaviour of a floating ADDR is not stated. Table 4-1 calls ADDR a 'Digital input'."
+  - entity: ads1115
+    level: ic
+    path: electrical.supply_voltage
+    value: {min: 2.0, max: 5.5}
+    unit: V
+    conditions: VDD to GND, recommended operating
+    doc: ti-ads111x-sbas444e
+    locator: "pdf p1 Features; pdf p4 / printed p4, 5.3 Recommended Operating Conditions"
+    quote: "Wide supply range: 2.0V to 5.5V"
+    transcribed: false
+    confidence: found
+    notes: null
+  - entity: ads1115
+    level: ic
+    path: electrical.logic.VIH
+    value: "0.7 x VDD min"
+    unit: V
+    conditions: "digital inputs SDA, SCL, ADDR; max 5.5 V; applies -40 to +125 C, VDD 3.3 V test point"
+    doc: ti-ads111x-sbas444e
+    locator: "pdf p5 / printed p5, 5.5 Electrical Characteristics, DIGITAL INPUT/OUTPUT"
+    quote: "High-level input voltage 0.7 VDD 5.5 V"
+    transcribed: false
+    confidence: found
+    notes: "Thresholds are ratios of VDD, so the thresholds track the ADS1115 supply, not the MCU supply."
+  - entity: ads1115
+    level: ic
+    path: electrical.logic.VIL
+    value: "0.3 x VDD max"
+    unit: V
+    conditions: "digital inputs; min GND"
+    doc: ti-ads111x-sbas444e
+    locator: "pdf p5 / printed p5, 5.5, DIGITAL INPUT/OUTPUT"
+    quote: "Low-level input voltage GND 0.3 VDD V"
+    transcribed: false
+    confidence: found
+    notes: null
+  - entity: ads1115
+    level: ic
+    path: electrical.logic.VOL
+    value: {typ: 0.15, max: 0.4}
+    unit: V
+    conditions: "IOL = 3 mA (SDA, ALERT/RDY open-drain outputs)"
+    doc: ti-ads111x-sbas444e
+    locator: "pdf p5 / printed p5, 5.5, DIGITAL INPUT/OUTPUT"
+    quote: "Low-level output voltage IOL = 3mA GND 0.15 0.4 V"
+    transcribed: false
+    confidence: found
+    notes: "No VOH: outputs are open drain, high level comes from the pull-up. Input leakage -10 to +10 uA for GND < VDIG < VDD (same table)."
+  - entity: ads1115
+    level: ic
+    path: interface.i2c.modes
+    value: {standard_max_khz: 100, fast_max_khz: 400, high_speed_max_khz: 3400}
+    unit: kHz
+    conditions: "VDD 2.0 to 5.5 V; fSCL range 0.01-0.4 MHz (fast) and 0.01-3.4 MHz (high-speed) in timing table"
+    doc: ti-ads111x-sbas444e
+    locator: "pdf p20 / printed p20, 7.5.1.3; pdf p6 / printed p6, 5.6 Timing Requirements"
+    quote: "Standard mode allows a clock frequency of up to 100kHz; fast mode permits a clock frequency of up to 400kHz"
+    transcribed: false
+    confidence: found
+    notes: "High-speed mode rise/fall time max 160 ns and bus capacitance must not exceed 400 pF (table notes, p6)."
+  - entity: ads1115
+    level: ic
+    path: interface.i2c.high_speed_enable
+    value: "send Hs controller code 00001xxxb after START (xxx unique to the Hs-capable controller); not acknowledged; Hs mode ends at the next STOP"
+    unit: null
+    conditions: needed for 3.4 MHz; standard and fast mode need no special action
+    doc: ti-ads111x-sbas444e
+    locator: "pdf p20 / printed p20, 7.5.1.3 I2C Speed Modes"
+    quote: "To activate high-speed mode, send a special address byte of 00001xxxb following the START condition"
+    transcribed: false
+    confidence: found
+    notes: null
+  - entity: ads1115
+    level: ic
+    path: pins.ALERT_RDY.type
+    value: "open-drain output; needs a pull-up resistor to VDD; ALERT/RDY is pin 2"
+    unit: null
+    conditions: "ADS1114/ADS1115 only; if unused leave unconnected or tie to VDD with a weak pull-up"
+    doc: ti-ads111x-sbas444e
+    locator: "pdf p3 / printed p3, Table 4-1; pdf p29, 9.1.4"
+    quote: "Open-drain output. Connect to VDD using a pullup resistor."
+    transcribed: false
+    confidence: found
+    notes: null
+  - entity: ads1115
+    level: ic
+    path: pins.ALERT_RDY.comparator_behaviour
+    value: "comparator output, active low by default (COMP_POL selects polarity); traditional or window mode; optional latch (cleared by SMBus alert response or reading Conversion register); COMP_QUE waits 1, 2 or 4 readings, or disables it (pin high)"
+    unit: null
+    conditions: Config register bits COMP_MODE, COMP_POL, COMP_LAT, COMP_QUE[1:0]
+    doc: ti-ads111x-sbas444e
+    locator: "pdf p16 / printed p16, 7.3.7 Digital Comparator; pdf p17, 7.3.9"
+    quote: "the ALERT/RDY pin asserts (active low by default)"
+    transcribed: false
+    confidence: found
+    notes: "Default Config register values after reset not re-derived here."
+  - entity: ads1115
+    level: ic
+    path: pins.ALERT_RDY.conversion_ready
+    value: "RDY mode: set MSB of Hi_thresh = 1 and MSB of Lo_thresh = 0, COMP_QUE != 11b; about 8 us pulse at the end of each conversion in continuous mode; in single-shot the pin asserts low at end of conversion if COMP_POL = 0"
+    unit: null
+    conditions: "still needs pull-up; COMP_POL still applies"
+    doc: ti-ads111x-sbas444e
+    locator: "pdf p17 / printed p17, 7.3.8 Conversion Ready Pin"
+    quote: "conversion-ready pulse on the ALERT/RDY pin at the end of each conversion in continuous-conversion mode"
+    transcribed: false
+    confidence: found
+    notes: "the printed text gives the pulse width as approximately 8 microseconds"
+  - entity: ads1115
+    level: ic
+    path: analog.full_scale_range
+    value: {PGA_6.144V: "187.5 uV/LSB", PGA_4.096V: "125 uV/LSB", PGA_2.048V: "62.5 uV/LSB", PGA_1.024V: "31.25 uV/LSB", PGA_0.512V: "15.625 uV/LSB", PGA_0.256V: "7.8125 uV/LSB"}
+    unit: V (FSR, differential, +/-)
+    conditions: "set by PGA[2:0] in Config register; 16-bit; LSB = FSR/2^16"
+    doc: ti-ads111x-sbas444e
+    locator: "pdf p15 / printed p15, 7.3.3, Table 7-1"
+    quote: "±6.144V, ±4.096V, ±2.048V, ±1.024V, ±0.512V, and ±0.256V"
+    transcribed: false
+    confidence: found
+    notes: "The +/-6.144 V and +/-4.096 V ranges express ADC scaling only: no more than VDD + 0.3 V may be applied to analog inputs (Table 7-1 note 1). Single-ended measurements use half of the range (code 0-32767), p29. The power-on default PGA setting was not re-derived."
+  - entity: ads1115
+    level: ic
+    path: analog.input_voltage_range
+    value: {min: "GND", max: "VDD"}
+    unit: V
+    conditions: "recommended operating, absolute input voltage V(AINx); no negative voltages allowed"
+    doc: ti-ads111x-sbas444e
+    locator: "pdf p4 / printed p4, 5.3; negative voltages: pdf p28 section 9.1.1"
+    quote: "No more than VDD + 0.3V must be applied to the analog inputs"
+    transcribed: false
+    confidence: found
+    notes: "Section 9.1.1: 'these devices cannot accept negative voltages on either input'."
+  - entity: ads1115
+    level: ic
+    path: absolute_max.analog_inputs
+    value: {min: "GND - 0.3", max: "VDD + 0.3"}
+    unit: V
+    conditions: "AIN0-AIN3, over operating ambient temperature range"
+    doc: ti-ads111x-sbas444e
+    locator: "pdf p4 / printed p4, 5.1 Absolute Maximum Ratings"
+    quote: "Analog input voltage AIN0, AIN1, AIN2, AIN3 GND – 0.3 VDD + 0.3 V"
+    transcribed: false
+    confidence: found
+    notes: "9.1.3: damage possible beyond about 300 mV outside the rails for extended periods."
+  - entity: ads1115
+    level: ic
+    path: absolute_max.digital_inputs
+    value: {min: "GND - 0.3", max: 5.5}
+    unit: V
+    conditions: "SDA, SCL, ADDR, ALERT/RDY (absolute max does not depend on VDD)"
+    doc: ti-ads111x-sbas444e
+    locator: "pdf p4 / printed p4, 5.1"
+    quote: "Digital input voltage SDA, SCL, ADDR, ALERT/RDY GND – 0.3 5.5 V"
+    transcribed: false
+    confidence: found
+    notes: "Recommended VDIG range GND to 5.5 V (5.3)."
+  - entity: ads1115
+    level: ic
+    path: absolute_max.supply_voltage
+    value: {min: -0.3, max: 7}
+    unit: V
+    conditions: VDD to GND
+    doc: ti-ads111x-sbas444e
+    locator: "pdf p4 / printed p4, 5.1"
+    quote: "Power-supply voltage VDD to GND –0.3 7 V"
+    transcribed: false
+    confidence: found
+    notes: null
+  - entity: ads1115
+    level: ic
+    path: absolute_max.input_current
+    value: {min: -10, max: 10}
+    unit: mA
+    conditions: "continuous, any pin except power supply pins"
+    doc: ti-ads111x-sbas444e
+    locator: "pdf p4 / printed p4, 5.1; also 9.1.3 p29"
+    quote: "Input current, continuous Any pin except power supply pins –10 10 mA"
+    transcribed: false
+    confidence: found
+    notes: "Temperatures: operating ambient -40 to 125 C, junction -40 to 150 C, storage -60 to 150 C. ESD HBM +/-2000 V, CDM +/-500 V (5.2)."
+  - entity: ads1115
+    level: ic
+    path: electrical.supply_current.operating
+    value: {typ: 150, max_25C: 200, max_full_temp: 300}
+    unit: uA
+    conditions: "operating (continuous conversion), VDD = 3.3 V, 8 SPS, FSR +/-2.048 V; typ and 200 max at TA = 25 C, 300 max over -40 to +125 C"
+    doc: ti-ads111x-sbas444e
+    locator: "pdf p6 / printed p6, 5.5 Electrical Characteristics (continued), POWER-SUPPLY, IVDD"
+    quote: figure
+    transcribed: true
+    confidence: found
+    notes: "Rendered and read: Power-down row TA=25C typ 0.5, max 2; second row max 5. Operating row TA=25C typ 150, max 200; second row max 300. Page 1 states '150 uA (continuous-conversion mode)'. Power dissipation 0.9 mW at 5.0 V, 0.5 mW at 3.3 V, 0.3 mW at 2.0 V (typ)."
+  - entity: ads1115
+    level: ic
+    path: electrical.supply_current.power_down
+    value: {typ: 0.5, max_25C: 2, max_full_temp: 5}
+    unit: uA
+    conditions: "power-down, VDD = 3.3 V; typ and 2 max at TA = 25 C; 5 max over temperature"
+    doc: ti-ads111x-sbas444e
+    locator: "pdf p6 / printed p6, 5.5 (continued)"
+    quote: figure
+    transcribed: true
+    confidence: found
+    notes: "See previous fact."
+  - entity: ads1115
+    level: ic
+    path: analog.input_impedance
+    value: {common_mode_2.048V: "6 Mohm", differential_2.048V: "4.9 Mohm", differential_0.256V: "710 kohm", differential_6.144V: "22 Mohm"}
+    unit: ohm
+    conditions: "typical, VDD 3.3 V, depends on FSR"
+    doc: ti-ads111x-sbas444e
+    locator: "pdf p5 / printed p5, 5.5 ANALOG INPUT"
+    quote: "Differential input impedance FSR = ±6.144V(1) 22 MΩ"
+    transcribed: false
+    confidence: found
+    notes: "extra fact (not required): matters for source impedance in rule R8"
+  # ------------------------------------------------------------------ ADS1115 breakout
+  - entity: ads1115-breakout
+    level: breakout
+    path: pins.labels
+    value: "VIN, GND, SCL, SDA, ADDR, ALRT, A0, A1, A2, A3, A+, A-"
+    unit: null
+    conditions: "labels as printed on the current STEMMA QT board silkscreen and used by the guide; A+ and A- are outputs (ferrite-filtered VIN and GND), not inputs; two STEMMA QT connectors carry SCL, SDA, V+, GND"
+    doc: adafruit-adc-guide-pinouts
+    locator: "HTML section Pinouts (Power Pins, I2C Logic Pins, Address Pin, Other Pins); schematic: adafruit-ads1115-stemma-eagle-sch JP2 pins 1-6 = VCC, GND, SCL, SDA, ADDR, ALERT; JP1 pins 1-6 = AVDD, AIN3, AIN2, AIN1, AIN0, AGND; silkscreen texts read from the .brd file"
+    quote: "A+ and A- - ADC power supply (VIN through a ferrite) and ADC ground (digital GND through a ferrite) these are OUTPUTs not inputs!"
+    transcribed: false
+    confidence: found
+    notes: "Silkscreen text in .brd: VIN, GND, SCL, SDA, ADDR, ALRT, A0-A3, A+, A-, ADS1115, 16-bit ADC."
+  - entity: ads1115-breakout
+    level: breakout
+    path: power.vin_range
+    value: {min: 2, max: 5}
+    unit: V
+    conditions: "power and logic level; 'give it the same power as the logic level of your microcontroller'"
+    doc: adafruit-adc-guide-pinouts
+    locator: "HTML section Pinouts > Power Pins"
+    quote: "VIN - this is the power pin. Acceptable voltages are 2V to 5V."
+    transcribed: false
+    confidence: found
+    notes: "Upper limit 5 V on the board vs IC rating 5.5 V: guide does not state 5.5."
+  - entity: ads1115-breakout
+    level: breakout
+    path: power.regulator
+    value: false
+    unit: null
+    conditions: "STEMMA QT schematic netlist: VCC feeds the ADS1115 VDD only through ferrite FB3 (AVDD); no regulator part is placed"
+    doc: adafruit-ads1115-stemma-eagle-sch
+    locator: "parts list and nets VCC/AVDD (U1.VDD on AVDD via FB3; C1 10uF, C3 10uF, C5 0.1uF); the guide never mentions a regulator and tells the user to power at the MCU logic level"
+    quote: figure
+    transcribed: false
+    confidence: inferred
+    notes: "Inference from absence in the parsed schematic; the guide states 'requires between 2V to 5V power/logic'. The Eagle library file also contains regulator symbols but none is instantiated."
+  - entity: ads1115-breakout
+    level: breakout
+    path: level_shifting
+    value: false
+    unit: null
+    conditions: "no level shifter parts in either schematic; I2C and ALRT go straight from connector to the IC with pull-ups to VIN"
+    doc: adafruit-ads1115-stemma-eagle-sch
+    locator: "nets SCL, SDA, ALERT, ADDR"
+    quote: figure
+    transcribed: false
+    confidence: inferred
+    notes: "Logic level equals VIN, consistent with guide text 'power/logic'."
+  - entity: ads1115-breakout
+    level: breakout
+    path: i2c.pullups.SCL
+    value: 10000
+    unit: ohm
+    conditions: "to VIN; STEMMA QT board: resistor pack R1 (10K) gate G$4; legacy board: R1 10K"
+    doc: adafruit-adc-guide-pinouts
+    locator: "HTML section Pinouts > I2C Logic Pins (SCL)"
+    quote: "This pin has a 10K pullup to VIN"
+    transcribed: false
+    confidence: found
+    notes: "Schematic agrees (adafruit-ads1115-stemma-eagle-sch R1.G$4 pin1 on SCL, pin2 on VCC). Two boards on one bus put two 10k in parallel."
+  - entity: ads1115-breakout
+    level: breakout
+    path: i2c.pullups.SDA
+    value: 10000
+    unit: ohm
+    conditions: "to VIN; R1 gate G$3 (legacy board: R2 10K)"
+    doc: adafruit-adc-guide-pinouts
+    locator: "HTML section Pinouts > I2C Logic Pins (SDA)"
+    quote: "This pin has a 10K pullup to VIN."
+    transcribed: false
+    confidence: found
+    notes: "Schematic agrees."
+  - entity: ads1115-breakout
+    level: breakout
+    path: pins.ALRT.pullup
+    value: 10000
+    unit: ohm
+    conditions: "to VIN; R1 gate G$2 pin1 on ALERT, pin2 on VCC (legacy board: R4 10K to VDD)"
+    doc: adafruit-ads1115-stemma-eagle-sch
+    locator: "nets ALERT and VCC, part R1 value 10K (RESISTOR_4PACK, RESPACK_4X0603)"
+    quote: figure
+    transcribed: false
+    confidence: found
+    notes: "NOT mentioned in the guide text, only in the schematic. So ALRT is already pulled up on the board."
+  - entity: ads1115-breakout
+    level: breakout
+    path: address.default
+    value: "0x48 (ADDR pulled to GND through 10 kohm: R1 gate G$1; legacy board R3 10K to GND)"
+    unit: 7-bit address
+    conditions: "A0 solder jumper open (SJ1 not bridged)"
+    doc: adafruit-adc-guide-pinouts
+    locator: "HTML section Pinouts: first sentence and Address Jumper"
+    quote: "The default I2C address is 0x48."
+    transcribed: false
+    confidence: found
+    notes: "Schematic: SJ1 joins ADDR to VCC (pin2 on VCC). Guide: closing A0 gives 0x49 ('0x48 + A0'). The ADDR pad is also broken out (JP2 pin 5, label ADDR), so 0x4A/0x4B follow from the TI table if tied to SDA/SCL (not stated by the guide text; its address table is an image that was not read). Guide says the jumper lets you chain 'up to 2' boards."
+  - entity: ads1115-breakout
+    level: breakout
+    path: address.A0_jumper_closed
+    value: "0x49"
+    unit: 7-bit address
+    conditions: "A0 solder jumper bridged (ADDR to VIN)"
+    doc: adafruit-adc-guide-pinouts
+    locator: "HTML section Pinouts > Address Jumper"
+    quote: "If A0 is soldered closed, the address is 0x48 + 1 = 0x49"
+    transcribed: false
+    confidence: found
+    notes: null
+  - entity: ads1115-breakout
+    level: breakout
+    path: power.supply_current
+    value: null
+    unit: null
+    conditions: null
+    doc: adafruit-adc-guide-pinouts
+    locator: "searched the whole Pinouts page and both schematics"
+    quote: figure
+    transcribed: false
+    confidence: could-not-verify
+    notes: "No board-level supply current is stated. IC supply current 150 uA typ applies, plus power LED (green, 10K series resistor, jumper on back, cut trace to disable)."
+  - entity: ads1115-breakout
+    level: breakout
+    path: leds.power
+    value: "green LED D1 with 10K series resistor R2 from VCC; solder jumper SJ2 (closed) on the back can be cut"
+    unit: null
+    conditions: null
+    doc: adafruit-adc-guide-pinouts
+    locator: "HTML section Pinouts > Power LED and Jumper"
+    quote: "If you wish to disable the power LED, simply cut the trace on this jumper."
+    transcribed: false
+    confidence: found
+    notes: "10K value from schematic R2."
+  # ------------------------------------------------------------------ SRD relay
+  - entity: srd-05vdc-sl-c
+    level: relay
+    path: coil.nominal_voltage
+    value: 5
+    unit: VDC
+    conditions: "SRD-05VDC-SL-C: 05 = nominal coil voltage code, S = sealed, L = 0.36 W coil sensitivity, C = 1 form C"
+    doc: songle-srd-t73
+    locator: "pdf p1 / printed p30, ORDERING INFORMATION (image)"
+    quote: figure
+    transcribed: true
+    confidence: found
+    notes: "Ordering text: 'L 0.36W / D 0.45W'. Older sheet p1 ordering: L:0.36W, D:0.45W, S: sealed type, C: 1 form C."
+  - entity: srd-05vdc-sl-c
+    level: relay
+    path: coil.resistance
+    value: 69.4
+    unit: ohm
+    conditions: "5 VDC, 0.36 W (L) version, +/-10%, at 23 C (Songle V1 sheet)"
+    doc: songle-srd-t73
+    locator: "pdf p2 / printed p31, COIL PARAMETERS table (image), 0.36W(L) row, column 5"
+    quote: figure
+    transcribed: true
+    confidence: found
+    notes: "Same table, 0.45W(D) 5 V: 55 ohm. Row lists 3/5/6/9/12/18/24/36/48 V = 25 / 69.4 / 100 / 225 / 400 / 900 / 1600 / 3600 / 6400 ohm."
+  - entity: srd-05vdc-sl-c
+    level: relay
+    path: coil.resistance_old_sheet
+    value: {high_sensitivity_0.36W: 70, standard_0.45W: 55}
+    unit: ohm
+    conditions: "5 VDC, +/-10%, at 20 C (older sheet)"
+    doc: srd-old-circuitbasics
+    locator: "pdf p2 / printed p2, 6. COIL DATA CHART (AT20C), rows 05"
+    quote: "71.4 70"
+    transcribed: false
+    confidence: found
+    notes: "Differs from Songle V1 (69.4 ohm). See contradiction C4."
+  - entity: srd-05vdc-sl-c
+    level: relay
+    path: coil.current_nominal
+    value: {high_sensitivity_0.36W: 71.4, standard_0.45W: 89.3}
+    unit: mA
+    conditions: "5 VDC, at 20 C; STATED in the older sheet (column Nominal Current)"
+    doc: srd-old-circuitbasics
+    locator: "pdf p2 / printed p2, 6. COIL DATA CHART, rows 05"
+    quote: "71.4 70"
+    transcribed: false
+    confidence: found
+    notes: "The Songle V1 sheet has NO current column: it must be derived (5/69.4 = 72.0 mA; 5/55 = 90.9 mA) - derived by the auditor, not stated, so confidence for the V1 sheet is inferred. Variants: 0.36 W (SL, 71.4 mA) vs 0.45 W (SD, 89.3 mA); the part SRD-05VDC-SL-C is the L (0.36 W) version per its ordering code."
+  - entity: srd-05vdc-sl-c
+    level: relay
+    path: coil.current_nominal_derived_V1
+    value: {L_0.36W: 72.0, D_0.45W: 90.9}
+    unit: mA
+    conditions: "derived I = 5 V / R from Songle V1 resistance 69.4 / 55 ohm (+/-10%); at 23 C"
+    doc: songle-srd-t73
+    locator: "pdf p2 / printed p31, COIL PARAMETERS (image)"
+    quote: figure
+    transcribed: true
+    confidence: inferred
+    notes: "DERIVED, not stated. Coil resistance tolerance +/-10% means current range about 65-80 mA (L)."
+  - entity: srd-05vdc-sl-c
+    level: relay
+    path: coil.power
+    value: {L: "0.36 W (older sheet: abt. 0.36W)", D: "0.45 W (older sheet: abt. 0.45W; abt. 0.51W printed on the 48 V row)"}
+    unit: W
+    conditions: "SRD-05VDC-SL-C is the L (0.36 W) version"
+    doc: srd-old-circuitbasics
+    locator: "pdf p2 / printed p2, 6. COIL DATA CHART, Power Consumption column"
+    quote: "abt. 0.36W"
+    transcribed: false
+    confidence: found
+    notes: "Songle V1 pdf p2: 'Power consumption(W) 0.36W(L) / 0.45W(D)' (image)."
+  - entity: srd-05vdc-sl-c
+    level: relay
+    path: coil.pickup_voltage_max_pct
+    value: 75
+    unit: "% of nominal voltage (3.75 V at 5 V)"
+    conditions: "max (must operate at or below this)"
+    doc: songle-srd-t73
+    locator: "pdf p2 / printed p31, COIL PARAMETERS, row 'Pick-up voltage(Max)'"
+    quote: figure
+    transcribed: true
+    confidence: found
+    notes: "Older sheet p2 also: 75%Max. for both sensitivities."
+  - entity: srd-05vdc-sl-c
+    level: relay
+    path: coil.dropout_voltage_min_pct
+    value: 10
+    unit: "% of nominal voltage (0.5 V at 5 V)"
+    conditions: min
+    doc: songle-srd-t73
+    locator: "pdf p2 / printed p31, COIL PARAMETERS, row 'Drop-out voltage(Min)'"
+    quote: figure
+    transcribed: true
+    confidence: found
+    notes: "Older sheet p2: 10% Min. both."
+  - entity: srd-05vdc-sl-c
+    level: relay
+    path: coil.max_allowable_voltage_pct
+    value: {songle_V1: 130, old_sheet_high_sensitivity: 120, old_sheet_standard: 110}
+    unit: "% of nominal voltage (6.5 V / 6.0 V / 5.5 V at 5 V)"
+    conditions: "'Max allowable overdrive voltage'; V1 sheet gives one value for both power versions, older sheet gives 120% (0.36 W) and 110% (0.45 W)"
+    doc: songle-srd-t73
+    locator: "pdf p2 / printed p31, COIL PARAMETERS, row 'Max allowable overdrive voltage(VDC)'; older sheet pdf p2 column Max-Allowable Voltage"
+    quote: figure
+    transcribed: true
+    confidence: found
+    notes: "Disagreement between the two sheets, see C4. Overdrive duration is not stated."
+  - entity: srd-05vdc-sl-c
+    level: relay
+    path: contacts.rating_V1
+    value: {resistive: "7A/10A/15A 250VAC/28VDC, 10A 125VAC", max_switching_voltage: "277VAC/30VDC", max_switching_current: "15 A", max_switching_power: "2770VA/300W", contact_resistance: "<=100 mohm (1A 6VDC)", contact_material: "Silver alloy AgSnO2, AgSnIn2O3, AgNi"}
+    unit: null
+    conditions: "SRD(T73) series, contact arrangement A, B, C; per-form split of the 7/10/15 A figures is not given in text"
+    doc: songle-srd-t73
+    locator: "pdf p1 / printed p30, CONTACT PARAMETERS table (image)"
+    quote: figure
+    transcribed: true
+    confidence: found
+    notes: "Safety approval table pdf p2 (printed 31): UL 3A 125VAC inductive, 10A 125VAC, 15A 125VAC 'NO'; 7A/10A 250VAC; the 15A column marked NO for form C."
+  - entity: srd-05vdc-sl-c
+    level: relay
+    path: contacts.rating_old_sheet
+    value: {form_C_resistive: "7A 28VDC, 10A 125VAC, 7A 240VAC", form_A_resistive: "10A 28VDC, 10A 240VAC", form_C_inductive: "3A 120VAC, 3A 28VDC (cos phi 0.4, L/R 7 ms)", max_allowable_voltage: "250VAC/110VDC", max_power_form_C: "800VAC/240W", contact_material: "AgCdO"}
+    unit: null
+    conditions: "older sheet; SL-C is FORM C"
+    doc: srd-old-circuitbasics
+    locator: "pdf p2 / printed p2, 7. CONTACT RATING"
+    quote: "Max. Allowable Voltage 250VAC/110VDC"
+    transcribed: false
+    confidence: found
+    notes: "Form C is lower than form A on DC (7 A vs 10 A at 28 VDC). The V1 sheet's pdf p3 pin diagram shows C type wiring (bottom view); not transcribed further."
+  - entity: srd-05vdc-sl-c
+    level: relay
+    path: timing.operate_release
+    value: {operate_ms_max: 10, release_ms_max: 5}
+    unit: ms
+    conditions: "at nominal voltage; release without diode"
+    doc: songle-srd-t73
+    locator: "pdf p2 / printed p31, CHARACTERISTICS PARAMETERS (image)"
+    quote: figure
+    transcribed: true
+    confidence: found
+    notes: "Older sheet identical: 10 msec / 5 msec max."
+  - entity: srd-05vdc-sl-c
+    level: relay
+    path: environment.ambient_temperature
+    value: {songle_V1: "-40 to +85 C (features line also says +105 C)", old_sheet: "-25 to +70 C"}
+    unit: C
+    conditions: null
+    doc: songle-srd-t73
+    locator: "pdf p2 / printed p31, 'Ambient temperature'; pdf p1 FEATURES"
+    quote: figure
+    transcribed: true
+    confidence: found
+    notes: "C5. Coil data temperature: 23 C (V1) vs 20 C (older)."
+  # ------------------------------------------------------------------ opto + JD-VCC board
+  - entity: relay-board-4ch-opto-jdvcc
+    level: relay
+    path: signals.count_and_names
+    value: "4 control inputs IN1-IN4; header pins GND, IN1, IN2, IN3, IN4, VCC (pin 1 to 6); separate 2-pin JD-VCC/VCC header"
+    unit: null
+    conditions: "TS0011 and SainSmart schematic agree"
+    doc: sunfounder-ts0011
+    locator: "pdf p2 / printed p2, Pinout; schematic pdf p3 (header J: 1 GND, 2 IN1, 3 IN2, 4 IN3, 5 IN4, 6 VCC)"
+    quote: "IN1~IN4: The signal input pins for the relays."
+    transcribed: true
+    confidence: found
+    notes: "SainSmart schematic pdf p1 header numbering 6=VCC,5=IN1,4=IN2,3=IN3,2=IN4,1=GND (read from rendered image). Relay contacts: 3-pin NO/COM/NC; SPDT."
+  - entity: relay-board-4ch-opto-jdvcc
+    level: relay
+    path: signals.polarity
+    value: "ACTIVE LOW: LOW at IN switches the relay ON (NO closes to COM)"
+    unit: null
+    conditions: "per channel"
+    doc: sunfounder-ts0011
+    locator: "pdf p2 / printed p2, Pinout, IN1~IN4; pdf p7 code comments; pdf p3 schematic"
+    quote: "When a low-level signal is input, the Normally Open (NO) contact of the relay connects with the Common (COM) terminal."
+    transcribed: false
+    confidence: found
+    notes: "Contradicted by TS0011 p1 feature line (C1). SainSmart product page: 'TTL logic active low'. Schematic: opto LED between VCC (via R1) and IN, so pulling IN low lights the LED and turns the transistor on."
+  - entity: relay-board-4ch-opto-jdvcc
+    level: relay
+    path: signals.polarity_contradiction
+    value: "TS0011 p1 says the relay is off when input is low"
+    unit: null
+    conditions: null
+    doc: sunfounder-ts0011
+    locator: "pdf p1 / printed p1, Features"
+    quote: "When input is at low level, the relay is off, and the indicator light is on."
+    transcribed: false
+    confidence: found
+    notes: "Contradiction C1, resolved as an error in favour of active LOW."
+  - entity: relay-board-4ch-opto-jdvcc
+    level: relay
+    path: signals.polarity_vendor_statement
+    value: "TTL logic active low"
+    unit: null
+    conditions: SainSmart 4-Channel 5V Relay Module
+    doc: sainsmart-product-page
+    locator: "HTML section Specifications (More info)"
+    quote: "TTL logic active low"
+    transcribed: false
+    confidence: found
+    notes: "Product page, weaker evidence; agrees with the schematic."
+  - entity: relay-board-4ch-opto-jdvcc
+    level: relay
+    path: signals.resting_level_floating_input
+    value: "relay OFF when IN floats (no current path through the opto LED); the safe idle level for the driver is HIGH (or hi-Z only if the opto LED supply is the module VCC)"
+    unit: null
+    conditions: "derived from the schematic; HIGH from a 3.3 V MCU into an input whose LED anode is on a 5 V VCC may still leave the LED slightly forward biased (not computed: 817C datasheet not opened)"
+    doc: sunfounder-ts0011
+    locator: "pdf p3 schematic (R1 1K from VCC to opto pin 1; IN to opto pin 2 via indicator LED); pdf p7 code: 'Initially, all relays are turned off (HIGH for low-level trigger)'"
+    quote: "Initially, all relays are turned off (HIGH for low-level trigger)"
+    transcribed: true
+    confidence: inferred
+    notes: "No document states the floating behaviour explicitly. The 3.3 V-HIGH caveat is an open point for the electrical rules."
+  - entity: relay-board-4ch-opto-jdvcc
+    level: relay
+    path: input_circuit
+    value: "per channel: VCC - R(1K) - opto 817C LED anode; cathode - indicator LED - IN; opto transistor collector to JD-VCC, emitter - R(1K) - base of NPN Q (marked J3Y) with emitter at GND; relay coil between JD-VCC and Q collector; flyback diode D across the coil (cathode to JD-VCC)"
+    unit: null
+    conditions: "TS0011 schematic labels R1-R4 = 1K, R5-R8 = 1K, opto 817C, Q marking J3Y, D1-D4 (type not marked)"
+    doc: sunfounder-ts0011
+    locator: "pdf p3 / printed p3, Schematic (image)"
+    quote: figure
+    transcribed: true
+    confidence: found
+    notes: "SainSmart schematic (rendered) shows the same topology (U1/U3/U5/U7 opto, R, Q, D per channel, JD-VCC rail), but prints no resistor values and no transistor/diode/opto part numbers: values and parts for SainSmart = could-not-verify. Diode polarity read from the symbol: reverse-biased across the coil = flyback."
+  - entity: relay-board-4ch-opto-jdvcc
+    level: relay
+    path: power.pins
+    value: "VCC (input-side / opto LED supply), GND, JD-VCC (relay coil supply, separate 2-pin header with jumper)"
+    unit: null
+    conditions: null
+    doc: sunfounder-ts0011
+    locator: "pdf p2 / printed p2, Pinout; pdf p3 Schematic text"
+    quote: "Connecting JD-VCC and VCC with a jumper cap indicates that the relay is powered by the main control board's power supply."
+    transcribed: false
+    confidence: found
+    notes: "Apostrophe in quote is straight in the text layer."
+  - entity: relay-board-4ch-opto-jdvcc
+    level: relay
+    path: power.jumper_behaviour
+    value: "jumper ON: coil powered from VCC (one supply). Jumper OFF: JD-VCC fed from an extra supply for the coils, VCC (from the MCU 5 V) only supplies the input signals"
+    unit: null
+    conditions: null
+    doc: sunfounder-ts0011
+    locator: "pdf p3 / printed p3, Schematic text"
+    quote: "connect VCC to 5V of the MCU board to supply input signals."
+    transcribed: false
+    confidence: found
+    notes: "Schematic: the GND pin connects only to the transistor emitters; the opto LED side has no GND connection, it returns through the controller pin (IN). With the jumper removed, the external supply ground must therefore be tied to the GND pin, and the MCU GND is not on the module. Inferred from the figure; the document does not discuss it."
+  - entity: relay-board-4ch-opto-jdvcc
+    level: relay
+    path: input_current
+    value: "15-20"
+    unit: mA per channel
+    conditions: "STATED as 'driver current' by the vendor; not derived; inconsistent with the 1K input resistor in the drawing (C3)"
+    doc: sunfounder-ts0011
+    locator: "pdf p1 / printed p1, intro paragraph"
+    quote: "each channel needs a 15-20mA driver current."
+    transcribed: false
+    confidence: found
+    notes: "SainSmart page: 'each channel requires 15-20mA driver current'. Possibly this means the relay coil drive current rather than the signal-input current; the document does not say. Do not use as the GPIO current without a decision."
+  - entity: relay-board-4ch-opto-jdvcc
+    level: relay
+    path: relay_model
+    value: null
+    unit: null
+    conditions: null
+    doc: sunfounder-ts0011
+    locator: "pdf p1 Features: 'Equipped with high-current relays that work under AC250V 10A or DC30V 10A'; schematic: generic 'Relay'"
+    quote: "It is equipped with high-current relays that work under AC250V 10A or DC30V 10A."
+    transcribed: false
+    confidence: could-not-verify
+    notes: "No relay part number in TS0011, the SainSmart schematic or the SainSmart page. Features: SPDT, 73 x 54 x 19.5 mm, mounting holes 3.1 mm. Coil voltage is therefore not documented (see C2, '5VDC, 12VDC')."
+  - entity: relay-board-4ch-opto-jdvcc
+    level: relay
+    path: isolation
+    value: "optocoupler isolation claimed"
+    unit: null
+    conditions: null
+    doc: sunfounder-ts0011
+    locator: "pdf p1 / printed p1, Features"
+    quote: "Optocoupler isolation, good anti-interference capability"
+    transcribed: false
+    confidence: found
+    notes: "SainSmart page: 'Opto-isolated inputs for enhanced safety.'"
+  # ------------------------------------------------------------------ transistor-type board (KS0058 only)
+  - entity: relay-board-4ch-transistor
+    level: relay
+    path: signals.count_and_names
+    value: "4 control inputs (pins 1-4), plus VCC and GND"
+    unit: null
+    conditions: "Keyestudio KS0058 wiki text"
+    doc: keyestudio-ks0058-wiki
+    locator: "wiki section Specification, 'Definition of module pins'"
+    quote: "Pin 1- Pin 4----Controlling end"
+    transcribed: false
+    confidence: found
+    notes: "JD-VCC is not mentioned in the text; the photo shows a 2-pin jumper block (C8)."
+  - entity: relay-board-4ch-transistor
+    level: relay
+    path: signals.polarity
+    value: "ACTIVE HIGH: HIGH switches the relay on"
+    unit: null
+    conditions: "per channel, TTL control"
+    doc: keyestudio-ks0058-wiki
+    locator: "wiki section Specification, 'Control signal'"
+    quote: "Active at HIGH level"
+    transcribed: false
+    confidence: found
+    notes: "Sample code comments (Sample Code section): digitalWrite(i, LOW) is called 'turning off the relay gradually' and HIGH 'turning on'. Consistent."
+  - entity: relay-board-4ch-transistor
+    level: relay
+    path: signals.resting_level_floating_input
+    value: null
+    unit: null
+    conditions: null
+    doc: keyestudio-ks0058-wiki
+    locator: "wiki page (no schematic); KS0058 PDF not reachable (https://fs.keyestudio.com/KS0058)"
+    quote: figure
+    transcribed: false
+    confidence: could-not-verify
+    notes: "Whether a base pull-down resistor exists is unknowable without the schematic. A floating input on an active-HIGH NPN stage is undefined."
+  - entity: relay-board-4ch-transistor
+    level: relay
+    path: input_circuit
+    value: null
+    unit: null
+    conditions: "resistors, transistor, flyback diode"
+    doc: keyestudio-ks0058-wiki
+    locator: "wiki page and images Ks0058-1.png / Ks0058-2.png"
+    quote: figure
+    transcribed: true
+    confidence: could-not-verify
+    notes: "No schematic. The photo and diagram show reference designators (Q, D, R, LED) and DIP-4 footprints next to each relay but these cannot be read reliably, so no part values are recorded. Do not infer transistor-only vs opto from the images (C8). Manual download of the KS0058 PDF needed."
+  - entity: relay-board-4ch-transistor
+    level: relay
+    path: power.pins_and_jumper
+    value: "VCC and GND per the wiki text; the photo shows a jumper cap on a 2-pin block next to the 6-pin header; the connection diagram labels a 2-pin block COM/GND"
+    unit: null
+    conditions: null
+    doc: keyestudio-ks0058-wiki-images
+    locator: "Ks0058-1.png (photo), Ks0058-2.png (connection diagram, red wire = Uno 5V to VCC, header pins to Uno pins 2-5)"
+    quote: figure
+    transcribed: true
+    confidence: inferred
+    notes: "Function of the jumper is not documented anywhere that was reachable: could-not-verify (JD-VCC behaviour)."
+  - entity: relay-board-4ch-transistor
+    level: relay
+    path: input_current
+    value: null
+    unit: null
+    conditions: null
+    doc: keyestudio-ks0058-wiki
+    locator: "whole wiki page"
+    quote: figure
+    transcribed: false
+    confidence: could-not-verify
+    notes: "not stated"
+  - entity: relay-board-4ch-transistor
+    level: relay
+    path: relay_model
+    value: "SRD-05VDC-SL-C (printed on the relay cases in the product photo)"
+    unit: null
+    conditions: "photo only; the connection-diagram artwork draws SRD-06VDC-SL-C"
+    doc: keyestudio-ks0058-wiki-images
+    locator: "Ks0058-1.png photo, relay case text 'SRD-05VDC-SL-C'; Ks0058-2.png artwork"
+    quote: figure
+    transcribed: true
+    confidence: found
+    notes: "Read from a vendor photo of the actual relays (zoomed); the artwork says 06 (C8). Wiki text: 'high quality relay', 10A 250VAC / 10A 125VAC / 10A 30DC / 10A 28VDC, through-current 10A (NO) 5A (NC), max 250VAC 30VDC, actuation time < 10 ms."
+  - entity: relay-board-4ch-transistor
+    level: relay
+    path: ratings.contacts
+    value: "10A 250VAC, 10A 125VAC, 10A 30VDC, 10A 28VDC; through-current 10 A (NO) / 5 A (NC); max switching voltage 250VAC 30VDC; actuation < 10 ms"
+    unit: null
+    conditions: null
+    doc: keyestudio-ks0058-wiki
+    locator: "wiki section Specification, Rated load"
+    quote: "Rated Through-current: 10A(NO) 5A(NC)"
+    transcribed: false
+    confidence: found
+    notes: "Text uses '10A 30DC'."
