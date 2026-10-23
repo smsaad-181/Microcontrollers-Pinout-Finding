@@ -113,13 +113,30 @@ export function resolveAddress(
   }
   if (all.length === 1)
     return { instance, options: [all[0]?.value ?? 0], status: 'fixed', evidence };
+  // free-text hardwired level ("pulled up to 3.3 V by 10 kohm", "tied to GND"): the board's default address
+  let preferred: number | undefined;
+  for (const h of breakout.hardwired) {
+    const text = String(h.value);
+    const up = /pulled up|tied (high|to (3[.]3|vdd|vcc))/i.test(text);
+    const down = /pulled down|tied (low|to gnd)/i.test(text);
+    if (up === down) continue;
+    const hit = all.filter((a) => {
+      const [pin, level] = a.strap.split('=').map((t) => squash(t));
+      return pin === squash(h.strap) && (up ? /^(VDD|VCC)/.test(level ?? '') : level === 'GND');
+    });
+    if (hit.length === 1) preferred = hit[0]?.value;
+  }
+  const ordered =
+    preferred === undefined
+      ? unknown.options
+      : [preferred, ...unknown.options.filter((x) => x !== preferred)];
   const strapPins = new Set(all.map((a) => squash(a.strap.split('=')[0] ?? '')));
   const exposed = breakout.pins.some(
     (p) =>
       strapPins.has(squash(p.label)) || p.maps_to.split('/').some((t) => strapPins.has(squash(t))),
   );
   // The strap pin is on the breakout (e.g. ADS1115 ADDR, BME280 SDO): the user can choose.
-  return exposed ? { ...unknown, status: 'selectable' } : unknown;
+  return exposed ? { ...unknown, status: 'selectable', options: ordered } : unknown;
 }
 
 function compatible(
@@ -270,18 +287,13 @@ export function selectInterfaces(
     view.pins.filter((p) => p.usable && p.pad !== undefined).map((p) => p.pad),
   );
   const periphs = Object.values(chip.peripherals);
-  const onboardUsedPads = new Set(board?.onboard.flatMap((o) => o.uses_pad) ?? []);
+  const bridged = (a: string, b: string): boolean =>
+    board?.onboard.some((o) => o.uses_pad.includes(a) && o.uses_pad.includes(b)) ?? false;
   const usbUarts = periphs.filter((p) => {
     const m = p.iomux_pins ?? {};
     const tx = m.tx;
     const rx = m.rx;
-    return (
-      p.kind === 'uart' &&
-      tx !== undefined &&
-      rx !== undefined &&
-      onboardUsedPads.has(tx) &&
-      onboardUsedPads.has(rx)
-    );
+    return p.kind === 'uart' && tx !== undefined && rx !== undefined && bridged(tx, rx);
   }).length;
   const ctx: Ctx = {
     index,
@@ -533,6 +545,25 @@ export function selectInterfaces(
       members.findIndex((m) => m.instance === a.instance) -
       members.findIndex((m) => m.instance === b.instance),
   );
+  // Rule 5: two modules whose addresses collide on one bus are told apart by an address strap. The strap
+  // decides the placement even when the interface itself was fixed by the user (rule 7).
+  for (const mod of modules) {
+    if (mod.chosen !== 'i2c') continue;
+    const me = addresses.find((a) => a.instance === mod.instance);
+    if (me?.address == null || me.status !== 'selectable') continue;
+    const peer = addresses.find(
+      (o) =>
+        o.instance !== me.instance &&
+        o.bus === me.bus &&
+        o.status === 'selectable' &&
+        o.options.some((x) => me.options.includes(x)),
+    );
+    if (!peer) continue;
+    mod.decidedByRule = 5;
+    mod.trace.push(
+      `rule 5: ${me.instance} and ${peer.instance} share address options on bus ${String(me.bus)}; the address strap separates them (${me.instance} at 0x${me.address.toString(16)})`,
+    );
+  }
   return {
     status: 'ok',
     modules,

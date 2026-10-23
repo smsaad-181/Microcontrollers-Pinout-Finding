@@ -27,6 +27,8 @@ import {
 
 /** I2C spec (UM10204) standard-mode sink current; a bus constant, not a catalog fact. */
 export const I2C_IOL_MA = 3;
+/** I2C spec (UM10204) VOL,max of a bus device at IOL: the sink voltage the pull-up window is sized for. */
+export const I2C_VOL_MAX_V = 0.4;
 /** Bus capacitance estimate: per attached device (pF) and per metre of wire (pF). Engine assumption. */
 export const I2C_CB_PER_DEVICE_PF = 10;
 export const I2C_CB_PER_METRE_PF = 100;
@@ -46,6 +48,8 @@ export interface ModuleChecks {
   budgets: { rail: string; demand_ma: number; limit_ma: number | null }[];
   /** Scope -> printable trace lines (instance or `i2c<n>`). */
   traces: Map<string, string[]>;
+  /** Instance -> claim ids of the device facts the checks relied on (supply range). */
+  facts: Map<string, string[]>;
 }
 
 const fmt = (n: number): string => String(Math.round(n * 1e6) / 1e6);
@@ -128,6 +132,7 @@ export function moduleChecks(
   const warnings: WarnItem[] = [];
   const parts: PartItem[] = [];
   const traces = new Map<string, string[]>();
+  const facts = new Map<string, string[]>();
   const trace = (scope: string, lines: readonly string[]) => {
     traces.set(scope, [...(traces.get(scope) ?? []), ...lines]);
   };
@@ -173,6 +178,7 @@ export function moduleChecks(
     const ic = index.ic(first.ic);
     if (!breakout || !ic) continue;
     const dev = deviceSupply(ic, logic);
+    facts.set(inst, [...prov(ic.vdd_range).evidence]);
     const ll = ic.logic_levels;
     const devL = ll
       ? {
@@ -291,6 +297,24 @@ export function moduleChecks(
         pads,
         ev,
       );
+      // the levels cannot be proven compatible, so the breakout's level-shifter fact is relied on
+      if (shifter.status === 'conflict') {
+        warn(
+          'caution',
+          'LEVEL_SHIFTER_CONFLICT_RELIED',
+          `${inst}: the level-shifter fact of ${breakout.id} is in conflict and the logic levels cannot be verified`,
+          pads,
+          [...ev, ...shifter.evidence],
+        );
+      } else if (shifter.value === null || shifter.status !== 'verified') {
+        warn(
+          'caution',
+          'LEVEL_SHIFTER_UNKNOWN',
+          `${inst}: the level-shifter fact of ${breakout.id} is ${shifter.value === null ? 'missing' : 'not verified'} and the logic levels cannot be verified`,
+          pads,
+          [...ev, ...shifter.evidence],
+        );
+      }
     }
 
     // regulator / supply facts
@@ -329,7 +353,10 @@ export function moduleChecks(
     const r3 = run('R3', scope, {
       pullUpsOhm: pulls,
       vddV: f(logic),
-      volMaxV: f(mcu.vol),
+      volMaxV:
+        mcu.vol.value !== null && mcu.vol.value > I2C_VOL_MAX_V
+          ? f(mcu.vol)
+          : known(I2C_VOL_MAX_V, mcu.vol.evidence),
       iolMa: known(I2C_IOL_MA),
       speedHz: speed,
       cbPf: { value: cb, status: 'inferred', evidence: [] },
@@ -362,6 +389,20 @@ export function moduleChecks(
     parts.push(...mapParts(scope, undefined, r3.requiredParts));
   }
   for (const a of addresses) {
+    // an address pin tied to SDA needs SDA held low for a set time after SCL falls (ADS1115 ADDR=SDA)
+    const sig = signals.find((x) => x.instance === a.instance);
+    const strapText = (sig ? index.ic(sig.ic) : undefined)?.interfaces
+      .find((i) => i.kind === 'i2c')
+      ?.limits.addresses?.find((x) => x.value === a.address)?.strap;
+    if (strapText !== undefined && /=SDA$/i.test(strapText.replace(/s+/g, ''))) {
+      warn(
+        'info',
+        'I2C_ADDRESS_SDA_STRAP_TIMING',
+        `${a.instance}: address strap ${strapText} needs SDA held low for the minimum time after SCL falls (see the IC datasheet)`,
+        [],
+        a.evidence,
+      );
+    }
     if (a.status === 'unknown') {
       warn(
         'caution',
@@ -375,6 +416,7 @@ export function moduleChecks(
 
   // ---------- supply: R7 ----------
   const railOf = new Map<string, string>();
+  const dualSupply = new Set<string>();
   const railLoads = new Map<string, Fact[]>();
   for (const inst of modules) {
     const first = signals.find((s) => s.instance === inst);
@@ -382,6 +424,8 @@ export function moduleChecks(
     const ic = first ? index.ic(first.ic) : undefined;
     if (!breakout || !ic) continue;
     const dev = deviceSupply(ic, logic);
+    // a second supply pin of its own (JD-VCC): the coil side can be fed apart from the logic side
+    if (breakout.pins.filter((p) => p.maps_to === 'VCC').length >= 2) dualSupply.add(inst);
     let rail = board.rails.find((r) => railFits(prov(r.voltage), ic) === true);
     if (!rail && !dev.separate)
       rail = board.rails.find((r) => prov(r.voltage).value === logic.value);
@@ -421,6 +465,20 @@ export function moduleChecks(
         total ?? loads.reduce((a, l) => a + (typeof l.value === 'number' ? l.value : 0), 0),
       limit_ma: limit.value,
     });
+    if (r7.level === 'caution' || !r7.passed) {
+      for (const [inst, rail] of railOf) {
+        if (rail === r.name && dualSupply.has(inst)) {
+          parts.push({
+            kind: 'regulator',
+            role: 'jd-vcc',
+            note: `${inst}: feed the coil supply (second supply pin) from a separate 5 V source with a common GND, jumper removed; value not asserted (${r7.level === 'caution' ? 'coil current or rail rating missing' : 'rail over capacity'})`,
+          });
+          trace(inst, [
+            'supply split: separate coil supply recommended while the rail budget cannot be proven',
+          ]);
+        }
+      }
+    }
     if (r7.level === 'caution') {
       warn(
         'caution',
@@ -443,16 +501,18 @@ export function moduleChecks(
 
   // ---------- SPI sharing ----------
   const spiMiso = signals.filter((s) => s.interface === 'spi' && s.miso !== undefined);
-  if (spiMiso.length > 1 && spiMiso.some((s) => s.miso?.shareProven !== true)) {
+  const spiDevices = new Set(signals.filter((s) => s.interface === 'spi').map((s) => s.instance));
+  if (spiDevices.size > 1 && spiMiso.some((s) => s.miso?.shareProven !== true)) {
+    // two devices that both drive MISO: Caution; one reader beside write-only devices: Info
     warn(
-      'caution',
+      spiMiso.length > 1 ? 'caution' : 'info',
       'MISO_SHARE_UNPROVEN',
-      `MISO is shared by ${spiMiso.map((s) => s.instance).join(', ')} and the catalog does not prove every device releases it when deselected`,
+      `MISO is used by ${spiMiso.map((s) => s.instance).join(', ')} on a bus shared with ${[...spiDevices].join(', ')} and the catalog does not prove the MISO driver releases it when deselected`,
       [...new Set(spiMiso.flatMap((s) => padOf(s.id) ?? []))],
       [],
     );
   }
-  return { rules, warnings, parts, budgets, traces };
+  return { rules, warnings, parts, budgets, traces, facts };
 }
 
 export type { Project };

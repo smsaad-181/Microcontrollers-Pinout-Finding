@@ -12,6 +12,7 @@
 // caller injects `options.now` (this package never reads a clock).
 import type { RuleId } from '@pinout/rules';
 import type { Recommendation, Project } from '@pinout/schema';
+import { minAssignment, scalarCost } from './assignment.js';
 import {
   addCost,
   assess,
@@ -22,7 +23,7 @@ import {
   type PartItem,
   type WarnItem,
 } from './assess.js';
-import { sortedUnique, type CatalogIndex, type InterfaceKind } from './catalog.js';
+import { prov, sortedUnique, type CatalogIndex, type InterfaceKind } from './catalog.js';
 import {
   composePinView,
   type CarryOption,
@@ -73,9 +74,29 @@ export interface SolveStats {
   budgetExhausted: boolean;
 }
 
+/** Numbers behind a solution that the Recommendation schema has no field for (golden fixtures, tests, UI). */
+export interface SolveDetails {
+  /** I2C placement: address, bus, status and the strap text per instance. */
+  i2c: { instance: string; address: number | null; bus: number; status: string }[];
+  /** Module- and bus-level rule results (scope = `inst:direction`, `i2c<n>`, `rail:<name>`). */
+  moduleRules: {
+    scope: string;
+    rule: string;
+    level: string;
+    passed: boolean;
+    values: Record<string, number>;
+  }[];
+  /** Clock ceiling per instance: min(device maximum, routing limit of the chosen pad). */
+  maxHz: Record<string, number>;
+  /** Current limits that applied to the loads (active reading when the pin figure is in conflict). */
+  currents: { pinMa: number | null; portMa: number | null; cumulativeMa: number | null };
+}
+
 export interface SolveOutcome {
   recommendation: Recommendation;
   stats: SolveStats;
+  /** Present when the status is ok. */
+  details?: SolveDetails;
 }
 
 // ---------- model ----------
@@ -103,6 +124,7 @@ interface Cand {
   routing: Routing | null;
   instance: string | null;
   carryMaxHz: number | null;
+  carryEvidence: string[];
   a: Assessment;
 }
 
@@ -113,6 +135,8 @@ interface Exclusion {
   /** Conflict-set token for this exclusion, e.g. `adc2-wifi:GPIO25`; null when it is not a conflict cause. */
   token: string | null;
   why: string;
+  /** Claim ids behind the exclusion. */
+  evidence: string[];
 }
 
 interface NetDomain {
@@ -194,6 +218,8 @@ interface Ctx {
   usbUarts: Set<string>;
   /** Pads of the UART the board wires to its USB bridge: the console link, never a free pin. */
   usbPads: Set<string>;
+  /** Claim ids of the onboard parts that tie those pads up. */
+  usbEvidence: string[];
   budget: Budget;
   i2cMux: boolean;
   /** ADC pads of the chip that the board uses internally and does not route to a header (e.g. Pico W GPIO29). */
@@ -253,6 +279,9 @@ function buildNets(
   const nets = new Map<string, Net>();
   const groups = new Map<string, BusKind>();
   for (const s of signals) {
+    // An interrupt output (IRQ/INT/ALERT) is optional wiring: it gets a pad only when the user locks one
+    // (the worked example leaves the RC522 IRQ unconnected).
+    if (s.peripheral === 'GPIO.IRQ' && s.lockedPad === undefined) continue;
     let id = s.id;
     let group: string | null = null;
     let busKind: BusKind | null = null;
@@ -323,13 +352,14 @@ function domainFor(
     const pad = pin.pad ?? '';
     if (net.lockedPad !== undefined && net.lockedPad !== pad) continue;
     const rel = net.kind !== 'adc' || pin.adc !== undefined;
-    const ex = (token: string | null, why: string) => {
-      excluded.push({ pad, rel, token, why });
+    const ex = (token: string | null, why: string, evidence: readonly string[] = []) => {
+      excluded.push({ pad, rel, token, why, evidence: [...evidence] });
     };
     if (!pin.usable) {
       ex(
         pin.unusableReason === 'consumed' ? `consumed:${pad}` : null,
         `${pad} is ${pin.unusableReason === 'consumed' ? 'used inside the module' : 'not available'}`,
+        pin.consumed?.by.evidence ?? [],
       );
       continue;
     }
@@ -338,7 +368,7 @@ function domainFor(
       continue;
     }
     if (ctx.usbPads.has(pad)) {
-      ex(`consumed:${pad}`, `${pad} is wired to the USB-UART bridge`);
+      ex(`consumed:${pad}`, `${pad} is wired to the USB-UART bridge`, ctx.usbEvidence);
       continue;
     }
     const other = lockedElsewhere.get(pad);
@@ -349,6 +379,7 @@ function domainFor(
     // function
     let routing: Routing | null = null;
     let carryMaxHz: number | null = null;
+    let carryEvidence: string[] = [];
     if (net.kind === 'adc') {
       if (!pin.adc) {
         ex(null, `${pad} has no ADC`);
@@ -370,6 +401,7 @@ function domainFor(
       }
       routing = c.routing;
       carryMaxHz = c.maxHz?.value ?? null;
+      carryEvidence = c.maxHz?.evidence ?? [];
     } else if (!pin.functions.some((f) => f.fn === 'GPIO')) {
       ex(null, `${pad} has no GPIO function`);
       continue;
@@ -383,10 +415,34 @@ function domainFor(
       ex(a.blocked, `${pad} would change boot mode or flash voltage (R6)`);
       continue;
     }
-    cands.push({ pin, pad, routing, instance, carryMaxHz, a });
+    cands.push({ pin, pad, routing, instance, carryMaxHz, carryEvidence, a });
   }
   cands.sort((x, y) => compareCost(x.a.cost, y.a.cost) || pinOrder(x.pin, y.pin));
   return { cands, excluded };
+}
+
+/**
+ * Exact minimum scalar cost of completing the assignment of `rows` given the pads already `used`
+ * (null: no completion exists). Cost of a pair is independent of the other nets, so this is the
+ * assignment problem and a perfect lower bound for the depth-first search below.
+ */
+function completionBound(
+  rows: readonly Net[],
+  scalar: ReadonlyMap<string, ReadonlyMap<string, number>>,
+  used: ReadonlySet<string>,
+): number | null {
+  const colIndex = new Map<string, number>();
+  for (const n of rows) {
+    for (const pad of scalar.get(n.id)?.keys() ?? []) {
+      if (!used.has(pad) && !colIndex.has(pad)) colIndex.set(pad, colIndex.size);
+    }
+  }
+  const padList = [...colIndex.keys()];
+  return minAssignment(rows.length, padList.length, (r, c) => {
+    const n = rows[r];
+    const pad = padList[c];
+    return n === undefined || pad === undefined ? null : (scalar.get(n.id)?.get(pad) ?? null);
+  }).cost;
 }
 
 function searchOnce(
@@ -395,22 +451,30 @@ function searchOnce(
   domains: ReadonlyMap<string, Cand[]>,
   best: { cost: Cost | null; pick: Map<string, Cand> | null },
 ): void {
-  const pick = new Map<string, Cand>();
+  const scalar = new Map<string, Map<string, number>>();
+  for (const n of nets) {
+    const m = new Map<string, number>();
+    for (const c of domains.get(n.id) ?? []) m.set(c.pad, scalarCost(c.a.cost));
+    scalar.set(n.id, m);
+  }
   const used = new Set<string>();
-  const rec = (cur: Cost): void => {
-    if (budget.exhausted) return;
-    // forward checking: live candidates per unassigned net
+  // exact optimum of this leaf: the depth-first dive below then follows it without backtracking and
+  // returns the first optimal assignment in candidate order (cost, connector, position)
+  const target = completionBound(nets, scalar, used);
+  if (target === null) return;
+  if (best.cost !== null && target >= scalarCost(best.cost)) return; // strict improvement only
+  const pick = new Map<string, Cand>();
+  let spent = 0;
+  const rec = (cur: Cost): boolean => {
+    if (budget.exhausted) return false;
     let chosen: Net | null = null;
     let chosenLive: Cand[] = [];
-    let lb: Cost = cur;
     let remaining = 0;
     for (const n of nets) {
       if (pick.has(n.id)) continue;
       remaining++;
       const live = (domains.get(n.id) ?? []).filter((c) => !used.has(c.pad));
-      if (live.length === 0) return; // dead end
-      const first = live[0];
-      if (first) lb = addCost(lb, first.a.cost);
+      if (live.length === 0) return false;
       if (
         chosen === null ||
         live.length < chosenLive.length ||
@@ -421,33 +485,28 @@ function searchOnce(
       }
     }
     if (remaining === 0) {
-      if (best.cost === null || compareCost(cur, best.cost) < 0) {
-        best.cost = cur;
-        best.pick = new Map(pick);
-      }
-      return;
+      best.cost = cur;
+      best.pick = new Map(pick);
+      return true;
     }
-    // componentwise lower bound (each tier minimised separately) is valid for lexicographic pruning
-    if (best.cost !== null) {
-      const lbv: Cost = [...cur];
-      for (const n of nets) {
-        if (pick.has(n.id)) continue;
-        const live = (domains.get(n.id) ?? []).filter((c) => !used.has(c.pad));
-        for (let t = 0; t < 4; t++) {
-          lbv[t] = (lbv[t] ?? 0) + Math.min(...live.map((c) => c.a.cost[t] ?? 0));
-        }
-      }
-      if (compareCost(lbv, best.cost) >= 0) return;
-    }
-    if (chosen === null) return;
+    if (chosen === null) return false;
     for (const c of chosenLive) {
-      if (!budget.step()) return;
+      if (!budget.step()) return false;
       pick.set(chosen.id, c);
       used.add(c.pad);
-      rec(addCost(cur, c.a.cost));
+      const next = addCost(cur, c.a.cost);
+      const rest = nets.filter((n) => !pick.has(n.id));
+      const lb = completionBound(rest, scalar, used);
+      if (lb !== null && spent + scalarCost(c.a.cost) + lb <= target) {
+        const before = spent;
+        spent += scalarCost(c.a.cost);
+        if (rec(next)) return true;
+        spent = before;
+      }
       used.delete(c.pad);
       pick.delete(chosen.id);
     }
+    return false;
   };
   rec([0, 0, 0, 0]);
 }
@@ -711,7 +770,7 @@ function toRecommendation(
   r: BranchResult,
   opts: SolveOptions,
   stats: SolveStats,
-): Recommendation {
+): { recommendation: Recommendation; details: SolveDetails } {
   const sol = r.solution;
   if (!sol) throw new Error('toRecommendation needs a solution');
   const padOfNet = new Map<string, string>();
@@ -737,7 +796,24 @@ function toRecommendation(
 
   const ruleLines = (n: Net, c: Cand): { trace: string[]; evidence: string[] } => {
     const trace: string[] = [];
-    const ev = new Set<string>([...c.pin.evidence, ...c.a.evidence]);
+    const ev = new Set<string>([...c.pin.evidence, ...c.a.evidence, ...c.carryEvidence]);
+    // facts that decided which pads were offered at all (consumed, USB bridge, PSRAM)
+    const dom = r.domains.get(`${n.id}|${c.instance ?? ''}`);
+    const filterEv = sortedUnique([
+      ...ctx.view.moduleEvidence,
+      ...(dom?.excluded ?? []).filter((e) => e.rel).flatMap((e) => e.evidence),
+    ]);
+    for (const e of filterEv) ev.add(e);
+    // pads passed over because board circuitry (boot button, auto-reset, connectors) shares them
+    const avoided = (dom?.cands ?? []).filter((x) => x.pin.onboard.length > 0 && x.pad !== c.pad);
+    for (const x of avoided) for (const o of x.pin.onboard) for (const e of o.evidence) ev.add(e);
+    const notOffered = [
+      ...new Set(
+        (dom?.excluded ?? []).filter((e) => e.rel && e.evidence.length > 0).map((e) => e.pad),
+      ),
+    ].sort(cmp);
+    if (notOffered.length > 0)
+      trace.push(`not offered (module, board or USB-bridge facts): ${notOffered.join(', ')}`);
     trace.push(
       `candidates: ${String(r.domains.get(`${n.id}|${c.instance ?? ''}`)?.cands.length ?? 0)} usable pads after filters`,
     );
@@ -746,6 +822,7 @@ function toRecommendation(
     );
     if (c.carryMaxHz !== null) trace.push(`routing limit ${String(c.carryMaxHz)} Hz`);
     for (const m of n.members) {
+      for (const e of mc.facts.get(m.instance) ?? []) ev.add(e);
       if (m.maxHz !== null && c.carryMaxHz !== null) {
         trace.push(
           `${m.id}: device max ${String(m.maxHz)} Hz, bus clock capped at ${String(Math.min(m.maxHz, c.carryMaxHz))} Hz`,
@@ -889,7 +966,42 @@ function toRecommendation(
   }
 
   assignments.sort((a, b) => cmp(a.instance, b.instance) || cmp(a.role, b.role));
-  return {
+  const maxHz: Record<string, number> = {};
+  let loadPin: number | null = null;
+  for (const n of r.nets) {
+    const c = sol.pick.get(n.id);
+    if (!c) continue;
+    for (const m of n.members) {
+      if (n.busKind !== null) {
+        const cap = Math.min(m.maxHz ?? Infinity, c.carryMaxHz ?? Infinity);
+        if (Number.isFinite(cap)) maxHz[m.instance] = Math.min(maxHz[m.instance] ?? Infinity, cap);
+      }
+      if (m.actsOnLevel && loadPin === null) loadPin = c.pin.pinCurrentMaxMa.value;
+    }
+  }
+  const el = ctx.ac.chip.electrical;
+  const details: SolveDetails = {
+    i2c: addresses.map((a) => ({
+      instance: a.instance,
+      address: a.address,
+      bus: a.bus,
+      status: a.status,
+    })),
+    moduleRules: mc.rules.map((e) => ({
+      scope: e.scope,
+      rule: e.result.rule,
+      level: e.result.level,
+      passed: e.result.passed,
+      values: { ...e.result.values },
+    })),
+    maxHz,
+    currents: {
+      pinMa: loadPin,
+      portMa: el.port_current_max ? prov(el.port_current_max).value : null,
+      cumulativeMa: prov(el.cumulative_current_max).value,
+    },
+  };
+  const recommendation: Recommendation = {
     catalog_version: opts.catalogVersion ?? 'unversioned',
     catalog_sha256: opts.catalogSha256 ?? 'unknown',
     ruleset_version: RULESET_VERSION,
@@ -909,6 +1021,7 @@ function toRecommendation(
     budgets: mc.budgets,
     score: sol.cost,
   };
+  return { recommendation, details };
 }
 
 function unsatRecommendation(
@@ -964,6 +1077,9 @@ function solveOnce(index: CatalogIndex, project: Project, options: SolveOptions)
   if (!chip || !board) throw new Error(`unknown chip or board for ${project.board}`);
 
   const onboardPads = new Set(board.onboard.flatMap((o) => o.uses_pad));
+  /** True when one onboard part (a USB bridge) uses both pads of a UART. */
+  const bridged = (a: string, b: string): boolean =>
+    board.onboard.some((o) => o.uses_pad.includes(a) && o.uses_pad.includes(b));
   const chipPeripherals = Object.entries(chip.peripherals).map(
     ([name, p]) =>
       [
@@ -980,13 +1096,7 @@ function solveOnce(index: CatalogIndex, project: Project, options: SolveOptions)
       .filter(([, p]) => {
         const tx = p.iomux_pins?.tx;
         const rx = p.iomux_pins?.rx;
-        return (
-          p.kind === 'uart' &&
-          tx !== undefined &&
-          rx !== undefined &&
-          onboardPads.has(tx) &&
-          onboardPads.has(rx)
-        );
+        return p.kind === 'uart' && tx !== undefined && rx !== undefined && bridged(tx, rx);
       })
       .map(([n]) => n),
   );
@@ -1009,6 +1119,21 @@ function solveOnce(index: CatalogIndex, project: Project, options: SolveOptions)
         const m = chip.peripherals[n]?.iomux_pins;
         return [m?.tx, m?.rx].flatMap((x) => (x === undefined ? [] : [x]));
       }),
+    ),
+    usbEvidence: sortedUnique(
+      board.onboard
+        .filter((o) =>
+          [...usbUarts].some((n) => {
+            const m = chip.peripherals[n]?.iomux_pins;
+            return (
+              m?.tx !== undefined &&
+              m.rx !== undefined &&
+              o.uses_pad.includes(m.tx) &&
+              o.uses_pad.includes(m.rx)
+            );
+          }),
+        )
+        .flatMap((o) => o.evidence),
     ),
     budget,
     i2cMux: options.i2cMux === true,
@@ -1043,7 +1168,7 @@ function solveOnce(index: CatalogIndex, project: Project, options: SolveOptions)
   if (project.modules.length === 0) {
     finish();
     return {
-      recommendation: toRecommendation(
+      ...toRecommendation(
         ctx,
         { choice: {}, ranks: [] },
         {
@@ -1098,7 +1223,7 @@ function solveOnce(index: CatalogIndex, project: Project, options: SolveOptions)
     const r = solveBranch(ctx, b);
     if (r.solution) {
       finish();
-      return { recommendation: toRecommendation(ctx, b, r, options, stats), stats };
+      return { ...toRecommendation(ctx, b, r, options, stats), stats };
     }
     firstFailure ??= { r, b };
     if (budget.exhausted) break;

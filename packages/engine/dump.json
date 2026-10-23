@@ -1,0 +1,1070 @@
+{
+  "ads1115-nine-boards-i2c-address-space-unsat": {
+    "status": "unsat",
+    "interfaces": {
+      "adc1": {
+        "kind": "i2c",
+        "decided_by_rule": 1,
+        "alternatives": []
+      },
+      "adc2": {
+        "kind": "i2c",
+        "decided_by_rule": 1,
+        "alternatives": []
+      },
+      "adc3": {
+        "kind": "i2c",
+        "decided_by_rule": 1,
+        "alternatives": []
+      },
+      "adc4": {
+        "kind": "i2c",
+        "decided_by_rule": 1,
+        "alternatives": []
+      },
+      "adc5": {
+        "kind": "i2c",
+        "decided_by_rule": 1,
+        "alternatives": []
+      },
+      "adc6": {
+        "kind": "i2c",
+        "decided_by_rule": 1,
+        "alternatives": []
+      },
+      "adc7": {
+        "kind": "i2c",
+        "decided_by_rule": 1,
+        "alternatives": []
+      },
+      "adc8": {
+        "kind": "i2c",
+        "decided_by_rule": 1,
+        "alternatives": []
+      },
+      "adc9": {
+        "kind": "i2c",
+        "decided_by_rule": 1,
+        "alternatives": []
+      }
+    },
+    "a": [],
+    "warnings": [],
+    "parts": [],
+    "score": [0, 0, 0, 0],
+    "unsat": {
+      "minimal_conflict": [
+        "i2c-address:ads1115-breakout:9-devices-vs-8-addresses",
+        "i2c-controllers:esp32:2"
+      ],
+      "relaxations": ["add-i2c-multiplexer", "remove-module:ads1115-breakout"]
+    },
+    "budgets": []
+  },
+  "bme280-three-boards-second-bus-or-spi": {
+    "status": "ok",
+    "interfaces": {
+      "env1": {
+        "kind": "i2c",
+        "decided_by_rule": 3,
+        "alternatives": ["spi"]
+      },
+      "env2": {
+        "kind": "i2c",
+        "decided_by_rule": 3,
+        "alternatives": ["spi"]
+      },
+      "env3": {
+        "kind": "i2c",
+        "decided_by_rule": 3,
+        "alternatives": ["spi"]
+      }
+    },
+    "a": [
+      "env1.SCL=GPIO16(I2C0,matrix)",
+      "env1.SDA=GPIO17(I2C0,matrix)",
+      "env2.SCL=GPIO16(I2C0,matrix)",
+      "env2.SDA=GPIO17(I2C0,matrix)",
+      "env3.SCL=GPIO22(I2C1,matrix)",
+      "env3.SDA=GPIO23(I2C1,matrix)"
+    ],
+    "warnings": [
+      "caution LOGIC_LEVEL_UNKNOWN [GPIO16,GPIO17,GPIO22,GPIO23] env1: logic-level facts are incomplete; levels cannot be verified; env2: logic-level facts are incomplete; levels cannot be verified; env3: logic-level facts are incomplete; levels cannot be verified",
+      "caution RAIL_BUDGET_UNKNOWN [] rail 3V3: load or capacity not documented; budget cannot be verified"
+    ],
+    "parts": [],
+    "score": [0, 0, 0, 2],
+    "budgets": [
+      {
+        "rail": "3V3",
+        "demand_ma": 2.142,
+        "limit_ma": null
+      }
+    ]
+  },
+  "bme280-two-4pin-modules-unknown-address": {
+    "status": "ok",
+    "interfaces": {
+      "env1": {
+        "kind": "i2c",
+        "decided_by_rule": 1,
+        "alternatives": []
+      },
+      "env2": {
+        "kind": "i2c",
+        "decided_by_rule": 1,
+        "alternatives": []
+      }
+    },
+    "a": [
+      "env1.SCL=GPIO1(I2C0,iomux)",
+      "env1.SDA=GPIO0(I2C0,iomux)",
+      "env2.SCL=GPIO3(I2C1,iomux)",
+      "env2.SDA=GPIO2(I2C1,iomux)"
+    ],
+    "warnings": [
+      "critical R2_LOGIC_LEVEL_MISMATCH [GPIO0,GPIO1,GPIO2,GPIO3] env1: logic levels do not match; see required parts; env2: logic levels do not match; see required parts",
+      "caution I2C_ADDRESS_UNKNOWN [] env1: I2C address cannot be proven (strap level of the module not documented); env2: I2C address cannot be proven (strap level of the module not documented)",
+      "caution I2C_PULLUP_UNKNOWN [GPIO0,GPIO1,GPIO2,GPIO3] i2c0: pull-up resistance of the attached modules is not documented; R3 cannot be verified; i2c1: pull-up resistance of the attached modules is not documented; R3 cannot be verified",
+      "caution LEVEL_SHIFTER_UNKNOWN [GPIO0,GPIO1,GPIO2,GPIO3] env1: logic levels need a level shifter and the breakout's shifter fact is missing; env2: logic levels need a level shifter and the breakout's shifter fact is missing",
+      "caution MODULE_REGULATOR_UNKNOWN [] env1: onboard regulator of gy-bme280-4pin is not documented; env2: onboard regulator of gy-bme280-4pin is not documented"
+    ],
+    "parts": [
+      {
+        "kind": "buffer",
+        "role": "logic-buffer:env1",
+        "count": 1
+      },
+      {
+        "kind": "buffer",
+        "role": "logic-buffer:env2",
+        "count": 1
+      }
+    ],
+    "score": [0, 0, 0, 4],
+    "budgets": [
+      {
+        "rail": "3V3",
+        "demand_ma": 1.428,
+        "limit_ma": 300
+      }
+    ]
+  },
+  "bme280-two-boards-address-strap": {
+    "status": "ok",
+    "interfaces": {
+      "env1": {
+        "kind": "i2c",
+        "decided_by_rule": 7,
+        "alternatives": []
+      },
+      "env2": {
+        "kind": "i2c",
+        "decided_by_rule": 7,
+        "alternatives": []
+      }
+    },
+    "a": [
+      "env1.SCL=GPIO16(I2C0,matrix)",
+      "env1.SDA=GPIO17(I2C0,matrix)",
+      "env2.SCL=GPIO16(I2C0,matrix)",
+      "env2.SDA=GPIO17(I2C0,matrix)"
+    ],
+    "warnings": [
+      "caution I2C_PULLUP_UNKNOWN [GPIO16,GPIO17] i2c0: pull-up resistance of the attached modules is not documented; R3 cannot be verified",
+      "caution LOGIC_LEVEL_UNKNOWN [GPIO16,GPIO17] env1: logic-level facts are incomplete; levels cannot be verified; env2: logic-level facts are incomplete; levels cannot be verified",
+      "caution MODULE_REGULATOR_UNKNOWN [] env1: onboard regulator of gy-bme280-6pin is not documented; env2: onboard regulator of gy-bme280-6pin is not documented",
+      "caution RAIL_BUDGET_UNKNOWN [] rail 3V3: load or capacity not documented; budget cannot be verified"
+    ],
+    "parts": [],
+    "score": [0, 0, 0, 0],
+    "budgets": [
+      {
+        "rail": "3V3",
+        "demand_ma": 1.428,
+        "limit_ma": null
+      }
+    ]
+  },
+  "d1-mini-a0-potentiometer-adc-fit": {
+    "status": "ok",
+    "interfaces": {
+      "pot": {
+        "kind": "analog",
+        "decided_by_rule": 1,
+        "alternatives": []
+      }
+    },
+    "a": ["pot.WIPER=TOUT(,fixed)"],
+    "warnings": [
+      "warning ADC_OVER_RANGE [TOUT] pot.WIPER: sensor up to 3.3 V exceeds the ADC effective maximum 1 V; add a divider",
+      "caution ADC_RADIO_UNKNOWN [TOUT] whether ADC works while the radio is on is not in the catalog",
+      "caution LOGIC_LEVEL_UNKNOWN [TOUT] pot: logic-level facts are incomplete; levels cannot be verified",
+      "caution ONBOARD_LOAD_ON_PAD [TOUT] TOUT is shared with onboard hardware: R12 220k / R13 100k A0 divider",
+      "caution RAIL_BUDGET_UNKNOWN [] rail 3V3: load or capacity not documented; budget cannot be verified"
+    ],
+    "parts": [
+      {
+        "kind": "divider",
+        "role": "adc-attenuation",
+        "count": 1,
+        "pads": ["TOUT"]
+      }
+    ],
+    "score": [0, 1, 0, 0],
+    "budgets": [
+      {
+        "rail": "3V3",
+        "demand_ma": 0,
+        "limit_ma": null
+      }
+    ]
+  },
+  "d1-mini-boot-pins-gpio0-2-15-avoided": {
+    "status": "ok",
+    "interfaces": {
+      "relays": {
+        "kind": "digital",
+        "decided_by_rule": 1,
+        "alternatives": []
+      },
+      "sw1": {
+        "kind": "digital",
+        "decided_by_rule": 1,
+        "alternatives": []
+      }
+    },
+    "a": [
+      "relays.COIL[1]=GPIO16(,iomux)",
+      "relays.COIL[2]=GPIO5(,iomux)",
+      "relays.COIL[3]=GPIO4(,iomux)",
+      "relays.COIL[4]=GPIO14(,iomux)",
+      "sw1.SW=GPIO12(,iomux)"
+    ],
+    "warnings": [
+      "caution FLOATING_AT_RESET_UNKNOWN [GPIO14,GPIO16,GPIO4,GPIO5] the off level of the load on relays.COIL[1] is not documented, so its state while GPIO16 is in reset cannot be proven; reset state of GPIO16 is not documented; relays.COIL[1] drives a load; the off level of the load on relays.COIL[2] is not documented, so its state while GPIO5 is in reset cannot be proven; reset state of GPIO5 is not documented; relays.COIL[2] drives a load; the off level of the load on relays.COIL[3] is not documented, so its state while GPIO4 is in reset cannot be proven; reset state of GPIO4 is not documented; relays.COIL[3] drives a load; the off level of the load on relays.COIL[4] is not documented, so its state while GPIO14 is in reset cannot be proven; reset state of GPIO14 is not documented; relays.COIL[4] drives a load",
+      "caution LOGIC_LEVEL_UNKNOWN [GPIO12,GPIO14,GPIO16,GPIO4,GPIO5] relays: logic-level facts are incomplete; levels cannot be verified; sw1: logic-level facts are incomplete; levels cannot be verified",
+      "caution MODULE_REGULATOR_UNKNOWN [] relays: onboard regulator of relay-board-4ch-transistor is not documented",
+      "caution ONBOARD_LOAD_ON_PAD [GPIO16,GPIO4,GPIO5] GPIO16 is shared with onboard hardware: JP1 jumper and R14 470 ohm; GPIO5 is shared with onboard hardware: P1 SH1.0 4-pin I2C connector; GPIO4 is shared with onboard hardware: P1 SH1.0 4-pin I2C connector",
+      "caution PIN_CURRENT_UNVERIFIED [GPIO14,GPIO16,GPIO4,GPIO5] load current of relays.COIL[1] on GPIO16 is not in the catalog; pin limit 12 mA; load current of relays.COIL[2] on GPIO5 is not in the catalog; pin limit 12 mA; load current of relays.COIL[3] on GPIO4 is not in the catalog; pin limit 12 mA; load current of relays.COIL[4] on GPIO14 is not in the catalog; pin limit 12 mA",
+      "caution RAIL_BUDGET_UNKNOWN [] rail 3V3: load or capacity not documented; budget cannot be verified"
+    ],
+    "parts": [
+      {
+        "kind": "regulator",
+        "value": "5 V",
+        "role": "separate-supply",
+        "count": 1
+      }
+    ],
+    "score": [0, 0, 0, 2],
+    "budgets": [
+      {
+        "rail": "3V3",
+        "demand_ma": 0,
+        "limit_ma": null
+      }
+    ]
+  },
+  "d1-mini-ssd1306-i2c-pad-ambiguity": {
+    "status": "ok",
+    "interfaces": {
+      "oled": {
+        "kind": "i2c",
+        "decided_by_rule": 1,
+        "alternatives": []
+      }
+    },
+    "a": ["oled.SCL=GPIO14(I2C0,iomux)", "oled.SDA=GPIO2(I2C0,iomux)"],
+    "warnings": [
+      "caution I2C_ADDRESS_UNKNOWN [] oled: I2C address cannot be proven (strap level of the module not documented)",
+      "caution I2C_PULLUP_UNKNOWN [GPIO14,GPIO2] i2c0: pull-up resistance of the attached modules is not documented; R3 cannot be verified",
+      "caution LOGIC_LEVEL_UNKNOWN [GPIO14,GPIO2] oled: logic-level facts are incomplete; levels cannot be verified",
+      "caution MODULE_REGULATOR_UNKNOWN [] oled: onboard regulator of ssd1306-128x64-i2c-4pin is not documented",
+      "caution ONBOARD_LOAD_ON_PAD [GPIO2] GPIO2 is shared with onboard hardware: LED1 LED_0603_B with R5 2k; R9, R10 12k pull-up resistors",
+      "caution RAIL_BUDGET_UNKNOWN [] rail 3V3: load or capacity not documented; budget cannot be verified",
+      "caution STRAP_FACT_MISSING [GPIO2] strap behaviour of GPIO2 is not documented in the catalog"
+    ],
+    "parts": [],
+    "score": [1, 0, 0, 1],
+    "budgets": [
+      {
+        "rail": "3V3",
+        "demand_ma": 0.78,
+        "limit_ma": null
+      }
+    ]
+  },
+  "devkitc-v4-wroom-bme280-rc522-st7735s-relays-switches": {
+    "status": "ok",
+    "interfaces": {
+      "env": {
+        "kind": "i2c",
+        "decided_by_rule": 4,
+        "alternatives": ["spi"]
+      },
+      "rfid": {
+        "kind": "spi",
+        "decided_by_rule": 1,
+        "alternatives": []
+      },
+      "tft": {
+        "kind": "spi",
+        "decided_by_rule": 1,
+        "alternatives": []
+      },
+      "relays": {
+        "kind": "digital",
+        "decided_by_rule": 1,
+        "alternatives": []
+      },
+      "sw1": {
+        "kind": "digital",
+        "decided_by_rule": 1,
+        "alternatives": []
+      },
+      "sw2": {
+        "kind": "digital",
+        "decided_by_rule": 1,
+        "alternatives": []
+      },
+      "sw3": {
+        "kind": "digital",
+        "decided_by_rule": 1,
+        "alternatives": []
+      },
+      "sw4": {
+        "kind": "digital",
+        "decided_by_rule": 1,
+        "alternatives": []
+      }
+    },
+    "a": [
+      "env.SCL=GPIO16(I2C0,matrix)",
+      "env.SDA=GPIO17(I2C0,matrix)",
+      "relays.COIL[1]=GPIO26(,iomux)",
+      "relays.COIL[2]=GPIO27(,iomux)",
+      "relays.COIL[3]=GPIO5(,iomux)",
+      "relays.COIL[4]=GPIO0(,iomux)",
+      "rfid.CS=GPIO22(,iomux)",
+      "rfid.MISO=GPIO19(SPI3,iomux)",
+      "rfid.MOSI=GPIO23(SPI3,iomux)",
+      "rfid.RST=GPIO21(,iomux)",
+      "rfid.SCLK=GPIO18(SPI3,iomux)",
+      "sw1.SW=GPIO36(,iomux)",
+      "sw2.SW=GPIO39(,iomux)",
+      "sw3.SW=GPIO34(,iomux)",
+      "sw4.SW=GPIO35(,iomux)",
+      "tft.CS=GPIO32(,iomux)",
+      "tft.DC=GPIO33(,iomux)",
+      "tft.MOSI=GPIO23(SPI3,iomux)",
+      "tft.RST=GPIO25(,iomux)",
+      "tft.SCLK=GPIO18(SPI3,iomux)"
+    ],
+    "warnings": [
+      "warning FLOATING_AT_RESET_LOAD [GPIO0,GPIO26,GPIO27,GPIO5] relays.COIL[1] drives a load and GPIO26 floats during reset; add a pull-down resistor to the off level (not documented; GND assumed for an active-high board); relays.COIL[2] drives a load and GPIO27 floats during reset; add a pull-down resistor to the off level (not documented; GND assumed for an active-high board); relays.COIL[3] drives a load whose off level is not documented; GPIO5 is pulled high during reset; relays.COIL[4] drives a load whose off level is not documented; GPIO0 is pulled high during reset",
+      "caution ERRATUM_GPIO_3_11 [GPIO36,GPIO39] pad GPIO36 carries erratum GPIO-3.11 (about 80 ns low pulse on the input when the SAR ADC or amplifier powers on; debounce); pad GPIO39 carries erratum GPIO-3.11 (about 80 ns low pulse on the input when the SAR ADC or amplifier powers on; debounce)",
+      "caution FLOATING_AT_RESET_UNKNOWN [GPIO0,GPIO26,GPIO27,GPIO5] the off level of the load on relays.COIL[1] is not documented, so its state while GPIO26 is in reset cannot be proven; the off level of the load on relays.COIL[2] is not documented, so its state while GPIO27 is in reset cannot be proven; the off level of the load on relays.COIL[3] is not documented, so its state while GPIO5 is in reset cannot be proven; relays.COIL[4] on strap pad GPIO0: its level during reset is not documented (the pad requires high at reset); the off level of the load on relays.COIL[4] is not documented, so its state while GPIO0 is in reset cannot be proven",
+      "caution I2C_PULLUP_UNKNOWN [GPIO16,GPIO17] i2c0: pull-up resistance of the attached modules is not documented; R3 cannot be verified",
+      "caution LOGIC_LEVEL_UNKNOWN [GPIO0,GPIO16,GPIO17,GPIO18,GPIO19,GPIO21,GPIO22,GPIO23,GPIO26,GPIO27,GPIO34,GPIO35,GPIO36,GPIO39,GPIO5] env: logic-level facts are incomplete; levels cannot be verified; rfid: logic-level facts are incomplete; levels cannot be verified; relays: logic-level facts are incomplete; levels cannot be verified; sw1: logic-level facts are incomplete; levels cannot be verified; sw2: logic-level facts are incomplete; levels cannot be verified; sw3: logic-level facts are incomplete; levels cannot be verified; sw4: logic-level facts are incomplete; levels cannot be verified",
+      "caution MODULE_REGULATOR_UNKNOWN [] env: onboard regulator of gy-bme280-6pin is not documented; rfid: onboard regulator of rfid-rc522-blue is not documented; tft: onboard regulator of st7735s-1.8-spi-tft is not documented; relays: onboard regulator of relay-board-4ch-transistor is not documented",
+      "caution ONBOARD_LOAD_ON_PAD [GPIO0] GPIO0 is shared with onboard hardware: Auto-program circuit Q1/Q2 SS8050-G (driven by bridge DTR/RTS); SW1 Boot button; C15 0.1 uF on GPIO0 (NC in schematic V4; fitted on earlier V4 boards)",
+      "caution PIN_CURRENT_UNVERIFIED [GPIO0,GPIO26,GPIO27,GPIO5] load current of relays.COIL[1] on GPIO26 is not in the catalog; pin limit unknown; load current of relays.COIL[2] on GPIO27 is not in the catalog; pin limit unknown; load current of relays.COIL[3] on GPIO5 is not in the catalog; pin limit unknown; load current of relays.COIL[4] on GPIO0 is not in the catalog; pin limit unknown",
+      "caution RAIL_BUDGET_UNKNOWN [] rail 3V3: load or capacity not documented; budget cannot be verified; rail 5V: load or capacity not documented; budget cannot be verified"
+    ],
+    "parts": [
+      {
+        "kind": "resistor",
+        "role": "pull-down",
+        "count": 2,
+        "pads": ["GPIO26", "GPIO27"]
+      },
+      {
+        "kind": "resistor",
+        "role": "pull-up",
+        "count": 4,
+        "pads": ["GPIO34", "GPIO35", "GPIO36", "GPIO39"]
+      }
+    ],
+    "score": [2, 0, 0, 19],
+    "budgets": [
+      {
+        "rail": "3V3",
+        "demand_ma": 102.714,
+        "limit_ma": null
+      },
+      {
+        "rail": "5V",
+        "demand_ma": 71.4,
+        "limit_ma": null
+      }
+    ]
+  },
+  "devkitc-v4-wrover-e-variant-change": {
+    "status": "ok",
+    "interfaces": {
+      "env": {
+        "kind": "i2c",
+        "decided_by_rule": 4,
+        "alternatives": ["spi"]
+      },
+      "rfid": {
+        "kind": "spi",
+        "decided_by_rule": 1,
+        "alternatives": []
+      },
+      "tft": {
+        "kind": "spi",
+        "decided_by_rule": 1,
+        "alternatives": []
+      },
+      "relays": {
+        "kind": "digital",
+        "decided_by_rule": 1,
+        "alternatives": []
+      },
+      "sw1": {
+        "kind": "digital",
+        "decided_by_rule": 1,
+        "alternatives": []
+      },
+      "sw2": {
+        "kind": "digital",
+        "decided_by_rule": 1,
+        "alternatives": []
+      },
+      "sw3": {
+        "kind": "digital",
+        "decided_by_rule": 1,
+        "alternatives": []
+      },
+      "sw4": {
+        "kind": "digital",
+        "decided_by_rule": 1,
+        "alternatives": []
+      }
+    },
+    "a": [
+      "env.SCL=GPIO21(I2C0,matrix)",
+      "env.SDA=GPIO22(I2C0,matrix)",
+      "relays.COIL[1]=GPIO26(,iomux)",
+      "relays.COIL[2]=GPIO27(,iomux)",
+      "relays.COIL[3]=GPIO5(,iomux)",
+      "relays.COIL[4]=GPIO0(,iomux)",
+      "rfid.CS=GPIO32(,iomux)",
+      "rfid.MISO=GPIO19(SPI3,iomux)",
+      "rfid.MOSI=GPIO23(SPI3,iomux)",
+      "rfid.RST=GPIO33(,iomux)",
+      "rfid.SCLK=GPIO18(SPI3,iomux)",
+      "sw1.SW=GPIO36(,iomux)",
+      "sw2.SW=GPIO39(,iomux)",
+      "sw3.SW=GPIO34(,iomux)",
+      "sw4.SW=GPIO35(,iomux)",
+      "tft.CS=GPIO25(,iomux)",
+      "tft.DC=GPIO14(,iomux)",
+      "tft.MOSI=GPIO23(SPI3,iomux)",
+      "tft.RST=GPIO13(,iomux)",
+      "tft.SCLK=GPIO18(SPI3,iomux)"
+    ],
+    "warnings": [
+      "warning FLOATING_AT_RESET_LOAD [GPIO0,GPIO26,GPIO27,GPIO5] relays.COIL[1] drives a load and GPIO26 floats during reset; add a pull-down resistor to the off level (not documented; GND assumed for an active-high board); relays.COIL[2] drives a load and GPIO27 floats during reset; add a pull-down resistor to the off level (not documented; GND assumed for an active-high board); relays.COIL[3] drives a load whose off level is not documented; GPIO5 is pulled high during reset; relays.COIL[4] drives a load whose off level is not documented; GPIO0 is pulled high during reset",
+      "caution ERRATUM_GPIO_3_11 [GPIO36,GPIO39] pad GPIO36 carries erratum GPIO-3.11 (about 80 ns low pulse on the input when the SAR ADC or amplifier powers on; debounce); pad GPIO39 carries erratum GPIO-3.11 (about 80 ns low pulse on the input when the SAR ADC or amplifier powers on; debounce)",
+      "caution FLOATING_AT_RESET_UNKNOWN [GPIO0,GPIO26,GPIO27,GPIO5] the off level of the load on relays.COIL[1] is not documented, so its state while GPIO26 is in reset cannot be proven; the off level of the load on relays.COIL[2] is not documented, so its state while GPIO27 is in reset cannot be proven; the off level of the load on relays.COIL[3] is not documented, so its state while GPIO5 is in reset cannot be proven; relays.COIL[4] on strap pad GPIO0: its level during reset is not documented (the pad requires high at reset); the off level of the load on relays.COIL[4] is not documented, so its state while GPIO0 is in reset cannot be proven",
+      "caution I2C_PULLUP_UNKNOWN [GPIO21,GPIO22] i2c0: pull-up resistance of the attached modules is not documented; R3 cannot be verified",
+      "caution LOGIC_LEVEL_UNKNOWN [GPIO0,GPIO18,GPIO19,GPIO21,GPIO22,GPIO23,GPIO26,GPIO27,GPIO32,GPIO33,GPIO34,GPIO35,GPIO36,GPIO39,GPIO5] env: logic-level facts are incomplete; levels cannot be verified; rfid: logic-level facts are incomplete; levels cannot be verified; relays: logic-level facts are incomplete; levels cannot be verified; sw1: logic-level facts are incomplete; levels cannot be verified; sw2: logic-level facts are incomplete; levels cannot be verified; sw3: logic-level facts are incomplete; levels cannot be verified; sw4: logic-level facts are incomplete; levels cannot be verified",
+      "caution MODULE_REGULATOR_UNKNOWN [] env: onboard regulator of gy-bme280-6pin is not documented; rfid: onboard regulator of rfid-rc522-blue is not documented; tft: onboard regulator of st7735s-1.8-spi-tft is not documented; relays: onboard regulator of relay-board-4ch-transistor is not documented",
+      "caution ONBOARD_LOAD_ON_PAD [GPIO0] GPIO0 is shared with onboard hardware: Auto-program circuit Q1/Q2 SS8050-G (driven by bridge DTR/RTS); SW1 Boot button; C15 0.1 uF on GPIO0 (NC in schematic V4; fitted on earlier V4 boards)",
+      "caution PIN_CURRENT_UNVERIFIED [GPIO0,GPIO26,GPIO27,GPIO5] load current of relays.COIL[1] on GPIO26 is not in the catalog; pin limit unknown; load current of relays.COIL[2] on GPIO27 is not in the catalog; pin limit unknown; load current of relays.COIL[3] on GPIO5 is not in the catalog; pin limit unknown; load current of relays.COIL[4] on GPIO0 is not in the catalog; pin limit unknown",
+      "caution RAIL_BUDGET_UNKNOWN [] rail 3V3: load or capacity not documented; budget cannot be verified; rail 5V: load or capacity not documented; budget cannot be verified"
+    ],
+    "parts": [
+      {
+        "kind": "resistor",
+        "role": "pull-down",
+        "count": 2,
+        "pads": ["GPIO26", "GPIO27"]
+      },
+      {
+        "kind": "resistor",
+        "role": "pull-up",
+        "count": 4,
+        "pads": ["GPIO34", "GPIO35", "GPIO36", "GPIO39"]
+      }
+    ],
+    "score": [4, 0, 0, 25],
+    "budgets": [
+      {
+        "rail": "3V3",
+        "demand_ma": 102.714,
+        "limit_ma": null
+      },
+      {
+        "rail": "5V",
+        "demand_ma": 71.4,
+        "limit_ma": null
+      }
+    ]
+  },
+  "devkitc-wroom32e-bme280-ssd1306-i2c": {
+    "status": "ok",
+    "interfaces": {
+      "env": {
+        "kind": "i2c",
+        "decided_by_rule": 1,
+        "alternatives": []
+      },
+      "oled": {
+        "kind": "i2c",
+        "decided_by_rule": 1,
+        "alternatives": []
+      }
+    },
+    "a": [
+      "env.SCL=GPIO16(I2C0,matrix)",
+      "env.SDA=GPIO17(I2C0,matrix)",
+      "oled.SCL=GPIO16(I2C0,matrix)",
+      "oled.SDA=GPIO17(I2C0,matrix)"
+    ],
+    "warnings": [
+      "caution I2C_ADDRESS_UNKNOWN [] env: I2C address cannot be proven (strap level of the module not documented); oled: I2C address cannot be proven (strap level of the module not documented)",
+      "caution I2C_PULLUP_UNKNOWN [GPIO16,GPIO17] i2c0: pull-up resistance of the attached modules is not documented; R3 cannot be verified",
+      "caution LOGIC_LEVEL_UNKNOWN [GPIO16,GPIO17] env: logic-level facts are incomplete; levels cannot be verified; oled: logic-level facts are incomplete; levels cannot be verified",
+      "caution MODULE_REGULATOR_UNKNOWN [] env: onboard regulator of gy-bme280-4pin is not documented; oled: onboard regulator of ssd1306-128x64-i2c-4pin is not documented",
+      "caution RAIL_BUDGET_UNKNOWN [] rail 3V3: load or capacity not documented; budget cannot be verified"
+    ],
+    "parts": [],
+    "score": [0, 0, 0, 0],
+    "budgets": [
+      {
+        "rail": "3V3",
+        "demand_ma": 1.494,
+        "limit_ma": null
+      }
+    ]
+  },
+  "esp32-button-on-input-only-gpio34": {
+    "status": "ok",
+    "interfaces": {
+      "sw1": {
+        "kind": "digital",
+        "decided_by_rule": 1,
+        "alternatives": []
+      }
+    },
+    "a": ["sw1.SW=GPIO34(,iomux)"],
+    "warnings": [
+      "caution LOGIC_LEVEL_UNKNOWN [GPIO34] sw1: logic-level facts are incomplete; levels cannot be verified",
+      "caution RAIL_BUDGET_UNKNOWN [] rail 3V3: load or capacity not documented; budget cannot be verified"
+    ],
+    "parts": [
+      {
+        "kind": "resistor",
+        "role": "pull-up",
+        "count": 1,
+        "pads": ["GPIO34"]
+      }
+    ],
+    "score": [0, 0, 0, 1],
+    "budgets": [
+      {
+        "rail": "3V3",
+        "demand_ma": 0,
+        "limit_ma": null
+      }
+    ]
+  },
+  "esp32-pot-adc2-no-wifi-ok": {
+    "status": "ok",
+    "interfaces": {
+      "pot": {
+        "kind": "analog",
+        "decided_by_rule": 1,
+        "alternatives": []
+      }
+    },
+    "a": ["pot.WIPER=GPIO25(,fixed)"],
+    "warnings": [
+      "caution ADC_RANGE_UNKNOWN [GPIO25] effective input range of ADC2 is not in the catalog; the supply the sensor is wired to is assumed",
+      "caution LOGIC_LEVEL_UNKNOWN [GPIO25] pot: logic-level facts are incomplete; levels cannot be verified",
+      "caution RAIL_BUDGET_UNKNOWN [] rail 3V3: load or capacity not documented; budget cannot be verified"
+    ],
+    "parts": [],
+    "score": [0, 1, 0, 1],
+    "budgets": [
+      {
+        "rail": "3V3",
+        "demand_ma": 0,
+        "limit_ma": null
+      }
+    ]
+  },
+  "esp32-pot-adc2-wifi-unsat": {
+    "status": "unsat",
+    "interfaces": {
+      "pot": {
+        "kind": "analog",
+        "decided_by_rule": 1,
+        "alternatives": []
+      }
+    },
+    "a": [],
+    "warnings": [],
+    "parts": [],
+    "score": [0, 0, 0, 0],
+    "unsat": {
+      "minimal_conflict": ["adc2-wifi:GPIO25", "locked:pot.WIPER=GPIO25"],
+      "relaxations": [
+        "unlock:pot.WIPER",
+        "add-external-adc:ads1115-breakout",
+        "wifi:false",
+        "remove-module:potentiometer-10k"
+      ]
+    },
+    "budgets": []
+  },
+  "esp32-s3-n8-gpio36-ok": {
+    "status": "ok",
+    "interfaces": {
+      "sw1": {
+        "kind": "digital",
+        "decided_by_rule": 1,
+        "alternatives": []
+      }
+    },
+    "a": ["sw1.SW=GPIO36(,iomux)"],
+    "warnings": [
+      "caution LOGIC_LEVEL_UNKNOWN [GPIO36] sw1: logic-level facts are incomplete; levels cannot be verified",
+      "caution RAIL_BUDGET_UNKNOWN [] rail 3V3: load or capacity not documented; budget cannot be verified"
+    ],
+    "parts": [],
+    "score": [0, 0, 0, 0],
+    "budgets": [
+      {
+        "rail": "3V3",
+        "demand_ma": 0,
+        "limit_ma": null
+      }
+    ]
+  },
+  "esp32-s3-n8r8-gpio36-psram-unsat": {
+    "status": "unsat",
+    "interfaces": {
+      "sw1": {
+        "kind": "digital",
+        "decided_by_rule": 1,
+        "alternatives": []
+      }
+    },
+    "a": [],
+    "warnings": [],
+    "parts": [],
+    "score": [0, 0, 0, 0],
+    "unsat": {
+      "minimal_conflict": ["consumed:GPIO36", "locked:sw1.SW=GPIO36"],
+      "relaxations": [
+        "unlock:sw1.SW",
+        "different-variant:esp32-s3-devkitc-1-n8",
+        "different-board:esp32-devkitc-v4",
+        "remove-module:push-button"
+      ]
+    },
+    "budgets": []
+  },
+  "hc-sr04-echo-into-esp32-level-unknown": {
+    "status": "ok",
+    "interfaces": {
+      "sonar": {
+        "kind": "digital",
+        "decided_by_rule": 1,
+        "alternatives": []
+      }
+    },
+    "a": ["sonar.ECHO=GPIO16(,iomux)", "sonar.TRIG=GPIO17(,iomux)"],
+    "warnings": [
+      "caution LOGIC_LEVEL_UNKNOWN [GPIO16,GPIO17] sonar: logic-level facts are incomplete; levels cannot be verified",
+      "caution MODULE_REGULATOR_UNKNOWN [] sonar: onboard regulator of hc-sr04-4pin is not documented",
+      "caution RAIL_BUDGET_UNKNOWN [] rail 5V: load or capacity not documented; budget cannot be verified"
+    ],
+    "parts": [],
+    "score": [0, 0, 0, 0],
+    "budgets": [
+      {
+        "rail": "5V",
+        "demand_ma": 15,
+        "limit_ma": null
+      }
+    ]
+  },
+  "i2c-pullup-stack-ten-kohm-five-boards": {
+    "status": "ok",
+    "interfaces": {
+      "adc1": {
+        "kind": "i2c",
+        "decided_by_rule": 7,
+        "alternatives": []
+      },
+      "adc2": {
+        "kind": "i2c",
+        "decided_by_rule": 7,
+        "alternatives": []
+      },
+      "adc3": {
+        "kind": "i2c",
+        "decided_by_rule": 7,
+        "alternatives": []
+      },
+      "adc4": {
+        "kind": "i2c",
+        "decided_by_rule": 7,
+        "alternatives": []
+      },
+      "env": {
+        "kind": "i2c",
+        "decided_by_rule": 7,
+        "alternatives": []
+      }
+    },
+    "a": [
+      "adc1.SCL=GPIO16(I2C0,matrix)",
+      "adc1.SDA=GPIO17(I2C0,matrix)",
+      "adc2.SCL=GPIO16(I2C0,matrix)",
+      "adc2.SDA=GPIO17(I2C0,matrix)",
+      "adc3.SCL=GPIO16(I2C0,matrix)",
+      "adc3.SDA=GPIO17(I2C0,matrix)",
+      "adc4.SCL=GPIO16(I2C0,matrix)",
+      "adc4.SDA=GPIO17(I2C0,matrix)",
+      "env.SCL=GPIO16(I2C0,matrix)",
+      "env.SDA=GPIO17(I2C0,matrix)"
+    ],
+    "warnings": [
+      "caution LOGIC_LEVEL_UNKNOWN [GPIO16,GPIO17] adc1: logic-level facts are incomplete; levels cannot be verified; adc2: logic-level facts are incomplete; levels cannot be verified; adc3: logic-level facts are incomplete; levels cannot be verified; adc4: logic-level facts are incomplete; levels cannot be verified; env: logic-level facts are incomplete; levels cannot be verified",
+      "caution RAIL_BUDGET_UNKNOWN [] rail 3V3: load or capacity not documented; budget cannot be verified"
+    ],
+    "parts": [],
+    "score": [0, 0, 0, 0],
+    "budgets": [
+      {
+        "rail": "3V3",
+        "demand_ma": 1.914,
+        "limit_ma": null
+      }
+    ]
+  },
+  "pico-i2c-bme280-ssd1306": {
+    "status": "ok",
+    "interfaces": {
+      "env": {
+        "kind": "i2c",
+        "decided_by_rule": 7,
+        "alternatives": []
+      },
+      "oled": {
+        "kind": "i2c",
+        "decided_by_rule": 1,
+        "alternatives": []
+      }
+    },
+    "a": [
+      "env.SCL=GPIO1(I2C0,iomux)",
+      "env.SDA=GPIO0(I2C0,iomux)",
+      "oled.SCL=GPIO1(I2C0,iomux)",
+      "oled.SDA=GPIO0(I2C0,iomux)"
+    ],
+    "warnings": [
+      "critical R2_LOGIC_LEVEL_MISMATCH [GPIO0,GPIO1] oled: logic levels do not match; see required parts",
+      "caution I2C_ADDRESS_UNKNOWN [] oled: I2C address cannot be proven (strap level of the module not documented)",
+      "caution I2C_PULLUP_UNKNOWN [GPIO0,GPIO1] i2c0: pull-up resistance of the attached modules is not documented; R3 cannot be verified",
+      "caution LEVEL_SHIFTER_CONFLICT_RELIED [GPIO0,GPIO1] env: level-shifter fact of adafruit-bme280 is in conflict",
+      "caution LEVEL_SHIFTER_UNKNOWN [GPIO0,GPIO1] oled: logic levels need a level shifter and the breakout's shifter fact is missing",
+      "caution MODULE_REGULATOR_UNKNOWN [] oled: onboard regulator of ssd1306-128x64-i2c-4pin is not documented"
+    ],
+    "parts": [
+      {
+        "kind": "buffer",
+        "role": "logic-buffer:oled",
+        "count": 1
+      }
+    ],
+    "score": [0, 0, 0, 2],
+    "budgets": [
+      {
+        "rail": "3V3",
+        "demand_ma": 1.494,
+        "limit_ma": 300
+      }
+    ]
+  },
+  "pico-w-four-pots-no-free-adc-unsat": {
+    "status": "unsat",
+    "interfaces": {
+      "pot1": {
+        "kind": "analog",
+        "decided_by_rule": 1,
+        "alternatives": []
+      },
+      "pot2": {
+        "kind": "analog",
+        "decided_by_rule": 1,
+        "alternatives": []
+      },
+      "pot3": {
+        "kind": "analog",
+        "decided_by_rule": 1,
+        "alternatives": []
+      },
+      "pot4": {
+        "kind": "analog",
+        "decided_by_rule": 1,
+        "alternatives": []
+      }
+    },
+    "a": [],
+    "warnings": [],
+    "parts": [],
+    "score": [0, 0, 0, 0],
+    "unsat": {
+      "minimal_conflict": ["adc:4-analog-signals-vs-3-adc-pads", "consumed:GPIO29"],
+      "relaxations": [
+        "add-external-adc:ads1115-breakout",
+        "different-board:arduino-uno-r4-minima",
+        "different-board:esp32-devkitc-v4",
+        "different-board:esp32-s3-devkitc-1",
+        "remove-module:potentiometer-10k"
+      ]
+    },
+    "budgets": []
+  },
+  "pico-w-reserved-gpio23-24-25-29": {
+    "status": "ok",
+    "interfaces": {
+      "pot1": {
+        "kind": "analog",
+        "decided_by_rule": 1,
+        "alternatives": []
+      },
+      "pot2": {
+        "kind": "analog",
+        "decided_by_rule": 1,
+        "alternatives": []
+      },
+      "pot3": {
+        "kind": "analog",
+        "decided_by_rule": 1,
+        "alternatives": []
+      },
+      "oled": {
+        "kind": "i2c",
+        "decided_by_rule": 1,
+        "alternatives": []
+      },
+      "relays": {
+        "kind": "digital",
+        "decided_by_rule": 1,
+        "alternatives": []
+      }
+    },
+    "a": [
+      "oled.SCL=GPIO1(I2C0,iomux)",
+      "oled.SDA=GPIO0(I2C0,iomux)",
+      "pot1.WIPER=GPIO26(,fixed)",
+      "pot2.WIPER=GPIO27(,fixed)",
+      "pot3.WIPER=GPIO28(,fixed)",
+      "relays.COIL[1]=GPIO2(,iomux)",
+      "relays.COIL[2]=GPIO3(,iomux)",
+      "relays.COIL[3]=GPIO4(,iomux)",
+      "relays.COIL[4]=GPIO5(,iomux)"
+    ],
+    "warnings": [
+      "critical R2_LOGIC_LEVEL_MISMATCH [GPIO0,GPIO1] oled: logic levels do not match; see required parts",
+      "warning FLOATING_AT_RESET_LOAD [GPIO2,GPIO3,GPIO4,GPIO5] relays.COIL[1] drives a load whose off level is not documented; GPIO2 is pulled low during reset; relays.COIL[2] drives a load whose off level is not documented; GPIO3 is pulled low during reset; relays.COIL[3] drives a load whose off level is not documented; GPIO4 is pulled low during reset; relays.COIL[4] drives a load whose off level is not documented; GPIO5 is pulled low during reset",
+      "caution ADC_RANGE_UNKNOWN [GPIO26,GPIO27,GPIO28] effective input range of ADC is not in the catalog; the supply the sensor is wired to is assumed",
+      "caution FLOATING_AT_RESET_UNKNOWN [GPIO2,GPIO3,GPIO4,GPIO5] the off level of the load on relays.COIL[1] is not documented, so its state while GPIO2 is in reset cannot be proven; the off level of the load on relays.COIL[2] is not documented, so its state while GPIO3 is in reset cannot be proven; the off level of the load on relays.COIL[3] is not documented, so its state while GPIO4 is in reset cannot be proven; the off level of the load on relays.COIL[4] is not documented, so its state while GPIO5 is in reset cannot be proven",
+      "caution I2C_ADDRESS_UNKNOWN [] oled: I2C address cannot be proven (strap level of the module not documented)",
+      "caution I2C_PULLUP_UNKNOWN [GPIO0,GPIO1] i2c0: pull-up resistance of the attached modules is not documented; R3 cannot be verified",
+      "caution LEVEL_SHIFTER_UNKNOWN [GPIO0,GPIO1] oled: logic levels need a level shifter and the breakout's shifter fact is missing",
+      "caution LOGIC_LEVEL_UNKNOWN [GPIO2,GPIO26,GPIO27,GPIO28,GPIO3,GPIO4,GPIO5] pot1: logic-level facts are incomplete; levels cannot be verified; pot2: logic-level facts are incomplete; levels cannot be verified; pot3: logic-level facts are incomplete; levels cannot be verified; relays: logic-level facts are incomplete; levels cannot be verified",
+      "caution MODULE_REGULATOR_UNKNOWN [] oled: onboard regulator of ssd1306-128x64-i2c-4pin is not documented; relays: onboard regulator of relay-board-4ch-transistor is not documented",
+      "caution PIN_CURRENT_UNVERIFIED [GPIO2,GPIO3,GPIO4,GPIO5] load current of relays.COIL[1] on GPIO2 is not in the catalog; pin limit unknown; load current of relays.COIL[2] on GPIO3 is not in the catalog; pin limit unknown; load current of relays.COIL[3] on GPIO4 is not in the catalog; pin limit unknown; load current of relays.COIL[4] on GPIO5 is not in the catalog; pin limit unknown",
+      "caution RAIL_BUDGET_UNKNOWN [] rail 3V3: load or capacity not documented; budget cannot be verified; rail VBUS: load or capacity not documented; budget cannot be verified"
+    ],
+    "parts": [
+      {
+        "kind": "buffer",
+        "role": "logic-buffer:oled",
+        "count": 1
+      }
+    ],
+    "score": [3, 3, 0, 9],
+    "budgets": [
+      {
+        "rail": "3V3",
+        "demand_ma": 0.78,
+        "limit_ma": 300
+      },
+      {
+        "rail": "VBUS",
+        "demand_ma": 71.4,
+        "limit_ma": null
+      }
+    ]
+  },
+  "relay-opto-on-esp32-clean-pads-split-supply": {
+    "status": "ok",
+    "interfaces": {
+      "relays": {
+        "kind": "digital",
+        "decided_by_rule": 1,
+        "alternatives": []
+      }
+    },
+    "a": [
+      "relays.COIL[1]=GPIO32(,iomux)",
+      "relays.COIL[2]=GPIO33(,iomux)",
+      "relays.COIL[3]=GPIO25(,iomux)",
+      "relays.COIL[4]=GPIO26(,iomux)"
+    ],
+    "warnings": [
+      "warning FLOATING_AT_RESET_LOAD [GPIO25,GPIO26,GPIO32,GPIO33] relays.COIL[1] drives a load and GPIO32 floats during reset; add a pull-down resistor to the off level (not documented; GND assumed for an active-high board); relays.COIL[2] drives a load and GPIO33 floats during reset; add a pull-down resistor to the off level (not documented; GND assumed for an active-high board); relays.COIL[3] drives a load and GPIO25 floats during reset; add a pull-down resistor to the off level (not documented; GND assumed for an active-high board); relays.COIL[4] drives a load and GPIO26 floats during reset; add a pull-down resistor to the off level (not documented; GND assumed for an active-high board)",
+      "caution FLOATING_AT_RESET_UNKNOWN [GPIO25,GPIO26,GPIO32,GPIO33] the off level of the load on relays.COIL[1] is not documented, so its state while GPIO32 is in reset cannot be proven; the off level of the load on relays.COIL[2] is not documented, so its state while GPIO33 is in reset cannot be proven; the off level of the load on relays.COIL[3] is not documented, so its state while GPIO25 is in reset cannot be proven; the off level of the load on relays.COIL[4] is not documented, so its state while GPIO26 is in reset cannot be proven",
+      "caution LOGIC_LEVEL_UNKNOWN [GPIO25,GPIO26,GPIO32,GPIO33] relays: logic-level facts are incomplete; levels cannot be verified",
+      "caution PIN_CURRENT_UNVERIFIED [GPIO25,GPIO26,GPIO32,GPIO33] load current of relays.COIL[1] on GPIO32 is not in the catalog; pin limit unknown; load current of relays.COIL[2] on GPIO33 is not in the catalog; pin limit unknown; load current of relays.COIL[3] on GPIO25 is not in the catalog; pin limit unknown; load current of relays.COIL[4] on GPIO26 is not in the catalog; pin limit unknown",
+      "caution RAIL_BUDGET_UNKNOWN [] rail 5V: load or capacity not documented; budget cannot be verified"
+    ],
+    "parts": [
+      {
+        "kind": "resistor",
+        "role": "pull-down",
+        "count": 4,
+        "pads": ["GPIO25", "GPIO26", "GPIO32", "GPIO33"]
+      }
+    ],
+    "score": [0, 0, 0, 8],
+    "budgets": [
+      {
+        "rail": "5V",
+        "demand_ma": 71.4,
+        "limit_ma": null
+      }
+    ]
+  },
+  "relay-opto-on-esp32-gpio12-strap-blocked-unsat": {
+    "status": "ok",
+    "interfaces": {
+      "relays": {
+        "kind": "digital",
+        "decided_by_rule": 1,
+        "alternatives": []
+      }
+    },
+    "a": [
+      "relays.COIL[1]=GPIO12(,iomux)",
+      "relays.COIL[2]=GPIO32(,iomux)",
+      "relays.COIL[3]=GPIO33(,iomux)",
+      "relays.COIL[4]=GPIO25(,iomux)"
+    ],
+    "warnings": [
+      "warning FLOATING_AT_RESET_LOAD [GPIO12,GPIO25,GPIO32,GPIO33] relays.COIL[1] drives a load whose off level is not documented; GPIO12 is pulled low during reset; relays.COIL[2] drives a load and GPIO32 floats during reset; add a pull-down resistor to the off level (not documented; GND assumed for an active-high board); relays.COIL[3] drives a load and GPIO33 floats during reset; add a pull-down resistor to the off level (not documented; GND assumed for an active-high board); relays.COIL[4] drives a load and GPIO25 floats during reset; add a pull-down resistor to the off level (not documented; GND assumed for an active-high board)",
+      "caution FLOATING_AT_RESET_UNKNOWN [GPIO12,GPIO25,GPIO32,GPIO33] relays.COIL[1] on strap pad GPIO12: its level during reset is not documented (the pad requires low at reset); the off level of the load on relays.COIL[1] is not documented, so its state while GPIO12 is in reset cannot be proven; the off level of the load on relays.COIL[2] is not documented, so its state while GPIO32 is in reset cannot be proven; the off level of the load on relays.COIL[3] is not documented, so its state while GPIO33 is in reset cannot be proven; the off level of the load on relays.COIL[4] is not documented, so its state while GPIO25 is in reset cannot be proven",
+      "caution LOGIC_LEVEL_UNKNOWN [GPIO12,GPIO25,GPIO32,GPIO33] relays: logic-level facts are incomplete; levels cannot be verified",
+      "caution PIN_CURRENT_UNVERIFIED [GPIO12,GPIO25,GPIO32,GPIO33] load current of relays.COIL[1] on GPIO12 is not in the catalog; pin limit unknown; load current of relays.COIL[2] on GPIO32 is not in the catalog; pin limit unknown; load current of relays.COIL[3] on GPIO33 is not in the catalog; pin limit unknown; load current of relays.COIL[4] on GPIO25 is not in the catalog; pin limit unknown",
+      "caution RAIL_BUDGET_UNKNOWN [] rail 5V: load or capacity not documented; budget cannot be verified"
+    ],
+    "parts": [
+      {
+        "kind": "resistor",
+        "role": "pull-down",
+        "count": 3,
+        "pads": ["GPIO25", "GPIO32", "GPIO33"]
+      }
+    ],
+    "score": [2, 0, 0, 9],
+    "budgets": [
+      {
+        "rail": "5V",
+        "demand_ma": 71.4,
+        "limit_ma": null
+      }
+    ]
+  },
+  "uno-r4-minima-d13-onboard-led-load": {
+    "status": "ok",
+    "interfaces": {
+      "relays": {
+        "kind": "digital",
+        "decided_by_rule": 1,
+        "alternatives": []
+      }
+    },
+    "a": [
+      "relays.COIL[1]=P111(,iomux)",
+      "relays.COIL[2]=P112(,iomux)",
+      "relays.COIL[3]=P107(,iomux)",
+      "relays.COIL[4]=P106(,iomux)"
+    ],
+    "warnings": [
+      "warning FLOATING_AT_RESET_LOAD [P106,P107,P111,P112] relays.COIL[1] drives a load and P111 floats during reset; add a pull-down resistor to the off level (not documented; GND assumed for an active-high board); relays.COIL[2] drives a load and P112 floats during reset; add a pull-down resistor to the off level (not documented; GND assumed for an active-high board); relays.COIL[3] drives a load and P107 floats during reset; add a pull-down resistor to the off level (not documented; GND assumed for an active-high board); relays.COIL[4] drives a load and P106 floats during reset; add a pull-down resistor to the off level (not documented; GND assumed for an active-high board)",
+      "caution FACT_CONFLICT_RELIED [P106,P107,P111,P112] pad P111 relies on a catalog fact whose sources disagree; pad P112 relies on a catalog fact whose sources disagree; pad P107 relies on a catalog fact whose sources disagree; pad P106 relies on a catalog fact whose sources disagree",
+      "caution FLOATING_AT_RESET_UNKNOWN [P106,P107,P111,P112] the off level of the load on relays.COIL[1] is not documented, so its state while P111 is in reset cannot be proven; the off level of the load on relays.COIL[2] is not documented, so its state while P112 is in reset cannot be proven; the off level of the load on relays.COIL[3] is not documented, so its state while P107 is in reset cannot be proven; the off level of the load on relays.COIL[4] is not documented, so its state while P106 is in reset cannot be proven",
+      "caution LOGIC_LEVEL_UNKNOWN [P106,P107,P111,P112] relays: logic-level facts are incomplete; levels cannot be verified",
+      "caution ONBOARD_LOAD_ON_PAD [P111] P111 is shared with onboard hardware: User LED DL4 \"SCK LED\" (LED_BUILTIN) with R17 330 ohm",
+      "caution PIN_CURRENT_UNVERIFIED [P106,P107,P111,P112] load current of relays.COIL[1] on P111 is not in the catalog; pin limit 4 mA; load current of relays.COIL[2] on P112 is not in the catalog; pin limit 4 mA; load current of relays.COIL[3] on P107 is not in the catalog; pin limit 4 mA; load current of relays.COIL[4] on P106 is not in the catalog; pin limit 4 mA",
+      "caution RAIL_BUDGET_UNKNOWN [] rail 5V: load or capacity not documented; budget cannot be verified"
+    ],
+    "parts": [
+      {
+        "kind": "resistor",
+        "role": "pull-down",
+        "count": 4,
+        "pads": ["P106", "P107", "P111", "P112"]
+      }
+    ],
+    "score": [4, 0, 0, 1],
+    "budgets": [
+      {
+        "rail": "5V",
+        "demand_ma": 71.4,
+        "limit_ma": null
+      }
+    ]
+  },
+  "uno-r4-minima-opto-relay-pin-current": {
+    "status": "ok",
+    "interfaces": {
+      "relays": {
+        "kind": "digital",
+        "decided_by_rule": 1,
+        "alternatives": []
+      }
+    },
+    "a": [
+      "relays.COIL[1]=P112(,iomux)",
+      "relays.COIL[2]=P107(,iomux)",
+      "relays.COIL[3]=P106(,iomux)",
+      "relays.COIL[4]=P002(,iomux)"
+    ],
+    "warnings": [
+      "warning FLOATING_AT_RESET_LOAD [P002,P106,P107,P112] relays.COIL[1] drives a load and P112 floats during reset; add a pull-down resistor to the off level (not documented; GND assumed for an active-high board); relays.COIL[2] drives a load and P107 floats during reset; add a pull-down resistor to the off level (not documented; GND assumed for an active-high board); relays.COIL[3] drives a load and P106 floats during reset; add a pull-down resistor to the off level (not documented; GND assumed for an active-high board); relays.COIL[4] drives a load and P002 floats during reset; add a pull-down resistor to the off level (not documented; GND assumed for an active-high board)",
+      "caution FACT_CONFLICT_RELIED [P002,P106,P107,P112] pad P112 relies on a catalog fact whose sources disagree; pad P107 relies on a catalog fact whose sources disagree; pad P106 relies on a catalog fact whose sources disagree; pad P002 relies on a catalog fact whose sources disagree",
+      "caution FLOATING_AT_RESET_UNKNOWN [P002,P106,P107,P112] the off level of the load on relays.COIL[1] is not documented, so its state while P112 is in reset cannot be proven; the off level of the load on relays.COIL[2] is not documented, so its state while P107 is in reset cannot be proven; the off level of the load on relays.COIL[3] is not documented, so its state while P106 is in reset cannot be proven; the off level of the load on relays.COIL[4] is not documented, so its state while P002 is in reset cannot be proven",
+      "caution LOGIC_LEVEL_UNKNOWN [P002,P106,P107,P112] relays: logic-level facts are incomplete; levels cannot be verified",
+      "caution PIN_CURRENT_UNVERIFIED [P002,P106,P107,P112] load current of relays.COIL[1] on P112 is not in the catalog; pin limit 4 mA; load current of relays.COIL[2] on P107 is not in the catalog; pin limit 4 mA; load current of relays.COIL[3] on P106 is not in the catalog; pin limit 4 mA; load current of relays.COIL[4] on P002 is not in the catalog; pin limit 4 mA",
+      "caution RAIL_BUDGET_UNKNOWN [] rail 5V: load or capacity not documented; budget cannot be verified"
+    ],
+    "parts": [
+      {
+        "kind": "resistor",
+        "role": "pull-down",
+        "count": 4,
+        "pads": ["P002", "P106", "P107", "P112"]
+      }
+    ],
+    "score": [4, 0, 0, 1],
+    "budgets": [
+      {
+        "rail": "5V",
+        "demand_ma": 71.4,
+        "limit_ma": null
+      }
+    ]
+  }
+}

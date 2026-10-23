@@ -17,6 +17,7 @@ import type { Board, Chip, Project, Status } from '@pinout/schema';
 import { prov, sortedUnique, weakest, type CatalogIndex, type Prov } from './catalog.js';
 import type { ComposedPin } from './compose.js';
 import type { ExpandedSignal } from './signals.js';
+import { normRole } from './wiring.js';
 
 /** Lexicographic score, tier 1 (risk) first; lower is better. */
 export type Cost = [number, number, number, number];
@@ -136,6 +137,41 @@ const fmt = (n: number): string => String(Math.round(n * 1e6) / 1e6);
 
 // ---------- the assessment ----------
 
+/** Errata ids with a modelled effect -> warning code (see fixture-vocabulary.ts). */
+const ERRATUM_CODES: Readonly<Record<string, string>> = { 'GPIO-3.11': 'ERRATUM_GPIO_3_11' };
+/**
+ * ESP32 GPIO errata (esp32-errata-v3.1): GPIO-3.6 (pull configuration of RTC pads), GPIO-3.11 (input
+ * glitch on GPIO36/39) and GPIO-3.14 (edge interrupts) do not rank pads against each other.
+ */
+const REPORT_ONLY_ERRATA: ReadonlySet<string> = new Set(['GPIO-3.6', 'GPIO-3.11', 'GPIO-3.14']);
+const ERRATUM_TEXT: Readonly<Record<string, string>> = {
+  'GPIO-3.11':
+    'about 80 ns low pulse on the input when the SAR ADC or amplifier powers on; debounce',
+};
+
+/**
+ * Pads whose internal pull is limited. The catalog states this only in free text (claim
+ * esp8266ex-ds-v7.1#pull-config), so the one known case is keyed by chip and pad here.
+ */
+const PULL_DOWN_ONLY: Readonly<Record<string, { pads: readonly string[]; evidence: string }>> = {
+  esp8266ex: { pads: ['GPIO16'], evidence: 'esp8266ex-ds-v7.1#pull-config' },
+};
+
+const wideCache = new WeakMap<Chip, Set<string>>();
+/** Errata present on every pad of the chip: they cannot rank one pad against another. */
+export function chipWideErrata(chip: Chip): Set<string> {
+  const hit = wideCache.get(chip);
+  if (hit) return hit;
+  const pads = Object.values(chip.pads);
+  const wide = new Set<string>();
+  const first = pads[0];
+  if (first) {
+    for (const e of first.errata) if (pads.every((p) => p.errata.includes(e))) wide.add(e);
+  }
+  wideCache.set(chip, wide);
+  return wide;
+}
+
 function strapEffect(role: string): StrapEffect {
   const r = role.toLowerCase();
   if (/boot|download/.test(r)) return 'boot-mode';
@@ -226,27 +262,50 @@ export function assess(
     cost[0] += 1;
     notes.push('documented power-up glitch: +1 risk');
   }
+  // Errata: the ESP32 GPIO errata are reported, not scored (the worked example keeps GPIO36/39 at zero
+  // risk and asks for a Caution with a debounce workaround); any other erratum that is not chip-wide
+  // (e.g. RP2040-E11 on the ADC pads) costs one risk per pad.
   const chipWide = chipWideErrata(ctx.chip);
-  const padErrata = pin.errata.filter((e) => !chipWide.has(e));
-  if (padErrata.length > 0) {
+  const scored = pin.errata.filter((e) => !REPORT_ONLY_ERRATA.has(e) && !chipWide.has(e));
+  if (scored.length > 0) {
     cost[0] += 1;
-    notes.push(`errata ${padErrata.join(', ')}: +1 risk`);
+    notes.push(`errata ${scored.join(', ')}: +1 risk`);
+  }
+  for (const e of pin.errata) {
+    const code = ERRATUM_CODES[e];
+    if (REPORT_ONLY_ERRATA.has(e)) {
+      notes.push(
+        `erratum ${e}: reported${code === undefined ? '' : ` as ${code}`}, no tier-1 cost`,
+      );
+    }
+    if (code !== undefined) {
+      warn(
+        'caution',
+        code,
+        `pad ${pad} carries erratum ${e} (${ERRATUM_TEXT[e] ?? 'see the errata sheet'})`,
+        pin.evidence,
+      );
+    }
   }
   // the reset state is only relied on for loads and strap pads
   const relied: Prov<unknown>[] = [pin.inputOnly, pin.strap, pin.powerUpGlitch];
   if (strapObj || members.some((m) => m.actsOnLevel)) relied.push(pin.resetState);
+  if (members.some((m) => m.actsOnLevel)) relied.push(pin.pinCurrentMaxMa);
   if (members.some((m) => m.peripheral === 'ADC') && pin.adc) relied.push(pin.adc.radioConflict);
   if (relied.some((f) => f.status === 'conflict')) {
     cost[0] += 1;
     notes.push('a fact relied on for this pad is in conflict: +1 risk');
     warn(
-      'warning',
+      'caution',
       'FACT_CONFLICT_RELIED',
       `pad ${pad} relies on a catalog fact whose sources disagree`,
       pin.evidence,
     );
   }
   if (pin.strap.status === 'missing') {
+    // an undocumented strap behaviour cannot be proven harmless: count it as a strap pad
+    cost[0] += 1;
+    notes.push('strap behaviour not documented in the catalog: +1 risk');
     warn(
       'caution',
       'STRAP_FACT_MISSING',
@@ -255,8 +314,10 @@ export function assess(
     );
   }
   if (pin.onboard.length > 0) {
+    cost[2] += 1;
+    notes.push('onboard circuitry shares the pad: +1 convenience');
     warn(
-      'warning',
+      'caution',
       'ONBOARD_LOAD_ON_PAD',
       `${pad} is shared with onboard hardware: ${pin.onboard.map((o) => o.part).join('; ')}`,
       pin.onboard.flatMap((o) => o.evidence),
@@ -269,9 +330,16 @@ export function assess(
   if (!isAdcNet && pin.adc) cost[3] += 1;
   if (pin.dac) cost[3] += 1;
   if (pin.touch) cost[3] += 1;
+  // a chip-select line on an IO_MUX chip-select pad of an SPI instance uses that pad as intended
+  const isSpiCs = members.some((m) => m.interface === 'spi' && normRole(m.role) === 'CS');
   if (
     busKind !== 'spi' &&
-    pin.carries.some((c) => c.routing === 'iomux' && /^(SPI|HSPI|RSPI)/.test(c.peripheral))
+    pin.carries.some(
+      (c) =>
+        c.routing === 'iomux' &&
+        /^(SPI|HSPI|RSPI)/.test(c.peripheral) &&
+        !(isSpiCs && c.role.startsWith('cs')),
+    )
   ) {
     cost[3] += 1;
   }
@@ -297,6 +365,12 @@ export function assess(
       ) {
         resting = 'unknown';
       }
+      if (s.actsOnLevel) {
+        // a load on a pad that decides the boot: one more risk, so that loads leave strap pads to logic
+        // inputs (worked example: the CS lines take the strap pads)
+        cost[0] += 1;
+        notes.push(`load ${s.id} on strap pad ${pad}: +1 risk`);
+      }
       const r6 = run('R6', s.id, {
         requiredLevel: required,
         defaultLevel: defLevel,
@@ -305,6 +379,13 @@ export function assess(
         evidence: pin.strap.evidence,
       });
       if (r6.level === 'caution') {
+        if (effect !== 'other') {
+          // R6 would block this pad if the level were known to be wrong; unproven, it is a risk of its own
+          cost[0] += 1;
+          notes.push(
+            `strap pad ${pad} sets ${effect === 'boot-mode' ? 'the boot mode' : 'the flash voltage'} and the level of ${s.id} at reset is unproven: +1 risk`,
+          );
+        }
         warn(
           'caution',
           'FLOATING_AT_RESET_UNKNOWN',
@@ -324,6 +405,14 @@ export function assess(
     // loads: reset behaviour and pin current
     if (s.actsOnLevel) {
       const lvl = padResetLevel(pin.resetState);
+      if (!s.restingKnown) {
+        warn(
+          'caution',
+          'FLOATING_AT_RESET_UNKNOWN',
+          `the off level of the load on ${s.id} is not documented, so its state while ${pad} is in reset cannot be proven`,
+          pin.resetState.evidence,
+        );
+      }
       if (lvl === null) {
         warn(
           'caution',
@@ -331,21 +420,28 @@ export function assess(
           `reset state of ${pad} is not documented; ${s.id} drives a load`,
           pin.resetState.evidence,
         );
-      } else if (!s.restingKnown) {
+      } else if (lvl === 'float') {
+        // a floating pad is fixed with a pull resistor to the off level; with the part counted the pad
+        // is pulled, so it adds no risk (worked example: relay inputs on 25/26/27/32 get pull-downs)
+        const pull = s.restingKnown && s.restingLevelAtReset === 'high' ? 'pull-up' : 'pull-down';
         warn(
           'warning',
           'FLOATING_AT_RESET_LOAD',
-          `${s.id} drives a load whose off level is not documented; ${pad} is ${lvl === 'float' ? 'floating' : `pulled ${lvl}`} during reset`,
+          `${s.id} drives a load and ${pad} floats during reset; add a ${pull} resistor to the ${s.restingKnown ? 'off level' : 'off level (not documented; GND assumed for an active-high board)'}`,
           pin.resetState.evidence,
         );
-        if (lvl === 'float') cost[0] += 1;
-      } else if (lvl === 'float') {
-        cost[0] += 1;
-        notes.push(`load ${s.id} on a pad floating at reset without a pull: +1 risk`);
+        parts.push({
+          kind: 'resistor',
+          role: pull,
+          pad,
+          note: `${pad} floats during reset: ${pull} for ${s.id}; value not asserted by the catalog`,
+        });
+      } else if (!s.restingKnown) {
+        notes.push(`load ${s.id} on a pad pulled ${lvl} at reset with an undocumented off level`);
         warn(
           'warning',
           'FLOATING_AT_RESET_LOAD',
-          `${s.id} drives a load and ${pad} floats during reset`,
+          `${s.id} drives a load whose off level is not documented; ${pad} is pulled ${lvl} during reset`,
           pin.resetState.evidence,
         );
       } else if (lvl !== s.restingLevelAtReset) {
@@ -369,14 +465,26 @@ export function assess(
       }
     }
     // pull-up on an input-only pad (no software pull)
-    if (s.needsPull === 'up' && busKind === null && pin.inputOnly.value === true) {
+    const pdo = PULL_DOWN_ONLY[ctx.chip.id];
+    const noPullUp = pdo?.pads.includes(pad) === true;
+    if (s.needsPull === 'up' && busKind === null && (pin.inputOnly.value === true || noPullUp)) {
       parts.push({
         kind: 'resistor',
         role: 'pull-up',
         pad,
-        note: `${pad} is input-only and has no internal pull-up: add an external pull-up for ${s.id}`,
+        note: `${pad} ${noPullUp ? 'has no internal pull-up (pull-down only)' : 'is input-only and has no internal pull-up'}: add an external pull-up for ${s.id}`,
       });
-      notes.push('input-only pad: external pull-up required');
+      notes.push(
+        `${noPullUp ? 'pull-down-only pad' : 'input-only pad'}: external pull-up required`,
+      );
+      if (noPullUp) {
+        warn(
+          'info',
+          'NO_INTERNAL_PULL_UP_ON_GPIO16',
+          `${pad} supports only an internal pull-down; ${s.id} needs an external pull-up`,
+          [pdo.evidence],
+        );
+      }
     }
     // R8: ADC fit
     if (s.peripheral === 'ADC' && pin.adc) {
@@ -447,21 +555,6 @@ export function assess(
     notes,
     ...(blocked === undefined ? {} : { blocked }),
   };
-}
-
-const wideCache = new WeakMap<Chip, Set<string>>();
-/** Errata present on every pad of the chip: they cannot rank one pad against another. */
-export function chipWideErrata(chip: Chip): Set<string> {
-  const hit = wideCache.get(chip);
-  if (hit) return hit;
-  const pads = Object.values(chip.pads);
-  const wide = new Set<string>();
-  const first = pads[0];
-  if (first) {
-    for (const e of first.errata) if (pads.every((p) => p.errata.includes(e))) wide.add(e);
-  }
-  wideCache.set(chip, wide);
-  return wide;
 }
 
 export type { RequiredPart };

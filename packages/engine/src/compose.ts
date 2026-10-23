@@ -109,6 +109,8 @@ export interface ComposedView {
   logicVoltage: Prov<number>;
   pins: ComposedPin[];
   unavailablePads: UnavailablePad[];
+  /** Claim ids of the module facts that decide which pads are free (PSRAM fitted, consumed pads). */
+  moduleEvidence: ClaimId[];
 }
 
 export type ComposeResult =
@@ -331,6 +333,10 @@ export function composePinView(index: CatalogIndex, ref: string, variantId: stri
       logicVoltage: prov(board.logic_voltage),
       pins,
       unavailablePads,
+      moduleEvidence: sortedUnique([
+        ...(mod.psram ? prov(mod.psram).evidence : []),
+        ...Object.values(mod.consumed).flatMap((f) => prov(f).evidence),
+      ]),
     },
   };
 }

@@ -25,4 +25,4 @@ New dependency: `@pinout/rules` (workspace) in `packages/engine/package.json` (l
 
 ## Fixture status
 
-See the hand-off: 6 of 24 pass fully, the rest are listed by `fixtures.test.ts` (never edited). Findings for the fixture task: pico four pots expects `reserved:GPIO29` where the catalog calls the pad `consumed`; `bus.*` pseudo-instance in `exact` of the 6-module fixtures; fixture part kinds `wire`, `attenuation`, `supply` are outside the schema vocabulary; the opto relay resting level is not a catalog fact (R6 gives Caution, the fixture expects blocked); D1 mini ADC divider ratio is only free text on the board.
+Task 2b.9: see `fixtures-run.md` (15 pass, 9 disputed) and `fixture-disputes.md`. The search bound is now an exact assignment-problem bound (`assignment.ts`).
