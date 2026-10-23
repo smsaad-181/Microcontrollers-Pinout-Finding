@@ -5,7 +5,10 @@ input_abs_max:
   evidence:
   - ads1115-ds-sbas444e#absmax-digital
   note: Digital pins only. Analog inputs AIN0..AIN3 are limited to VDD + 0.3 V absolute maximum (ads1115-ds-sbas444e#absmax-analog); that limit is not expressible in this single field.
-  status: single-source
+  reviewers:
+  - hardware-researcher
+  - hardware-fact-auditor
+  status: verified
   unit: V
   value: 5.5
 interfaces:
@@ -32,7 +35,10 @@ interfaces:
       - ads1115-ds-sbas444e#timing-fscl
       - ads1115-ds-sbas444e#i2c-hs-mode
       note: 'Standard mode 100 kHz and fast mode 400 kHz need no special action (evidence ads1115-ds-sbas444e#i2c-speed-modes). Addresses 0x48/0x49/0x4A/0x4B: ads1115-ds-sbas444e#i2c-address-table; ADDR=SDA needs SDA held low >= 100 ns after SCL falls (#i2c-address-sda-note).'
-      status: single-source
+      reviewers:
+      - hardware-researcher
+      - hardware-fact-auditor
+      status: verified
       unit: Hz
       value: 3400000
   signals:
@@ -61,7 +67,10 @@ interfaces:
       - ads1115-ds-sbas444e#rec-fsr
       - ads1115-ds-sbas444e#pga-fsr-list
       note: 'This is the programmable full-scale differential range (+/-6.144 V ... +/-0.256 V), NOT an input-voltage limit. The datasheet restricts each AINx to GND .. VDD recommended and GND-0.3 .. VDD+0.3 V absolute (ads1115-ds-sbas444e#rec-ain-abs, #absmax-analog), so with VDD=3.3 V the usable input is 0..3.3 V single-ended whatever the PGA.'
-      status: single-source
+      reviewers:
+      - hardware-researcher
+      - hardware-fact-auditor
+      status: verified
       unit: V
       value:
       - -6.144
@@ -88,13 +97,19 @@ logic_levels:
     evidence:
     - ads1115-ds-sbas444e#elec-vih
     note: 0.7 VDD, max 5.5 V
-    status: single-source
+    reviewers:
+    - hardware-researcher
+    - hardware-fact-auditor
+    status: verified
     value: VDD*0.7
   vil_max:
     evidence:
     - ads1115-ds-sbas444e#elec-vil
     note: 0.3 VDD
-    status: single-source
+    reviewers:
+    - hardware-researcher
+    - hardware-fact-auditor
+    status: verified
     value: VDD*0.3
   vol_max:
     conditions:
@@ -102,7 +117,10 @@ logic_levels:
     evidence:
     - ads1115-ds-sbas444e#elec-vol
     note: ALERT/RDY and SDA open-drain low level; typ 0.15 V; no VOH (open-drain, external pull-up)
-    status: single-source
+    reviewers:
+    - hardware-researcher
+    - hardware-fact-auditor
+    status: verified
     unit: V
     value: 0.4
 part: ADS1115
@@ -115,7 +133,10 @@ supply_current:
   evidence:
   - ads1115-ds-sbas444e#elec-idd
   note: 'typ 150 uA at TA=25 C; max 200 uA at 25 C, 300 uA over -40..125 C (max recorded = 300 uA). Power-down: typ 0.5 uA, max 2 uA at 25 C, 5 uA over temperature.'
-  status: single-source
+  reviewers:
+  - hardware-researcher
+  - hardware-fact-auditor
+  status: verified
   unit: mA
   value:
     max: 0.3
@@ -124,7 +145,10 @@ vdd_range:
   evidence:
   - ads1115-ds-sbas444e#rec-vdd
   note: 'Single-supply part: no separate I/O supply pin (Table 4-1 lists only VDD).'
-  status: single-source
+  reviewers:
+  - hardware-researcher
+  - hardware-fact-auditor
+  status: verified
   unit: V
   value:
   - 2.0
