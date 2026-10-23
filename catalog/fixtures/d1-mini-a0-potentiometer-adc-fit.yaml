@@ -1,5 +1,5 @@
 # Golden fixture 09 - LOLIN D1 mini V4.0.0: 10 kohm potentiometer wiper on A0 with the pot wired to the 3V3 rail (R8 ADC fit).
-# The 3.2 V full scale is a BOARD fact only because the catalog records the A0 divider R12 220 k / R13 100 k and the product-page statement.
+# The A0 divider (R12 220 k / R13 100 k, 3.2 V full scale) is hand-derived below; the catalog has no structured ADC divider fact yet, so the ratio and full scale are not asserted.
 id: d1-mini-a0-potentiometer-adc-fit
 board: lolin-d1-mini@V4.0.0
 variant: lolin-d1-mini-v4
@@ -17,13 +17,9 @@ expect:
     pot.WIPER: TOUT        # the only ADC pad; header label A0 (J2-2)
   properties:
     - header_label_of_pad: { TOUT: A0 }
-    - adc_ratio_board: 0.3125
-    - adc_sensor_max_v_for_full_scale: 3.2
   warnings_include:
     - { code: ADC_OVER_RANGE, level: warning }     # 3.3 V * 0.3125 = 1.03125 V > 1.000 V; 3.3 V > 3.2 V stated A0 maximum
     - { code: ADC_RADIO_UNKNOWN, level: caution }  # esp8266ex ADC radio_conflict fact is missing
-  required_parts_include:
-    - { kind: attenuation, role: limit-pot-supply, max_wiper_v: 3.2, note: "pot ends must not exceed 3.2 V; exact parts not asserted" }
 evidence:
   - lolin-d1-mini-v4-sch#adc-divider
   - lolin-d1-mini-v4-ug#features-adc
@@ -45,3 +41,4 @@ derivations:
   - "Wi-Fi project: the ESP8266 ADC/radio conflict is missing in the catalog (no document says it conflicts and none says it does not) -> Caution, not a block."
 changelog:
   - "2026-10-23: created (task 2a.7, fixture-author)."
+  - "2026-10-23: 2b ruling 4 (owner): dropped adc_ratio_board, adc_sensor_max_v_for_full_scale and the attenuation required part (the A0 divider is free text in the catalog). Later: a structured ADC divider fact in the catalog, then these assertions return."

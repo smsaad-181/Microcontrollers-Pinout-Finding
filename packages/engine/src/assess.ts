@@ -48,7 +48,7 @@ export interface WarnItem {
 }
 
 export interface PartItem {
-  kind: 'resistor' | 'level-shifter' | 'buffer' | 'transistor' | 'regulator' | 'divider';
+  kind: 'resistor' | 'level-shifter' | 'buffer' | 'transistor' | 'regulator' | 'supply' | 'divider';
   role: string;
   value?: string;
   pad?: string;
@@ -423,18 +423,44 @@ export function assess(
       } else if (lvl === 'float') {
         // a floating pad is fixed with a pull resistor to the off level; with the part counted the pad
         // is pulled, so it adds no risk (worked example: relay inputs on 25/26/27/32 get pull-downs)
-        const pull = s.restingKnown && s.restingLevelAtReset === 'high' ? 'pull-up' : 'pull-down';
+        // direction: the catalog's resting level, else the breakout's active level (high-active: a pull-down
+        // keeps it off; low-active: a pull-up). Neither stated: the direction is unknown and never guessed.
+        const pull = s.restingKnown
+          ? s.restingLevelAtReset === 'high'
+            ? 'pull-up'
+            : 'pull-down'
+          : s.activeLevel === 'high'
+            ? 'pull-down'
+            : s.activeLevel === 'low'
+              ? 'pull-up'
+              : 'pull';
+        const unknownDir = pull === 'pull';
+        const basis = s.restingKnown
+          ? 'off level'
+          : s.activeLevel === undefined
+            ? 'off level (active level not documented: direction unknown)'
+            : `off level (${s.activeLevel}-active input)`;
         warn(
           'warning',
           'FLOATING_AT_RESET_LOAD',
-          `${s.id} drives a load and ${pad} floats during reset; add a ${pull} resistor to the ${s.restingKnown ? 'off level' : 'off level (not documented; GND assumed for an active-high board)'}`,
+          `${s.id} drives a load and ${pad} floats during reset; add a ${unknownDir ? 'pull resistor (direction unknown)' : `${pull} resistor`} to the ${basis}`,
           pin.resetState.evidence,
         );
+        if (unknownDir) {
+          warn(
+            'caution',
+            'FLOATING_AT_RESET_UNKNOWN',
+            `pull direction for ${s.id} on ${pad} cannot be chosen: the catalog states neither the resting level nor the active level of the input`,
+            pin.resetState.evidence,
+          );
+        }
         parts.push({
           kind: 'resistor',
           role: pull,
           pad,
-          note: `${pad} floats during reset: ${pull} for ${s.id}; value not asserted by the catalog`,
+          note: unknownDir
+            ? `${pad} floats during reset: pull resistor for ${s.id}, direction unknown (active level not in the catalog); value not asserted`
+            : `${pad} floats during reset: ${pull} for ${s.id}; value not asserted by the catalog`,
         });
       } else if (!s.restingKnown) {
         notes.push(`load ${s.id} on a pad pulled ${lvl} at reset with an undocumented off level`);

@@ -15,7 +15,7 @@ expect:
   properties:
     - outputs_not_in: [P200, P214, P215]
     - pin_current_limit_used_mA: 4        # chip pin_current_max is `conflict`; most restrictive (4 mA) is active
-    - port_group_total_mA_limit: { pads: [P000, P001, P002, P012, P013, P014, P015], mA: 30 }
+    - port_group_total_mA_limit: { mA: 30 }   # 2b ruling 8: the pad list is note text in the catalog, not a fact, so it is not asserted
     - cumulative_mA_limit: 60
   warnings_include:
     - { code: FACT_CONFLICT_RELIED, level: caution }   # pin_current_max: 4 mA vs 8 mA
@@ -47,3 +47,4 @@ derivations:
   - "outputs_not_in P200/P214/P215 are the RA4M1 input-only ports; none is on a header, the property is a guard."
 changelog:
   - "2026-10-23: created (task 2a.7, fixture-author). Weakened: LED current cannot be computed (no LED breakout, Vf not in catalog); the 4 vs 8 mA conflict is exercised through the opto input instead."
+  - "2026-10-23: 2b ruling 8 (owner): dropped the pads list of port_group_total_mA_limit (it exists only in the port_current_max note text); the 30 mA limit is still asserted."

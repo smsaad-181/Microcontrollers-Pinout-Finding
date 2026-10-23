@@ -29,8 +29,6 @@ export const WARNING_CODES = [
 
 /** Keys of one `expect.properties` entry (each entry is an object with exactly one of these keys). */
 export const PROPERTY_KEYS = [
-  'adc_ratio_board',
-  'adc_sensor_max_v_for_full_scale',
   'address_set_on_one_bus_distinct',
   'address_straps_distinct',
   'all_used',
@@ -71,7 +69,7 @@ export const PROPERTY_KEYS = [
 
 /**
  * Prefixes of `expect.minimal_conflict_includes` tokens (`<prefix><detail>`, e.g.
- * `locked:pot.WIPER=GPIO25`, `strap:GPIO12`, `consumed:GPIO16`, `adc2-wifi:GPIO25`).
+ * `locked:pot.WIPER=GPIO25`, `consumed:GPIO16`, `adc2-wifi:GPIO25`). The engine also emits `reserved:` and `strap:` tokens; no fixture uses them since 2b rulings 1 and 2.
  */
 export const CONFLICT_TOKEN_PREFIXES = [
   'adc2-wifi:',
@@ -80,14 +78,11 @@ export const CONFLICT_TOKEN_PREFIXES = [
   'i2c-address:',
   'i2c-controllers:',
   'locked:',
-  'reserved:',
-  'strap:',
 ] as const;
 
 /** Prefixes of `expect.relaxations_include` tokens (e.g. `unlock:pot.WIPER`, `wifi:false`). */
 export const RELAXATION_TOKEN_PREFIXES = [
   'add-external-adc:',
-  'different-board:',
   'different-variant:',
   'remove-module:',
   'unlock:',
@@ -114,3 +109,21 @@ export const isConflictToken = (s: string): boolean => startsWithAny(s, CONFLICT
 export const isRelaxationToken = (s: string): boolean =>
   (RELAXATION_BARE_TOKENS as readonly string[]).includes(s) ||
   startsWithAny(s, RELAXATION_TOKEN_PREFIXES);
+
+/**
+ * Pseudo-instance in an `expect.exact` / property signal id (2b ruling 6). `bus.<ROLE>` names the shared
+ * SPI bus line of that role (`bus.SCK`, `bus.MOSI`, `bus.MISO`) instead of one module's own signal
+ * (`rfid.SCLK`, `tft.SCLK`...). Every other id is `<module instance>.<role>`.
+ */
+export const BUS_PSEUDO_INSTANCE = 'bus';
+export const BUS_PSEUDO_ROLES = ['SCK', 'MOSI', 'MISO'] as const;
+
+/** True for `bus.SCK|MOSI|MISO`, or for `<instance>.<role>` with `instance` one of `instances`. */
+export const isSignalId = (s: string, instances: readonly string[]): boolean => {
+  const dot = s.indexOf('.');
+  if (dot <= 0) return false;
+  const inst = s.slice(0, dot);
+  const role = s.slice(dot + 1);
+  if (inst === BUS_PSEUDO_INSTANCE) return (BUS_PSEUDO_ROLES as readonly string[]).includes(role);
+  return instances.includes(inst) && LOCKED_ROLE_PATTERN.test(role);
+};

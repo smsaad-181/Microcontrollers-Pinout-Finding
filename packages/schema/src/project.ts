@@ -5,6 +5,7 @@ import {
   LOCKED_ROLE_PATTERN,
   isConflictToken,
   isPropertyKey,
+  isSignalId,
   isRelaxationToken,
   isWarningCode,
 } from './fixture-vocabulary.js';
@@ -67,7 +68,7 @@ export const FixtureSchema = z
         exact: z
           .record(z.string(), PadIdSchema)
           .exactOptional()
-          .describe('`instance.role` to pad.'),
+          .describe('`instance.role` (or the pseudo-instance `bus.SCK|MOSI|MISO`) to pad.'),
         properties: z.array(z.unknown()).exactOptional().describe('Property assertions.'),
         warnings_include: z
           .array(z.strictObject({ code: z.string(), level: WarningSchema.shape.level }))
@@ -100,6 +101,14 @@ export const FixtureSchema = z
         );
     });
     const e = f.expect;
+    const instances = f.project.modules.map((m) => m.instance);
+    for (const k of Object.keys(e.exact ?? {})) {
+      if (!isSignalId(k, instances))
+        bad(
+          ['expect', 'exact', k],
+          `signal id "${k}" must be <module instance>.<role> or bus.SCK|MOSI|MISO (see fixture-vocabulary.ts)`,
+        );
+    }
     (e.warnings_include ?? []).forEach((w, i) => {
       if (!isWarningCode(w.code))
         bad(
@@ -199,6 +208,7 @@ export const RecommendationSchema = z
             'transistor',
             'diode',
             'regulator',
+            'supply',
             'divider',
           ]),
           value: z.string().exactOptional(),

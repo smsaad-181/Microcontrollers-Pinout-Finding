@@ -117,6 +117,7 @@ A breakout module wrapping an IC (catalog/breakouts/).
 | `hardwired[].strap` | string | yes | Strap. |
 | `hardwired[].value` | string \| number | yes | Hardwired value. |
 | `interfaces_exposed` | "i2c" \| "spi" \| "uart" \| "onewire" \| "analog" \| "digital"[] | yes | Interfaces reachable on the pins. |
+| `active_level` | Fact<"high" \| "low"> | no | Level on a control input that switches the load on (relay or driver boards). Omit when no source states it; the engine never guesses a pull direction. |
 | `supply_current` | Fact<object> | yes | Supply current (typ/max). |
 | `notes` | string | no | Free-text notes. |
 
@@ -226,7 +227,7 @@ A golden test fixture written by hand from datasheets (catalog/fixtures/).
 | `project.allow_reassign` | boolean | no | Allow moving locked pins. |
 | `expect` | object | yes | Expected engine result, derived by hand from datasheets. |
 | `expect.status` | "ok" \| "unsat" \| "needs_variant" | yes | Solver result status. |
-| `expect.exact` | Record<string, string> | no | `instance.role` to pad. |
+| `expect.exact` | Record<string, string> | no | `instance.role` (or the pseudo-instance `bus.SCK\|MOSI\|MISO`) to pad. |
 | `expect.properties` | any[] | no | Property assertions. |
 | `expect.warnings_include` | object[] | no | Warnings that must be present. |
 | `expect.warnings_include[].code` | string | yes |  |
@@ -369,7 +370,7 @@ The engine output: interfaces, assignments, parts, warnings, budgets, score.
 | `assignments[].alternatives[].lower_tier` | 1 \| 2 \| 3 \| 4 | yes |  |
 | `assignments[].alternatives[].reason` | string | yes |  |
 | `required_parts` | object[] | yes | Extra parts required. |
-| `required_parts[].kind` | "resistor" \| "capacitor" \| "level-shifter" \| "buffer" \| "transistor" \| "diode" \| "regulator" \| "divider" | yes |  |
+| `required_parts[].kind` | "resistor" \| "capacitor" \| "level-shifter" \| "buffer" \| "transistor" \| "diode" \| "regulator" \| "supply" \| "divider" | yes |  |
 | `required_parts[].value` | string | no |  |
 | `required_parts[].role` | string | yes |  |
 | `required_parts[].count` | number | yes |  |

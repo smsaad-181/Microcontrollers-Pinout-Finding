@@ -129,6 +129,11 @@ export const BreakoutSchema = z
       )
       .describe('Hardwired straps.'),
     interfaces_exposed: z.array(InterfaceKindSchema).describe('Interfaces reachable on the pins.'),
+    active_level: fact(z.enum(['high', 'low']))
+      .exactOptional()
+      .describe(
+        'Level on a control input that switches the load on (relay or driver boards). Omit when no source states it; the engine never guesses a pull direction.',
+      ),
     supply_current: fact(currentRange()).describe('Supply current (typ/max).'),
     notes: z.string().exactOptional().describe('Free-text notes.'),
   })

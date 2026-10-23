@@ -16,11 +16,10 @@ expect:
   status: unsat
   minimal_conflict_includes:
     - "adc:4-analog-signals-vs-3-adc-pads"        # pot1..pot4 WIPER need ADC pads, only GPIO26/27/28 usable
-    - "reserved:GPIO29"                             # consumed by the CYW43439 (WL_CLK)
+    - "consumed:GPIO29"                             # consumed by the CYW43439 (WL_CLK)
   relaxations_include:
     - "add-external-adc:ads1115-breakout"           # catalog has an I2C ADC breakout
     - "remove-module:potentiometer-10k"
-    - "different-board:raspberry-pi-pico-w"         # the plain Pico has the same 3 exposed ADC pads; a board with more ADC pads is needed
 evidence:
   - pico-w-ds-rel7#gpio-exposed
   - pico-w-ds-rel7#internal-gpio29
@@ -37,3 +36,4 @@ derivations:
   - "Relaxation: ADS1115 offers 4 single-ended inputs per chip (ads1115-ds-sbas444e#pin-ain) on I2C; one chip adds 4 channels using 2 pins."
 changelog:
   - "2026-10-23: created (task 2a.7, fixture-author). Conflict/relaxation tokens are a proposed convention (see report): the engine spec has no normative vocabulary."
+  - "2026-10-23: 2b ruling 2 (owner): conflict token reserved:GPIO29 -> consumed:GPIO29 (the catalog records GPIO29 as module-consumed, not a user reservation); relaxation different-board:raspberry-pi-pico-w dropped (it named the current board; no catalog board fits)."

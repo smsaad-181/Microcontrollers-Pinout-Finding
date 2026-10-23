@@ -25,7 +25,6 @@ expect:
   relaxations_include:
     - "remove-module:ads1115-breakout"
     - "add-i2c-multiplexer"
-    - "different-board:esp32-devkitc-v4"
 evidence:
   - ads1115-ds-sbas444e#i2c-address-table
   - ads1115-ds-sbas444e#i2c-address-sda-note
@@ -40,3 +39,4 @@ derivations:
   - "ADS1115 exposes only I2C on this breakout (interfaces_exposed: i2c), so the 'change interface' relaxation does not apply."
 changelog:
   - "2026-10-23: created (task 2a.7, fixture-author). Conflict/relaxation tokens are a proposed convention (see report)."
+  - "2026-10-23: 2b ruling 2 (owner): relaxation different-board:esp32-devkitc-v4 dropped (it named the current board; no catalog board fits)."

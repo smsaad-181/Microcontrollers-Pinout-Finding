@@ -2,11 +2,12 @@
 // rail voltage range, and the fixture vocabulary registry.
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call -- test documents are dynamic YAML/JSON */
 import { describe, expect, it } from 'vitest';
-import { BoardSchema, ChipSchema, FixtureSchema } from '../src/index.js';
+import { BoardSchema, BreakoutSchema, ChipSchema, FixtureSchema } from '../src/index.js';
 import {
   CONFLICT_TOKEN_PREFIXES,
   LOCKED_ROLE_PATTERN,
   PROPERTY_KEYS,
+  isSignalId,
   RELAXATION_TOKEN_PREFIXES,
   WARNING_CODES,
 } from '../src/fixture-vocabulary.js';
@@ -92,7 +93,7 @@ describe('fixture vocabulary registry', () => {
     expect(WARNING_CODES).toContain('ADC2_WIFI_CONFLICT');
     expect(PROPERTY_KEYS).toContain('no_pad_in');
     expect(CONFLICT_TOKEN_PREFIXES).toEqual(
-      expect.arrayContaining(['locked:', 'strap:', 'consumed:', 'adc2-wifi:']),
+      expect.arrayContaining(['locked:', 'consumed:', 'adc2-wifi:']),
     );
     expect(RELAXATION_TOKEN_PREFIXES).toContain('unlock:');
     expect(LOCKED_ROLE_PATTERN.test('COIL[1]')).toBe(true);
@@ -103,7 +104,7 @@ describe('fixture vocabulary registry', () => {
   it('accepts known vocabulary', () => {
     const f = fx({
       warnings_include: [{ code: 'I2C_PULLUP_UNKNOWN', level: 'caution' }],
-      minimal_conflict_includes: ['locked:pot.WIPER=GPIO25', 'strap:GPIO12'],
+      minimal_conflict_includes: ['locked:pot.WIPER=GPIO25', 'consumed:GPIO16'],
       relaxations_include: ['unlock:pot.WIPER', 'add-i2c-multiplexer'],
     });
     expect(ok(FixtureSchema, f)).toBe(true);
@@ -138,5 +139,49 @@ describe('fixture vocabulary registry', () => {
       ok(FixtureSchema, fx({ properties: [{ no_warning_code: ['ADC2_WIFI_CONFLICT'] }] })),
     ).toBe(true);
     expect(ok(FixtureSchema, fx({ properties: [{ no_warning_code: ['NOPE'] }] }))).toBe(false);
+  });
+});
+
+describe('breakout active_level (2b ruling 11)', () => {
+  const withLevel = (v: unknown) => {
+    const b = clone(sample.breakout);
+    b.active_level = { ...sample.verified('high'), value: v };
+    return b;
+  };
+  it('is optional', () => {
+    expect(ok(BreakoutSchema, sample.breakout)).toBe(true);
+  });
+  it.each(['high', 'low'])('accepts %s', (v) => {
+    expect(ok(BreakoutSchema, withLevel(v))).toBe(true);
+  });
+  it('rejects any other value', () => {
+    expect(ok(BreakoutSchema, withLevel('floating'))).toBe(false);
+  });
+});
+
+describe('exact signal ids and the bus pseudo-instance (2b ruling 6)', () => {
+  const withExact = (exact: Record<string, string>) => {
+    const f = clone(sample.fixture);
+    f.expect.exact = exact;
+    return f;
+  };
+  it('accepts <module instance>.<role> and bus.SCK|MOSI|MISO', () => {
+    expect(ok(FixtureSchema, withExact({ 'env.SDA': 'GPIO21' }))).toBe(true);
+    expect(
+      ok(
+        FixtureSchema,
+        withExact({ 'bus.SCK': 'GPIO18', 'bus.MOSI': 'GPIO23', 'bus.MISO': 'GPIO19' }),
+      ),
+    ).toBe(true);
+  });
+  it('rejects an unknown instance and an unknown bus role', () => {
+    expect(ok(FixtureSchema, withExact({ 'nope.SDA': 'GPIO21' }))).toBe(false);
+    expect(ok(FixtureSchema, withExact({ 'bus.SDA': 'GPIO21' }))).toBe(false);
+    expect(ok(FixtureSchema, withExact({ SDA: 'GPIO21' }))).toBe(false);
+  });
+  it('isSignalId follows the same rule', () => {
+    expect(isSignalId('bus.MISO', [])).toBe(true);
+    expect(isSignalId('relays.COIL[2]', ['relays'])).toBe(true);
+    expect(isSignalId('bus.CS', ['bus'])).toBe(false);
   });
 });

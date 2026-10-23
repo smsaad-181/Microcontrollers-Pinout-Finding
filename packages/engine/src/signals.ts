@@ -55,6 +55,8 @@ export interface ExpandedSignal {
   /** Level on the line while the MCU pad is at reset; `float` when the catalog does not state it. */
   restingLevelAtReset: 'high' | 'low' | 'float';
   restingKnown: boolean;
+  /** Level that switches the load on (breakout active_level); absent when the catalog does not state it. */
+  activeLevel?: 'high' | 'low';
   needsPull?: 'up' | 'down';
   /** MISO only: whether the catalog proves the line is released when deselected (null = unproven). */
   miso?: { shareProven: boolean | null };
@@ -159,6 +161,7 @@ export function expandSignals(
           }
         : undefined;
     const misoFact = limits.miso_tristate_when_deselected;
+    const activeLevel = breakout.active_level ? prov(breakout.active_level).value : null;
 
     for (const w of wiring.wired) {
       const s = w.signal;
@@ -191,6 +194,7 @@ export function expandSignals(
           actsOnLevel: s.acts_on_level === true,
           restingLevelAtReset: s.resting_level ?? 'float',
           restingKnown: s.resting_level !== undefined,
+          ...(s.acts_on_level === true && activeLevel !== null ? { activeLevel } : {}),
           ...(open ? { needsPull: 'up' as const } : {}),
           ...(kind === 'spi' && normRole(role) === 'MISO'
             ? { miso: { shareProven: misoFact ? prov(misoFact).value : null } }

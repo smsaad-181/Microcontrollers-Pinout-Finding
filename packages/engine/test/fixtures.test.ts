@@ -1,5 +1,6 @@
 // Golden-fixture harness (tasks 2b.5 start, 2b.9 finish). Runs each catalog/fixtures entry through
-// `solveDetailed` and reports pass / fail / disputed / unchecked per fixture. Fixtures are never edited.
+// `solveDetailed` and reports pass / fail / disputed / unchecked per fixture. Fixtures are edited only on an
+// owner ruling (docs/validation/phase-2b/dispute-resolution.md).
 //   pass       every assertion was checked and held
 //   fail       an assertion was checked and does not hold (engine bug until proven otherwise)
 //   disputed   the only deviations are listed in DISPUTES and in docs/validation/phase-2b/fixture-disputes.md:
@@ -42,64 +43,7 @@ interface Dispute {
 }
 
 /** Fixture id -> disputed assertions (details in docs/validation/phase-2b/fixture-disputes.md). */
-export const DISPUTES: Readonly<Record<string, readonly Dispute[]>> = {
-  'ads1115-nine-boards-i2c-address-space-unsat': [
-    {
-      pattern: /relaxation different-board:esp32-devkitc-v4 missing/,
-      why: 'names the current board as its own alternative',
-    },
-  ],
-  'pico-w-four-pots-no-free-adc-unsat': [
-    {
-      pattern: /conflict token reserved:GPIO29 missing/,
-      why: 'catalog says consumed, not reserved',
-    },
-    {
-      pattern: /relaxation different-board:raspberry-pi-pico-w missing/,
-      why: 'names the current board as its own alternative',
-    },
-  ],
-  'relay-opto-on-esp32-gpio12-strap-blocked-unsat': [
-    { pattern: /status ok, expected unsat/, why: 'relay resting level is not a catalog fact' },
-    { pattern: /conflict token (locked|strap):/, why: 'follows from the status' },
-    { pattern: /relaxation unlock:/, why: 'follows from the status' },
-  ],
-  'bme280-three-boards-second-bus-or-spi': [
-    {
-      pattern: /missing warning MISO_SHARE_UNPROVEN/,
-      why: 'conditional on the SPI resolution; the engine resolves with a second I2C bus',
-    },
-  ],
-  'd1-mini-boot-pins-gpio0-2-15-avoided': [
-    {
-      pattern: /missing warning NO_INTERNAL_PULL_UP_ON_GPIO16/,
-      why: 'conditional on sw1 landing on GPIO16; the engine puts it elsewhere',
-    },
-  ],
-  'bme280-two-boards-address-strap': [
-    { pattern: /required part kind "wire"/, why: 'part kind outside the schema vocabulary' },
-  ],
-  'd1-mini-a0-potentiometer-adc-fit': [
-    { pattern: /property adc_ratio_board/, why: 'divider ratio is free text on the board' },
-    { pattern: /property adc_sensor_max_v_for_full_scale/, why: 'derived from the same free text' },
-    { pattern: /required part kind "attenuation"/, why: 'part kind outside the schema vocabulary' },
-  ],
-  'devkitc-v4-wrover-e-variant-change': [
-    {
-      pattern: /bus\.(SCK|MOSI|MISO) on /,
-      why: 'engine finds a risk-4 plan on HSPI pads; SPI3 plan scores 5 (GPIO15 = strap + MTDO)',
-    },
-    { pattern: /switch pads /, why: 'MISO takes input-only GPIO36 in the risk-4 plan' },
-    { pattern: /risk pads outside/, why: 'GPIO15 cost differs between catalog and fixture' },
-  ],
-  'devkitc-v4-wroom-bme280-rc522-st7735s-relays-switches': [],
-  'uno-r4-minima-opto-relay-pin-current': [
-    {
-      pattern: /port_group_total_mA_limit pads/,
-      why: 'port pad list only in a note, mA checked',
-    },
-  ],
-};
+export const DISPUTES: Readonly<Record<string, readonly Dispute[]>> = {};
 
 const padOf = (r: Recommendation, sid: string): string | undefined => {
   const i = sid.indexOf('.');
@@ -362,8 +306,8 @@ function checkProperty(
     case 'port_group_total_mA_limit':
       if (d.currents.portMa !== Number(o.mA))
         fail(`port group limit ${String(d.currents.portMa)} mA != ${String(o.mA)}`);
-      // the pad list of the group only exists in the fact's note text, so it cannot be compared
-      unchecked('port_group_total_mA_limit pads list (note text only)');
+      // the pad list of the group only exists in the fact's note text (2b ruling 8): not a fixture key
+      if (o.pads !== undefined) unchecked('port_group_total_mA_limit pads list (note text only)');
       return;
     case 'cumulative_mA_limit':
       if (d.currents.cumulativeMa !== Number(v))
@@ -418,7 +362,6 @@ function checkProperty(
 }
 
 /** Fixture part kinds the schema does not know, mapped onto the nearest schema kind where one exists. */
-const KIND_ALIAS: Readonly<Record<string, string>> = { supply: 'regulator' };
 const SCHEMA_KINDS = [
   'resistor',
   'capacitor',
@@ -427,6 +370,7 @@ const SCHEMA_KINDS = [
   'transistor',
   'diode',
   'regulator',
+  'supply',
   'divider',
 ];
 
@@ -463,7 +407,7 @@ export function runFixture(fx: Fixture): FixtureReport {
   }
   for (const part of ex.required_parts_include ?? []) {
     const pt = part as { kind: string; role: string; count?: number };
-    const kind = KIND_ALIAS[pt.kind] ?? pt.kind;
+    const kind = pt.kind;
     if (!SCHEMA_KINDS.includes(kind)) {
       unk(`required part kind "${pt.kind}" is outside the schema vocabulary`);
       continue;
@@ -563,31 +507,6 @@ function citedByCatalog(): Set<string> {
   return out;
 }
 
-/**
- * Evidence ids the worked-example fixture lists that no catalog fact cites (they exist only in the evidence
- * files and in the fixture's own list), so no engine trace can carry them. A catalog gap, not an engine gap;
- * listed in docs/validation/phase-2b/fixture-disputes.md. The list may only shrink.
- */
-const UNCITED_BY_CATALOG: readonly string[] = [
-  'bme280-ds-1.24#i2c-address',
-  'esp-idf-spi-master-v6.1#iomux-pins-main',
-  'esp-idf-spi-master-v6.1#matrix-routing',
-  'esp32-devkitc-v4-ug#j2-11-13',
-  'esp32-devkitc-v4-ug#j2-5-8',
-  'esp32-devkitc-v4-ug#j2-8-11',
-  'esp32-devkitc-v4-ug#j3-6-10',
-  'esp32-devkitc-v4-ug#note-flash-pins',
-  'esp32-devkitc-v4-ug#note-gpio16-17-wroom',
-  'esp32-errata-v3.1#gpio-3-11',
-  'esp32-errata-v3.1#gpio-3-11-workaround',
-  'keyestudio-ks0058-wiki#active-high',
-  'mfrc522-ds-v3.9#spi-pins',
-  'mfrc522-ds-v3.9#supply-current-digital-analog',
-  'omron-b3f-ds-a070-e1-08#contact-form',
-  'songle-srd-ds-circuitbasics#coil-5v-d-current',
-  'st7735-ds-v2.1#pin-dcx-resx',
-];
-
 describe('worked example evidence (DevKitC V4)', () => {
   const fx = loadFixtures().find(
     (f) => f.id === 'devkitc-v4-wroom-bme280-rc522-st7735s-relays-switches',
@@ -607,9 +526,8 @@ describe('worked example evidence (DevKitC V4)', () => {
     const missing = (fx?.evidence ?? []).filter((e) => cited.has(e) && !trace.has(e));
     expect(missing).toEqual([]);
   });
-  it('the fixture ids no catalog fact cites are exactly the documented gap list', () => {
+  it('every evidence id of the fixture is cited by a catalog fact (2b ruling 9)', () => {
     const cited = citedByCatalog();
-    const uncited = (fx?.evidence ?? []).filter((e) => !cited.has(e)).sort();
-    expect(uncited).toEqual([...UNCITED_BY_CATALOG].sort());
+    expect((fx?.evidence ?? []).filter((e) => !cited.has(e))).toEqual([]);
   });
 });

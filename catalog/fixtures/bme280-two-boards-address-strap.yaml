@@ -21,8 +21,6 @@ expect:
   warnings_include:
     - { code: I2C_PULLUP_UNKNOWN, level: caution }
     - { code: MODULE_REGULATOR_UNKNOWN, level: caution }
-  required_parts_include:
-    - { kind: wire, role: address-strap, count: 1, note: "SDO of one module to GND (0x76) and the other to VDDIO (0x77); the 6-pin module exposes SDO" }
 evidence:
   - bme280-ds-1.24#i2c-address
   - bme280-ds-1.24#i2c-sdo-float
@@ -39,3 +37,4 @@ derivations:
   - "Which strap the generic module ties by default is unknown (all board facts missing) -> the engine must instruct to wire SDO explicitly; no Critical."
 changelog:
   - "2026-10-23: created (task 2a.7, fixture-author)."
+  - "2026-10-23: 2b ruling 5 (owner): dropped required part kind wire (not in the schema's part kinds; address_straps_distinct already asserts the two straps: SDO of one module to GND = 0x76, the other to VDDIO = 0x77)."

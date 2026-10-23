@@ -1,4 +1,4 @@
-# Golden fixture 18 (negative) - the opto relay input is locked to ESP32 GPIO12 (MTDI strap, must be low at reset on 3.3 V flash parts). The board rests at VCC when the input floats, so the lock is blocked.
+# Golden fixture 18 - the opto relay input is locked to ESP32 GPIO12 (MTDI strap, must be low at reset on 3.3 V flash parts). Intent: the lock is the hazard. The relay board's resting level at reset is not a catalog fact, so the engine honours the lock and cautions (2b ruling 1); a stated resting level would make it unsat again.
 id: relay-opto-on-esp32-gpio12-strap-blocked-unsat
 board: esp32-devkitc-v4@V4
 variant: esp32-devkitc-32e
@@ -12,12 +12,9 @@ project:
     - { instance: relays, role: "COIL[1]", pad: GPIO12 }
   reserved: []
 expect:
-  status: unsat
-  minimal_conflict_includes:
-    - "locked:relays.COIL[1]=GPIO12"
-    - "strap:GPIO12"
-  relaxations_include:
-    - "unlock:relays.COIL[1]"
+  status: ok
+  warnings_include:
+    - { code: FLOATING_AT_RESET_UNKNOWN, level: caution }
 evidence:
   - esp32-ds-v5.3#strap-default-config
   - esp32-ds-v5.3#vdd-sdio-mtdi0
@@ -29,6 +26,8 @@ evidence:
 derivations:
   - "GPIO12 = MTDI: required_at_reset low for 3.3 V flash (WROOM-32E, flash_voltage 3.3 V), default pull-down; a high level at reset selects the 1.8 V VDD_SDIO and the module can fail to boot (esp32-ds-v5.3#vdd-sdio-mtdi0/1, esp32-trm-v5.8#vdd-sdio-mtdi)."
   - "The opto board is active-low: the input LED path runs VCC -> R1 -> LED -> IN (sunfounder-ts0011-4ch-relay#sch-channel), so with the MCU pin floating or in reset the IN node rests at VCC (inferred, interim). A board input that pulls IN to VCC at reset puts GPIO12 high -> R6 blocked."
+  - "2b ruling 1: the catalog has no resting_level fact on the opto coil signal (the VCC resting level above is an inference, interim). Without a documented level R6 cannot prove the pad wrong: the lock is honoured (status ok) and the engine reports Caution FLOATING_AT_RESET_UNKNOWN on GPIO12. If the catalog later states resting_level: high for this input, this fixture returns to status unsat with the conflict locked:relays.COIL[1]=GPIO12 + strap:GPIO12 and relaxation unlock:relays.COIL[1]."
   - "The lock removes any alternative, so the conflict set is exactly the lock plus the GPIO12 strap fact; the other pads are irrelevant (minimal)."
 changelog:
   - "2026-10-23: created (task 2a.7, fixture-author). Conflict/relaxation tokens follow the proposed convention of fixture pico-w-four-pots-no-free-adc-unsat. Relay resting level is inferred, not a vendor statement."
+  - "2026-10-23: 2b ruling 1 (owner): expect changed from unsat to status ok + caution FLOATING_AT_RESET_UNKNOWN; conflict and relaxation expectations removed; file id unchanged."

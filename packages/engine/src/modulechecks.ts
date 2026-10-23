@@ -87,7 +87,7 @@ function mapParts(
         out.push({ kind: 'transistor', role: 'driver', ...base });
         break;
       case 'separate-supply':
-        out.push({ kind: 'regulator', role: 'separate-supply', ...base });
+        out.push({ kind: 'supply', role: 'separate-supply', ...base });
         break;
       default:
         break; // lower-speed, remove-pull-up, move-pin: advice carried in the rule trace
@@ -442,7 +442,7 @@ export function moduleChecks(
       railLoads.set(rail.name, [...(railLoads.get(rail.name) ?? []), fact]);
     } else {
       parts.push({
-        kind: 'regulator',
+        kind: 'supply',
         role: 'separate-supply',
         value: dev.vdd.value === null ? undefined : `${fmt(dev.vdd.value)} V`,
         note: `${inst} needs ${dev.vdd.value === null ? 'its own' : `${fmt(dev.vdd.value)} V`} supply; no board rail fits (supply split)`,
@@ -469,7 +469,7 @@ export function moduleChecks(
       for (const [inst, rail] of railOf) {
         if (rail === r.name && dualSupply.has(inst)) {
           parts.push({
-            kind: 'regulator',
+            kind: 'supply',
             role: 'jd-vcc',
             note: `${inst}: feed the coil supply (second supply pin) from a separate 5 V source with a common GND, jumper removed; value not asserted (${r7.level === 'caution' ? 'coil current or rail rating missing' : 'rail over capacity'})`,
           });

@@ -116,6 +116,7 @@ export interface Breakout { id: string; ic: string; vendor: string; variant_name
   pullups: { line: string; value_ohm: Fact<number> }[];
   hardwired: { strap: string; value: string | number }[];
   interfaces_exposed: Interface['kind'][];
+  active_level?: Fact<'high' | 'low'>;
   supply_current: Fact<{ typ?: number; max?: number }>; notes?: string; }
 
 // ---------- project, fixture, recommendation ----------
@@ -137,7 +138,7 @@ export interface Recommendation {
   assignments: { instance: string; role: string; pad: PadId; gpio: number; label: string; connector: string; position: number;
     peripheral_instance?: string; routing: Routing; trace: string[]; evidence: ClaimId[];
     alternatives: { pad: PadId; lower_tier: 1 | 2 | 3 | 4; reason: string }[] }[];
-  required_parts: { kind: 'resistor'|'capacitor'|'level-shifter'|'buffer'|'transistor'|'diode'|'regulator'|'divider'; value?: string; role: string; count: number; pads?: PadId[] }[];
+  required_parts: { kind: 'resistor'|'capacitor'|'level-shifter'|'buffer'|'transistor'|'diode'|'regulator'|'supply'|'divider'; value?: string; role: string; count: number; pads?: PadId[] }[];
   warnings: Warning[];
   budgets: { rail: string; demand_ma: number; limit_ma: number | null }[];
   score: [number, number, number, number];

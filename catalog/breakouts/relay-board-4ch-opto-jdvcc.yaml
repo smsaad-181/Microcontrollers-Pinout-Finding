@@ -1,3 +1,12 @@
+active_level:
+  evidence:
+  - sunfounder-ts0011-4ch-relay#pinout-in-low
+  - sunfounder-ts0011-4ch-relay#sketch-low-active
+  - sainsmart-4ch-relay-page#spec-active-low
+  - sunfounder-ts0011-4ch-relay#sch-channel
+  note: 'Active-low: TS0011 p2/p7 pinout and sketch, SainSmart page, and the opto LED path VCC-R1-LED-IN in both schematics (found by both keys, 2026-10-23 reconcile). TS0011 p1 "relay is off when input is low" contradicts the rest of the document and is kept as an error. Polarity only; says nothing about the resting level of a floating input.'
+  status: interim
+  value: low
 hardwired: []
 ic: srd-05vdc-sl-c
 id: relay-board-4ch-opto-jdvcc

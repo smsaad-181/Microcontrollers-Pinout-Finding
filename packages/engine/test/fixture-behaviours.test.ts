@@ -1,6 +1,7 @@
 // Engine behaviours added for the golden fixtures (task 2b.9), one focused test each.
 import { describe, expect, it } from 'vitest';
 import type { Project } from '@pinout/schema';
+import { indexCatalog } from '../src/catalog.js';
 import { solve, solveDetailed } from '../src/solver.js';
 import { realCatalog } from './helpers.js';
 
@@ -75,6 +76,39 @@ describe('errata, strap facts and loads', () => {
     expect(find(r, 'FLOATING_AT_RESET_LOAD')?.level).toBe('warning');
     expect(r.required_parts.find((p) => p.role === 'pull-down')?.pads).toContain('GPIO25');
     expect(r.score[0]).toBe(0);
+  });
+});
+
+describe('pull direction comes from the breakout active_level (2b ruling 11)', () => {
+  const relayOn = (breakout: string): Project =>
+    base({
+      modules: [{ breakout, instance: 'relays' }],
+      locked: [{ instance: 'relays', role: 'COIL[1]', pad: 'GPIO25' }],
+    });
+  const resistors = (r: ReturnType<typeof solve>) =>
+    r.required_parts.filter((p) => p.kind === 'resistor').map((p) => p.role);
+  it('active-high board: pull-down keeps it off', () => {
+    expect(resistors(solve(index, relayOn('relay-board-4ch-transistor')))).toEqual(['pull-down']);
+  });
+  it('active-low board: pull-up keeps it off', () => {
+    const r = solve(index, relayOn('relay-board-4ch-opto-jdvcc'));
+    expect(resistors(r)).toEqual(['pull-up']);
+    expect(r.required_parts.find((p) => p.role === 'pull-up')?.pads).toContain('GPIO25');
+  });
+  it('unknown active level: a pull part with unknown direction and a Caution, never a guess', () => {
+    const stripped = indexCatalog({
+      ...index.catalog,
+      breakouts: index.catalog.breakouts.map((b) => {
+        if (b.id !== 'relay-board-4ch-transistor') return b;
+        const { active_level: _drop, ...rest } = b;
+        return rest;
+      }),
+    });
+    const r = solve(stripped, relayOn('relay-board-4ch-transistor'));
+    expect(resistors(r)).toEqual(['pull']);
+    expect(
+      r.warnings.some((w) => w.code === 'FLOATING_AT_RESET_UNKNOWN' && w.level === 'caution'),
+    ).toBe(true);
   });
 });
 

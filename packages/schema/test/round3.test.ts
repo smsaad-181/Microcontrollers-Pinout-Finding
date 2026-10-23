@@ -382,6 +382,7 @@ const EXPECTED_ENUMS: Record<string, readonly (string | number)[]> = {
   'board:connectors.*.pins.*.kind': PIN_KINDS,
   'board:numbering.primary': ['gpio', 'label', 'physical'],
   'board:status': ['fully-verified', 'partially-verified', 'datasheet-required', 'unsupported'],
+  'breakout:active_level.value': ['high', 'low'],
   'breakout:interfaces_exposed.*': INTERFACE_KINDS,
   'chip:pads.*.functions.*.routing': ROUTING,
   'chip:pads.*.reset_state.value': [
@@ -447,6 +448,7 @@ const EXPECTED_ENUMS: Record<string, readonly (string | number)[]> = {
     'transistor',
     'diode',
     'regulator',
+    'supply',
     'divider',
   ],
   'recommendation:warnings.*.level': LEVELS,
@@ -541,7 +543,7 @@ const BASES: Record<JsonSchemaName, () => Doc> = {
     };
     return ic;
   },
-  breakout: () => clone(sample.breakout),
+  breakout: () => ({ ...clone(sample.breakout), active_level: sample.verified('high') }),
   fixture: () => {
     const f = clone(sample.fixture);
     const project = clone(sample.project);

@@ -7,8 +7,8 @@ project:
   variant: esp32-devkitc-32e
   modules:
     - { breakout: adafruit-bme280, instance: env1 }
-    - { breakout: adafruit-bme280, instance: env2 }
-    - { breakout: adafruit-bme280, instance: env3 }
+    - { breakout: adafruit-bme280, instance: env2, interface: spi }
+    - { breakout: adafruit-bme280, instance: env3, interface: spi }
   locked: []
   reserved: []
 expect:
@@ -17,14 +17,13 @@ expect:
     - i2c_collision: none
     - address_set_on_one_bus_distinct: true     # at most 2 BME280 per I2C bus: 0x76 and 0x77
     - max_per_i2c_bus: { part: bme280, count: 2 }
-    # Interface-selection rule 5 order: address strap, then second I2C bus, then SPI. Either resolution is a valid answer for the third sensor.
+    # 2b ruling 7: env2 and env3 are forced onto SPI (they share the MISO line), so the MISO_SHARE_UNPROVEN assertion below is unconditional.
     - one_of:
-        - { env3_interface: i2c, bus: second_i2c_controller }
         - { env3_interface: spi }
     - no_pad_in: [GPIO6, GPIO7, GPIO8, GPIO9, GPIO10, GPIO11, GPIO1, GPIO3, GPIO34, GPIO35, GPIO36, GPIO39]
   warnings_include:
     - { code: LEVEL_SHIFTER_CONFLICT_RELIED, level: caution }   # adafruit-bme280 level_shifter is `conflict`
-    - { code: MISO_SHARE_UNPROVEN, level: info }                # only if the SPI resolution shares MISO with another device
+    - { code: MISO_SHARE_UNPROVEN, level: caution }             # env2 and env3 (both forced onto SPI) both drive MISO (two drivers on one line: caution, a single reader beside write-only devices is info); the catalog does not prove the line is released when deselected
 evidence:
   - bme280-ds-1.24#i2c-address
   - bme280-ds-1.24#iface-selection-csb
@@ -44,3 +43,4 @@ derivations:
   - "Locking: a BME280 whose CSB has once gone low stays in SPI until power-on reset (bme280-ds-1.24#iface-lockout-csb): the engine must keep CSB high on I2C instances and may not mix modes on one module."
 changelog:
   - "2026-10-23: created (task 2a.7, fixture-author)."
+  - "2026-10-23: 2b ruling 7 (owner): project now forces interface: spi on env2 and env3 so that the SPI MISO share is certain and MISO_SHARE_UNPROVEN is asserted unconditionally; the one_of keeps only the SPI alternative (the second-I2C-controller resolution is no longer reachable with this project; env1 stays free). With two MISO drivers the code's level is caution (the original info level was written for a single reader); flagged for the auditor."

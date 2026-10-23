@@ -45,17 +45,11 @@ expect:
     - { code: MISO_SHARE_UNPROVEN, level: info }
   required_parts_include:
     - { kind: resistor, role: pull-up, count: 4, note: "switch inputs on GPIO34/35/36/39 (no internal pulls); value not asserted by the catalog" }
-    - { kind: resistor, role: pull-down, count: 4, note: "relay inputs 25/26/27/32 float at reset and the board's resting level is unknown" }
+    - { kind: resistor, role: pull-down, count: 4, note: "relay inputs 25/26/27/32 float at reset; the board is active-high (breakout active_level), so a pull-down keeps the coils off" }
 evidence:
   - esp32-devkitc-v4-ug#j2-1-4
-  - esp32-devkitc-v4-ug#j2-5-8
-  - esp32-devkitc-v4-ug#j2-8-11
-  - esp32-devkitc-v4-ug#j2-11-13
   - esp32-devkitc-v4-ug#j3-1-5
-  - esp32-devkitc-v4-ug#j3-6-10
   - esp32-devkitc-v4-ug#j3-11-14
-  - esp32-devkitc-v4-ug#note-gpio16-17-wroom
-  - esp32-devkitc-v4-ug#note-flash-pins
   - esp32-devkitc-v4-sch-v4#uart0-links
   - esp32-ds-v5.3#strap-default-config
   - esp32-ds-v5.3#input-only-note
@@ -63,24 +57,13 @@ evidence:
   - esp32-trm-v5.8#input-only-34-39
   - esp32-trm-v5.8#reset-legend-0-1
   - esp32-trm-v5.8#gpio-strap-reg
-  - esp32-errata-v3.1#gpio-3-11
-  - esp32-errata-v3.1#gpio-3-11-workaround
-  - esp-idf-spi-master-v6.1#iomux-pins-main
-  - esp-idf-spi-master-v6.1#matrix-routing
   - esp-idf-spi-master-v6.1#matrix-40mhz-iomux-80mhz
   - esp32-wroom-32e-ds-v2.1#series-n4
-  - mfrc522-ds-v3.9#spi-pins
   - mfrc522-ds-v3.9#host-interfaces-speed
   - mfrc522-ds-v3.9#op-supply-core
   - mfrc522-ds-v3.9#supply-current-tvdd
-  - mfrc522-ds-v3.9#supply-current-digital-analog
   - st7735-ds-v2.1#serial-write-cycle-4line
-  - st7735-ds-v2.1#pin-dcx-resx
   - st7735-ds-v2.1#dc-supply
-  - keyestudio-ks0058-wiki#active-high
-  - songle-srd-ds-circuitbasics#coil-5v-d-current
-  - bme280-ds-1.24#i2c-address
-  - omron-b3f-ds-a070-e1-08#contact-form
 derivations:
   - "Pads: 12 clean output pads (16,17,18,19,21,22,23,25,26,27,32,33) on the WROOM-32E variant; output-capable signals = SDA, SCL, SCK, MOSI, MISO(iomux), tft.CS, tft.DC, tft.RST, rfid.CS, rfid.RST, 4 relay inputs = 14; 14 - 12 = 2 signals must sit on risk pads -> optimum risk tier 1 = 2 (the CS lines; GPIO5 strap-compatible idle-high CS, GPIO14/13 JTAG). Load pull assumption: relay inputs counted as pulled once the required pull-down is added, as in the plan."
   - "Exact pins: SPI3 IO_MUX = SCLK GPIO18, MOSI GPIO23, MISO GPIO19, CS0 GPIO5 (esp-idf-spi-master-v6.1#iomux-pins-main). TFT is write-only (4-line SPI, st7735-ds-v2.1#pin-dcx-resx) so only the RC522 uses MISO; the unproven 'MISO high-Z when deselected' fact is missing for MFRC522 -> info only."
@@ -91,3 +74,5 @@ derivations:
   - "Header positions in the plan table (J3-6 etc.) follow esp32-devkitc-v4-ug#j3-6-10 and #j2-5-8; they are not asserted in `exact` because header position is a tie-break, not a constraint."
 changelog:
   - "2026-10-23: created (task 2a.7, fixture-author) from docs/research/worked-example-esp32-devkitc.md, re-derived against the catalog."
+  - "2026-10-23: 2b ruling 9 (owner): removed the 17 evidence ids no catalog fact cites (they stay in catalog/evidence): bme280-ds-1.24#i2c-address, esp-idf-spi-master-v6.1#iomux-pins-main, esp-idf-spi-master-v6.1#matrix-routing, esp32-devkitc-v4-ug#j2-11-13, esp32-devkitc-v4-ug#j2-5-8, esp32-devkitc-v4-ug#j2-8-11, esp32-devkitc-v4-ug#j3-6-10, esp32-devkitc-v4-ug#note-flash-pins, esp32-devkitc-v4-ug#note-gpio16-17-wroom, esp32-errata-v3.1#gpio-3-11, esp32-errata-v3.1#gpio-3-11-workaround, keyestudio-ks0058-wiki#active-high, mfrc522-ds-v3.9#spi-pins, mfrc522-ds-v3.9#supply-current-digital-analog, omron-b3f-ds-a070-e1-08#contact-form, songle-srd-ds-circuitbasics#coil-5v-d-current, st7735-ds-v2.1#pin-dcx-resx."
+  - "2026-10-23: 2b ruling 11: note of the pull-down part reworded (the pull direction now comes from the structured active_level of relay-board-4ch-transistor = high); the expected part is unchanged."
