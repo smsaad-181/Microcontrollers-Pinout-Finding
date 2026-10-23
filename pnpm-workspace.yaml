@@ -5,3 +5,5 @@ packages:
 # pnpm 10 blocks dependency install scripts by default; allow only these.
 onlyBuiltDependencies:
   - esbuild
+patchedDependencies:
+  '@stryker-mutator/vitest-runner@10.0.0': patches/@stryker-mutator__vitest-runner@10.0.0.patch

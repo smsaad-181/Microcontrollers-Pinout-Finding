@@ -16,3 +16,5 @@ tools/
 .mcp.json
 # verbatim copy of the normative TS reference in skill catalog-schema (do not reformat)
 packages/schema/test/reference.ts
+.stryker-tmp/
+reports/

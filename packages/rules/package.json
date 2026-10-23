@@ -18,7 +18,8 @@
     "build": "tsc -p tsconfig.build.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "lint": "eslint .",
-    "test": "vitest run"
+    "test": "vitest run",
+    "mutation": "stryker run"
   },
   "dependencies": {
     "@pinout/schema": "workspace:*"

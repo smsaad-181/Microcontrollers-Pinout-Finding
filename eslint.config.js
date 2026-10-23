@@ -8,6 +8,8 @@ export default defineConfig(
   globalIgnores([
     '**/dist/**',
     '**/coverage/**',
+    '**/.stryker-tmp/**',
+    'reports/**',
     '**/node_modules/**',
     'apps/web/public/catalog/**',
     'sources/**',

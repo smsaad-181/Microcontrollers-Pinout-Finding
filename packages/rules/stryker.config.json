@@ -1,0 +1,14 @@
+{
+  "$schema": "https://raw.githubusercontent.com/stryker-mutator/stryker/master/packages/core/schema/stryker-schema.json",
+  "testRunner": "vitest",
+  "plugins": ["@stryker-mutator/vitest-runner"],
+  "mutate": ["src/**/*.ts", "!src/types.ts"],
+  "coverageAnalysis": "perTest",
+  "concurrency": 1,
+  "vitest": { "related": false },
+  "reporters": ["clear-text", "json", "html"],
+  "jsonReporter": { "fileName": "../../reports/mutation/rules/mutation.json" },
+  "htmlReporter": { "fileName": "../../reports/mutation/rules/index.html" },
+  "tempDirName": ".stryker-tmp",
+  "thresholds": { "high": 90, "low": 85, "break": 85 }
+}
