@@ -1,15 +1,20 @@
 # HC-SR04 ultrasonic ranging module. The module is the part: no separate IC datasheet exists.
-# drive: the datasheet does not state the ECHO output driver type; push-pull is a structural placeholder (see hand-off).
+# Plain HC-SR04 is DC 5 V only. The HC-SR04-33 (3.3 V~5 V) is a DIFFERENT product and must never be merged with this record.
+# drive: the datasheet does not state the ECHO output driver type; push-pull is a structural placeholder, not a fact.
 id: hc-sr04
-input_abs_max: { evidence: [], status: missing, value: null }
+input_abs_max: { evidence: [], note: "No absolute-maximum statement for supply, TRIG or ECHO anywhere in the 3-page datasheet. Researcher and blind auditor agree: not documented.", status: missing, value: null }
 interfaces:
   - kind: digital
     limits: {}
     signals:
       - { dir: in, drive: push-pull, role: TRIG, shareable: false }
       - { dir: out, drive: push-pull, role: ECHO, shareable: false }
+logic_levels:
+  vih_min: { evidence: [], note: "TRIG is labelled only '10uS TTL pulse'; no VIH number is stated (blind auditor: could-not-verify). Not inferred from TTL.", status: missing, unit: V, value: null }
+  vil_max: { evidence: [], note: "No VIL number is stated; only the word TTL (claim hc-sr04-elecfreaks-ds#trigger-signal).", status: missing, unit: V, value: null }
+  voh_min: { evidence: [], note: "echo_voh stays missing. The datasheet describes the echo output only as 'Input TTL lever signal and the range in proportion' (claim hc-sr04-elecfreaks-ds#echo-signal): garbled wording ('Input' for an output, 'lever' for level), no voltage, no logic family definition, no load. A '5 V echo' would be inferred from the 5 V supply, not stated. Researcher and blind auditor agree.", status: missing, unit: V, value: null }
 part: HC-SR04
-supply_current: { evidence: [hc-sr04-elecfreaks-ds#working-current], note: "Datasheet label is 'Working Current 15mA' only; it does not say typical or maximum. Entered as typ.", status: single-source, unit: mA, value: { typ: 15 } }
-vdd_range: { evidence: [hc-sr04-elecfreaks-ds#working-voltage], note: "Datasheet gives a single value 'Working Voltage DC 5 V' with no tolerance; entered as the point range [5, 5].", status: single-source, unit: V, value: [5, 5] }
+supply_current: { evidence: [hc-sr04-elecfreaks-ds#working-current], note: "Datasheet label is 'Working Current 15mA' only; no typical/maximum qualifier and no test condition. Value 15 mA agreed by researcher and blind auditor. The typ slot is a schema convention here, not a datasheet statement; power budgets should treat 15 mA as the only figure available (do not read it as a stated maximum or typical).", reviewers: [hardware-researcher, hardware-fact-auditor], status: verified, unit: mA, value: { typ: 15 } }
+vdd_range: { evidence: [hc-sr04-elecfreaks-ds#working-voltage], note: "Single value 'Working Voltage DC 5 V' with no min/max or tolerance anywhere in the document; entered as the point range [5, 5]. Plain HC-SR04 is 5 V only. The HC-SR04-33 datasheet says DC 3.3V~5 V but is a different product (separate document, not used as evidence here); never merge them. Researcher and blind auditor agree.", reviewers: [hardware-researcher, hardware-fact-auditor], status: verified, unit: V, value: [5, 5] }
 vendor: Elecfreaks
-vio_range: { evidence: [], status: missing, value: null }
+vio_range: { evidence: [], note: "No separate I/O supply and no logic-level voltage stated beyond the word TTL (blind auditor: could-not-verify).", status: missing, value: null }

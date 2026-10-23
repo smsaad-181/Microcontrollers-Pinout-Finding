@@ -15,7 +15,7 @@ claims:
 - id: bourns-3386-ds-rev-12-24#power-max-v
   locator: Environmental Characteristics, PDF p.1
   quote: Power Rating (300 volts max.)
-  supports: Power rating is quoted with a 300 V maximum across the element
+  supports: Power rating line carries a 300 V maximum; the document does not say DC or AC nor where it is applied. Not a signal-voltage limit.
 - id: bourns-3386-ds-rev-12-24#power-85c
   locator: Environmental Characteristics, PDF p.1
   quote: 1,000 hours 0.5 watt @ 85 °C
@@ -24,6 +24,10 @@ claims:
   locator: Product Dimensions / wiring diagram, PDF p.2
   quote: CW CLOCKWISE CCW 2 WIPER
   supports: 'Wiring diagram: terminals 1 and 3 are the element ends (CCW / CW), terminal 2 is the wiper'
+- id: bourns-3386-ds-rev-12-24#trimmer-life
+  locator: Environmental Characteristics, PDF p.1
+  quote: 200 cycles
+  supports: Rotational life 200 cycles confirms the 3386 is a trimming potentiometer, not a panel/knob potentiometer
 doc_number: null
 id: bourns-3386-ds-rev-12-24
 kind: datasheet

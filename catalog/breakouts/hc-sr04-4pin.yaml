@@ -3,15 +3,15 @@ hardwired: []
 ic: hc-sr04
 id: hc-sr04-4pin
 interfaces_exposed: [digital]
-level_shifter: { evidence: [], note: "The datasheet does not mention a level shifter; ECHO voltage level is not stated (only 'TTL').", status: missing, value: null }
-notes: "5 V module: the datasheet describes ECHO only as a TTL level signal and gives no voltage; no schematic read. The 3.3 V variants (HC-SR04P, RCWL-1601) are different parts and are not covered."
+level_shifter: { evidence: [], note: "The datasheet does not mention a level shifter; absence of mention is not evidence of absence, and no schematic is in the document. ECHO voltage level is not stated (only 'TTL').", status: missing, value: null }
+notes: "Plain 5 V module (DC 5 V only). The datasheet describes ECHO only as a TTL level signal and gives no voltage (echo_voh missing); no schematic read. The 3.3 V variants (HC-SR04-33, HC-SR04P, RCWL-1601) are different parts and are not covered. Datasheet table row 'Working Frequency 40Hz' is a unit typo: the text and timing diagram say an eight-cycle 40 kHz burst (40 kHz is the ultrasonic carrier, not a measurement rate; suggested measurement cycle over 60 ms). Datasheet is undated and the vendor-own host was unreachable, so currency is unconfirmed."
 pins:
   - { label: Vcc, maps_to: VCC }
   - { label: Trig, maps_to: TRIG }
   - { label: Echo, maps_to: ECHO }
   - { label: GND, maps_to: GND }
 pullups: []
-regulator: { evidence: [], status: missing, value: null }
-supply_current: { evidence: [hc-sr04-elecfreaks-ds#working-current], note: "Datasheet label is 'Working Current 15mA' only; it does not say typical or maximum. Entered as typ.", status: single-source, unit: mA, value: { typ: 15 } }
+regulator: { evidence: [], note: "No regulator mentioned and no schematic in the datasheet; not stated (blind auditor: could-not-verify).", status: missing, value: null }
+supply_current: { evidence: [hc-sr04-elecfreaks-ds#working-current], note: "Datasheet label is 'Working Current 15mA' only; no typical/maximum qualifier. Value agreed by researcher and blind auditor; the typ slot is a schema convention, not a datasheet statement.", reviewers: [hardware-researcher, hardware-fact-auditor], status: verified, unit: mA, value: { typ: 15 } }
 variant_names: ["HC-SR04", "HCSR04", "Ultrasonic Ranging Module HC-SR04", "HC-SR04 ultrasonic sensor"]
 vendor: generic

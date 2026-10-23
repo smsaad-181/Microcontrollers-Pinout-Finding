@@ -1,7 +1,7 @@
 id: push-button
 input_abs_max:
   evidence: []
-  note: No absolute-maximum rating is stated for the contact in the representative datasheet (only the 3-24 VDC / 1-50 mA operating rating).
+  note: No separate absolute-maximum rating is stated in the representative Omron B3F datasheet (24 VDC / 50 mA appear only as the upper end of the contact rating); it defers to a separate 'safety precautions common to all Tactile Switches' document that was not opened (p9). Researcher and blind auditor agree.
   status: missing
   unit: V
   value: null
@@ -22,17 +22,11 @@ supply_current:
   unit: mA
   value: null
 vdd_range:
-  conditions:
-    meaning: rated switching voltage of the contact, resistive load
-    part: Omron B3F (representative; other buttons differ)
-  evidence:
-  - omron-b3f-ds-a070-e1-08#rating
-  note: 'This is a contact rating, not a supply range: B3F 1-50 mA at 3-24 VDC (B3F-G 100 uA-50 mA); minimum applicable load 10 uA at 1 VDC (omron-b3f-ds-a070-e1-08#min-load); contact form SPST-NO (#contact-form); contact resistance 100 mohm max (#contact-res); bounce time 5 ms max (#bounce) - no schema field exists for bounce time, so it is only stated here.'
-  status: single-source
+  evidence: []
+  note: 'Missing by design: a push button is passive and has no supply pin, so vdd_range does not apply. The earlier placeholder [3, 24] V was the Omron B3F CONTACT RATING (1-50 mA at 3-24 VDC resistive load; B3F-G 100 uA-50 mA; claim omron-b3f-ds-a070-e1-08#rating), a switching-load limit, not a supply range, and 24 VDC is not a GPIO-safe level. Researcher placeholder and blind auditor (could-not-verify) agree the datasheet states no supply requirement. Other B3F facts kept in notes because the schema has no field: minimum applicable load 10 uA at 1 VDC (#min-load); SPST-NO (#contact-form); contact resistance 100 mohm max (#contact-res); bounce 5 ms max, make/break not stated (#bounce).'
+  status: missing
   unit: V
-  value:
-  - 3.0
-  - 24.0
+  value: null
 vendor: 'generic (representative datasheet: Omron B3F)'
 vio_range:
   evidence: []

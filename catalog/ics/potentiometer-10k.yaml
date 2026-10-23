@@ -1,13 +1,10 @@
 id: potentiometer-10k
 input_abs_max:
-  conditions:
-    part: Bourns 3386 trimmer (representative; panel potentiometers differ)
-  evidence:
-  - bourns-3386-ds-rev-12-24#power-max-v
-  note: The Bourns 3386 sheet states 'Power Rating (300 volts max.)', the maximum voltage across the element, with power 0.5 W at 85 C (bourns-3386-ds-rev-12-24#power-85c). Standard resistance 10 ohm to 2 Mohm (#res-range), 10 kohm is a standard value (#res-10k), tolerance +/-10 % (#res-tol). The sheet states no wiper-current rating. Resistance is a user choice; this record is named 10k only because the request asked for a 10 kohm part.
-  status: single-source
+  evidence: []
+  note: 'Missing: the field meaning does not match the document. The earlier placeholder 300 V was the Bourns 3386 "Power Rating (300 volts max.)" line (claim bourns-3386-ds-rev-12-24#power-max-v), a power-rating voltage of a TRIMMER, not an input/signal absolute maximum for a GPIO or ADC pin (the document does not even say whether it is DC or AC, or across the element or wiper-to-end). At 10 kohm, 0.5 W is only about 70.7 V (derived), so 300 V is not the binding limit either. The Bourns 3386 is a trimming potentiometer (rotational life 200 cycles, claim #trimmer-life), used here only as a representative part; panel pots differ. The sheet states no wiper-current rating. Other 3386 facts (resistance 10 ohm-2 Mohm #res-range, 10 kohm standard #res-10k, +/-10 % #res-tol, 0.5 W at 85 C #power-85c) have no schema field and are stated here only.'
+  status: missing
   unit: V
-  value: 300.0
+  value: null
 interfaces:
 - kind: analog
   limits:
@@ -21,7 +18,7 @@ interfaces:
     drive: push-pull
     role: WIPER
     shareable: false
-part: 10 kohm linear potentiometer (three-terminal voltage divider)
+part: 10 kohm potentiometer (three-terminal voltage divider; taper not stated in the representative Bourns 3386 trimmer datasheet)
 supply_current:
   evidence: []
   note: 'Passive part: current is set by the applied voltage and the element resistance; the 3386 sheet gives no wiper or element current rating.'
