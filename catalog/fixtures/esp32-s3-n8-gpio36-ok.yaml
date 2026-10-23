@@ -1,0 +1,28 @@
+# Golden fixture 24 - same lock on GPIO36 with the N8 variant (no PSRAM): GPIO36 is an ordinary I/O pad.
+id: esp32-s3-n8-gpio36-ok
+board: esp32-s3-devkitc-1@V1.1
+variant: esp32-s3-devkitc-1-n8
+project:
+  board: esp32-s3-devkitc-1@V1.1
+  variant: esp32-s3-devkitc-1-n8
+  wifi: true
+  modules:
+    - { breakout: push-button, instance: sw1 }
+  locked:
+    - { instance: sw1, role: SW, pad: GPIO36 }
+  reserved: []
+expect:
+  status: ok
+  exact:
+    sw1.SW: GPIO36
+  properties:
+    - no_warning_at_level: [critical]
+evidence:
+  - esp32-s3-devkitc-1-ug-v1.1#octal-note
+  - esp32-s3-ds-v2.2#pin-map-gpio36
+  - esp32-s3-ds-v2.2#iomux-gpio36
+derivations:
+  - "The N8 module has no PSRAM, so GPIO35-37 are not consumed (board header comment; consumed lists only GPIO27-32 flash lines for N8 - read from modules/esp32-s3-wroom-1-n8). GPIO36 is I/O/T, not input-only (esp32-s3-ds-v2.2#iomux-gpio36), reset_state disabled, no strap."
+  - "Pull-up for the button: the catalog has no internal-pull fact for the S3 pad, so internal vs external pull-up is not asserted."
+changelog:
+  - "2026-10-23: created (task 2a.7, fixture-author). Counterpart of esp32-s3-n8r8-gpio36-psram-unsat."

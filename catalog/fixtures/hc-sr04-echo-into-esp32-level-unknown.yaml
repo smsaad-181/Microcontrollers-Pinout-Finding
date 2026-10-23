@@ -1,0 +1,34 @@
+# Golden fixture 17 - HC-SR04 on an ESP32-DevKitC V4: the datasheet gives ECHO only as a "TTL lever signal" (no voltage), so echo_voh is missing and the 5 V-echo-into-3.3 V-pad danger cannot be proven. Expected: ok with a Caution, no divider part invented.
+id: hc-sr04-echo-into-esp32-level-unknown
+board: esp32-devkitc-v4@V4
+variant: esp32-devkitc-32e
+project:
+  board: esp32-devkitc-v4@V4
+  variant: esp32-devkitc-32e
+  wifi: true
+  modules:
+    - { breakout: hc-sr04-4pin, instance: sonar }
+  locked: []
+  reserved: []
+expect:
+  status: ok
+  properties:
+    - no_pad_in: [GPIO6, GPIO7, GPIO8, GPIO9, GPIO10, GPIO11, GPIO1, GPIO3]
+    - outputs_not_in: [GPIO34, GPIO35, GPIO36, GPIO39]   # sonar.TRIG is an output of the MCU
+    - no_warning_at_level: [critical]
+    - required_parts_exclude: [{ kind: resistor, role: divider }]   # no VOH number exists, so no divider part may be invented
+  warnings_include:
+    - { code: LOGIC_LEVEL_UNKNOWN, level: caution }      # sonar.ECHO -> ESP32 pad: echo_voh missing
+evidence:
+  - hc-sr04-elecfreaks-ds#echo-signal
+  - hc-sr04-elecfreaks-ds#working-voltage
+  - hc-sr04-elecfreaks-ds#trigger-signal
+  - hc-sr04-elecfreaks-ds#wiring
+  - esp32-devkitc-v4-ug#j2-1-4
+  - esp32-ds-v5.3#strap-default-config
+derivations:
+  - "Plain HC-SR04 is a 5 V module (hc-sr04-elecfreaks-ds#working-voltage) but the datasheet describes ECHO only as 'Input TTL lever signal' (hc-sr04-elecfreaks-ds#echo-signal): no VOH, no load. Catalog hc-sr04.logic_levels.voh_min = missing, so R5 (VOH <= VIH_max of the receiver) cannot be evaluated: expected Caution LOGIC_LEVEL_UNKNOWN, not Critical and not a divider. A 5 V echo is an inference from the supply, not a stated value."
+  - "TRIG: vih_min also missing (hc-sr04-elecfreaks-ds#trigger-signal says only '10uS TTL pulse'); the 3.3 V ESP32 drive into TRIG is likewise unknown, covered by the same code."
+  - "Because no number exists, required_parts must not contain a divider resistor pair; the plan's R5 example (e.g. 1k/2k) is a design choice, not a catalog fact."
+changelog:
+  - "2026-10-23: created (task 2a.7, fixture-author). Weakened: expectation is Caution (missing echo_voh), not the plan's divider accept/reject."
