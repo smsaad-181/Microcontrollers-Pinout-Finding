@@ -69,7 +69,7 @@ A board revision: connectors, labels, rails, onboard parts (catalog/boards/<id>@
 | `logic_voltage` | Fact<number> | yes | Logic voltage of the headers. |
 | `rails` | object[] | yes | Power rails. |
 | `rails[].name` | string | yes | Rail name. |
-| `rails[].voltage` | Fact<number> | yes | Rail voltage. |
+| `rails[].voltage` | Fact<number \| object> | yes | Rail voltage: one value, or a {min, max} range. |
 | `rails[].max_current` | Fact<number> | yes | Rail current capacity. |
 | `rails[].source` | string | yes | What supplies the rail. |
 | `connectors` | object[] | yes | Headers and connectors. |
@@ -78,7 +78,7 @@ A board revision: connectors, labels, rails, onboard parts (catalog/boards/<id>@
 | `connectors[].pins` | object[] | yes | Pins in position order. |
 | `connectors[].pins[].position` | integer | yes | Physical position on the connector (numbering 3 of 3). |
 | `connectors[].pins[].label` | string | yes | Silkscreen label (numbering 2 of 3). |
-| `connectors[].pins[].kind` | "power" \| "ground" \| "gpio" \| "reset" \| "nc" \| "analog-ref" | yes | Pin kind. |
+| `connectors[].pins[].kind` | "power" \| "ground" \| "gpio" \| "reset" \| "nc" \| "analog-ref" \| "enable" \| "boot" \| "analog" | yes | Pin kind. |
 | `connectors[].pins[].pad` | string | no | Chip pad (gives the GPIO number); required for gpio pins. |
 | `connectors[].pins[].rail` | string | no | Power rail name for power pins. |
 | `connectors[].pins[].alias_of` | string | no | Reference '<connector-id>:<position>' of the primary pin of this board that shares this pad (Arduino SDA/SCL = A4/A5, ICSP header). |
@@ -144,7 +144,7 @@ A chip (SoC/MCU): pads, straps, electrical limits and peripherals (catalog/chips
 | `electrical.cumulative_current_max` | Fact<number> | yes | Maximum total current of all pins (mA). |
 | `electrical.internal_pull_ohm` | Fact<object> | no | Internal pull resistance range. |
 | `pads` | Record<string, object> | yes | Pads keyed by pad id. |
-| `pads.*.gpio` | integer | yes | Chip GPIO number (numbering system 1 of 3). |
+| `pads.*.gpio` | integer | no | Chip GPIO number (numbering system 1 of 3). Omit for a pad that is not a GPIO (e.g. the ESP8266 TOUT ADC input); such a pad is identified only by its record key, which is its stable name. |
 | `pads.*.functions` | object[] | yes | Functions with routing class. |
 | `pads.*.functions[].fn` | string | yes | Function name, e.g. 'GPIO', 'SPI3.SCK', 'I2C.SDA', 'ADC1_CH4', 'UART0.TX'. |
 | `pads.*.functions[].routing` | "iomux" \| "matrix" \| "fixed" | yes | How a function reaches a pad: dedicated IO_MUX, GPIO matrix, or fixed (analog/dedicated). |
@@ -304,7 +304,7 @@ PROVISIONAL (addition, not in the reference): one board pin with its effective, 
 | `connector` | string | yes | Connector id (numbering 3 of 3, with position). |
 | `position` | integer | yes | Physical position on the connector (numbering 3 of 3). |
 | `label` | string | yes | Silkscreen label (numbering 2 of 3). |
-| `kind` | "power" \| "ground" \| "gpio" \| "reset" \| "nc" \| "analog-ref" | yes | Pin kind. |
+| `kind` | "power" \| "ground" \| "gpio" \| "reset" \| "nc" \| "analog-ref" \| "enable" \| "boot" \| "analog" | yes | Pin kind. |
 | `pad` | string | no | Chip pad, for gpio pins. |
 | `gpio` | integer | no | Chip GPIO number (numbering 1 of 3). |
 | `functions` | object[] | yes | Effective functions after stacking chip, module and board. |

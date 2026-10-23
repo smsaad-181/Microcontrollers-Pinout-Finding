@@ -31,7 +31,10 @@ export const StrapValueSchema = z
     z.strictObject({
       role: z.string().describe('What the strap selects at reset.'),
       required_at_reset: z.enum(['low', 'high', 'any']).describe('Level required for normal boot.'),
-      default_pull: z.enum(['up', 'down', 'none']).describe('Internal default pull.'),
+      default_pull: z
+        .enum(['up', 'down', 'none'])
+        .exactOptional()
+        .describe('Internal default pull; omitted when the sources do not state it.'),
     }),
     z.literal('none'),
   ])
@@ -49,7 +52,14 @@ export const PowerUpGlitchSchema = z
 
 export const PadSchema = z
   .strictObject({
-    gpio: z.number().int().nonnegative().describe('Chip GPIO number (numbering system 1 of 3).'),
+    gpio: z
+      .number()
+      .int()
+      .nonnegative()
+      .exactOptional()
+      .describe(
+        'Chip GPIO number (numbering system 1 of 3). Omit for a pad that is not a GPIO (e.g. the ESP8266 TOUT ADC input); such a pad is identified only by its record key, which is its stable name.',
+      ),
     functions: z.array(PadFunctionSchema).describe('Functions with routing class.'),
     input_only: fact(z.boolean()).describe('True when the pad cannot drive an output.'),
     reset_state: fact(ResetStateSchema).describe('State at reset.'),

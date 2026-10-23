@@ -37,7 +37,7 @@ function otherWorktreeFiles() {
     .filter((d) => d.replace(/\\/g, '/').toLowerCase() !== root.replace(/\\/g, '/').toLowerCase());
   const out = [];
   for (const dir of dirs) {
-    let status = '';
+    let status;
     try {
       status = execFileSync('git', ['-C', dir, 'status', '--porcelain', '--untracked-files=all'], {
         encoding: 'utf8',

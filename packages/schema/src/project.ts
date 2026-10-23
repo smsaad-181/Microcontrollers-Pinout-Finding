@@ -1,6 +1,13 @@
 import { z } from 'zod';
 import { RoutingSchema } from './chip.js';
 import { InterfaceKindSchema } from './ic.js';
+import {
+  LOCKED_ROLE_PATTERN,
+  isConflictToken,
+  isPropertyKey,
+  isRelaxationToken,
+  isWarningCode,
+} from './fixture-vocabulary.js';
 import { ClaimIdSchema, EntityIdSchema, PadIdSchema } from './primitives.js';
 
 export const ProjectSchema = z
@@ -80,6 +87,63 @@ export const FixtureSchema = z
     evidence: z.array(ClaimIdSchema).describe('Claim ids the derivations rely on (a plain list).'),
     derivations: z.array(z.string()).describe('Hand derivations from the sources.'),
     changelog: z.array(z.string()).exactOptional().describe('Fixture change history.'),
+  })
+  .superRefine((f, ctx) => {
+    const bad = (path: (string | number)[], message: string) => {
+      ctx.addIssue({ code: 'custom', path, message });
+    };
+    f.project.locked.forEach((l, i) => {
+      if (!LOCKED_ROLE_PATTERN.test(l.role))
+        bad(
+          ['project', 'locked', i, 'role'],
+          `locked role "${l.role}" must look like WIPER or COIL[1]`,
+        );
+    });
+    const e = f.expect;
+    (e.warnings_include ?? []).forEach((w, i) => {
+      if (!isWarningCode(w.code))
+        bad(
+          ['expect', 'warnings_include', i, 'code'],
+          `unknown warning code "${w.code}" (see fixture-vocabulary.ts)`,
+        );
+    });
+    (e.properties ?? []).forEach((p, i) => {
+      const at = ['expect', 'properties', i];
+      if (typeof p !== 'object' || p === null || Array.isArray(p)) {
+        bad(at, 'a property must be an object with exactly one key');
+        return;
+      }
+      const keys = Object.keys(p);
+      if (keys.length !== 1) bad(at, 'a property must have exactly one key');
+      for (const k of keys) {
+        if (!isPropertyKey(k))
+          bad([...at, k], `unknown property key "${k}" (see fixture-vocabulary.ts)`);
+      }
+      const codes = (p as { no_warning_code?: unknown }).no_warning_code;
+      if (Array.isArray(codes)) {
+        codes.forEach((c, j) => {
+          if (typeof c !== 'string' || !isWarningCode(c))
+            bad(
+              [...at, 'no_warning_code', j],
+              `unknown warning code "${String(c)}" (see fixture-vocabulary.ts)`,
+            );
+        });
+      }
+    });
+    (e.minimal_conflict_includes ?? []).forEach((t, i) => {
+      if (!isConflictToken(t))
+        bad(
+          ['expect', 'minimal_conflict_includes', i],
+          `conflict token "${t}" must start with a known prefix (see fixture-vocabulary.ts)`,
+        );
+    });
+    (e.relaxations_include ?? []).forEach((t, i) => {
+      if (!isRelaxationToken(t))
+        bad(
+          ['expect', 'relaxations_include', i],
+          `relaxation token "${t}" must start with a known prefix (see fixture-vocabulary.ts)`,
+        );
+    });
   })
   .describe('A golden test fixture written by hand from datasheets (catalog/fixtures/).');
 export type Fixture = z.infer<typeof FixtureSchema>;

@@ -42,11 +42,11 @@ export type ResetState = 'input' | 'pullup' | 'pulldown' | 'disabled' | 'output-
 export interface PadFunction { fn: string /* 'GPIO'|'SPI3.SCK'|'I2C.SDA'|'ADC1_CH4'|'UART0.TX'|'JTAG.TMS'… */;
   routing: Routing; max_hz?: Fact<number>; }
 export interface Pad {
-  gpio: number;
+  gpio?: number;
   functions: PadFunction[];
   input_only: Fact<boolean>;
   reset_state: Fact<ResetState>;
-  strap: Fact<{ role: string; required_at_reset: 'low' | 'high' | 'any'; default_pull: 'up'|'down'|'none' } | 'none'>;
+  strap: Fact<{ role: string; required_at_reset: 'low' | 'high' | 'any'; default_pull?: 'up'|'down'|'none' } | 'none'>;
   adc?: { unit: string; channel: number; radio_conflict: Fact<boolean> };
   dac?: { channel: number }; touch?: { channel: number };
   jtag?: string;                              // e.g. 'MTMS'
@@ -79,14 +79,14 @@ export interface Module { id: string; chip: string; bonded_pads: PadId[];
 
 // ---------- board ----------
 export type BoardStatus = 'fully-verified' | 'partially-verified' | 'datasheet-required' | 'unsupported';
-export interface ConnectorPin { position: number; label: string; kind: 'power'|'ground'|'gpio'|'reset'|'nc'|'analog-ref'; pad?: PadId; rail?: string;
+export interface ConnectorPin { position: number; label: string; kind: 'power'|'ground'|'gpio'|'reset'|'nc'|'analog-ref'|'enable'|'boot'|'analog'; pad?: PadId; rail?: string;
   alias_of?: string;  // '<connector-id>:<position>' of the primary pin that shares this pad (Arduino SDA/SCL = A4/A5, ICSP)
 }
 export interface Board {
   id: string; vendor: string; name: string; revision: string;
   variants: { id: string; module: string }[];
   logic_voltage: Fact<number>;
-  rails: { name: string; voltage: Fact<number>; max_current: Fact<number>; source: string }[];
+  rails: { name: string; voltage: Fact<number | { min: number; max: number }>; max_current: Fact<number>; source: string }[];
   connectors: { id: string; side?: 'left'|'right'|'top'|'bottom'; pins: ConnectorPin[] }[];
   onboard: { part: string; uses_pad: PadId[]; effect: string; evidence: ClaimId[] }[];
   numbering: { primary: 'gpio' | 'label' | 'physical' };

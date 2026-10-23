@@ -73,6 +73,16 @@ describe('chip pad identity (E_PAD_KEY)', () => {
     ]);
   });
 
+  it('a pad without gpio is fine under a non-GPIO-style key, and several may omit it', () => {
+    const chip = { pads: { TOUT: {}, VBAT: {}, GPIO2: { gpio: 2 } } } as unknown as Chip;
+    expect(checkChipPads(chip)).toEqual([]);
+  });
+
+  it('a GPIO-style key without gpio is reported (the name promises a number)', () => {
+    const chip = { pads: { GPIO4: {} } } as unknown as Chip;
+    expect(checkChipPads(chip).map((i) => i.path)).toEqual(['pads.GPIO4.gpio']);
+  });
+
   it('through the validator: a non-GPIO-style key with any unique number is fine', () => {
     expect(brief(validateCatalog(renamedGpio3()))).toEqual([]);
   });
@@ -110,6 +120,19 @@ describe('pad references (E_REF_UNRESOLVED)', () => {
   it('a pad that is on the chip but not bonded is not a dangling reference', () => {
     const s = patched('modules/', BONDED, 'bonded_pads: [GPIO0, GPIO2, GPIO3]');
     // GPIO1 exists on the chip; only the existing header-pin rule reports it.
+    expect(brief(validateCatalog(s)).map((e) => e[0])).toEqual(['E_PIN_NUMBERING']);
+  });
+
+  it('a header pad that the module consumes internally need not be bonded (per-variant unbonded pad)', () => {
+    const entry =
+      '  GPIO1: { evidence: [demo-datasheet-1#module-pads], reviewers: [hardware-researcher, hardware-fact-auditor], status: verified, value: psram }';
+    let s = patched('modules/', BONDED, 'bonded_pads: [GPIO0, GPIO2, GPIO3]');
+    s = patched('modules/', 'consumed:\n', `consumed:\n${entry}\n`, s); // GPIO1: a header pin of the demo board
+    expect(brief(validateCatalog(s))).toEqual([]);
+  });
+
+  it('a consumed pad does not excuse another unbonded header pad', () => {
+    const s = patched('modules/', BONDED, 'bonded_pads: [GPIO0, GPIO2]'); // GPIO1 is not consumed
     expect(brief(validateCatalog(s)).map((e) => e[0])).toEqual(['E_PIN_NUMBERING']);
   });
 

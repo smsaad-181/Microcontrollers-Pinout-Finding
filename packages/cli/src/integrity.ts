@@ -22,9 +22,10 @@ export function checkChipPads(chip: Chip): IntegrityIssue[] {
     if (named && Number(named[1]) !== pad.gpio) {
       issues.push({
         path,
-        message: `pad "${key}" is named for GPIO ${String(Number(named[1]))} but has gpio: ${String(pad.gpio)}`,
+        message: `pad "${key}" is named for GPIO ${String(Number(named[1]))} but has ${pad.gpio === undefined ? 'no gpio' : `gpio: ${String(pad.gpio)}`}`,
       });
     }
+    if (pad.gpio === undefined) continue; // a pad that is not a GPIO is identified by its key alone
     const first = firstByGpio.get(pad.gpio);
     if (first !== undefined) {
       issues.push({

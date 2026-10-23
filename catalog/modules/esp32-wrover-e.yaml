@@ -1,12 +1,9 @@
 # ESP32-WROVER-E module (N4R8/N8R8/N16R8) - reconciled (task 2a.4), see docs/validation/phase-2a/reconcile-esp32-modules-board.md.
 # Source: ESP32-WROVER-E & ESP32-WROVER-IE Datasheet v2.4 (+ ESP32 Datasheet v5.3 §2.6 notes, DevKitC V4 guide).
-# SCHEMA GAP / KNOWN DISCREPANCY (blind auditor: 24 bonded pads, researcher: 26): the datasheet leads out only 24 GPIOs ("Up to 24 GPIOs";
-# Table 3 pins 27/28 are NC) - GPIO16 and GPIO17 are wired inside the module to the PSRAM (CS# / SCLK, Figure 9). GPIO16 and GPIO17 are
-# nevertheless listed in bonded_pads, which is NOT faithful to the datasheet, only because the catalog validator (E_PIN_NUMBERING,
-# "pad ... is not bonded out by module") requires every gpio header pin of the shared DevKitC V4 connector (J3-11 IO17 / J3-12 IO16,
-# usable on the WROOM-32E variant) to be in bonded_pads of EVERY variant's module, and the schema has no per-variant pin map.
-# The facts that matter to the engine are in `consumed` (GPIO16/GPIO17 = psram, verified), which removes them from use. Do not read
-# bonded_pads of this record as "pins led out".
+# GPIO16 and GPIO17 are wired inside the module to the PSRAM (CS# / SCLK, Figure 9); module pins 27/28 are NC and the datasheet leads out
+# only 24 GPIOs ("Up to 24 GPIOs"). They are therefore NOT in bonded_pads and are listed in `consumed` (psram, verified). The DevKitC V4
+# connector still shows J3-11 IO17 / J3-12 IO16 (usable on the WROOM-32E variant): the validator accepts a header pad that a module
+# consumes without bonding it (schema round 2b). Engine rule: a pad in `consumed` of the selected variant's module is unusable.
 bonded_pads:
   - "GPIO0"
   - "GPIO1"
@@ -18,8 +15,6 @@ bonded_pads:
   - "GPIO13"
   - "GPIO14"
   - "GPIO15"
-  - "GPIO16"
-  - "GPIO17"
   - "GPIO18"
   - "GPIO19"
   - "GPIO21"

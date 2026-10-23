@@ -10,4 +10,5 @@ export * from './ic.js';
 export * from './project.js';
 export * from './pin-view.js';
 export * from './fact-rules.js';
+export * from './fixture-vocabulary.js';
 export * from './json-schema.js';

@@ -3,9 +3,7 @@
 # Sources: ESP8266EX Datasheet v7.1, ESP8266 Hardware Design Guidelines v2.8, ESP8266 Technical Reference v1.7.
 # Pads: GPIO0-GPIO16 exist (datasheet §4.1: 17 GPIO pins). Pads GPIO6-GPIO11 are the SDIO/SPI flash bus pins (Table 2-1).
 # Every function is a fixed per-pad function, hence routing 'iomux' (the documents give per-pad function tables, no matrix).
-# CATALOG-INTERNAL PAD 'TOUT' with gpio: 17: the ADC input (pin 6) is not a GPIO, but the schema requires a pad with a number
-#   to carry the ADC fact and to let a board header pin (A0) resolve. 17 is NOT a datasheet number (the chip has GPIO0-16 only;
-#   17 is the next free index). Flagged as a schema gap in the hand-off.
+# PAD 'TOUT' (chip pin 6) is the ADC input, not a GPIO: it has no `gpio` number; its record key is its stable name.
 # I2C, PWM and IR are software implementations in this chip (datasheet §4.4, §4.7, §4.8); the datasheet lists fixed example pins
 #   (I2C SCL IO14 / SDA IO2, PWM0-3 IO12/15/14/4, IR TX IO14 / RX IO5). They are recorded as printed with matrix_routable false
 #   (most restrictive reading of the pin tables); the documents do not say software I2C/PWM cannot use other GPIOs.
@@ -228,7 +226,6 @@ pads:
     errata: []
     functions:
       - {"fn": "ADC", "routing": "fixed"}
-    gpio: 17
     input_only: {"evidence": [], "note": "Not confirmed by a second key. The researcher read Table 2-1 pin 6 TOUT as type I (input) and the ADC pin, not one of the 17 GPIOs (claim esp8266ex-ds-v7.1#pin-tout); the blind auditor read TOUT only for the ADC facts and recorded no input-only statement. Kept missing until a second independent read of Table 2-1 pin 6.", "status": "missing", "value": null}
     power_up_glitch: {"evidence": [], "note": "No document states a power-up output glitch for this pad (datasheet v7.1, hardware design guidelines v2.8, TRM v1.7 searched by both keys; the auditor's text search for glitch / spurious / power-on state found nothing relevant). No ESP8266 errata document exists in the Espressif technical-documents list (the chip-errata site returns HTTP 404 for an esp8266 page), so absence of a documented glitch is not a negative finding and 'none' is not recorded. The Espressif 'ESP8266 Pin List' xls (sheets Strapping List, Register List, Buffer Sheet; linked from datasheet Appendix A) could not be downloaded automatically (the server returns the documentation-portal HTML shell) and is requested as a manual download.", "status": "missing", "value": null}
     reset_state: {"evidence": [], "note": "Reset-time pad state (input / pull / disabled) is not stated in datasheet v7.1, hardware design guidelines v2.8 or technical reference v1.7 (both keys searched pin tables, GPIO chapter, register list; auditor: could-not-verify). The datasheet only says each pad can be software-configured with an internal pull (§4.1). The Espressif 'ESP8266 Pin List' xls (sheets Strapping List, Register List, Buffer Sheet; linked from datasheet Appendix A) could not be downloaded automatically (the server returns the documentation-portal HTML shell) and is requested as a manual download.", "status": "missing", "value": null}

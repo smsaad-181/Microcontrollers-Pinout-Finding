@@ -554,7 +554,12 @@ export function validateCatalog(sources: readonly SourceFile[]): ValidationResul
           bad(`${at}.pad`, `${where}: pad "${pad}" is not a pad of chip ${list}`);
         }
         const notBonded = resolved.filter(
-          (r) => Object.hasOwn(r.chip.pads, pad) && !r.module.bonded_pads.includes(pad),
+          (r) =>
+            Object.hasOwn(r.chip.pads, pad) &&
+            !r.module.bonded_pads.includes(pad) &&
+            // Per-variant unbonded pad: a module that consumes the pad internally (e.g. WROVER-E PSRAM on
+            // GPIO16/17) may leave it out of bonded_pads; the engine reads `consumed` and skips the pad.
+            !Object.hasOwn(r.module.consumed, pad),
         );
         if (notBonded.length > 0) {
           const list = notBonded.map((r) => `${r.module.id} (variant ${r.variant})`).join(', ');

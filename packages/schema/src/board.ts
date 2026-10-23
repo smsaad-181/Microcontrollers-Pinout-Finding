@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { ClaimIdSchema, EntityIdSchema, PadIdSchema, fact } from './primitives.js';
+import { ClaimIdSchema, EntityIdSchema, PadIdSchema, VoltageSchema, fact } from './primitives.js';
 
 export const ModuleSchema = z
   .strictObject({
@@ -28,7 +28,9 @@ export const ConnectorPinSchema = z
       .positive()
       .describe('Physical position on the connector (numbering 3 of 3).'),
     label: z.string().describe('Silkscreen label (numbering 2 of 3).'),
-    kind: z.enum(['power', 'ground', 'gpio', 'reset', 'nc', 'analog-ref']).describe('Pin kind.'),
+    kind: z
+      .enum(['power', 'ground', 'gpio', 'reset', 'nc', 'analog-ref', 'enable', 'boot', 'analog'])
+      .describe('Pin kind.'),
     pad: PadIdSchema.exactOptional().describe(
       'Chip pad (gives the GPIO number); required for gpio pins.',
     ),
@@ -63,7 +65,7 @@ export const BoardSchema = z
       .array(
         z.strictObject({
           name: z.string().describe('Rail name.'),
-          voltage: fact(z.number()).describe('Rail voltage.'),
+          voltage: fact(VoltageSchema).describe('Rail voltage: one value, or a {min, max} range.'),
           max_current: fact(z.number()).describe('Rail current capacity.'),
           source: z.string().describe('What supplies the rail.'),
         }),

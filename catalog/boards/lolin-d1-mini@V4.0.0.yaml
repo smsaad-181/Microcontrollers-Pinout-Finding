@@ -4,7 +4,7 @@
 #   figure shows the USB-C port at the bottom). Labels are the labels printed in the official V4.0.0 pin-map figure: RST, A0, 16, 14, 12,
 #   13, 15, 3.3V (left) and TX, RX, 5, 4, 0, 2, GND, VBUS (right). The V4.0.0 figure prints NO D0-D8 labels (page text only says
 #   "except D0"), so no D-label is recorded. Secondary tags in the figure: SCK=14, MISO=12, MOSI=13, SCL=5, SDA=4, LED=2.
-# Header pins A0 -> chip pad TOUT (catalog-internal pad number 17, see chips/esp8266ex.yaml header).
+# Header pins A0 -> chip pad TOUT (a pad without a GPIO number, see chips/esp8266ex.yaml header).
 # The 4-pin I2C connector P1 and the reset button are board parts (onboard), not connector pins: GPIO4/GPIO5 are already on J3.
 # Divider (transcribed): A0 -> R12 220k -> TOUT node -> R13 100k -> GND. The page states 3.2 V max at A0; the ratio is not stored as a fact.
 # `status` is the value the catalog CLI computes.

@@ -191,8 +191,9 @@ describe('strap levels (S15)', () => {
     expect(chipWithStrap('none').success).toBe(true);
     for (const v of ['None', 'NONE', 'no', '']) expect(chipWithStrap(v).success, v).toBe(false);
   });
-  it('a strap needs all three keys and rejects unknown ones', () => {
-    expect(chipWithStrap({ role: 'x', required_at_reset: 'low' }).success).toBe(false);
+  it('a strap needs role and required_at_reset (default_pull is optional) and rejects unknown ones', () => {
+    expect(chipWithStrap({ required_at_reset: 'low' }).success).toBe(false);
+    expect(chipWithStrap({ role: 'x' }).success).toBe(false);
     expect(chipWithStrap({ ...strap({}), extra: 1 }).success).toBe(false);
   });
 });
@@ -362,7 +363,17 @@ const INTERFACE_KINDS = ['i2c', 'spi', 'uart', 'onewire', 'analog', 'digital'];
 const ROUTING = ['iomux', 'matrix', 'fixed'];
 const LEVELS = ['critical', 'warning', 'caution', 'info'];
 const RESULT = ['ok', 'unsat', 'needs_variant'];
-const PIN_KINDS = ['power', 'ground', 'gpio', 'reset', 'nc', 'analog-ref'];
+const PIN_KINDS = [
+  'power',
+  'ground',
+  'gpio',
+  'reset',
+  'nc',
+  'analog-ref',
+  'enable',
+  'boot',
+  'analog',
+];
 const FRAMEWORKS = ['arduino', 'micropython', 'esp-idf', 'pico-sdk', 'rpi-python'];
 
 /** The contract (skill catalog-schema, reference.ts): every non-fact enum, by schema and field path. */
@@ -537,7 +548,7 @@ const BASES: Record<JsonSchemaName, () => Doc> = {
     project.framework = 'arduino';
     setAt(project, ['modules', 0, 'interface'], 'i2c');
     f.project = project;
-    setAt(f, ['expect', 'warnings_include'], [{ code: 'C_X', level: 'caution' }]);
+    setAt(f, ['expect', 'warnings_include'], [{ code: 'I2C_PULLUP_UNKNOWN', level: 'caution' }]);
     return f;
   },
   project: () => {

@@ -57,6 +57,12 @@ export const ExprSchema = z
   );
 export type Expr = z.infer<typeof ExprSchema>;
 
+/** A voltage: one number, or a {min, max} range (e.g. a rail documented as 1.8-5.5 V). */
+export const VoltageSchema = z
+  .union([z.number(), z.strictObject({ min: z.number(), max: z.number() })])
+  .describe('A voltage: a single number or a {min, max} range.');
+export type Voltage = z.infer<typeof VoltageSchema>;
+
 /** A string with at least one non-whitespace character. */
 export const NON_BLANK = /\S/;
 
