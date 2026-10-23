@@ -56,17 +56,17 @@ Legend: `[x]` done · `[~]` in progress · `[-]` deferred (needs GitHub) · `[ ]
 - [x] 2a.8 · Delete catalog/.drafting · _catalog-author_
 
 **Phase 2b**
-- [ ] 2b.1 · packages/rules · _engine-developer_
-- [ ] 2b.2 · Pin view composer · _engine-developer_
-- [ ] 2b.3 · Interface selection per module (rules 1–7 in skill interface-selection), producing cand… · _engine-developer_
-- [ ] 2b.4 · Signal expansion · _engine-developer_
-- [ ] 2b.5 · CSP solver · _engine-developer_
-- [ ] 2b.6 · Unsat path · _engine-developer_
-- [ ] 2b.7 · Explanation traces · _engine-developer_
-- [ ] 2b.8 · Property tests (fast-check) · _test-automator_
-- [ ] 2b.9 · Run all golden fixtures from Phase 2a · _engine-developer_
-- [ ] 2b.10 · Mutation testing (Stryker) on packages/rules and solver constraints; target ≥ 85 % muta… · _test-automator_
-- [ ] 2b.11 · Performance · _engine-developer_
+- [x] 2b.1 · packages/rules · _engine-developer_
+- [x] 2b.2 · Pin view composer · _engine-developer_
+- [x] 2b.3 · Interface selection per module (rules 1–7 in skill interface-selection), producing cand… · _engine-developer_
+- [x] 2b.4 · Signal expansion · _engine-developer_
+- [x] 2b.5 · CSP solver · _engine-developer_
+- [x] 2b.6 · Unsat path · _engine-developer_
+- [x] 2b.7 · Explanation traces · _engine-developer_
+- [x] 2b.8 · Property tests (fast-check) · _test-automator_
+- [x] 2b.9 · Run all golden fixtures from Phase 2a · _engine-developer_
+- [x] 2b.10 · Mutation testing (Stryker) on packages/rules and solver constraints; target ≥ 85 % muta… · _test-automator_
+- [x] 2b.11 · Performance · _engine-developer_
 
 **Phase 3**
 - [ ] 3.1 · App shell, hash routes #/, #/board, #/modules, #/constraints, #/results, #/p/<shared> · _ui-developer_
@@ -214,3 +214,4 @@ None of these block Phase 0. Re-check all three when a session is started inside
 | 2026-10-22 | 0 | Started. Local git repo on `main`. Tasks 0.1 (tools), 0.2 (MCP), 0.5 (LICENSE, catalog/LICENSE, .editorconfig, .gitattributes) done; 0.6 already satisfied by `sources/manual/README.md`. Waiting on `gh` install/login + repo name. |
 | 2026-10-23 | 2a | Phase 2a done: 1052 facts (789 verified, 42 conflict, 8 interim, 1 single-source->0, 212 missing), 24 golden fixtures, phase-validator PASS after owner accepted deferrals (Uno R3/ATmega328P, DS18B20, DHT22, MPU-6050, KS0058 await manual PDFs; ESP8266 GPIO0/2/15 strap facts missing until schema makes default_pull optional - first task of 2b). Merged phase-2a into main. |
 
+| 2026-10-23 | 2b | Phase 2b done: rules R1-R8, composer, selector, CSP solver, unsat explainer, traces; 24/24 golden fixtures; property tests (1000 runs), rules mutation 95.75%, perf p95 58 ms; gate found 2 lock bugs + missing MCU-pin capacitance in R3 (all fixed); phase-validator PASS after fixes. Later list in docs/validation/phase-2b/phase-validator.md. |
