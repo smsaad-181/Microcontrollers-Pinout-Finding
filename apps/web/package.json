@@ -12,7 +12,10 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@pinout/engine": "workspace:*",
     "@pinout/schema": "workspace:*",
+    "comlink": "4.4.2",
+    "minisearch": "7.2.0",
     "react": "19.3.1",
     "react-dom": "19.3.1"
   },
