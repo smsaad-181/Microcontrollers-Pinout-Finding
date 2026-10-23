@@ -1,5 +1,5 @@
 // Test-only: the compiled catalog exactly as `catalog:compile` ships it to the browser.
-import { fileURLToPath } from 'node:url';
+import { resolve } from 'node:path';
 import { compileCatalog, validateRoot } from '@pinout/cli';
 import type { WebCatalog } from '../src/catalog/loadCatalog';
 
@@ -12,7 +12,7 @@ export function compiledCatalog(): {
   version: string;
 } {
   if (cached) return cached;
-  const root = fileURLToPath(new URL('../../../catalog', import.meta.url));
+  const root = resolve(import.meta.dirname, '../../../catalog');
   const result = validateRoot(root);
   if (result.errorCount > 0) throw new Error('catalog does not validate');
   const compiled = compileCatalog(result, { date: '2026-01-01' });
