@@ -6,5 +6,6 @@ const conditions = ['@pinout/source', 'module', 'node', 'development|production'
 export default defineProject({
   resolve: { conditions },
   ssr: { resolve: { conditions } },
-  test: { name: 'cli' },
+  // The real catalog (100+ files) is validated and compiled in several tests; 5 s is too tight under parallel load.
+  test: { name: 'cli', testTimeout: 30_000 },
 });
