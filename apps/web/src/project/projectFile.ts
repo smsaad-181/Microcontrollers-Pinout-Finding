@@ -76,6 +76,7 @@ export function decodeShare(data: string): ProjectReadResult {
   if (text === null || text === '') {
     return { ok: false, message: 'The link is damaged or incomplete.' };
   }
+  if (text.length > MAX_FILE_LENGTH) return { ok: false, message: 'The link is too large.' };
   try {
     return fromObject(JSON.parse(text) as unknown);
   } catch {

@@ -510,7 +510,7 @@ export function moduleChecks(
     warn(
       spiMiso.length > 1 ? 'caution' : 'info',
       'MISO_SHARE_UNPROVEN',
-      `MISO is used by ${spiMiso.map((s) => s.instance).join(', ')} on a bus shared with ${[...spiDevices].join(', ')} and the catalog does not prove the MISO driver releases it when deselected`,
+      `MISO is used by ${[...new Set(spiMiso.map((s) => s.instance))].join(', ')}${[...spiDevices].filter((d) => !spiMiso.some((s) => s.instance === d)).length > 0 ? ` on a bus that also has ${[...spiDevices].filter((d) => !spiMiso.some((s) => s.instance === d)).join(', ')}` : ' on a bus shared by all of them'}, and the catalog does not prove the MISO driver releases it when deselected`,
       [...new Set(spiMiso.flatMap((s) => padOf(s.id) ?? []))],
       [],
     );

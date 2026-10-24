@@ -1,4 +1,4 @@
-// Evidence link checker. Reads every `url:` / `url_original:` in catalog/evidence/*.yaml and asks the
+// Evidence link checker. Reads every `url:` (not `url_original:`, which keeps the pre-move address) in catalog/evidence/*.yaml and asks the
 // server whether it still answers. Dead links (404, 410, DNS failure) fail the run; links that block
 // robots (401, 403, 429, 5xx, timeouts) are reported as "unverified" and do not fail it.
 // Usage: node tools/check-links.mjs [--json out.json]
@@ -13,7 +13,7 @@ const CONCURRENCY = 6;
 const links = new Map(); // url -> evidence ids
 for (const f of readdirSync(DIR).filter((n) => n.endsWith('.yaml'))) {
   const id = f.replace(/\.yaml$/, '');
-  for (const m of readFileSync(join(DIR, f), 'utf8').matchAll(/^(?:url|url_original):\s*"?(https?:\/\/[^\s"]+)"?\s*$/gm)) {
+  for (const m of readFileSync(join(DIR, f), 'utf8').matchAll(/^url:\s*"?(https?:\/\/[^\s"]+)"?\s*$/gm)) {
     const set = links.get(m[1]) ?? new Set();
     set.add(id);
     links.set(m[1], set);

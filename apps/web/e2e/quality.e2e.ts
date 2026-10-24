@@ -200,3 +200,17 @@ test('keyboard only: board, module, results', async ({ page }) => {
   await page.keyboard.press('Enter');
   await expect(page.locator('details[open]').first()).toBeVisible();
 });
+
+test.describe('axe, dark scheme', () => {
+  test.use({ bypassCSP: true, colorScheme: 'dark' });
+  test('dark scheme: 0 serious or critical (contrast included) on the main screens', async ({
+    page,
+  }) => {
+    for (const route of ['', '#/board', '#/modules', '#/constraints']) {
+      await page.goto(`./${route}`);
+      await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
+      await expect(page.getByText('Loading the catalog…')).toHaveCount(0);
+      await expectNoSeriousViolations(page);
+    }
+  });
+});

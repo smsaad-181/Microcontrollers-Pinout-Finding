@@ -3,6 +3,7 @@ import { useId, useState, type ChangeEvent } from 'react';
 import { downloadText, fileStem } from '../project/download';
 import {
   encodeShare,
+  MAX_FILE_LENGTH,
   MAX_SHARE_LENGTH,
   projectFileText,
   readProjectFile,
@@ -33,6 +34,10 @@ export function OpenProjectFile() {
     const file = e.target.files?.[0];
     e.target.value = '';
     if (!file) return;
+    if (file.size > MAX_FILE_LENGTH * 4) {
+      setMessage('The file is too large.');
+      return;
+    }
     void file.text().then(
       (text) => {
         const r = readProjectFile(text);

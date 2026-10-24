@@ -76,7 +76,7 @@ rails:
   - max_current: {"evidence": [], "note": "No current rating stated.", "status": "missing", "unit": "mA", "value": null}
     name: "VBUS"
     source: "USB-C VBUS (pin 40)"
-    voltage: {"evidence": ["waveshare-esp32-s3-pico-wiki#pinout-image"], "note": "VBUS is the USB 5 V rail (nominal); pin 40 labelled VBUS.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "unit": "V", "value": 5}
+    voltage: {"evidence": ["waveshare-esp32-s3-pico-wiki#pinout-image", "pico-ds-rel21#vbus-desc", "pico-ds-rel21#operating-vbus"], "note": "Interim: no Waveshare source states the VBUS voltage (the wiki picture and schematic only label pin 40 VBUS, and the wiki does not state Pico compatibility). 5 V is taken from the Raspberry Pi Pico datasheet (same pin-40 VBUS on the Pico form factor, USB 5 V nominal).", "status": "interim", "unit": "V", "value": 5}
   - max_current: {"evidence": [], "note": "No current rating stated.", "status": "missing", "unit": "mA", "value": null}
     name: "VSYS"
     source: "VBUS through diode D1 MBR230LSFT1G; external supply input"

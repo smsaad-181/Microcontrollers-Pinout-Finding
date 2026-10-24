@@ -178,6 +178,12 @@ export function BoardView({ connectors, title }: { connectors: ViewConnector[]; 
                     onClick={() => {
                       move(p);
                     }}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        move(p);
+                      }
+                    }}
                   >
                     <rect
                       x={2}

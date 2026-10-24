@@ -1,8 +1,9 @@
 import { useEffect, useId, useState } from 'react';
 import type { Recommendation } from '@pinout/schema';
+import type { BoardOption } from '../catalog/boards';
 import { boardView } from '../catalog/boardView';
 import { BoardView } from '../components/BoardView';
-import { Citations, LevelBadge } from '../components/common';
+import { Citations, LevelBadge, StatusBadge } from '../components/common';
 import { ProjectActions } from '../components/ProjectActions';
 import { toProject } from '../project/draft';
 import { resultCsv } from '../results/csv';
@@ -414,10 +415,12 @@ function ResultView({
   response,
   data,
   boardText,
+  boardStatus,
 }: {
   response: SolveResponse;
   data: LoadedCatalog;
   boardText: string;
+  boardStatus?: BoardOption['status'] | undefined;
 }) {
   const { outcome, elapsedMs } = response;
   const rec = outcome.recommendation;
@@ -432,7 +435,9 @@ function ResultView({
       <dl className="facts summary">
         <div className="facts-row">
           <dt>Board</dt>
-          <dd>{boardText}</dd>
+          <dd>
+            {boardText} {boardStatus ? <StatusBadge status={boardStatus} /> : null}
+          </dd>
         </div>
         <div className="facts-row">
           <dt>Result</dt>
@@ -539,7 +544,12 @@ function Results({ data }: { data: LoadedCatalog }) {
         <SolveProblem solve={solve} onRetry={runSolve} />
       ) : null}
       {solve.status === 'done' && current ? (
-        <ResultView response={solve.response} data={data} boardText={boardText} />
+        <ResultView
+          response={solve.response}
+          data={data}
+          boardText={boardText}
+          boardStatus={board?.status}
+        />
       ) : null}
       <ProjectActions
         {...(okRec ? { csv: () => resultCsv(okRec.outcome.recommendation, okRec.pinLabels) } : {})}
