@@ -1,0 +1,186 @@
+# TTGO T-Display V1.1 (task boards-1). Sources: LilyGO README and pinmap image (maker repository, commit 6f89cdd) plus the schematic PDF (label evidence only). The pinmap is an image: header rows are transcribed (USB at the bottom; rows numbered top to bottom).
+# Header labels are the numbers/names printed in the pinmap; 37/38 are GPIO37/GPIO38. USB-UART bridge and charger pads are not stated in the sources (the schematic text has no connectivity): no onboard entry, gap recorded.
+# Module: bare ESP32 plus external 4 MB flash, modelled as ttgo-t-display-core (no RF module datasheet applies).
+# Single key; blind audit pending.
+connectors:
+  - id: "J-left"
+    pins:
+      - kind: "ground"
+        label: "GND"
+        position: 1
+      - kind: "ground"
+        label: "GND"
+        position: 2
+      - kind: "gpio"
+        label: "21"
+        pad: "GPIO21"
+        position: 3
+      - kind: "gpio"
+        label: "22"
+        pad: "GPIO22"
+        position: 4
+      - kind: "gpio"
+        label: "17"
+        pad: "GPIO17"
+        position: 5
+      - kind: "gpio"
+        label: "2"
+        pad: "GPIO2"
+        position: 6
+      - kind: "gpio"
+        label: "15"
+        pad: "GPIO15"
+        position: 7
+      - kind: "gpio"
+        label: "13"
+        pad: "GPIO13"
+        position: 8
+      - kind: "gpio"
+        label: "12"
+        pad: "GPIO12"
+        position: 9
+      - kind: "ground"
+        label: "GND"
+        position: 10
+      - kind: "ground"
+        label: "GND"
+        position: 11
+      - kind: "power"
+        label: "3V3"
+        position: 12
+        rail: "3V3"
+    side: "left"
+  - id: "J-right"
+    pins:
+      - kind: "power"
+        label: "3V3"
+        position: 1
+        rail: "3V3"
+      - kind: "gpio"
+        label: "SVP"
+        pad: "GPIO36"
+        position: 2
+      - kind: "gpio"
+        label: "37"
+        pad: "GPIO37"
+        position: 3
+      - kind: "gpio"
+        label: "38"
+        pad: "GPIO38"
+        position: 4
+      - kind: "gpio"
+        label: "SVN"
+        pad: "GPIO39"
+        position: 5
+      - kind: "gpio"
+        label: "32"
+        pad: "GPIO32"
+        position: 6
+      - kind: "gpio"
+        label: "33"
+        pad: "GPIO33"
+        position: 7
+      - kind: "gpio"
+        label: "25"
+        pad: "GPIO25"
+        position: 8
+      - kind: "gpio"
+        label: "26"
+        pad: "GPIO26"
+        position: 9
+      - kind: "gpio"
+        label: "27"
+        pad: "GPIO27"
+        position: 10
+      - kind: "ground"
+        label: "GND"
+        position: 11
+      - kind: "power"
+        label: "5V"
+        position: 12
+        rail: "5V"
+    side: "right"
+id: "ttgo-t-display"
+logic_voltage:
+  evidence:
+    - "lilygo-ttgo-t-display-pinmap#left-b"
+  note: "Inferred from the 3V3 rail pin label and the VDD3V3 supply net of the ESP32; no document states a logic voltage in words."
+  status: "single-source"
+  unit: "V"
+  value: 3.3
+name: "TTGO T-Display"
+numbering:
+  primary: "gpio"
+onboard:
+  - effect: "Display MOSI 19, SCLK 18, CS 5, DC 16, RST 23, backlight 4 (no MISO); pads are not free for other use."
+    evidence:
+      - "lilygo-ttgo-t-display-readme#driver"
+      - "lilygo-ttgo-t-display-readme#tft-pins"
+      - "lilygo-ttgo-t-display-readme#miso"
+      - "lilygo-ttgo-t-display-pinmap#lcd"
+      - "lilygo-ttgo-t-display-sch#lcd-nets"
+    part: "ST7789V 1.14 in IPS display (135x240, SPI)"
+    uses_pad:
+      - "GPIO4"
+      - "GPIO5"
+      - "GPIO16"
+      - "GPIO18"
+      - "GPIO19"
+      - "GPIO23"
+  - effect: "GPIO0 is the boot-mode strapping pad (button also used for download mode); GPIO35 is input-only with no internal pull."
+    evidence:
+      - "lilygo-ttgo-t-display-readme#buttons"
+      - "lilygo-ttgo-t-display-pinmap#btns"
+    part: "Button 1 (GPIO35) and Button 2 (GPIO0)"
+    uses_pad:
+      - "GPIO0"
+      - "GPIO35"
+  - effect: "GPIO34 reads the battery divider; input-only, not on the header."
+    evidence:
+      - "lilygo-ttgo-t-display-readme#adc-in"
+    part: "Battery voltage divider (ADC_IN)"
+    uses_pad:
+      - "GPIO34"
+  - effect: "README names GPIO14 \"ADC Power\" (enables the battery-measurement path); circuit not read."
+    evidence:
+      - "lilygo-ttgo-t-display-readme#adc-power"
+    part: "ADC power control"
+    uses_pad:
+      - "GPIO14"
+rails:
+  - max_current:
+      evidence: []
+      note: "Regulator part and current rating not identified in the README, pinmap or schematic text."
+      status: "missing"
+      unit: "mA"
+      value: null
+    name: "3V3"
+    source: "onboard regulator (part not read)"
+    voltage:
+      evidence:
+        - "lilygo-ttgo-t-display-pinmap#left-b"
+      note: "Pin label 3V3."
+      status: "single-source"
+      unit: "V"
+      value: 3.3
+  - max_current:
+      evidence: []
+      note: "No current rating stated."
+      status: "missing"
+      unit: "mA"
+      value: null
+    name: "5V"
+    source: "USB-C VBUS / 5V pin"
+    voltage:
+      evidence:
+        - "lilygo-ttgo-t-display-pinmap#right-b"
+      note: "Pin label 5V; nominal."
+      status: "single-source"
+      unit: "V"
+      value: 5
+revision: "V1.1"
+status: "partially-verified"
+variants:
+  - id: "ttgo-t-display-4mb"
+    module: "ttgo-t-display-core"
+vendor: "LilyGO"

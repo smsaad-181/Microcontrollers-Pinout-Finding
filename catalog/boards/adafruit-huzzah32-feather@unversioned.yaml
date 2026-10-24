@@ -1,0 +1,216 @@
+# Adafruit HUZZAH32 ESP32 Feather (task boards-1). Sources: Adafruit Learning System pages (Pinouts, Power Management; read 2026-10-24) and the adafruit/Adafruit-HUZZAH32-ESP32-Feather-PCB EAGLE schematic (commit e23514c).
+# Pad mapping comes from the schematic nets (JP1/JP3 header pin numbers); labels are the guide silkscreen labels where the guide names the pin (A0-A5, 21, 13, 12, 27, 33, 15, 32, 14) and the schematic net names otherwise (MISO/MOSI/SCK/SDA/SCL, IO16/IO17).
+# IO16/IO17 are the guide "RX/TX" Serial1 pins by inference of the pad numbers only; the guide does not state RX = GPIO16. Labelled by net name on purpose.
+# JP1 pin 14 has no net in the schematic (the guide does not label it): omitted, not guessed. JP1-1..16 are listed bottom row, JP3 top row (guide "Bottom row"/"Top row").
+# GPIO2, GPIO0 (except via Q2) and GPIO35 are not on the headers. Revision: the repository and guide carry no revision string ("unversioned").
+# Single key (researcher + author); blind audit pending.
+connectors:
+  - id: "JP1"
+    pins:
+      - kind: "gpio"
+        label: "21"
+        pad: "GPIO21"
+        position: 1
+      - kind: "gpio"
+        label: "IO17"
+        pad: "GPIO17"
+        position: 2
+      - kind: "gpio"
+        label: "IO16"
+        pad: "GPIO16"
+        position: 3
+      - kind: "gpio"
+        label: "MISO"
+        pad: "GPIO19"
+        position: 4
+      - kind: "gpio"
+        label: "MOSI"
+        pad: "GPIO18"
+        position: 5
+      - kind: "gpio"
+        label: "SCK"
+        pad: "GPIO5"
+        position: 6
+      - kind: "gpio"
+        label: "A5"
+        pad: "GPIO4"
+        position: 7
+      - kind: "gpio"
+        label: "A4"
+        pad: "GPIO36"
+        position: 8
+      - kind: "gpio"
+        label: "A3"
+        pad: "GPIO39"
+        position: 9
+      - kind: "gpio"
+        label: "A2"
+        pad: "GPIO34"
+        position: 10
+      - kind: "gpio"
+        label: "A1"
+        pad: "GPIO25"
+        position: 11
+      - kind: "gpio"
+        label: "A0"
+        pad: "GPIO26"
+        position: 12
+      - kind: "ground"
+        label: "GND"
+        position: 13
+      - kind: "power"
+        label: "3V"
+        position: 15
+        rail: "3V3"
+      - kind: "reset"
+        label: "RESET"
+        position: 16
+    side: "bottom"
+  - id: "JP3"
+    pins:
+      - kind: "power"
+        label: "BAT"
+        position: 1
+        rail: "BAT"
+      - kind: "enable"
+        label: "EN"
+        position: 2
+      - kind: "power"
+        label: "USB"
+        position: 3
+        rail: "USB"
+      - kind: "gpio"
+        label: "13"
+        pad: "GPIO13"
+        position: 4
+      - kind: "gpio"
+        label: "12"
+        pad: "GPIO12"
+        position: 5
+      - kind: "gpio"
+        label: "27"
+        pad: "GPIO27"
+        position: 6
+      - kind: "gpio"
+        label: "33"
+        pad: "GPIO33"
+        position: 7
+      - kind: "gpio"
+        label: "15"
+        pad: "GPIO15"
+        position: 8
+      - kind: "gpio"
+        label: "32"
+        pad: "GPIO32"
+        position: 9
+      - kind: "gpio"
+        label: "14"
+        pad: "GPIO14"
+        position: 10
+      - kind: "gpio"
+        label: "SCL"
+        pad: "GPIO22"
+        position: 11
+      - kind: "gpio"
+        label: "SDA"
+        pad: "GPIO23"
+        position: 12
+    side: "top"
+id: "adafruit-huzzah32-feather"
+logic_voltage:
+  evidence:
+    - "adafruit-huzzah32-learn-pinouts#logic-3v3"
+  status: "single-source"
+  unit: "V"
+  value: 3.3
+name: "Adafruit HUZZAH32 - ESP32 Feather"
+numbering:
+  primary: "label"
+onboard:
+  - effect: "LED load on GPIO13 (next to the USB port)."
+    evidence:
+      - "adafruit-huzzah32-learn-pinouts#d13-led"
+      - "adafruit-huzzah32-sch#net-jp3-4"
+      - "adafruit-huzzah32-sch#d3-led"
+      - "adafruit-huzzah32-sch#r10-1k"
+      - "adafruit-huzzah32-sch#net-n5"
+    part: "D3 red LED with R10 1K"
+    uses_pad:
+      - "GPIO13"
+  - effect: "UART0 TXD0/RXD0 wired to the bridge; used for flashing and console; not on the header."
+    evidence:
+      - "adafruit-huzzah32-sch#ic1-cp2104"
+      - "adafruit-huzzah32-sch#net-rxd0"
+      - "adafruit-huzzah32-sch#net-txd0"
+    part: "IC1 CP2104 USB-to-UART bridge"
+    uses_pad:
+      - "GPIO1"
+      - "GPIO3"
+  - effect: "Q2 can pull GPIO0 low (and Q1 pulls EN) for download mode; GPIO0 is not on the header."
+    evidence:
+      - "adafruit-huzzah32-sch#net-gpio0"
+      - "adafruit-huzzah32-sch#net-reset"
+      - "adafruit-huzzah32-sch#net-dtr"
+      - "adafruit-huzzah32-sch#net-rts"
+    part: "Q1/Q2 mmbt2222 auto-reset (bridge DTR/RTS)"
+    uses_pad:
+      - "GPIO0"
+  - effect: "GPIO35 (A13) reads VBAT/2; input-only pad, not on the header."
+    evidence:
+      - "adafruit-huzzah32-learn-pinouts#a13"
+      - "adafruit-huzzah32-learn-power#vbat-divider"
+      - "adafruit-huzzah32-sch#net-vbat-adc"
+      - "adafruit-huzzah32-sch#r1-100k"
+      - "adafruit-huzzah32-sch#r3-100k"
+    part: "R1/R3 100K VBAT divider"
+    uses_pad:
+      - "GPIO35"
+rails:
+  - max_current:
+      evidence:
+        - "adafruit-huzzah32-learn-power#reg-500ma"
+      note: "Peak rating; guide: not continuous from 5V, and about half is drawn by the ESP32 (budget 250 mA for the module)."
+      status: "single-source"
+      unit: "mA"
+      value: 500
+    name: "3V3"
+    source: "U2 AP2112-3.3 regulator from USB (via changeover MOSFET/diode) or LiPo BAT"
+    voltage:
+      evidence:
+        - "adafruit-huzzah32-learn-pinouts#3v-pin"
+      status: "single-source"
+      value: 3.3
+  - max_current:
+      evidence: []
+      note: "Guide gives no current rating for the USB pin (USB host / cable limited)."
+      status: "missing"
+      unit: "mA"
+      value: null
+    name: "USB"
+    source: "micro-USB VBUS"
+    voltage:
+      evidence:
+        - "adafruit-huzzah32-learn-power#usb-5v"
+      status: "single-source"
+      unit: "V"
+      value: 5
+  - max_current:
+      evidence: []
+      note: "No current rating stated for the BAT pin."
+      status: "missing"
+      unit: "mA"
+      value: null
+    name: "BAT"
+    source: "JST-PH LiPo connector (optional single-cell LiPo)"
+    voltage:
+      evidence: []
+      note: "Battery dependent; the guide gives only LiPo 4.2/3.7 V text and \"3.2V or so\" cutoff, not a pin rating."
+      status: "missing"
+      unit: "V"
+      value: null
+revision: "unversioned"
+status: "partially-verified"
+variants:
+  - id: "huzzah32-wroom-32"
+    module: "esp32-wroom-32"
+vendor: "Adafruit Industries"

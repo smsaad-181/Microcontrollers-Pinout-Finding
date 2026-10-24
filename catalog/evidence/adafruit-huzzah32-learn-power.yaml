@@ -1,0 +1,35 @@
+# Evidence record: Adafruit Learning System, HUZZAH32 Power Management page (read 2026-10-24, HTML, no hash).
+accessed: "2026-10-24"
+claims:
+  - id: "adafruit-huzzah32-learn-power#reg-500ma"
+    locator: "Power Management, Power Supplies"
+    quote: "We use a 500mA peak regulator. While you can get 500mA from it, you can't do it continuously from 5V"
+    supports: "3V3 regulator is a 500 mA peak part, not continuous"
+  - id: "adafruit-huzzah32-learn-power#budget-250ma"
+    locator: "Power Management, Power Supplies"
+    quote: "Please budget 250mA for the WROOM32 module."
+    supports: "Module budget 250 mA (WROOM32 module fitted)"
+  - id: "adafruit-huzzah32-learn-power#usb-5v"
+    locator: "Power Management, Battery + USB Power"
+    quote: "the Feather will regulate the 5V USB down to 3.3V."
+    supports: "USB rail is 5 V, regulated to 3.3 V"
+  - id: "adafruit-huzzah32-learn-power#ext-3v"
+    locator: "Power Management, Alternative Power Options"
+    quote: "Not recommended, this may cause unexpected behavior and the EN pin will no longer work."
+    supports: "External 3.3 V into the 3V pin is not supported"
+  - id: "adafruit-huzzah32-learn-power#vbat-divider"
+    locator: "Power Management, Measuring Battery"
+    quote: "You can read half of the battery voltage off of A13 also known as GPIO 35."
+    supports: "GPIO35 reads VBAT/2 (divider), not exposed on the header"
+doc_number: null
+id: "adafruit-huzzah32-learn-power"
+kind: "board-guide"
+manual: false
+publisher: "Adafruit Industries"
+revision: "page last edited August 23, 2024"
+revision_date: null
+secondary: false
+sha256: null
+title: "Adafruit HUZZAH32 - ESP32 Feather: Power Management"
+url: "https://learn.adafruit.com/adafruit-huzzah32-esp32-feather/power-management"
+url_original: null

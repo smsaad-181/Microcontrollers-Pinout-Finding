@@ -1,0 +1,230 @@
+# NodeMCU-32S (Ai-Thinker) V1.2 (task boards-1). Source: Ai-Thinker Nodemcu-32s Datasheet V1 (secondary retailer copy of the maker PDF); header map and onboard parts transcribed from the page-10 schematic image (J1/J2 pin numbers as printed there). Single key; blind audit pending.
+# Labels are the Table 2 names (P34 ... SD2 ...). Table 2 numbers the right-hand pins 20..38 in the opposite order to the schematic J2: positions here are the schematic J1/J2 pin numbers.
+# SD2/SD3/CMD/SD0/SD1/CLK are kind nc (flash pins; interim flash use, see module). Rail/regulator current ratings and the module flash voltage are missing.
+# Revision V1.2 is the schematic title block (the datasheet itself is "Version V1").
+connectors:
+  - id: "J1"
+    pins:
+      - kind: "power"
+        label: "3.3V"
+        position: 1
+        rail: "3V3"
+      - kind: "reset"
+        label: "EN"
+        position: 2
+      - kind: "gpio"
+        label: "SVP"
+        pad: "GPIO36"
+        position: 3
+      - kind: "gpio"
+        label: "SVN"
+        pad: "GPIO39"
+        position: 4
+      - kind: "gpio"
+        label: "P34"
+        pad: "GPIO34"
+        position: 5
+      - kind: "gpio"
+        label: "P35"
+        pad: "GPIO35"
+        position: 6
+      - kind: "gpio"
+        label: "P32"
+        pad: "GPIO32"
+        position: 7
+      - kind: "gpio"
+        label: "P33"
+        pad: "GPIO33"
+        position: 8
+      - kind: "gpio"
+        label: "P25"
+        pad: "GPIO25"
+        position: 9
+      - kind: "gpio"
+        label: "P26"
+        pad: "GPIO26"
+        position: 10
+      - kind: "gpio"
+        label: "P27"
+        pad: "GPIO27"
+        position: 11
+      - kind: "gpio"
+        label: "P14"
+        pad: "GPIO14"
+        position: 12
+      - kind: "gpio"
+        label: "P12"
+        pad: "GPIO12"
+        position: 13
+      - kind: "ground"
+        label: "GND"
+        position: 14
+      - kind: "gpio"
+        label: "P13"
+        pad: "GPIO13"
+        position: 15
+      - kind: "nc"
+        label: "SD2"
+        position: 16
+      - kind: "nc"
+        label: "SD3"
+        position: 17
+      - kind: "nc"
+        label: "CMD"
+        position: 18
+      - kind: "power"
+        label: "5V"
+        position: 19
+        rail: "5V"
+    side: "left"
+  - id: "J2"
+    pins:
+      - kind: "ground"
+        label: "GND"
+        position: 1
+      - kind: "gpio"
+        label: "P23"
+        pad: "GPIO23"
+        position: 2
+      - kind: "gpio"
+        label: "P22"
+        pad: "GPIO22"
+        position: 3
+      - kind: "gpio"
+        label: "TX"
+        pad: "GPIO1"
+        position: 4
+      - kind: "gpio"
+        label: "RX"
+        pad: "GPIO3"
+        position: 5
+      - kind: "gpio"
+        label: "P21"
+        pad: "GPIO21"
+        position: 6
+      - kind: "ground"
+        label: "GND"
+        position: 7
+      - kind: "gpio"
+        label: "P19"
+        pad: "GPIO19"
+        position: 8
+      - kind: "gpio"
+        label: "P18"
+        pad: "GPIO18"
+        position: 9
+      - kind: "gpio"
+        label: "P5"
+        pad: "GPIO5"
+        position: 10
+      - kind: "gpio"
+        label: "P17"
+        pad: "GPIO17"
+        position: 11
+      - kind: "gpio"
+        label: "P16"
+        pad: "GPIO16"
+        position: 12
+      - kind: "gpio"
+        label: "P4"
+        pad: "GPIO4"
+        position: 13
+      - kind: "gpio"
+        label: "P0"
+        pad: "GPIO0"
+        position: 14
+      - kind: "gpio"
+        label: "P2"
+        pad: "GPIO2"
+        position: 15
+      - kind: "gpio"
+        label: "P15"
+        pad: "GPIO15"
+        position: 16
+      - kind: "nc"
+        label: "SD1"
+        position: 17
+      - kind: "nc"
+        label: "SD0"
+        position: 18
+      - kind: "nc"
+        label: "CLK"
+        position: 19
+    side: "right"
+id: "nodemcu-32s"
+logic_voltage:
+  evidence:
+    - "nodemcu-32s-ds-v1#supply"
+  note: "Module typical supply 3.3 V; the 3V3 rail (U4 AMS1117-3.3) feeds it."
+  status: "single-source"
+  unit: "V"
+  value: 3.3
+name: "NodeMCU-32S"
+numbering:
+  primary: "label"
+onboard:
+  - effect: "Module UART0 (U0TX/U0RX) wired to the bridge for flashing and console."
+    evidence:
+      - "nodemcu-32s-ds-v1#sch-usb-uart"
+      - "nodemcu-32s-ds-v1#sch-j2-a"
+    part: "U2 CP2102 USB-to-UART bridge"
+    uses_pad:
+      - "GPIO1"
+      - "GPIO3"
+  - effect: "Bridge DTR/RTS can pull EN and GPIO0 low to enter download mode."
+    evidence:
+      - "nodemcu-32s-ds-v1#sch-autoprog"
+    part: "VT1/VT2 S8050 auto-program circuit (DTR/RTS)"
+    uses_pad:
+      - "GPIO0"
+  - effect: "Pulls GPIO0 low through 470 ohm; GPIO0 has a 12K pull-up to 3V3."
+    evidence:
+      - "nodemcu-32s-ds-v1#sch-key-io0"
+    part: "S2 boot button with R12 470 / R14 12K pull-up"
+    uses_pad:
+      - "GPIO0"
+  - effect: "LED load on GPIO2 (strapping pad), sinks to GND through 470 ohm."
+    evidence:
+      - "nodemcu-32s-ds-v1#sch-led-io2"
+    part: "LED1 blue with R9 470"
+    uses_pad:
+      - "GPIO2"
+rails:
+  - max_current:
+      evidence: []
+      note: "The Ai-Thinker datasheet and schematic print no current rating; the AMS1117 manufacturer datasheet was not used."
+      status: "missing"
+      unit: "mA"
+      value: null
+    name: "3V3"
+    source: "U4 AMS1117-3.3 from VDD5V (schematic)"
+    voltage:
+      evidence:
+        - "nodemcu-32s-ds-v1#sch-reg"
+      status: "single-source"
+      transcribed: true
+      unit: "V"
+      value: 3.3
+  - max_current:
+      evidence: []
+      note: "No current rating for the USB / 5V path is printed."
+      status: "missing"
+      unit: "mA"
+      value: null
+    name: "5V"
+    source: "micro-USB VDDUSB through D1 1N5819/SS14 diode (VDD5V), or the 5V pin"
+    voltage:
+      evidence:
+        - "nodemcu-32s-ds-v1#sch-usb-diode"
+        - "nodemcu-32s-ds-v1#sch-j1-b"
+      note: "Rail name VDD5V / pin label 5V; value 5 is the USB nominal, not printed as a number in the datasheet."
+      status: "single-source"
+      transcribed: true
+      unit: "V"
+      value: 5
+revision: "V1.2"
+status: "partially-verified"
+variants:
+  - id: "nodemcu-32s-wroom-32s"
+    module: "esp32-wroom-32s"
+vendor: "Shenzhen Ai-Thinker Technology"

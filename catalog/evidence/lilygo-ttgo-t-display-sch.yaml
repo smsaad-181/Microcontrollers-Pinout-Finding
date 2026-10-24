@@ -1,0 +1,31 @@
+# Evidence record: LilyGO TTGO T-Display schematic PDF, read 2026-10-24 via pdftotext (text is label soup without connectivity). Only net/part labels are quoted; its header pin order was NOT used (it appears to be a different revision than V1.1).
+accessed: "2026-10-24"
+claims:
+  - id: "lilygo-ttgo-t-display-sch#flash"
+    locator: "page 1, flash symbol"
+    quote: "W25Q32 CS DO WP GND VCC HOLD CLK DI/1O0"
+    supports: "External 32 Mbit SPI flash W25Q32 on the module-less ESP32"
+  - id: "lilygo-ttgo-t-display-sch#flash-nets"
+    locator: "page 1, flash nets"
+    quote: "SCS/CMD SDO/SD0 SWP/SD3 GND VDD_SDIO"
+    supports: "Flash lines SCS/CMD, SDO/SD0, SWP/SD3, SHD/SD2, SCK/CLK, SDI/SD1 (GPIO6-11) go to the W25Q32"
+  - id: "lilygo-ttgo-t-display-sch#lcd-nets"
+    locator: "page 1, ST7789 connector nets"
+    quote: "IO19 IO18 IO16 IO23 IO5 VDD3V3"
+    supports: "Display connector nets IO19, IO18, IO16, IO23, IO5 (corroborates README)"
+  - id: "lilygo-ttgo-t-display-sch#vdd3v3"
+    locator: "page 1"
+    quote: "VDD3V3"
+    supports: "Logic supply net VDD3V3"
+doc_number: null
+id: "lilygo-ttgo-t-display-sch"
+kind: "schematic"
+manual: false
+publisher: "LilyGO (Xinyuan-LilyGO)"
+revision: "repository commit 6f89cddcde7152b84f7afc1831b6a1dee1fc3206"
+revision_date: null
+secondary: false
+sha256: "aea09366b9e23c498d127363b73dc8211cd1cff9031b7482dbe521cb8b807121"
+title: "ESP32-TFT(6-26).pdf (TTGO T-Display schematic)"
+url: "https://github.com/Xinyuan-LilyGO/TTGO-T-Display/blob/master/schematic/ESP32-TFT(6-26).pdf"
+url_original: "https://raw.githubusercontent.com/Xinyuan-LilyGO/TTGO-T-Display/master/schematic/ESP32-TFT(6-26).pdf"
