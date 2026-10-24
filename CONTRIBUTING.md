@@ -1,7 +1,7 @@
 # Contributing
 
 Thanks for helping. This project is a pin-allocation tool whose answers are only as good as its data,
-so the rules below are strict about **evidence**. This is a skeleton; Phase 5 completes it.
+so the rules below are strict about **evidence**. 
 
 ## Ground rules
 
@@ -51,6 +51,20 @@ pnpm install --frozen-lockfile
    `sources/manual/README.md` and mark the facts `missing`.
 
 Every pin needs all three names: chip GPIO number, board silkscreen label, and connector position.
+
+## Review and ownership
+
+`.github/CODEOWNERS` assigns `catalog/`, `packages/rules/`, `packages/engine/` and `.github/` to the
+project owner. Turn on "Require review from Code Owners" in the branch protection for `main`. A
+catalog pull request needs: a clean `pnpm catalog:validate`, evidence records for every new fact, and
+a note saying who did the second check. The weekly `links.yml` run checks that sources stay reachable
+(`pnpm check:links` locally).
+
+## Adding a photo
+
+Photos are for recognising a board or part. Put the file in `apps/web/src/assets/photos/` (max 480 px
+wide, aim under 60 KB), register it in `apps/web/src/catalog/photos*.ts` with its credit, licence and
+source page, and add a row to `docs/image-credits.md`. Prefer openly licensed or your own photos.
 
 ## Code conventions
 

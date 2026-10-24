@@ -13,8 +13,38 @@ jobs:
   links:
     name: links
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      issues: write
     steps:
-      # Stub until Phase 5: will run `pnpm catalog check-links` and open an issue on drift
-      # (that step will need `issues: write` on this job).
-      - run: echo "links.yml is a no-op stub until Phase 5 (source URL and hash re-check)."
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+      # Exit code 1 only for dead links (404, 410, DNS). Blocked or slow sites are listed, not failed.
+      - id: check
+        run: |
+          set +e
+          node tools/check-links.mjs --json links.json | tee links.txt
+          echo "code=${PIPESTATUS[0]}" >> "$GITHUB_OUTPUT"
+      - name: Open or update the "dead evidence links" issue
+        if: steps.check.outputs.code != '0'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          body="Weekly link check found dead evidence links. The stored facts stay valid (each record keeps its file hash), but the source needs a new URL or an archive copy.
+
+          \`\`\`
+          $(grep -E '^(DEAD)' links.txt || true)
+          \`\`\`"
+          existing=$(gh issue list --state open --label evidence-links --json number --jq '.[0].number // empty')
+          if [ -n "$existing" ]; then
+            gh issue comment "$existing" --body "$body"
+          else
+            gh issue create --title "Dead evidence links" --label evidence-links --body "$body" || \
+              gh issue create --title "Dead evidence links" --body "$body"
+          fi
+      - name: Fail on dead links
+        if: steps.check.outputs.code != '0'
+        run: exit 1

@@ -1,0 +1,5 @@
+# Catalog facts and the rules that read them need the owner's review before they merge.
+/catalog/ @smsaad-181
+/packages/rules/ @smsaad-181
+/packages/engine/ @smsaad-181
+/.github/ @smsaad-181

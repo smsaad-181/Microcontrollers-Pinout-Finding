@@ -20,7 +20,8 @@
     "mutation": "pnpm -r --workspace-concurrency=1 --if-present run mutation",
     "check:rules-disabled": "node tools/checks/rules-disabled.mjs",
     "check:boundaries": "node tools/checks/boundaries.mjs",
-    "check:size": "node tools/checks/size.mjs"
+    "check:size": "node tools/checks/size.mjs",
+    "check:links": "node tools/check-links.mjs"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",

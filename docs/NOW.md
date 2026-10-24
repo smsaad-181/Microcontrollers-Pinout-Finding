@@ -8,3 +8,6 @@ Where: Overall about 95%.
 
 ## Update (pickers redesigned)
 Board page has a brand sidebar (ESP > Espressif/Waveshare/..., Arduino, Raspberry Pi), search and photo cards. Module page has categories and one card per board version. Photos for all boards and modules (credits in docs/image-credits.md; most are product images used with credit, the owner chose this). Single HTML rebuilt. Next: Phase 5 (pin finder only).
+
+## Update (Phase 5 built)
+Phase 5 work is done on branch phase-5 and merged to main: link checker (`pnpm check:links`, weekly links.yml), README, provenance, CONTRIBUTING, CODEOWNERS, CHANGELOG, docs/RELEASE.md, bench procedure. Reviewer: PASS (0 Critical/Major, 6 minor; 3 fixed). 12 of 12 sampled facts re-confirmed. Waiting for the owner: run docs/validation/phase-5/bench-procedure.md and fill bench.md, then follow docs/RELEASE.md (push, enable Pages, restore deploy trigger, tag v1.0.0). Overall about 98%.
