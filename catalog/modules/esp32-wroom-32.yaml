@@ -1,6 +1,6 @@
 # ESP32-WROOM-32 module (original, ESP32-D0WDQ6, 4 MB flash; NRND), task boards-1. Source: ESP32-WROOM-32 Datasheet v3.8.
 # bonded_pads = 32 pads led out on module pins (Figure 1 / Table 2): includes GPIO6-GPIO11 on pins 17-22, which are consumed by the in-module flash.
-# Single key (researcher + author); blind audit pending.
+# Two keys (hardware-researcher, hardware-fact-auditor): bonded_pads, consumed GPIO6-11 and psram agree. flash_voltage stays missing (the datasheet text does not say which grade is fitted).
 bonded_pads:
   - "GPIO0"
   - "GPIO1"
@@ -40,38 +40,44 @@ consumed:
     evidence:
       - "esp32-wroom-32-ds-v3.8#gpio6-11-flash"
       - "esp32-wroom-32-ds-v3.8#pin-layout-15-25"
-    status: "single-source"
+    reviewers: ["hardware-researcher", "hardware-fact-auditor"]
+    status: "verified"
     value: "flash"
   GPIO11:
     evidence:
       - "esp32-wroom-32-ds-v3.8#gpio6-11-flash"
       - "esp32-wroom-32-ds-v3.8#pin-layout-15-25"
-    status: "single-source"
+    reviewers: ["hardware-researcher", "hardware-fact-auditor"]
+    status: "verified"
     value: "flash"
   GPIO6:
     evidence:
       - "esp32-wroom-32-ds-v3.8#gpio6-11-flash"
       - "esp32-wroom-32-ds-v3.8#pin-layout-15-25"
     note: "Led out on module pins 17-22 (unlike WROOM-32E) but connected to the in-module flash; datasheet: \"not recommended for other uses\". Treated as consumed."
-    status: "single-source"
+    reviewers: ["hardware-researcher", "hardware-fact-auditor"]
+    status: "verified"
     value: "flash"
   GPIO7:
     evidence:
       - "esp32-wroom-32-ds-v3.8#gpio6-11-flash"
       - "esp32-wroom-32-ds-v3.8#pin-layout-15-25"
-    status: "single-source"
+    reviewers: ["hardware-researcher", "hardware-fact-auditor"]
+    status: "verified"
     value: "flash"
   GPIO8:
     evidence:
       - "esp32-wroom-32-ds-v3.8#gpio6-11-flash"
       - "esp32-wroom-32-ds-v3.8#pin-layout-15-25"
-    status: "single-source"
+    reviewers: ["hardware-researcher", "hardware-fact-auditor"]
+    status: "verified"
     value: "flash"
   GPIO9:
     evidence:
       - "esp32-wroom-32-ds-v3.8#gpio6-11-flash"
       - "esp32-wroom-32-ds-v3.8#pin-layout-15-25"
-    status: "single-source"
+    reviewers: ["hardware-researcher", "hardware-fact-auditor"]
+    status: "verified"
     value: "flash"
 flash_voltage:
   evidence: []
@@ -84,5 +90,6 @@ psram:
   evidence:
     - "esp32-wroom-32-ds-v3.8#flash-4mb"
   note: "Ordering table (Table 1) lists a single part with 4 MB flash and no PSRAM column. Absence of PSRAM is inferred from that table."
-  status: "single-source"
+  reviewers: ["hardware-researcher", "hardware-fact-auditor"]
+  status: "verified"
   value: "none"

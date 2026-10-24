@@ -1,4 +1,4 @@
-# NodeMCU-32S (Ai-Thinker) V1.2 (task boards-1). Source: Ai-Thinker Nodemcu-32s Datasheet V1 (secondary retailer copy of the maker PDF); header map and onboard parts transcribed from the page-10 schematic image (J1/J2 pin numbers as printed there). Single key; blind audit pending.
+# NodeMCU-32S (Ai-Thinker) V1.2 (task boards-1). Source: Ai-Thinker Nodemcu-32s Datasheet V1 (secondary retailer copy of the maker PDF); header map and onboard parts transcribed from the page-10 schematic image (J1/J2 pin numbers as printed there). Blind audit done (pins and onboard entries agree); rail voltages stay single-source because the datasheet is a retailer-hosted secondary copy (Ai-Thinker docs returned 403).
 # Labels are the Table 2 names (P34 ... SD2 ...). Table 2 numbers the right-hand pins 20..38 in the opposite order to the schematic J2: positions here are the schematic J1/J2 pin numbers.
 # SD2/SD3/CMD/SD0/SD1/CLK are kind nc (flash pins; interim flash use, see module). Rail/regulator current ratings and the module flash voltage are missing.
 # Revision V1.2 is the schematic title block (the datasheet itself is "Version V1").

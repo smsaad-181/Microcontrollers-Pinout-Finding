@@ -3,7 +3,7 @@
 # IO16/IO17 are the guide "RX/TX" Serial1 pins by inference of the pad numbers only; the guide does not state RX = GPIO16. Labelled by net name on purpose.
 # JP1 pin 14 has no net in the schematic (the guide does not label it): omitted, not guessed. JP1-1..16 are listed bottom row, JP3 top row (guide "Bottom row"/"Top row").
 # GPIO2, GPIO0 (except via Q2) and GPIO35 are not on the headers. Revision: the repository and guide carry no revision string ("unversioned").
-# Single key (researcher + author); blind audit pending.
+# Two keys (hardware-researcher, hardware-fact-auditor); audit agrees on all pins and facts. The auditor resolved the RX/TX question: the official pinout PNG ties RX=GPIO16, TX=GPIO17 and labels JP1-14 N/C (labels left as net names).
 connectors:
   - id: "JP1"
     pins:
@@ -120,7 +120,8 @@ id: "adafruit-huzzah32-feather"
 logic_voltage:
   evidence:
     - "adafruit-huzzah32-learn-pinouts#logic-3v3"
-  status: "single-source"
+  reviewers: ["hardware-researcher", "hardware-fact-auditor"]
+  status: "verified"
   unit: "V"
   value: 3.3
 name: "Adafruit HUZZAH32 - ESP32 Feather"
@@ -170,7 +171,8 @@ rails:
       evidence:
         - "adafruit-huzzah32-learn-power#reg-500ma"
       note: "Peak rating; guide: not continuous from 5V, and about half is drawn by the ESP32 (budget 250 mA for the module)."
-      status: "single-source"
+      reviewers: ["hardware-researcher", "hardware-fact-auditor"]
+      status: "verified"
       unit: "mA"
       value: 500
     name: "3V3"
@@ -178,7 +180,8 @@ rails:
     voltage:
       evidence:
         - "adafruit-huzzah32-learn-pinouts#3v-pin"
-      status: "single-source"
+      reviewers: ["hardware-researcher", "hardware-fact-auditor"]
+      status: "verified"
       value: 3.3
   - max_current:
       evidence: []
@@ -191,7 +194,8 @@ rails:
     voltage:
       evidence:
         - "adafruit-huzzah32-learn-power#usb-5v"
-      status: "single-source"
+      reviewers: ["hardware-researcher", "hardware-fact-auditor"]
+      status: "verified"
       unit: "V"
       value: 5
   - max_current:

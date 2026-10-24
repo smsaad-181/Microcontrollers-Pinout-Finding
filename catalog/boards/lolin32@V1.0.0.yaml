@@ -1,7 +1,7 @@
 # LOLIN32 V1.0.0 (WEMOS, retired) (task boards-1). Sources: WEMOS LOLIN32 V1.0.0 schematic (Internet Archive copy of the maker PDF; transcribed from the rendered image) and the archived WEMOS wiki product page.
 # Positions are the P2 (1x16) / P3 (1x20) pin numbers printed in the schematic; labels are the schematic net names (VP/VN = SENSOR_VP/SENSOR_VN = GPIO36/GPIO39 via the module symbol).
 # Flash chip, regulator and PSRAM data: flash size 4 MB (wiki). Module is ESP-WROOM-32 (schematic U1 label); the boards variant uses module record esp32-wroom-32.
-# Hardware revisions of LOLIN32 other than 1.0.0 are not covered. Single key; blind audit pending.
+# Hardware revisions of LOLIN32 other than 1.0.0 are not covered. Blind audit done (pins and onboard entries agree); rail facts stay single-source because the sources are Internet Archive copies.
 connectors:
   - id: "P2"
     pins:

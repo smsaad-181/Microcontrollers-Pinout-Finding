@@ -1,6 +1,6 @@
-# ESP-WROVER-KIT v4.1 (task boards-1). Source: ESP-WROVER-KIT v4.1 Getting Started Guide (esp-dev-kits, latest, read 2026-10-24). Single key (researcher + author); blind audit pending.
+# ESP-WROVER-KIT v4.1 (task boards-1). Source: ESP-WROVER-KIT v4.1 Getting Started Guide (esp-dev-kits, latest, read 2026-10-24). Blind audit done (hardware-fact-auditor), corrections applied: BOOT pulls GPIO0 and GPIO2, SD strap pull-ups added, RGB wording.
 # Positions: the guide does not number the JP1 pins; positions are the table row numbers (1..14). Connector JP1-left = left "I/O" column, JP1-right = right "I/O" column. PCB orientation of the rows is not stated.
-# IO32/IO33 and IO16/IO17 are kind nc: not connected to JP1 by default (guide note) although the JP1 table prints their names. GPIO16/17 are PSRAM pads (module consumed).
+# IO32/IO33 are kind nc: not connected to JP1 by default (guide note). IO16/IO17 stay kind nc (conservative) with status conflict: the guide says not broken out by default, but the v4.1 schematic (esp-wrover-kit-v4.1-sch#gpio16-17-wired, R146/R147 -> R106/R108, 0R, no NC mark) wires them to JP1-23/22. They are PSRAM CS/CLK either way (module consumed).
 # 3V3 max_current 1000 mA is the LDO capability. 5V max_current missing.
 connectors:
   - id: "JP1-left"
@@ -120,14 +120,15 @@ logic_voltage:
   evidence:
     - "esp-wrover-kit-v4.1-ug#ldo"
     - "esp-wrover-kit-v4.1-ug#spi-3v3"
-  status: "single-source"
+  reviewers: ["hardware-researcher", "hardware-fact-auditor"]
+  status: "verified"
   unit: "V"
   value: 3.3
 name: "ESP-WROVER-KIT"
 numbering:
   primary: "gpio"
 onboard:
-  - effect: "LED loads on GPIO0 and GPIO2 (boot-mode strapping pads) and GPIO4."
+  - effect: "Drives RGB LED via N-MOSFET gates (Q7 red GPIO0, Q6 green GPIO2, Q8 blue GPIO4); LED lights when the pad is high. GPIO0 and GPIO2 are boot-mode strapping pads."
     evidence:
       - "esp-wrover-kit-v4.1-ug#rgb-led"
     part: "RGB LED (red GPIO0, green GPIO2, blue GPIO4)"
@@ -135,13 +136,28 @@ onboard:
       - "GPIO0"
       - "GPIO2"
       - "GPIO4"
-  - effect: "Pulls GPIO0 low; with EN selects firmware download mode."
+  - effect: "Pulls GPIO0 and GPIO2 low (Q10 and Q11); with EN selects firmware download mode."
     evidence:
       - "esp-wrover-kit-v4.1-ug#boot-button"
       - "esp-wrover-kit-v4.1-ug#jp1-row-13"
-    part: "SW2 BOOT button"
+      - "esp-wrover-kit-v4.1-sch#boot-io0"
+      - "esp-wrover-kit-v4.1-sch#boot-io2"
+    part: "BOOT button (guide: SW2; schematic: SW3)"
     uses_pad:
       - "GPIO0"
+      - "GPIO2"
+  - effect: "10 k pull-ups to 3V3 on the SD lines (R153 GPIO2, R152 GPIO4, R156 GPIO13, R154 GPIO14, R155 GPIO15) and on GPIO21 card detect (R168); the GPIO12 pull-up R157 is not fitted. GPIO2 is a strapping pad held high by 10 k: external circuits must not fight it."
+    evidence:
+      - "esp-wrover-kit-v4.1-sch#sd-pullups"
+      - "esp-wrover-kit-v4.1-sch#sd-cd-r168"
+    part: "SD card pull-ups R152-R156, R168"
+    uses_pad:
+      - "GPIO2"
+      - "GPIO4"
+      - "GPIO13"
+      - "GPIO14"
+      - "GPIO15"
+      - "GPIO21"
   - effect: "Pads are wired to the camera header; free for other use only when nothing is plugged into JP4."
     evidence:
       - "esp-wrover-kit-v4.1-ug#cam-1"
@@ -223,8 +239,10 @@ rails:
   - max_current:
       evidence:
         - "esp-wrover-kit-v4.1-ug#ldo"
-      note: "Guide: \"NCP1117 can provide a maximum current of 1A\" (regulator capability; not a budget after the module and onboard peripherals)."
-      status: "single-source"
+        - "esp-wrover-kit-v4.1-sch#ldo-ncp1117"
+      note: "Guide: \"NCP1117 can provide a maximum current of 1A\" (regulator capability; not a budget after the module and onboard peripherals). Schematic U4 is an NCP1117."
+      reviewers: ["hardware-researcher", "hardware-fact-auditor"]
+      status: "verified"
       unit: "mA"
       value: 1000
     name: "3V3"
@@ -232,12 +250,13 @@ rails:
     voltage:
       evidence:
         - "esp-wrover-kit-v4.1-ug#ldo"
-      status: "single-source"
+      reviewers: ["hardware-researcher", "hardware-fact-auditor"]
+      status: "verified"
       unit: "V"
       value: 3.3
   - max_current:
       evidence: []
-      note: "The guide states no current rating for the USB or DC-jack 5V input; the schematic PDF was not used as evidence."
+      note: "The guide states no current rating for the USB or DC-jack 5V input; the schematic (read by the auditor) prints none."
       status: "missing"
       unit: "mA"
       value: null
@@ -246,7 +265,9 @@ rails:
     voltage:
       evidence:
         - "esp-wrover-kit-v4.1-ug#5v-input"
-      status: "single-source"
+        - "esp-wrover-kit-v4.1-sch#sw-5v"
+      reviewers: ["hardware-researcher", "hardware-fact-auditor"]
+      status: "verified"
       unit: "V"
       value: 5
 revision: "v4.1"

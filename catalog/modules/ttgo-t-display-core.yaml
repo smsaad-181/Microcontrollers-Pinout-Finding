@@ -40,49 +40,49 @@ consumed:
     evidence:
       - "lilygo-ttgo-t-display-sch#flash-nets"
       - "lilygo-ttgo-t-display-sch#flash"
-    note: "Bare ESP32-D0WDQ6-class chip with an external W25Q32 on the SD/SPI flash lines; schematic text lists nets without connectivity (label soup), so read as label evidence only."
-    status: "single-source"
-    transcribed: true
+    note: "Bare ESP32-D0WDQ6-class chip with an external W25Q32 on the SD/SPI flash lines; W25Q32 wiring (CS, DO, WP, HOLD, CLK, DI to SCS/SDO/SWP/SHD/SCK/SDI) confirmed by the auditor on the rendered schematic."
+    reviewers: ["hardware-researcher", "hardware-fact-auditor"]
+    status: "verified"
     value: "flash"
   GPIO11:
     evidence:
       - "lilygo-ttgo-t-display-sch#flash-nets"
       - "lilygo-ttgo-t-display-sch#flash"
-    note: "Bare ESP32-D0WDQ6-class chip with an external W25Q32 on the SD/SPI flash lines; schematic text lists nets without connectivity (label soup), so read as label evidence only."
-    status: "single-source"
-    transcribed: true
+    note: "Bare ESP32-D0WDQ6-class chip with an external W25Q32 on the SD/SPI flash lines; W25Q32 wiring (CS, DO, WP, HOLD, CLK, DI to SCS/SDO/SWP/SHD/SCK/SDI) confirmed by the auditor on the rendered schematic."
+    reviewers: ["hardware-researcher", "hardware-fact-auditor"]
+    status: "verified"
     value: "flash"
   GPIO6:
     evidence:
       - "lilygo-ttgo-t-display-sch#flash-nets"
       - "lilygo-ttgo-t-display-sch#flash"
-    note: "Bare ESP32-D0WDQ6-class chip with an external W25Q32 on the SD/SPI flash lines; schematic text lists nets without connectivity (label soup), so read as label evidence only."
-    status: "single-source"
-    transcribed: true
+    note: "Bare ESP32-D0WDQ6-class chip with an external W25Q32 on the SD/SPI flash lines; W25Q32 wiring (CS, DO, WP, HOLD, CLK, DI to SCS/SDO/SWP/SHD/SCK/SDI) confirmed by the auditor on the rendered schematic."
+    reviewers: ["hardware-researcher", "hardware-fact-auditor"]
+    status: "verified"
     value: "flash"
   GPIO7:
     evidence:
       - "lilygo-ttgo-t-display-sch#flash-nets"
       - "lilygo-ttgo-t-display-sch#flash"
-    note: "Bare ESP32-D0WDQ6-class chip with an external W25Q32 on the SD/SPI flash lines; schematic text lists nets without connectivity (label soup), so read as label evidence only."
-    status: "single-source"
-    transcribed: true
+    note: "Bare ESP32-D0WDQ6-class chip with an external W25Q32 on the SD/SPI flash lines; W25Q32 wiring (CS, DO, WP, HOLD, CLK, DI to SCS/SDO/SWP/SHD/SCK/SDI) confirmed by the auditor on the rendered schematic."
+    reviewers: ["hardware-researcher", "hardware-fact-auditor"]
+    status: "verified"
     value: "flash"
   GPIO8:
     evidence:
       - "lilygo-ttgo-t-display-sch#flash-nets"
       - "lilygo-ttgo-t-display-sch#flash"
-    note: "Bare ESP32-D0WDQ6-class chip with an external W25Q32 on the SD/SPI flash lines; schematic text lists nets without connectivity (label soup), so read as label evidence only."
-    status: "single-source"
-    transcribed: true
+    note: "Bare ESP32-D0WDQ6-class chip with an external W25Q32 on the SD/SPI flash lines; W25Q32 wiring (CS, DO, WP, HOLD, CLK, DI to SCS/SDO/SWP/SHD/SCK/SDI) confirmed by the auditor on the rendered schematic."
+    reviewers: ["hardware-researcher", "hardware-fact-auditor"]
+    status: "verified"
     value: "flash"
   GPIO9:
     evidence:
       - "lilygo-ttgo-t-display-sch#flash-nets"
       - "lilygo-ttgo-t-display-sch#flash"
-    note: "Bare ESP32-D0WDQ6-class chip with an external W25Q32 on the SD/SPI flash lines; schematic text lists nets without connectivity (label soup), so read as label evidence only."
-    status: "single-source"
-    transcribed: true
+    note: "Bare ESP32-D0WDQ6-class chip with an external W25Q32 on the SD/SPI flash lines; W25Q32 wiring (CS, DO, WP, HOLD, CLK, DI to SCS/SDO/SWP/SHD/SCK/SDI) confirmed by the auditor on the rendered schematic."
+    reviewers: ["hardware-researcher", "hardware-fact-auditor"]
+    status: "verified"
     value: "flash"
 flash_voltage:
   evidence: []
@@ -95,5 +95,6 @@ psram:
   evidence:
     - "lilygo-ttgo-t-display-readme#psram-off"
   note: "README build setting \"select Disable in the PSRAM option\"."
-  status: "single-source"
+  reviewers: ["hardware-researcher", "hardware-fact-auditor"]
+  status: "verified"
   value: "none"

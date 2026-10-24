@@ -1,5 +1,6 @@
 # Ai-Thinker ESP-WROOM-32s module (as fitted on NodeMCU-32S), task boards-1. Source: Nodemcu-32s Datasheet V1 (secondary copy), Table 1/Table 2; flash-pin use is interim from ESP-WROOM-32 datasheet v3.8.
 # bonded_pads = the 32 module pads on header pins (Table 2 / schematic J1, J2), including the six SD pins.
+# Blind audit: bonded_pads agree (M1 footprint; an alternate M2 WROVER-style footprint with pins 27/28 NC exists on the schematic, fitted variant not verified). Consumed GPIO6-11 stay interim (secondary-hosted copy; Fig. 1 "FLASH" labels support them).
 bonded_pads:
   - "GPIO0"
   - "GPIO1"

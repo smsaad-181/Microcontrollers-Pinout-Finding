@@ -1,7 +1,7 @@
 # TTGO T-Display V1.1 (task boards-1). Sources: LilyGO README and pinmap image (maker repository, commit 6f89cdd) plus the schematic PDF (label evidence only). The pinmap is an image: header rows are transcribed (USB at the bottom; rows numbered top to bottom).
-# Header labels are the numbers/names printed in the pinmap; 37/38 are GPIO37/GPIO38. USB-UART bridge and charger pads are not stated in the sources (the schematic text has no connectivity): no onboard entry, gap recorded.
+# Header labels are the numbers/names printed in the pinmap; 37/38 are GPIO37/GPIO38. The blind audit read the schematic visually: header order matches the pinmap, U4 CP2104 bridge and U7 AP2112K-3.3 regulator are evidenced.
 # Module: bare ESP32 plus external 4 MB flash, modelled as ttgo-t-display-core (no RF module datasheet applies).
-# Single key; blind audit pending.
+# Two keys (hardware-researcher, hardware-fact-auditor); audit corrections applied. Facts not both-key agreed (logic voltage inferred, rail currents) stay single-source/missing.
 connectors:
   - id: "J-left"
     pins:
@@ -127,40 +127,64 @@ onboard:
       - "GPIO18"
       - "GPIO19"
       - "GPIO23"
-  - effect: "GPIO0 is the boot-mode strapping pad (button also used for download mode); GPIO35 is input-only with no internal pull."
+  - effect: "GPIO0 is the boot-mode strapping pad (button also used for download mode); GPIO35 is input-only with no internal pull but has an external R1 100 K pull-up to VDD3V3. Both buttons have 100 nF to GND (C3 on GPIO0, C11 on GPIO35)."
     evidence:
       - "lilygo-ttgo-t-display-readme#buttons"
       - "lilygo-ttgo-t-display-pinmap#btns"
+      - "lilygo-ttgo-t-display-sch#key1-r1"
     part: "Button 1 (GPIO35) and Button 2 (GPIO0)"
     uses_pad:
       - "GPIO0"
       - "GPIO35"
-  - effect: "GPIO34 reads the battery divider; input-only, not on the header."
+  - effect: "GPIO34 reads the battery divider (R6/R7 100 K/100 K from BAT, reads BAT/2; not switched); input-only, not on the header."
     evidence:
       - "lilygo-ttgo-t-display-readme#adc-in"
+      - "lilygo-ttgo-t-display-sch#bat-divider"
     part: "Battery voltage divider (ADC_IN)"
     uses_pad:
       - "GPIO34"
-  - effect: "README names GPIO14 \"ADC Power\" (enables the battery-measurement path); circuit not read."
+  - effect: "PWR_EN: via Q3 switches P-FET Q6 (VDD3V3 to V3V rail feeding the LCD-line pull-ups) and Q4 (battery path); the BAT/2 divider on GPIO34 is not switched. README calls it \"ADC Power\" (quote only)."
     evidence:
       - "lilygo-ttgo-t-display-readme#adc-power"
-    part: "ADC power control"
+      - "lilygo-ttgo-t-display-sch#pwr-en"
+      - "lilygo-ttgo-t-display-sch#q3-pmbt3904"
+    part: "PWR_EN power switch (Q3, Q4, Q6)"
     uses_pad:
       - "GPIO14"
+  - effect: "Input-only SENSOR_CAPP/CAPN pads: 270 pF couples 36 to 37 (C49) and 38 to 39 (C32), so signals cross-couple and fast edges are loaded."
+    evidence:
+      - "lilygo-ttgo-t-display-sch#cap-270pf"
+    part: "Sensor coupling capacitors C49, C32"
+    uses_pad:
+      - "GPIO36"
+      - "GPIO37"
+      - "GPIO38"
+      - "GPIO39"
+  - effect: "UART0 TX/RX wired to the USB bridge (used for flashing and console); Q1/Q2 auto-program drive CHIP_PU and GPIO0."
+    evidence:
+      - "lilygo-ttgo-t-display-sch#uart0-nets"
+      - "lilygo-ttgo-t-display-sch#q3-pmbt3904"
+    part: "U4 CP2104 USB-to-UART bridge, Q1/Q2 auto-program"
+    uses_pad:
+      - "GPIO0"
+      - "GPIO1"
+      - "GPIO3"
 rails:
   - max_current:
       evidence: []
-      note: "Regulator part and current rating not identified in the README, pinmap or schematic text."
+      note: "Regulator is U7 AP2112K-3.3 (RT9013 alternate); its current rating is not cited (regulator datasheet not read), so the value stays missing."
       status: "missing"
       unit: "mA"
       value: null
     name: "3V3"
-    source: "onboard regulator (part not read)"
+    source: "U7 AP2112K-3.3 (RT9013)"
     voltage:
       evidence:
         - "lilygo-ttgo-t-display-pinmap#left-b"
+        - "lilygo-ttgo-t-display-sch#ldo-ap2112k"
       note: "Pin label 3V3."
-      status: "single-source"
+      reviewers: ["hardware-researcher", "hardware-fact-auditor"]
+      status: "verified"
       unit: "V"
       value: 3.3
   - max_current:
@@ -175,7 +199,8 @@ rails:
       evidence:
         - "lilygo-ttgo-t-display-pinmap#right-b"
       note: "Pin label 5V; nominal."
-      status: "single-source"
+      reviewers: ["hardware-researcher", "hardware-fact-auditor"]
+      status: "verified"
       unit: "V"
       value: 5
 revision: "V1.1"
