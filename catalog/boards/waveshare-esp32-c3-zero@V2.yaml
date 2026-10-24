@@ -1,0 +1,50 @@
+# Waveshare ESP32-C3-Zero (and -M with headers). Chip ESP32-C3FH4 used bare. Revision "V2" is taken from the schematic file name ESP32-C3-Zero-Sch-V2.pdf (the wiki prints no revision). Two keys (researcher + blind auditor) agree on every fact.
+# Sources: Waveshare wiki page and the schematic PDF (18-pin header read from the rendered drawing).
+# Connector P1 = the 18 castellated pads in schematic numbering. IO18/IO19 are USB D-/D+; GPIO9 (BOOT) and GPIO10 (RGB LED) are also on the header. GPIO11-GPIO17 have no pad.
+# Gap: the wiki shows no pinout picture in the page text; the physical left/right position of each pad is not transcribed (only the schematic numbering). No current rating for the 3V3 LDO is given for this board (the 800 mA figure appears only for the sibling Zero/Tiny boards).
+connectors:
+  - id: "P1"
+    pins:
+      - {"kind": "power", "label": "5V", "position": 1, "rail": "5V"}
+      - {"kind": "ground", "label": "GND", "position": 2}
+      - {"kind": "power", "label": "3V3", "position": 3, "rail": "3V3"}
+      - {"kind": "gpio", "label": "IO0", "pad": "GPIO0", "position": 4}
+      - {"kind": "gpio", "label": "IO1", "pad": "GPIO1", "position": 5}
+      - {"kind": "gpio", "label": "IO2", "pad": "GPIO2", "position": 6}
+      - {"kind": "gpio", "label": "IO3", "pad": "GPIO3", "position": 7}
+      - {"kind": "gpio", "label": "IO4", "pad": "GPIO4", "position": 8}
+      - {"kind": "gpio", "label": "IO5", "pad": "GPIO5", "position": 9}
+      - {"kind": "gpio", "label": "IO6", "pad": "GPIO6", "position": 10}
+      - {"kind": "gpio", "label": "IO7", "pad": "GPIO7", "position": 11}
+      - {"kind": "gpio", "label": "IO8", "pad": "GPIO8", "position": 12}
+      - {"kind": "gpio", "label": "IO9", "pad": "GPIO9", "position": 13}
+      - {"kind": "gpio", "label": "IO10", "pad": "GPIO10", "position": 14}
+      - {"kind": "gpio", "label": "IO18", "pad": "GPIO18", "position": 15}
+      - {"kind": "gpio", "label": "IO19", "pad": "GPIO19", "position": 16}
+      - {"kind": "gpio", "label": "RX", "pad": "GPIO20", "position": 17}
+      - {"kind": "gpio", "label": "TX", "pad": "GPIO21", "position": 18}
+id: "waveshare-esp32-c3-zero"
+logic_voltage: {"evidence": ["waveshare-esp32-c3-zero-sch-v2#ldo-part"], "note": "LDO ME6217C33M5G (33 = 3.3 V) makes VCC3.3 for the chip. Derived, not stated in a sentence.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "unit": "V", "value": 3.3}
+name: "ESP32-C3-Zero"
+numbering: {"primary": "label"}
+onboard:
+  - {"effect": "DIN is on GPIO10 (supply 5V). GPIO10 is also header pin 14, so a load there disturbs the LED.", "evidence": ["waveshare-esp32-c3-zero-wiki#rgb-led", "waveshare-esp32-c3-zero-sch-v2#rgb-part"], "part": "WS_L1 WS2812B addressable RGB LED", "uses_pad": ["GPIO10"]}
+  - {"effect": "Pulls GPIO9 (strapping pin, normally high) to ground; hold BOOT while connecting the cable for download mode. GPIO9 is also header pin 13.", "evidence": ["waveshare-esp32-c3-zero-wiki#boot-button", "waveshare-esp32-c3-zero-sch-v2#keys"], "part": "BOOT button", "uses_pad": ["GPIO9"]}
+  - {"effect": "Pulls CHIP_EN low (10K pull-up R21, 100 nF C6); not a GPIO pad.", "evidence": ["waveshare-esp32-c3-zero-sch-v2#keys"], "part": "RESET button on CHIP_EN", "uses_pad": []}
+  - {"effect": "D-/D+ are wired to GPIO18/GPIO19, which are also header pins 15/16.", "evidence": ["waveshare-esp32-c3-zero-wiki#no-uart-chip", "waveshare-esp32-c3-zero-sch-v2#usb-native"], "part": "USB Type-C connector (native USB Serial/JTAG, no bridge chip)", "uses_pad": ["GPIO18", "GPIO19"]}
+  - {"effect": "TX (GPIO21) and RX (GPIO20) are header pins 18/17; no bridge is attached.", "evidence": ["waveshare-esp32-c3-zero-wiki#uart0-pins", "waveshare-esp32-c3-zero-sch-v2#header"], "part": "UART0 pads TX/RX", "uses_pad": ["GPIO20", "GPIO21"]}
+  - {"effect": "GPIO12-GPIO17 are wired to the stacked 4 MB flash and not exposed.", "evidence": ["waveshare-esp32-c3-zero-wiki#flash-pins", "waveshare-esp32-c3-zero-wiki#chip"], "part": "ESP32-C3FH4 in-package flash", "uses_pad": ["GPIO12", "GPIO13", "GPIO14", "GPIO15", "GPIO16", "GPIO17"]}
+rails:
+  - max_current: {"evidence": [], "note": "The C3-Zero wiki and schematic do not state an LDO current rating.", "status": "missing", "unit": "mA", "value": null}
+    name: "3V3"
+    source: "ME6217C33M5G LDO from 5V (schematic)"
+    voltage: {"evidence": ["waveshare-esp32-c3-zero-sch-v2#ldo-part"], "note": "LDO output 3.3 V (part code C33).", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "unit": "V", "value": 3.3}
+  - max_current: {"evidence": [], "note": "No current rating for the 5 V pad is stated.", "status": "missing", "unit": "mA", "value": null}
+    name: "5V"
+    source: "USB-C VBUS or the 5V castellated pad (header pin 1)"
+    voltage: {"evidence": ["waveshare-esp32-c3-zero-wiki#vin-range"], "note": "Wiki: input 3.7 V to 6 V on the pad silkscreened 5V.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "unit": "V", "value": {"max": 6, "min": 3.7}}
+revision: "V2"
+status: "partially-verified"
+variants:
+  - {"id": "waveshare-esp32-c3-zero-fh4", "module": "esp32-c3fh4"}
+vendor: "Waveshare"

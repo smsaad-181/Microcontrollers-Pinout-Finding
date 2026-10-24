@@ -1,0 +1,103 @@
+# Evidence record: ESP32-C3 Series Datasheet (read 2026-10-24; one key, boards-2 task; a blind auditor must re-read every claim).
+accessed: "2026-10-24"
+claims:
+  - {"id": "esp32-c3-ds-v2.4#strap-pins-list", "locator": "§3 Boot Configurations, Chip boot mode", "quote": "Strapping pins: GPIO2, GPIO8, and GPIO9", "supports": "Strapping pins of ESP32-C3 are GPIO2, GPIO8 and GPIO9 (only these)"}
+  - {"id": "esp32-c3-ds-v2.4#strap-default-gpio2", "locator": "§3, Table 3-1", "quote": "GPIO2 Floating", "supports": "GPIO2 strapping pin default configuration: floating (no internal pull)"}
+  - {"id": "esp32-c3-ds-v2.4#strap-default-gpio8", "locator": "§3, Table 3-1", "quote": "GPIO8 Floating", "supports": "GPIO8 strapping pin default configuration: floating"}
+  - {"id": "esp32-c3-ds-v2.4#strap-default-gpio9", "locator": "§3, Table 3-1", "quote": "GPIO9 Weak pull-up 1", "supports": "GPIO9 strapping pin default: weak pull-up, bit value 1"}
+  - {"id": "esp32-c3-ds-v2.4#boot-spi", "locator": "§3.1, Table 3-3 Chip Boot Mode Control", "quote": "SPI boot mode 1 Any value 1", "supports": "SPI boot (normal run): GPIO2=1, GPIO8 any, GPIO9=1"}
+  - {"id": "esp32-c3-ds-v2.4#boot-download", "locator": "§3.1, Table 3-3 Chip Boot Mode Control", "quote": "Joint download boot mode 3 1 1 0", "supports": "Joint download boot: GPIO2=1, GPIO8=1, GPIO9=0"}
+  - {"id": "esp32-c3-ds-v2.4#boot-gpio2-note", "locator": "§3.1, Table 3-3 footnote 2", "quote": "it is recommended to pull this pin up due to glitches.", "supports": "GPIO2 does not select the boot mode; pulling it up is recommended because of glitches"}
+  - {"id": "esp32-c3-ds-v2.4#strap-gpio8-rom-print", "locator": "§3 Boot Configurations, ROM message printing", "quote": "Strapping pin: GPIO8", "supports": "GPIO8 is the ROM message printing strapping pin (with eFuse UART_PRINT_CONTROL)"}
+  - {"id": "esp32-c3-ds-v2.4#power-up-glitch-intro", "locator": "§2.2, before Table 2-2", "quote": "Some pins have glitches during power-up. See details in Table 2-2.", "supports": "Pins with power-up glitches are listed in Table 2-2 (and only those)"}
+  - {"id": "esp32-c3-ds-v2.4#usb-default", "locator": "§2.3.3 Restrictions for GPIOs, USB_D+/-", "quote": "USB_D+/- by default, connected to the USB Serial/JTAG Controller.", "supports": "GPIO18/GPIO19 are connected to the USB Serial/JTAG controller by default"}
+  - {"id": "esp32-c3-ds-v2.4#flash-pins", "locator": "§2.3.4 Priority 4", "quote": "GPIO12, GPIO13, GPIO14, GPIO15, GPIO16, GPIO17 : SPI0/1 interface connected to the", "supports": "GPIO12-GPIO17 are the SPI0/1 pins connected to the in-package flash"}
+  - {"id": "esp32-c3-ds-v2.4#flash-notice", "locator": "§2.6, Notice", "quote": "Do not use the pins connected to in-package flash for any other purposes.", "supports": "Pads wired to the in-package flash must not be used for other purposes"}
+  - {"id": "esp32-c3-ds-v2.4#vdd-spi-gpio11", "locator": "§2.3.4 Priority 3", "quote": "GPIO11 : The VDD_SPI pin.", "supports": "GPIO11 is the VDD_SPI pin (flash supply by default; GPIO only with an externally powered flash)"}
+  - {"id": "esp32-c3-ds-v2.4#flash-3v3", "locator": "§2.3.1, Table 2-3", "quote": "3.3 V SPI0/1 interface for connection to in-package or off-package flash", "supports": "The SPI0/1 flash interface is a 3.3 V interface (in-package or off-package flash)"}
+  - {"id": "esp32-c3-ds-v2.4#abs-max-cumulative-current", "locator": "§5.1, Table 5-1", "quote": "Ioutput 2 Cumulative IO output current -- 1000 mA", "supports": "Cumulative IO output current 1000 mA (fully functional test, footnote 2)"}
+  - {"id": "esp32-c3-ds-v2.4#recommended-supply", "locator": "§5.2, Table 5-2", "quote": "VDD3P3_CPU 2, 3 Recommended input voltage 3.0 3.3 3.6 V", "supports": "VDD3P3_CPU recommended 3.0/3.3/3.6 V (min/typ/max); other supplies likewise"}
+  - {"id": "esp32-c3-ds-v2.4#dc-vih", "locator": "§5.4, Table 5-4", "quote": "VIH High-level input voltage 0.75 VDD 1 -- VDD 1 + 0.3 V", "supports": "VIH min = 0.75 x VDD"}
+  - {"id": "esp32-c3-ds-v2.4#dc-vil", "locator": "§5.4, Table 5-4", "quote": "VIL Low-level input voltage 0.3 -- 0.25 VDD 1 V", "supports": "VIL max = 0.25 x VDD"}
+  - {"id": "esp32-c3-ds-v2.4#dc-voh", "locator": "§5.4, Table 5-4", "quote": "VOH 2 High-level output voltage 0.8 VDD 1 -- -- V", "supports": "VOH min = 0.8 x VDD (high-impedance load)"}
+  - {"id": "esp32-c3-ds-v2.4#dc-vol", "locator": "§5.4, Table 5-4", "quote": "VOL 2 Low-level output voltage -- -- 0.1 VDD 1 V", "supports": "VOL max = 0.1 x VDD (high-impedance load)"}
+  - {"id": "esp32-c3-ds-v2.4#dc-pull-up", "locator": "§5.4, Table 5-4", "quote": "RP U Internal weak pull-up resistor -- 45 -- k", "supports": "Internal weak pull-up typ 45 kohm"}
+  - {"id": "esp32-c3-ds-v2.4#dc-pull-down", "locator": "§5.4, Table 5-4", "quote": "RP D Internal weak pull-down resistor -- 45 -- k", "supports": "Internal weak pull-down typ 45 kohm"}
+  - {"id": "esp32-c3-ds-v2.4#drive-strength-default", "locator": "§2.2, Table 2-1 footnote 4", "quote": "GPIO2, GPIO3, MTMS, and MTDI: 10 mA", "supports": "Default drive strength 10 mA on GPIO2/GPIO3/MTMS/MTDI, 40 mA on GPIO18/19, 20 mA elsewhere"}
+  - {"id": "esp32-c3-ds-v2.4#adc-atten0-range", "locator": "§5.5, Table 5-6 ADC Calibration Results", "quote": "ATTEN0, effective measurement range of 0 ~ 750", "supports": "ATTEN0 effective measurement range 0 ~ 750 mV"}
+  - {"id": "esp32-c3-ds-v2.4#adc-atten1-range", "locator": "§5.5, Table 5-6 ADC Calibration Results", "quote": "ATTEN1, effective measurement range of 0 ~ 1050", "supports": "ATTEN1 effective measurement range 0 ~ 1050 mV"}
+  - {"id": "esp32-c3-ds-v2.4#adc-atten2-range", "locator": "§5.5, Table 5-6 ADC Calibration Results", "quote": "ATTEN2, effective measurement range of 0 ~ 1300", "supports": "ATTEN2 effective measurement range 0 ~ 1300 mV"}
+  - {"id": "esp32-c3-ds-v2.4#adc-atten3-range", "locator": "§5.5, Table 5-6 ADC Calibration Results", "quote": "ATTEN3, effective measurement range of 0 ~ 2500", "supports": "ATTEN3 effective measurement range 0 ~ 2500 mV"}
+  - {"id": "esp32-c3-ds-v2.4#spi2-master-80mhz", "locator": "§4.2.1.2 SPI Controller, as a master", "quote": "Supports 2-line full-duplex communication with clock frequency up to 80 MHz", "supports": "GP-SPI (SPI2) master up to 80 MHz (2-line full duplex and 1/2/4-line half duplex)"}
+  - {"id": "esp32-c3-ds-v2.4#table-1-1-fh4", "locator": "§1.2, Table 1-1 ESP32-C3 Series Comparison", "quote": "ESP32-C3FH4 4 MB 40 105 QFN32 (5*5) 22 v0.4", "supports": "ESP32-C3FH4: 4 MB in-package flash, QFN32, 22 GPIOs, chip revision v0.4"}
+  - {"id": "esp32-c3-ds-v2.4#table-1-1-fh4x", "locator": "§1.2, Table 1-1 ESP32-C3 Series Comparison", "quote": "ESP32-C3FH4X 4 MB 40 105 QFN32 (5*5) 16 v1.1", "supports": "ESP32-C3FH4X: 4 MB in-package flash, QFN32, 16 GPIOs, chip revision v1.1"}
+  - {"id": "esp32-c3-ds-v2.4#fh4x-pins-19-24-nc", "locator": "§2.2, Table 2-1 footnote 9", "quote": "For ESP32-C3FH4AZ and ESP32-C3FH4X, pins within the frame (namely pin 19", "supports": "On ESP32-C3FH4AZ/FH4X the flash pins (pin 19-24 = GPIO12-GPIO17) are not bonded out"}
+  - {"id": "esp32-c3-ds-v2.4#table-2-12-inpackage-flash", "locator": "§2.6, Table 2-12", "quote": "Table 2-12. Pin Mapping Between Chip and In-package Flash", "supports": "GPIO12-GPIO17 (SPIHD, SPIWP, SPICS0, SPICLK, SPID, SPIQ) are mapped to the in-package flash"}
+  - {"id": "esp32-c3-ds-v2.4#vdd-spi-flash-supply", "locator": "§2.2, Table 2-1 footnote 8", "quote": "By default VDD_SPI is the power supply pin for in-package and off-package flash.", "supports": "VDD_SPI (GPIO11) is by default the flash supply pin"}
+  - {"id": "esp32-c3-ds-v2.4#pin-overview-gpio0", "locator": "§2.2, Table 2-1 Pin Overview", "quote": "4 XTAL_32K_P IO VDD3P3_RTC IO MUX Analog", "supports": "Table 2-1 row of pin 4 (XTAL_32K_P = GPIO0): power domain and pin settings at/after reset"}
+  - {"id": "esp32-c3-ds-v2.4#iomux-gpio0", "locator": "§2.3.1, Table 2-4 IO MUX Pin Functions", "quote": "4 GPIO0 GPIO0 I/O/T GPIO0 I/O/T", "supports": "Table 2-4 row of GPIO0: IO MUX functions F0-F2 and types"}
+  - {"id": "esp32-c3-ds-v2.4#analog-gpio0", "locator": "§2.3.2, Table 2-6 Analog Functions", "quote": "4 GPIO0 XTAL_32K_P ADC1_CH0", "supports": "GPIO0 has analog function ADC1_CH0"}
+  - {"id": "esp32-c3-ds-v2.4#pin-overview-gpio1", "locator": "§2.2, Table 2-1 Pin Overview", "quote": "5 XTAL_32K_N IO VDD3P3_RTC IO MUX Analog", "supports": "Table 2-1 row of pin 5 (XTAL_32K_N = GPIO1): power domain and pin settings at/after reset"}
+  - {"id": "esp32-c3-ds-v2.4#iomux-gpio1", "locator": "§2.3.1, Table 2-4 IO MUX Pin Functions", "quote": "5 GPIO1 GPIO1 I/O/T GPIO1 I/O/T", "supports": "Table 2-4 row of GPIO1: IO MUX functions F0-F2 and types"}
+  - {"id": "esp32-c3-ds-v2.4#analog-gpio1", "locator": "§2.3.2, Table 2-6 Analog Functions", "quote": "5 GPIO1 XTAL_32K_N ADC1_CH1", "supports": "GPIO1 has analog function ADC1_CH1"}
+  - {"id": "esp32-c3-ds-v2.4#pin-overview-gpio2", "locator": "§2.2, Table 2-1 Pin Overview", "quote": "6 GPIO2 IO VDD3P3_RTC IE IE IO MUX Analog", "supports": "Table 2-1 row of pin 6 (GPIO2 = GPIO2): power domain and pin settings at/after reset"}
+  - {"id": "esp32-c3-ds-v2.4#iomux-gpio2", "locator": "§2.3.1, Table 2-4 IO MUX Pin Functions", "quote": "6 GPIO2 GPIO2 I/O/T GPIO2 I/O/T FSPIQ I1/O/T", "supports": "Table 2-4 row of GPIO2: IO MUX functions F0-F2 and types"}
+  - {"id": "esp32-c3-ds-v2.4#analog-gpio2", "locator": "§2.3.2, Table 2-6 Analog Functions", "quote": "6 GPIO2 ADC1_CH2", "supports": "GPIO2 has analog function ADC1_CH2"}
+  - {"id": "esp32-c3-ds-v2.4#pin-overview-gpio3", "locator": "§2.2, Table 2-1 Pin Overview", "quote": "8 GPIO3 IO VDD3P3_RTC IE IE IO MUX Analog", "supports": "Table 2-1 row of pin 8 (GPIO3 = GPIO3): power domain and pin settings at/after reset"}
+  - {"id": "esp32-c3-ds-v2.4#iomux-gpio3", "locator": "§2.3.1, Table 2-4 IO MUX Pin Functions", "quote": "8 GPIO3 GPIO3 I/O/T GPIO3 I/O/T", "supports": "Table 2-4 row of GPIO3: IO MUX functions F0-F2 and types"}
+  - {"id": "esp32-c3-ds-v2.4#analog-gpio3", "locator": "§2.3.2, Table 2-6 Analog Functions", "quote": "8 GPIO3 ADC1_CH3", "supports": "GPIO3 has analog function ADC1_CH3"}
+  - {"id": "esp32-c3-ds-v2.4#pin-overview-gpio4", "locator": "§2.2, Table 2-1 Pin Overview", "quote": "9 MTMS IO VDD3P3_RTC IE IO MUX Analog", "supports": "Table 2-1 row of pin 9 (MTMS = GPIO4): power domain and pin settings at/after reset"}
+  - {"id": "esp32-c3-ds-v2.4#iomux-gpio4", "locator": "§2.3.1, Table 2-4 IO MUX Pin Functions", "quote": "9 GPIO4 MTMS I1 GPIO4 I/O/T FSPIHD I1/O/T", "supports": "Table 2-4 row of GPIO4: IO MUX functions F0-F2 and types"}
+  - {"id": "esp32-c3-ds-v2.4#analog-gpio4", "locator": "§2.3.2, Table 2-6 Analog Functions", "quote": "9 GPIO4 ADC1_CH4", "supports": "GPIO4 has analog function ADC1_CH4"}
+  - {"id": "esp32-c3-ds-v2.4#pin-overview-gpio5", "locator": "§2.2, Table 2-1 Pin Overview", "quote": "10 MTDI IO VDD3P3_RTC IE IO MUX Analog", "supports": "Table 2-1 row of pin 10 (MTDI = GPIO5): power domain and pin settings at/after reset"}
+  - {"id": "esp32-c3-ds-v2.4#iomux-gpio5", "locator": "§2.3.1, Table 2-4 IO MUX Pin Functions", "quote": "10 GPIO5 MTDI I1 GPIO5 I/O/T FSPIWP I1/O/T", "supports": "Table 2-4 row of GPIO5: IO MUX functions F0-F2 and types"}
+  - {"id": "esp32-c3-ds-v2.4#analog-gpio5", "locator": "§2.3.2, Table 2-6 Analog Functions", "quote": "10 GPIO5 ADC2_CH0", "supports": "GPIO5 has analog function ADC2_CH0"}
+  - {"id": "esp32-c3-ds-v2.4#pin-overview-gpio6", "locator": "§2.2, Table 2-1 Pin Overview", "quote": "12 MTCK IO VDD3P3_CPU IE 6 IO MUX", "supports": "Table 2-1 row of pin 12 (MTCK = GPIO6): power domain and pin settings at/after reset"}
+  - {"id": "esp32-c3-ds-v2.4#iomux-gpio6", "locator": "§2.3.1, Table 2-4 IO MUX Pin Functions", "quote": "12 GPIO6 MTCK I1 GPIO6 I/O/T FSPICLK I1/O/T", "supports": "Table 2-4 row of GPIO6: IO MUX functions F0-F2 and types"}
+  - {"id": "esp32-c3-ds-v2.4#glitch-gpio6", "locator": "§2.2, Table 2-2 Power-Up Glitches on Pins", "quote": "MTCK Low-level glitch 5", "supports": "Power-up glitch of MTCK (GPIO6): Low-level glitch, typical 5 ns"}
+  - {"id": "esp32-c3-ds-v2.4#pin-overview-gpio7", "locator": "§2.2, Table 2-1 Pin Overview", "quote": "13 MTDO IO VDD3P3_CPU IE IO MUX", "supports": "Table 2-1 row of pin 13 (MTDO = GPIO7): power domain and pin settings at/after reset"}
+  - {"id": "esp32-c3-ds-v2.4#iomux-gpio7", "locator": "§2.3.1, Table 2-4 IO MUX Pin Functions", "quote": "13 GPIO7 MTDO O/T GPIO7 I/O/T FSPID I1/O/T", "supports": "Table 2-4 row of GPIO7: IO MUX functions F0-F2 and types"}
+  - {"id": "esp32-c3-ds-v2.4#glitch-gpio7", "locator": "§2.2, Table 2-2 Power-Up Glitches on Pins", "quote": "MTDO Low-level glitch 5", "supports": "Power-up glitch of MTDO (GPIO7): Low-level glitch, typical 5 ns"}
+  - {"id": "esp32-c3-ds-v2.4#pin-overview-gpio8", "locator": "§2.2, Table 2-1 Pin Overview", "quote": "14 GPIO8 IO VDD3P3_CPU IE IE IO MUX", "supports": "Table 2-1 row of pin 14 (GPIO8 = GPIO8): power domain and pin settings at/after reset"}
+  - {"id": "esp32-c3-ds-v2.4#iomux-gpio8", "locator": "§2.3.1, Table 2-4 IO MUX Pin Functions", "quote": "14 GPIO8 GPIO8 I/O/T GPIO8 I/O/T", "supports": "Table 2-4 row of GPIO8: IO MUX functions F0-F2 and types"}
+  - {"id": "esp32-c3-ds-v2.4#pin-overview-gpio9", "locator": "§2.2, Table 2-1 Pin Overview", "quote": "15 GPIO9 IO VDD3P3_CPU IE, WPU IE, WPU IO MUX", "supports": "Table 2-1 row of pin 15 (GPIO9 = GPIO9): power domain and pin settings at/after reset"}
+  - {"id": "esp32-c3-ds-v2.4#iomux-gpio9", "locator": "§2.3.1, Table 2-4 IO MUX Pin Functions", "quote": "15 GPIO9 GPIO9 I/O/T GPIO9 I/O/T", "supports": "Table 2-4 row of GPIO9: IO MUX functions F0-F2 and types"}
+  - {"id": "esp32-c3-ds-v2.4#pin-overview-gpio10", "locator": "§2.2, Table 2-1 Pin Overview", "quote": "16 GPIO10 IO VDD3P3_CPU IE IO MUX", "supports": "Table 2-1 row of pin 16 (GPIO10 = GPIO10): power domain and pin settings at/after reset"}
+  - {"id": "esp32-c3-ds-v2.4#iomux-gpio10", "locator": "§2.3.1, Table 2-4 IO MUX Pin Functions", "quote": "16 GPIO10 GPIO10 I/O/T GPIO10 I/O/T FSPICS0 I1/O/T", "supports": "Table 2-4 row of GPIO10: IO MUX functions F0-F2 and types"}
+  - {"id": "esp32-c3-ds-v2.4#glitch-gpio10", "locator": "§2.2, Table 2-2 Power-Up Glitches on Pins", "quote": "GPIO10 Low-level glitch 5", "supports": "Power-up glitch of GPIO10 (GPIO10): Low-level glitch, typical 5 ns"}
+  - {"id": "esp32-c3-ds-v2.4#pin-overview-gpio11", "locator": "§2.2, Table 2-1 Pin Overview", "quote": "18 VDD_SPI 8 9 Power VDD3P3_CPU IO MUX", "supports": "Table 2-1 row of pin 18 (VDD_SPI = GPIO11): power domain and pin settings at/after reset"}
+  - {"id": "esp32-c3-ds-v2.4#iomux-gpio11", "locator": "§2.3.1, Table 2-4 IO MUX Pin Functions", "quote": "18 GPIO11 GPIO11 I/O/T GPIO11 I/O/T", "supports": "Table 2-4 row of GPIO11: IO MUX functions F0-F2 and types"}
+  - {"id": "esp32-c3-ds-v2.4#pin-overview-gpio12", "locator": "§2.2, Table 2-1 Pin Overview", "quote": "19 SPIHD IO VDD_SPI / VDD3P3_CPU WPU IE, WPU IO MUX", "supports": "Table 2-1 row of pin 19 (SPIHD = GPIO12): power domain and pin settings at/after reset"}
+  - {"id": "esp32-c3-ds-v2.4#iomux-gpio12", "locator": "§2.3.1, Table 2-4 IO MUX Pin Functions", "quote": "19 GPIO12 SPIHD I1/O/T GPIO12 I/O/T", "supports": "Table 2-4 row of GPIO12: IO MUX functions F0-F2 and types"}
+  - {"id": "esp32-c3-ds-v2.4#pin-overview-gpio13", "locator": "§2.2, Table 2-1 Pin Overview", "quote": "20 SPIWP IO VDD_SPI / VDD3P3_CPU WPU IE, WPU IO MUX", "supports": "Table 2-1 row of pin 20 (SPIWP = GPIO13): power domain and pin settings at/after reset"}
+  - {"id": "esp32-c3-ds-v2.4#iomux-gpio13", "locator": "§2.3.1, Table 2-4 IO MUX Pin Functions", "quote": "20 GPIO13 SPIWP I1/O/T GPIO13 I/O/T", "supports": "Table 2-4 row of GPIO13: IO MUX functions F0-F2 and types"}
+  - {"id": "esp32-c3-ds-v2.4#pin-overview-gpio14", "locator": "§2.2, Table 2-1 Pin Overview", "quote": "21 SPICS0 IO VDD_SPI / VDD3P3_CPU WPU IE, WPU IO MUX", "supports": "Table 2-1 row of pin 21 (SPICS0 = GPIO14): power domain and pin settings at/after reset"}
+  - {"id": "esp32-c3-ds-v2.4#iomux-gpio14", "locator": "§2.3.1, Table 2-4 IO MUX Pin Functions", "quote": "21 GPIO14 SPICS0 O/T GPIO14 I/O/T", "supports": "Table 2-4 row of GPIO14: IO MUX functions F0-F2 and types"}
+  - {"id": "esp32-c3-ds-v2.4#pin-overview-gpio15", "locator": "§2.2, Table 2-1 Pin Overview", "quote": "22 SPICLK IO VDD_SPI / VDD3P3_CPU WPU IE, WPU IO MUX", "supports": "Table 2-1 row of pin 22 (SPICLK = GPIO15): power domain and pin settings at/after reset"}
+  - {"id": "esp32-c3-ds-v2.4#iomux-gpio15", "locator": "§2.3.1, Table 2-4 IO MUX Pin Functions", "quote": "22 GPIO15 SPICLK O/T GPIO15 I/O/T", "supports": "Table 2-4 row of GPIO15: IO MUX functions F0-F2 and types"}
+  - {"id": "esp32-c3-ds-v2.4#pin-overview-gpio16", "locator": "§2.2, Table 2-1 Pin Overview", "quote": "23 SPID IO VDD_SPI / VDD3P3_CPU WPU IE, WPU IO MUX", "supports": "Table 2-1 row of pin 23 (SPID = GPIO16): power domain and pin settings at/after reset"}
+  - {"id": "esp32-c3-ds-v2.4#iomux-gpio16", "locator": "§2.3.1, Table 2-4 IO MUX Pin Functions", "quote": "23 GPIO16 SPID I1/O/T GPIO16 I/O/T", "supports": "Table 2-4 row of GPIO16: IO MUX functions F0-F2 and types"}
+  - {"id": "esp32-c3-ds-v2.4#pin-overview-gpio17", "locator": "§2.2, Table 2-1 Pin Overview", "quote": "24 SPIQ IO VDD_SPI / VDD3P3_CPU WPU IE, WPU IO MUX", "supports": "Table 2-1 row of pin 24 (SPIQ = GPIO17): power domain and pin settings at/after reset"}
+  - {"id": "esp32-c3-ds-v2.4#iomux-gpio17", "locator": "§2.3.1, Table 2-4 IO MUX Pin Functions", "quote": "24 GPIO17 SPIQ I1/O/T GPIO17 I/O/T", "supports": "Table 2-4 row of GPIO17: IO MUX functions F0-F2 and types"}
+  - {"id": "esp32-c3-ds-v2.4#pin-overview-gpio18", "locator": "§2.2, Table 2-1 Pin Overview", "quote": "25 GPIO18 IO VDD3P3_CPU IO MUX Analog", "supports": "Table 2-1 row of pin 25 (GPIO18 = GPIO18): power domain and pin settings at/after reset"}
+  - {"id": "esp32-c3-ds-v2.4#iomux-gpio18", "locator": "§2.3.1, Table 2-4 IO MUX Pin Functions", "quote": "25 GPIO18 GPIO18 I/O/T GPIO18 I/O/T", "supports": "Table 2-4 row of GPIO18: IO MUX functions F0-F2 and types"}
+  - {"id": "esp32-c3-ds-v2.4#glitch-gpio18", "locator": "§2.2, Table 2-2 Power-Up Glitches on Pins", "quote": "GPIO18 High-level glitch 50000", "supports": "Power-up glitch of GPIO18 (GPIO18): High-level glitch, typical 50000 ns = 50 us"}
+  - {"id": "esp32-c3-ds-v2.4#pin-overview-gpio19", "locator": "§2.2, Table 2-1 Pin Overview", "quote": "26 GPIO19 IO VDD3P3_CPU USB_PU IO MUX Analog", "supports": "Table 2-1 row of pin 26 (GPIO19 = GPIO19): power domain and pin settings at/after reset"}
+  - {"id": "esp32-c3-ds-v2.4#iomux-gpio19", "locator": "§2.3.1, Table 2-4 IO MUX Pin Functions", "quote": "26 GPIO19 GPIO19 I/O/T GPIO19 I/O/T", "supports": "Table 2-4 row of GPIO19: IO MUX functions F0-F2 and types"}
+  - {"id": "esp32-c3-ds-v2.4#pin-overview-gpio20", "locator": "§2.2, Table 2-1 Pin Overview", "quote": "27 U0RXD IO VDD3P3_CPU IE, WPU IO MUX", "supports": "Table 2-1 row of pin 27 (U0RXD = GPIO20): power domain and pin settings at/after reset"}
+  - {"id": "esp32-c3-ds-v2.4#iomux-gpio20", "locator": "§2.3.1, Table 2-4 IO MUX Pin Functions", "quote": "27 GPIO20 U0RXD I1 GPIO20 I/O/T", "supports": "Table 2-4 row of GPIO20: IO MUX functions F0-F2 and types"}
+  - {"id": "esp32-c3-ds-v2.4#glitch-gpio20", "locator": "§2.2, Table 2-2 Power-Up Glitches on Pins", "quote": "U0RXD Low-level glitch 5", "supports": "Power-up glitch of U0RXD (GPIO20): Low-level glitch, typical 5 ns"}
+  - {"id": "esp32-c3-ds-v2.4#pin-overview-gpio21", "locator": "§2.2, Table 2-1 Pin Overview", "quote": "28 U0TXD IO VDD3P3_CPU WPU 7 IO MUX", "supports": "Table 2-1 row of pin 28 (U0TXD = GPIO21): power domain and pin settings at/after reset"}
+  - {"id": "esp32-c3-ds-v2.4#iomux-gpio21", "locator": "§2.3.1, Table 2-4 IO MUX Pin Functions", "quote": "28 GPIO21 U0TXD O GPIO21 I/O/T", "supports": "Table 2-4 row of GPIO21: IO MUX functions F0-F2 and types"}
+doc_number: null
+id: "esp32-c3-ds-v2.4"
+kind: "datasheet"
+manual: false
+publisher: "Espressif Systems"
+revision: "2.4"
+revision_date: null
+secondary: false
+sha256: "833fc000b4b3c3d39c496fcbd597fed5806956503ce7390b19cc8ae82f19f968"
+title: "ESP32-C3 Series Datasheet"
+url: "https://documentation.espressif.com/esp32-c3_datasheet_en.pdf"
+url_original: "https://www.espressif.com/sites/default/files/documentation/esp32-c3_datasheet_en.pdf"

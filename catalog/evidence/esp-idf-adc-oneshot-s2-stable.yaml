@@ -1,0 +1,16 @@
+# Evidence record: ESP-IDF Programming Guide (stable) - ADC Oneshot Mode Driver (ESP32-S2) (read 2026-10-24; one key, boards-2 task; a blind auditor must re-read every claim).
+accessed: "2026-10-24"
+claims:
+  - {"id": "esp-idf-adc-oneshot-s2-stable#adc2-wifi", "locator": "ADC Oneshot Mode Driver - ESP32-S2, ADC2 note", "quote": "ADC2 is also used by Wi-Fi.", "supports": "ADC2 is shared with Wi-Fi; only ADC2 is named"}
+doc_number: null
+id: "esp-idf-adc-oneshot-s2-stable"
+kind: "api-doc"
+manual: false
+publisher: "Espressif Systems"
+revision: "stable"
+revision_date: null
+secondary: false
+sha256: null
+title: "ESP-IDF Programming Guide (stable) - ADC Oneshot Mode Driver (ESP32-S2)"
+url: "https://docs.espressif.com/projects/esp-idf/en/stable/esp32s2/api-reference/peripherals/adc/adc_oneshot.html"
+url_original: null

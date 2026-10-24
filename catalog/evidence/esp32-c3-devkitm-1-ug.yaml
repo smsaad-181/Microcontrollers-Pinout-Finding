@@ -1,0 +1,31 @@
+# Evidence record: ESP32-C3-DevKitM-1 User Guide (esp-dev-kits, latest) (read 2026-10-24; one key, boards-2 task; a blind auditor must re-read every claim).
+# HTML page read 2026-10-24; the page carries no revision number. Header tables J1/J3 numbering is the schematic numbering.
+accessed: "2026-10-24"
+claims:
+  - {"id": "esp32-c3-devkitm-1-ug#rgb-led", "locator": "Getting Started, Description of Components table, RGB LED", "quote": "Addressable RGB LED, driven by GPIO8.", "supports": "On-board addressable RGB LED is on GPIO8"}
+  - {"id": "esp32-c3-devkitm-1-ug#boot-button", "locator": "Description of Components, Boot Button", "quote": "Download button. Holding down Boot and then pressing Reset initiates Firmware Download mode", "supports": "Boot button: hold Boot, press Reset for download mode"}
+  - {"id": "esp32-c3-devkitm-1-ug#reset-button", "locator": "Description of Components, Reset Button", "quote": "Press this button to restart the system.", "supports": "Reset button restarts the system"}
+  - {"id": "esp32-c3-devkitm-1-ug#ldo", "locator": "Description of Components, 5 V to 3.3 V LDO", "quote": "Power regulator that converts a 5 V supply into a 3.3 V output.", "supports": "3V3 rail from a 5 V to 3.3 V LDO; no current rating in the guide"}
+  - {"id": "esp32-c3-devkitm-1-ug#usb-bridge", "locator": "Description of Components, USB-to-UART Bridge", "quote": "Single USB-UART bridge chip provides transfer rates up to 3 Mbps.", "supports": "USB-to-UART bridge chip on the board"}
+  - {"id": "esp32-c3-devkitm-1-ug#usb-port", "locator": "Description of Components, Micro-USB Port", "quote": "USB interface. Power supply for the board as well as the communication interface between a computer and the ESP32-C3 series of chips.", "supports": "Micro-USB port: power and communication"}
+  - {"id": "esp32-c3-devkitm-1-ug#headers-all-gpio", "locator": "Description of Components, Pin Headers", "quote": "All available GPIO pins (except for the SPI bus for flash) are broken out to the pin headers on the board.", "supports": "All available GPIOs except the flash bus are on the headers"}
+  - {"id": "esp32-c3-devkitm-1-ug#power-options", "locator": "Hardware Reference, Power Supply Options", "quote": "There are three mutually exclusive ways to provide power to the board", "supports": "Power via micro-USB, 5V pin or 3V3 pin (mutually exclusive)"}
+  - {"id": "esp32-c3-devkitm-1-ug#header-numbering", "locator": "Hardware Reference, Header Block", "quote": "The numbering is the same as in the ESP32-C3-DevKitM-1 Schematic (PDF).", "supports": "Header positions J1/J3 follow the schematic numbering"}
+  - {"id": "esp32-c3-devkitm-1-ug#j1-table", "locator": "Header Block, J1 table (rows 1-15)", "quote": "4 | IO2 | I/O/T | GPIO2 [2], ADC1_CH2, FSPIQ", "supports": "J1 table rows: position, name, function (J1-4 = IO2 ... J1-15 = GND); the table was transcribed row by row into connector J1"}
+  - {"id": "esp32-c3-devkitm-1-ug#j1-rst", "locator": "Header Block, J1 row 7", "quote": "7 | RST | I | CHIP_PU", "supports": "J1-7 RST is CHIP_PU (reset)"}
+  - {"id": "esp32-c3-devkitm-1-ug#j3-table", "locator": "Header Block, J3 table (rows 1-15)", "quote": "2 | TX | I/O/T | GPIO21, U0TXD", "supports": "J3 table rows: J3-2 TX = GPIO21, J3-3 RX = GPIO20 ... J3-14 IO19"}
+  - {"id": "esp32-c3-devkitm-1-ug#j3-gpio8-rgb", "locator": "Header Block, J3 row 6", "quote": "6 | IO8 | I/O/T | GPIO8 [2], RGB LED", "supports": "J3-6 IO8 (GPIO8) is shared with the RGB LED"}
+  - {"id": "esp32-c3-devkitm-1-ug#j3-usb", "locator": "Header Block, J3 rows 13-14", "quote": "13 | IO18 | I/O/T | GPIO18, USB_D-", "supports": "J3-13 IO18 = USB_D-, J3-14 IO19 = USB_D+ on the header"}
+  - {"id": "esp32-c3-devkitm-1-ug#ordering-n4x", "locator": "Contents and Packaging, Ordering Information", "quote": "ESP32-C3-DevKitM-1-N4X | ESP32-C3-MINI-1 | 4 MB", "supports": "DevKitM-1-N4X carries ESP32-C3-MINI-1 with 4 MB flash; plain ESP32-C3-DevKitM-1 is EOL"}
+doc_number: null
+id: "esp32-c3-devkitm-1-ug"
+kind: "board-guide"
+manual: false
+publisher: "Espressif Systems"
+revision: "latest"
+revision_date: null
+secondary: false
+sha256: null
+title: "ESP32-C3-DevKitM-1 User Guide (esp-dev-kits, latest)"
+url: "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32c3/esp32-c3-devkitm-1/user_guide.html"
+url_original: null

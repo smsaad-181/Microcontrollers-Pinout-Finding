@@ -1,0 +1,414 @@
+# ESP32-C6 chip series (ESP32-C6 QFN40 with external flash, ESP32-C6FH4/FH8 QFN32 with in-package flash) - facts drafted by hardware-researcher (task boards-2), then re-read blind by hardware-fact-auditor (docs/validation/boards-2-audit.md): promoted to verified.
+# Sources: ESP32-C6 Series Datasheet v1.5, ESP32-C6 Series SoC Errata v1.3. Read 2026-10-24.
+# Pads: the union of the QFN40 and QFN32 GPIOs, GPIO0-GPIO30 (31 pads). GPIO10, GPIO11 and GPIO24-GPIO30 exist only on QFN40 (GPIO27 = VDD_SPI, GPIO24/25/26/28/29/30 = SPICS0/SPIQ/SPIWP/SPIHD/SPICLK/SPID); GPIO14 exists only on QFN32 (reset state read from the QFN32 table).
+# Functions: GPIO = GPIO-matrix route; other IO MUX functions F0-F2 from Tables 2-4/2-5; LP_GPIOn/LP UART/LP I2C (Table 2-7), ADC1_CHn, XTAL_32K_P/N, USB_D-/D+ and VDD_SPI (Table 2-9) are fixed.
+# reset_state = the datasheet Pin Overview 'At Reset' column (blank = no pull, input not enabled = 'disabled'); where 'After Reset' differs the note says so. GPIO13 At Reset is USB_PU (USB pull-up) and is mapped to 'pullup'.
+# Strapping pins: GPIO4 (MTMS), GPIO5 (MTDI), GPIO8, GPIO9, GPIO15 (Table 3-1). GPIO12/GPIO13 are USB Serial/JTAG by default; GPIO4-GPIO7 are the JTAG pads, GPIO16/GPIO17 UART0.
+# errata ids on pads: none. The ten errata of v1.3 (CPU-206, CPU-863, CLK-6996, CLK-8588, RES-7080, SPI-304, RMT-176, ADC-305, ADC-1477, WIFI-9686) name no pad; ADC-305/ADC-1477 concern the SAR ADC as a whole and are not applied per pad.
+# power_up_glitch: the ESP32-C6 datasheet v1.5 has no power-up glitch table, so every pad is none (negative finding, weak basis).
+# input_only: none of the 31 pads is input-only. adc.radio_conflict: ADC1 only (no ADC2 on ESP32-C6).
+electrical:
+  abs_max_vin: {"evidence": [], "note": "No absolute maximum input voltage for GPIO pads is documented in ESP32-C6 datasheet v1.5: Table 5-1 has only 'Input power pins - allowed input voltage' (-0.3 to 3.6 V), cumulative IO output current and storage temperature. VIH max = VDD + 0.3 V (Table 5-4) is an operating-condition limit, not a rating, and is deliberately not stored.", "status": "missing", "unit": "V", "value": null}
+  cumulative_current_max: {"evidence": ["esp32-c6-ds-v1.5#abs-max-cumulative-current"], "note": "Table 5-1 Absolute Maximum Ratings: cumulative IO output current 1000 mA (footnote 2: fully functional after all IO pins pulled high while connected to ground for 24 h at 25 C; a functional test, not a stress rating).", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "unit": "mA", "value": 1000}
+  internal_pull_ohm: {"evidence": ["esp32-c6-ds-v1.5#dc-pull-up", "esp32-c6-ds-v1.5#dc-pull-down"], "note": "Table 5-4: internal weak pull-up RPU and pull-down RPD typical 45 kohm; no min/max given.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "unit": "ohm", "value": {"typ": 45000}}
+  pin_current_max: {"evidence": [], "note": "ESP32-C6 datasheet v1.5 gives no per-pin maximum current. Table 5-4 gives only typical IOH 40 mA (VDD 3.3 V, VOH >= 2.64 V, PAD_DRIVER = 3) and IOL 28 mA; Table 2-2 footnote 3 gives default drive strengths (GPIO12/GPIO13 40 mA, others 20 mA). These are typical/default values, not ratings.", "status": "missing", "unit": "mA", "value": null}
+  vih_min: {"conditions": {"temperature": "25 C", "vdd": "3.3 V"}, "evidence": ["esp32-c6-ds-v1.5#dc-vih"], "note": "Table 5-4 VIH min = 0.75 x VDD, VDD being the supply of the pad power domain (3.3 V, 25 C). The Max column is an operating limit, not stored.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "unit": "V", "value": "VDD*0.75"}
+  vil_max: {"conditions": {"temperature": "25 C", "vdd": "3.3 V"}, "evidence": ["esp32-c6-ds-v1.5#dc-vil"], "note": "Table 5-4 VIL max = 0.25 x VDD (3.3 V, 25 C).", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "unit": "V", "value": "VDD*0.25"}
+  voh_min: {"conditions": {"temperature": "25 C", "vdd": "3.3 V"}, "evidence": ["esp32-c6-ds-v1.5#dc-voh"], "note": "Table 5-4 VOH min = 0.8 x VDD, measured with a high-impedance load.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "unit": "V", "value": "VDD*0.8"}
+  vol_max: {"conditions": {"temperature": "25 C", "vdd": "3.3 V"}, "evidence": ["esp32-c6-ds-v1.5#dc-vol"], "note": "Table 5-4 VOL max = 0.1 x VDD, measured with a high-impedance load.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "unit": "V", "value": "VDD*0.1"}
+family: "ESP32-C6"
+id: "esp32-c6"
+pads:
+  GPIO0:
+    adc:
+      channel: 0
+      radio_conflict: {"evidence": ["esp32-c6-ds-v1.5#analog-gpio0"], "note": "Negative finding: ESP32-C6 has only the ADC1 unit on GPIO pads and this datasheet states no Wi-Fi/radio sharing for it; no document states explicitly that ADC1 is free of a radio conflict. Weak basis: one key; the owner may downgrade this to missing.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": false}
+      unit: "ADC1"
+    errata: []
+    functions:
+      - {"fn": "GPIO", "routing": "matrix"}
+      - {"fn": "XTAL_32K_P", "routing": "fixed"}
+      - {"fn": "LP_GPIO0", "routing": "fixed"}
+      - {"fn": "LP_UART_DTRN", "routing": "fixed"}
+      - {"fn": "ADC1_CH0", "routing": "fixed"}
+    gpio: 0
+    input_only: {"evidence": ["esp32-c6-ds-v1.5#iomux-gpio0"], "note": "ESP32-C6 IO MUX table row for GPIO0: GPIO function typed I/O/T (input, output, high impedance); not input-only.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": false}
+    power_up_glitch: {"evidence": ["esp32-c6-errata-v1.3#errata-list"], "note": "Negative finding: the ESP32-C6 datasheet has no power-up glitch table (no such table exists in the document) and the errata document lists no pad-level glitch erratum. Weak basis: no document states 'no glitch' explicitly; the owner may downgrade this to missing. Not independently re-read (one key).", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "none"}
+    reset_state: {"evidence": ["esp32-c6-ds-v1.5#pin-overview-gpio0"], "note": "Pin Overview (pin 6) At Reset = '(blank)', After Reset = '(blank)'. Blank = no pull and input not enabled (state 'disabled'); value taken from the At Reset column.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "disabled"}
+    strap: {"evidence": ["esp32-c6-ds-v1.5#strap-list-boot", "esp32-c6-ds-v1.5#strap-list-sdio", "esp32-c6-ds-v1.5#strap-list-jtag"], "note": "Negative finding: the datasheet's Boot Configurations chapter lists the strapping pins as GPIO8/GPIO9 (boot), MTMS/MTDI (SDIO edge) and GPIO15 (JTAG source); GPIO0 is not one of them. Not independently re-read (one key).", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "none"}
+  GPIO1:
+    adc:
+      channel: 1
+      radio_conflict: {"evidence": ["esp32-c6-ds-v1.5#analog-gpio1"], "note": "Negative finding: ESP32-C6 has only the ADC1 unit on GPIO pads and this datasheet states no Wi-Fi/radio sharing for it; no document states explicitly that ADC1 is free of a radio conflict. Weak basis: one key; the owner may downgrade this to missing.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": false}
+      unit: "ADC1"
+    errata: []
+    functions:
+      - {"fn": "GPIO", "routing": "matrix"}
+      - {"fn": "XTAL_32K_N", "routing": "fixed"}
+      - {"fn": "LP_GPIO1", "routing": "fixed"}
+      - {"fn": "LP_UART_DSRN", "routing": "fixed"}
+      - {"fn": "ADC1_CH1", "routing": "fixed"}
+    gpio: 1
+    input_only: {"evidence": ["esp32-c6-ds-v1.5#iomux-gpio1"], "note": "ESP32-C6 IO MUX table row for GPIO1: GPIO function typed I/O/T (input, output, high impedance); not input-only.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": false}
+    power_up_glitch: {"evidence": ["esp32-c6-errata-v1.3#errata-list"], "note": "Negative finding: the ESP32-C6 datasheet has no power-up glitch table (no such table exists in the document) and the errata document lists no pad-level glitch erratum. Weak basis: no document states 'no glitch' explicitly; the owner may downgrade this to missing. Not independently re-read (one key).", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "none"}
+    reset_state: {"evidence": ["esp32-c6-ds-v1.5#pin-overview-gpio1"], "note": "Pin Overview (pin 7) At Reset = '(blank)', After Reset = '(blank)'. Blank = no pull and input not enabled (state 'disabled'); value taken from the At Reset column.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "disabled"}
+    strap: {"evidence": ["esp32-c6-ds-v1.5#strap-list-boot", "esp32-c6-ds-v1.5#strap-list-sdio", "esp32-c6-ds-v1.5#strap-list-jtag"], "note": "Negative finding: the datasheet's Boot Configurations chapter lists the strapping pins as GPIO8/GPIO9 (boot), MTMS/MTDI (SDIO edge) and GPIO15 (JTAG source); GPIO1 is not one of them. Not independently re-read (one key).", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "none"}
+  GPIO10:
+    errata: []
+    functions:
+      - {"fn": "GPIO", "routing": "matrix"}
+    gpio: 10
+    input_only: {"evidence": ["esp32-c6-ds-v1.5#iomux-gpio10"], "note": "ESP32-C6 IO MUX table row for GPIO10: GPIO function typed I/O/T (input, output, high impedance); not input-only.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": false}
+    power_up_glitch: {"evidence": ["esp32-c6-errata-v1.3#errata-list"], "note": "Negative finding: the ESP32-C6 datasheet has no power-up glitch table (no such table exists in the document) and the errata document lists no pad-level glitch erratum. Weak basis: no document states 'no glitch' explicitly; the owner may downgrade this to missing. Not independently re-read (one key).", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "none"}
+    reset_state: {"evidence": ["esp32-c6-ds-v1.5#pin-overview-gpio10"], "note": "Pin Overview (pin 16) At Reset = '(blank)', After Reset = 'IE'. Blank = no pull and input not enabled (state 'disabled'); value taken from the At Reset column. The After Reset column differs (input/pull enabled after reset).", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "disabled"}
+    strap: {"evidence": ["esp32-c6-ds-v1.5#strap-list-boot", "esp32-c6-ds-v1.5#strap-list-sdio", "esp32-c6-ds-v1.5#strap-list-jtag"], "note": "Negative finding: the datasheet's Boot Configurations chapter lists the strapping pins as GPIO8/GPIO9 (boot), MTMS/MTDI (SDIO edge) and GPIO15 (JTAG source); GPIO10 is not one of them. Not independently re-read (one key).", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "none"}
+  GPIO11:
+    errata: []
+    functions:
+      - {"fn": "GPIO", "routing": "matrix"}
+    gpio: 11
+    input_only: {"evidence": ["esp32-c6-ds-v1.5#iomux-gpio11"], "note": "ESP32-C6 IO MUX table row for GPIO11: GPIO function typed I/O/T (input, output, high impedance); not input-only.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": false}
+    power_up_glitch: {"evidence": ["esp32-c6-errata-v1.3#errata-list"], "note": "Negative finding: the ESP32-C6 datasheet has no power-up glitch table (no such table exists in the document) and the errata document lists no pad-level glitch erratum. Weak basis: no document states 'no glitch' explicitly; the owner may downgrade this to missing. Not independently re-read (one key).", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "none"}
+    reset_state: {"evidence": ["esp32-c6-ds-v1.5#pin-overview-gpio11"], "note": "Pin Overview (pin 17) At Reset = '(blank)', After Reset = 'IE'. Blank = no pull and input not enabled (state 'disabled'); value taken from the At Reset column. The After Reset column differs (input/pull enabled after reset).", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "disabled"}
+    strap: {"evidence": ["esp32-c6-ds-v1.5#strap-list-boot", "esp32-c6-ds-v1.5#strap-list-sdio", "esp32-c6-ds-v1.5#strap-list-jtag"], "note": "Negative finding: the datasheet's Boot Configurations chapter lists the strapping pins as GPIO8/GPIO9 (boot), MTMS/MTDI (SDIO edge) and GPIO15 (JTAG source); GPIO11 is not one of them. Not independently re-read (one key).", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "none"}
+  GPIO12:
+    errata: []
+    functions:
+      - {"fn": "GPIO", "routing": "matrix"}
+      - {"fn": "USB_D-", "routing": "fixed"}
+    gpio: 12
+    input_only: {"evidence": ["esp32-c6-ds-v1.5#iomux-gpio12"], "note": "ESP32-C6 IO MUX table row for GPIO12: GPIO function typed I/O/T (input, output, high impedance); not input-only.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": false}
+    power_up_glitch: {"evidence": ["esp32-c6-errata-v1.3#errata-list"], "note": "Negative finding: the ESP32-C6 datasheet has no power-up glitch table (no such table exists in the document) and the errata document lists no pad-level glitch erratum. Weak basis: no document states 'no glitch' explicitly; the owner may downgrade this to missing. Not independently re-read (one key).", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "none"}
+    reset_state: {"evidence": ["esp32-c6-ds-v1.5#pin-overview-gpio12"], "note": "Pin Overview (pin 18) At Reset = '(blank)', After Reset = 'IE'. Blank = no pull and input not enabled (state 'disabled'); value taken from the At Reset column. The After Reset column differs (input/pull enabled after reset).", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "disabled"}
+    strap: {"evidence": ["esp32-c6-ds-v1.5#strap-list-boot", "esp32-c6-ds-v1.5#strap-list-sdio", "esp32-c6-ds-v1.5#strap-list-jtag"], "note": "Negative finding: the datasheet's Boot Configurations chapter lists the strapping pins as GPIO8/GPIO9 (boot), MTMS/MTDI (SDIO edge) and GPIO15 (JTAG source); GPIO12 is not one of them. Not independently re-read (one key).", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "none"}
+  GPIO13:
+    errata: []
+    functions:
+      - {"fn": "GPIO", "routing": "matrix"}
+      - {"fn": "USB_D+", "routing": "fixed"}
+    gpio: 13
+    input_only: {"evidence": ["esp32-c6-ds-v1.5#iomux-gpio13"], "note": "ESP32-C6 IO MUX table row for GPIO13: GPIO function typed I/O/T (input, output, high impedance); not input-only.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": false}
+    power_up_glitch: {"evidence": ["esp32-c6-errata-v1.3#errata-list"], "note": "Negative finding: the ESP32-C6 datasheet has no power-up glitch table (no such table exists in the document) and the errata document lists no pad-level glitch erratum. Weak basis: no document states 'no glitch' explicitly; the owner may downgrade this to missing. Not independently re-read (one key).", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "none"}
+    reset_state: {"evidence": ["esp32-c6-ds-v1.5#pin-overview-gpio13"], "note": "Pin Overview (pin 19) At Reset = 'USB_PU', After Reset = 'IE, USB_PU'. Blank = no pull and input not enabled (state 'disabled'); value taken from the At Reset column. USB_PU = the USB pull-up resistor is enabled (USB Serial/JTAG function default); mapped to 'pullup'.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "pullup"}
+    strap: {"evidence": ["esp32-c6-ds-v1.5#strap-list-boot", "esp32-c6-ds-v1.5#strap-list-sdio", "esp32-c6-ds-v1.5#strap-list-jtag"], "note": "Negative finding: the datasheet's Boot Configurations chapter lists the strapping pins as GPIO8/GPIO9 (boot), MTMS/MTDI (SDIO edge) and GPIO15 (JTAG source); GPIO13 is not one of them. Not independently re-read (one key).", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "none"}
+  GPIO14:
+    errata: []
+    functions:
+      - {"fn": "GPIO", "routing": "matrix"}
+    gpio: 14
+    input_only: {"evidence": ["esp32-c6-ds-v1.5#iomux-gpio14"], "note": "ESP32-C6 IO MUX table row for GPIO14: GPIO function typed I/O/T (input, output, high impedance); not input-only.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": false}
+    power_up_glitch: {"evidence": ["esp32-c6-errata-v1.3#errata-list"], "note": "Negative finding: the ESP32-C6 datasheet has no power-up glitch table (no such table exists in the document) and the errata document lists no pad-level glitch erratum. Weak basis: no document states 'no glitch' explicitly; the owner may downgrade this to missing. Not independently re-read (one key).", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "none"}
+    reset_state: {"evidence": ["esp32-c6-ds-v1.5#pin-overview-gpio14"], "note": "Pin Overview (pin 18) At Reset = '(blank)', After Reset = 'IE'. Blank = no pull and input not enabled (state 'disabled'); value taken from the At Reset column. The After Reset column differs (input/pull enabled after reset).", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "disabled"}
+    strap: {"evidence": ["esp32-c6-ds-v1.5#strap-list-boot", "esp32-c6-ds-v1.5#strap-list-sdio", "esp32-c6-ds-v1.5#strap-list-jtag"], "note": "Negative finding: the datasheet's Boot Configurations chapter lists the strapping pins as GPIO8/GPIO9 (boot), MTMS/MTDI (SDIO edge) and GPIO15 (JTAG source); GPIO14 is not one of them. Not independently re-read (one key).", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "none"}
+  GPIO15:
+    errata: []
+    functions:
+      - {"fn": "GPIO", "routing": "matrix"}
+    gpio: 15
+    input_only: {"evidence": ["esp32-c6-ds-v1.5#iomux-gpio15"], "note": "ESP32-C6 IO MUX table row for GPIO15: GPIO function typed I/O/T (input, output, high impedance); not input-only.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": false}
+    power_up_glitch: {"evidence": ["esp32-c6-errata-v1.3#errata-list"], "note": "Negative finding: the ESP32-C6 datasheet has no power-up glitch table (no such table exists in the document) and the errata document lists no pad-level glitch erratum. Weak basis: no document states 'no glitch' explicitly; the owner may downgrade this to missing. Not independently re-read (one key).", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "none"}
+    reset_state: {"evidence": ["esp32-c6-ds-v1.5#pin-overview-gpio15"], "note": "Pin Overview (pin 27) At Reset = 'IE', After Reset = 'IE'. Blank = no pull and input not enabled (state 'disabled'); value taken from the At Reset column.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "input"}
+    strap: {"evidence": ["esp32-c6-ds-v1.5#strap-list-jtag", "esp32-c6-ds-v1.5#strap-default-gpio15", "esp32-c6-ds-v1.5#strap-gpio15-no-pull"], "note": "Table 3-1: floating by default; section 3.4: the pin has no internal pull and its value must be controlled by an external circuit that cannot be high impedance (only relevant when EFUSE_JTAG_SEL_ENABLE is set).", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": {"default_pull": "none", "required_at_reset": "any", "role": "JTAG signal source control (USB Serial/JTAG vs JTAG pads), used with eFuses; no internal pull resistors"}}
+  GPIO16:
+    errata: []
+    functions:
+      - {"fn": "GPIO", "routing": "matrix"}
+      - {"fn": "U0TXD", "routing": "iomux"}
+      - {"fn": "FSPICS0", "routing": "iomux"}
+    gpio: 16
+    input_only: {"evidence": ["esp32-c6-ds-v1.5#iomux-gpio16"], "note": "ESP32-C6 IO MUX table row for GPIO16: GPIO function typed I/O/T (input, output, high impedance); not input-only.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": false}
+    power_up_glitch: {"evidence": ["esp32-c6-errata-v1.3#errata-list"], "note": "Negative finding: the ESP32-C6 datasheet has no power-up glitch table (no such table exists in the document) and the errata document lists no pad-level glitch erratum. Weak basis: no document states 'no glitch' explicitly; the owner may downgrade this to missing. Not independently re-read (one key).", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "none"}
+    reset_state: {"evidence": ["esp32-c6-ds-v1.5#pin-overview-gpio16"], "note": "Pin Overview (pin 29) At Reset = '(blank)', After Reset = 'WPU 6'. Blank = no pull and input not enabled (state 'disabled'); value taken from the At Reset column. The After Reset column differs (input/pull enabled after reset).", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "disabled"}
+    strap: {"evidence": ["esp32-c6-ds-v1.5#strap-list-boot", "esp32-c6-ds-v1.5#strap-list-sdio", "esp32-c6-ds-v1.5#strap-list-jtag"], "note": "Negative finding: the datasheet's Boot Configurations chapter lists the strapping pins as GPIO8/GPIO9 (boot), MTMS/MTDI (SDIO edge) and GPIO15 (JTAG source); GPIO16 is not one of them. Not independently re-read (one key).", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "none"}
+  GPIO17:
+    errata: []
+    functions:
+      - {"fn": "GPIO", "routing": "matrix"}
+      - {"fn": "U0RXD", "routing": "iomux"}
+      - {"fn": "FSPICS1", "routing": "iomux"}
+    gpio: 17
+    input_only: {"evidence": ["esp32-c6-ds-v1.5#iomux-gpio17"], "note": "ESP32-C6 IO MUX table row for GPIO17: GPIO function typed I/O/T (input, output, high impedance); not input-only.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": false}
+    power_up_glitch: {"evidence": ["esp32-c6-errata-v1.3#errata-list"], "note": "Negative finding: the ESP32-C6 datasheet has no power-up glitch table (no such table exists in the document) and the errata document lists no pad-level glitch erratum. Weak basis: no document states 'no glitch' explicitly; the owner may downgrade this to missing. Not independently re-read (one key).", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "none"}
+    reset_state: {"evidence": ["esp32-c6-ds-v1.5#pin-overview-gpio17"], "note": "Pin Overview (pin 30) At Reset = '(blank)', After Reset = 'IE, WPU'. Blank = no pull and input not enabled (state 'disabled'); value taken from the At Reset column. The After Reset column differs (input/pull enabled after reset).", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "disabled"}
+    strap: {"evidence": ["esp32-c6-ds-v1.5#strap-list-boot", "esp32-c6-ds-v1.5#strap-list-sdio", "esp32-c6-ds-v1.5#strap-list-jtag"], "note": "Negative finding: the datasheet's Boot Configurations chapter lists the strapping pins as GPIO8/GPIO9 (boot), MTMS/MTDI (SDIO edge) and GPIO15 (JTAG source); GPIO17 is not one of them. Not independently re-read (one key).", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "none"}
+  GPIO18:
+    errata: []
+    functions:
+      - {"fn": "GPIO", "routing": "matrix"}
+      - {"fn": "SDIO_CMD", "routing": "iomux"}
+      - {"fn": "FSPICS2", "routing": "iomux"}
+    gpio: 18
+    input_only: {"evidence": ["esp32-c6-ds-v1.5#iomux-gpio18"], "note": "ESP32-C6 IO MUX table row for GPIO18: GPIO function typed I/O/T (input, output, high impedance); not input-only.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": false}
+    power_up_glitch: {"evidence": ["esp32-c6-errata-v1.3#errata-list"], "note": "Negative finding: the ESP32-C6 datasheet has no power-up glitch table (no such table exists in the document) and the errata document lists no pad-level glitch erratum. Weak basis: no document states 'no glitch' explicitly; the owner may downgrade this to missing. Not independently re-read (one key).", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "none"}
+    reset_state: {"evidence": ["esp32-c6-ds-v1.5#pin-overview-gpio18"], "note": "Pin Overview (pin 31) At Reset = 'WPU', After Reset = 'IE'. Blank = no pull and input not enabled (state 'disabled'); value taken from the At Reset column.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "pullup"}
+    strap: {"evidence": ["esp32-c6-ds-v1.5#strap-list-boot", "esp32-c6-ds-v1.5#strap-list-sdio", "esp32-c6-ds-v1.5#strap-list-jtag"], "note": "Negative finding: the datasheet's Boot Configurations chapter lists the strapping pins as GPIO8/GPIO9 (boot), MTMS/MTDI (SDIO edge) and GPIO15 (JTAG source); GPIO18 is not one of them. Not independently re-read (one key).", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "none"}
+  GPIO19:
+    errata: []
+    functions:
+      - {"fn": "GPIO", "routing": "matrix"}
+      - {"fn": "SDIO_CLK", "routing": "iomux"}
+      - {"fn": "FSPICS3", "routing": "iomux"}
+    gpio: 19
+    input_only: {"evidence": ["esp32-c6-ds-v1.5#iomux-gpio19"], "note": "ESP32-C6 IO MUX table row for GPIO19: GPIO function typed I/O/T (input, output, high impedance); not input-only.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": false}
+    power_up_glitch: {"evidence": ["esp32-c6-errata-v1.3#errata-list"], "note": "Negative finding: the ESP32-C6 datasheet has no power-up glitch table (no such table exists in the document) and the errata document lists no pad-level glitch erratum. Weak basis: no document states 'no glitch' explicitly; the owner may downgrade this to missing. Not independently re-read (one key).", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "none"}
+    reset_state: {"evidence": ["esp32-c6-ds-v1.5#pin-overview-gpio19"], "note": "Pin Overview (pin 32) At Reset = 'WPU', After Reset = 'IE'. Blank = no pull and input not enabled (state 'disabled'); value taken from the At Reset column.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "pullup"}
+    strap: {"evidence": ["esp32-c6-ds-v1.5#strap-list-boot", "esp32-c6-ds-v1.5#strap-list-sdio", "esp32-c6-ds-v1.5#strap-list-jtag"], "note": "Negative finding: the datasheet's Boot Configurations chapter lists the strapping pins as GPIO8/GPIO9 (boot), MTMS/MTDI (SDIO edge) and GPIO15 (JTAG source); GPIO19 is not one of them. Not independently re-read (one key).", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "none"}
+  GPIO2:
+    adc:
+      channel: 2
+      radio_conflict: {"evidence": ["esp32-c6-ds-v1.5#analog-gpio2"], "note": "Negative finding: ESP32-C6 has only the ADC1 unit on GPIO pads and this datasheet states no Wi-Fi/radio sharing for it; no document states explicitly that ADC1 is free of a radio conflict. Weak basis: one key; the owner may downgrade this to missing.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": false}
+      unit: "ADC1"
+    errata: []
+    functions:
+      - {"fn": "GPIO", "routing": "matrix"}
+      - {"fn": "FSPIQ", "routing": "iomux"}
+      - {"fn": "LP_GPIO2", "routing": "fixed"}
+      - {"fn": "LP_UART_RTSN", "routing": "fixed"}
+      - {"fn": "ADC1_CH2", "routing": "fixed"}
+    gpio: 2
+    input_only: {"evidence": ["esp32-c6-ds-v1.5#iomux-gpio2"], "note": "ESP32-C6 IO MUX table row for GPIO2: GPIO function typed I/O/T (input, output, high impedance); not input-only.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": false}
+    power_up_glitch: {"evidence": ["esp32-c6-errata-v1.3#errata-list"], "note": "Negative finding: the ESP32-C6 datasheet has no power-up glitch table (no such table exists in the document) and the errata document lists no pad-level glitch erratum. Weak basis: no document states 'no glitch' explicitly; the owner may downgrade this to missing. Not independently re-read (one key).", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "none"}
+    reset_state: {"evidence": ["esp32-c6-ds-v1.5#pin-overview-gpio2"], "note": "Pin Overview (pin 8) At Reset = 'IE', After Reset = 'IE'. Blank = no pull and input not enabled (state 'disabled'); value taken from the At Reset column.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "input"}
+    strap: {"evidence": ["esp32-c6-ds-v1.5#strap-list-boot", "esp32-c6-ds-v1.5#strap-list-sdio", "esp32-c6-ds-v1.5#strap-list-jtag"], "note": "Negative finding: the datasheet's Boot Configurations chapter lists the strapping pins as GPIO8/GPIO9 (boot), MTMS/MTDI (SDIO edge) and GPIO15 (JTAG source); GPIO2 is not one of them. Not independently re-read (one key).", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "none"}
+  GPIO20:
+    errata: []
+    functions:
+      - {"fn": "GPIO", "routing": "matrix"}
+      - {"fn": "SDIO_DATA0", "routing": "iomux"}
+      - {"fn": "FSPICS4", "routing": "iomux"}
+    gpio: 20
+    input_only: {"evidence": ["esp32-c6-ds-v1.5#iomux-gpio20"], "note": "ESP32-C6 IO MUX table row for GPIO20: GPIO function typed I/O/T (input, output, high impedance); not input-only.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": false}
+    power_up_glitch: {"evidence": ["esp32-c6-errata-v1.3#errata-list"], "note": "Negative finding: the ESP32-C6 datasheet has no power-up glitch table (no such table exists in the document) and the errata document lists no pad-level glitch erratum. Weak basis: no document states 'no glitch' explicitly; the owner may downgrade this to missing. Not independently re-read (one key).", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "none"}
+    reset_state: {"evidence": ["esp32-c6-ds-v1.5#pin-overview-gpio20"], "note": "Pin Overview (pin 33) At Reset = 'WPU', After Reset = 'IE'. Blank = no pull and input not enabled (state 'disabled'); value taken from the At Reset column.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "pullup"}
+    strap: {"evidence": ["esp32-c6-ds-v1.5#strap-list-boot", "esp32-c6-ds-v1.5#strap-list-sdio", "esp32-c6-ds-v1.5#strap-list-jtag"], "note": "Negative finding: the datasheet's Boot Configurations chapter lists the strapping pins as GPIO8/GPIO9 (boot), MTMS/MTDI (SDIO edge) and GPIO15 (JTAG source); GPIO20 is not one of them. Not independently re-read (one key).", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "none"}
+  GPIO21:
+    errata: []
+    functions:
+      - {"fn": "GPIO", "routing": "matrix"}
+      - {"fn": "SDIO_DATA1", "routing": "iomux"}
+      - {"fn": "FSPICS5", "routing": "iomux"}
+    gpio: 21
+    input_only: {"evidence": ["esp32-c6-ds-v1.5#iomux-gpio21"], "note": "ESP32-C6 IO MUX table row for GPIO21: GPIO function typed I/O/T (input, output, high impedance); not input-only.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": false}
+    power_up_glitch: {"evidence": ["esp32-c6-errata-v1.3#errata-list"], "note": "Negative finding: the ESP32-C6 datasheet has no power-up glitch table (no such table exists in the document) and the errata document lists no pad-level glitch erratum. Weak basis: no document states 'no glitch' explicitly; the owner may downgrade this to missing. Not independently re-read (one key).", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "none"}
+    reset_state: {"evidence": ["esp32-c6-ds-v1.5#pin-overview-gpio21"], "note": "Pin Overview (pin 34) At Reset = 'WPU', After Reset = 'IE'. Blank = no pull and input not enabled (state 'disabled'); value taken from the At Reset column.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "pullup"}
+    strap: {"evidence": ["esp32-c6-ds-v1.5#strap-list-boot", "esp32-c6-ds-v1.5#strap-list-sdio", "esp32-c6-ds-v1.5#strap-list-jtag"], "note": "Negative finding: the datasheet's Boot Configurations chapter lists the strapping pins as GPIO8/GPIO9 (boot), MTMS/MTDI (SDIO edge) and GPIO15 (JTAG source); GPIO21 is not one of them. Not independently re-read (one key).", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "none"}
+  GPIO22:
+    errata: []
+    functions:
+      - {"fn": "GPIO", "routing": "matrix"}
+      - {"fn": "SDIO_DATA2", "routing": "iomux"}
+    gpio: 22
+    input_only: {"evidence": ["esp32-c6-ds-v1.5#iomux-gpio22"], "note": "ESP32-C6 IO MUX table row for GPIO22: GPIO function typed I/O/T (input, output, high impedance); not input-only.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": false}
+    power_up_glitch: {"evidence": ["esp32-c6-errata-v1.3#errata-list"], "note": "Negative finding: the ESP32-C6 datasheet has no power-up glitch table (no such table exists in the document) and the errata document lists no pad-level glitch erratum. Weak basis: no document states 'no glitch' explicitly; the owner may downgrade this to missing. Not independently re-read (one key).", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "none"}
+    reset_state: {"evidence": ["esp32-c6-ds-v1.5#pin-overview-gpio22"], "note": "Pin Overview (pin 35) At Reset = 'WPU', After Reset = 'IE'. Blank = no pull and input not enabled (state 'disabled'); value taken from the At Reset column.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "pullup"}
+    strap: {"evidence": ["esp32-c6-ds-v1.5#strap-list-boot", "esp32-c6-ds-v1.5#strap-list-sdio", "esp32-c6-ds-v1.5#strap-list-jtag"], "note": "Negative finding: the datasheet's Boot Configurations chapter lists the strapping pins as GPIO8/GPIO9 (boot), MTMS/MTDI (SDIO edge) and GPIO15 (JTAG source); GPIO22 is not one of them. Not independently re-read (one key).", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "none"}
+  GPIO23:
+    errata: []
+    functions:
+      - {"fn": "GPIO", "routing": "matrix"}
+      - {"fn": "SDIO_DATA3", "routing": "iomux"}
+    gpio: 23
+    input_only: {"evidence": ["esp32-c6-ds-v1.5#iomux-gpio23"], "note": "ESP32-C6 IO MUX table row for GPIO23: GPIO function typed I/O/T (input, output, high impedance); not input-only.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": false}
+    power_up_glitch: {"evidence": ["esp32-c6-errata-v1.3#errata-list"], "note": "Negative finding: the ESP32-C6 datasheet has no power-up glitch table (no such table exists in the document) and the errata document lists no pad-level glitch erratum. Weak basis: no document states 'no glitch' explicitly; the owner may downgrade this to missing. Not independently re-read (one key).", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "none"}
+    reset_state: {"evidence": ["esp32-c6-ds-v1.5#pin-overview-gpio23"], "note": "Pin Overview (pin 36) At Reset = 'WPU', After Reset = 'IE'. Blank = no pull and input not enabled (state 'disabled'); value taken from the At Reset column.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "pullup"}
+    strap: {"evidence": ["esp32-c6-ds-v1.5#strap-list-boot", "esp32-c6-ds-v1.5#strap-list-sdio", "esp32-c6-ds-v1.5#strap-list-jtag"], "note": "Negative finding: the datasheet's Boot Configurations chapter lists the strapping pins as GPIO8/GPIO9 (boot), MTMS/MTDI (SDIO edge) and GPIO15 (JTAG source); GPIO23 is not one of them. Not independently re-read (one key).", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "none"}
+  GPIO24:
+    errata: []
+    functions:
+      - {"fn": "GPIO", "routing": "matrix"}
+      - {"fn": "SPICS0", "routing": "iomux"}
+    gpio: 24
+    input_only: {"evidence": ["esp32-c6-ds-v1.5#iomux-gpio24"], "note": "ESP32-C6 IO MUX table row for GPIO24: GPIO function typed I/O/T (input, output, high impedance); not input-only.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": false}
+    power_up_glitch: {"evidence": ["esp32-c6-errata-v1.3#errata-list"], "note": "Negative finding: the ESP32-C6 datasheet has no power-up glitch table (no such table exists in the document) and the errata document lists no pad-level glitch erratum. Weak basis: no document states 'no glitch' explicitly; the owner may downgrade this to missing. Not independently re-read (one key).", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "none"}
+    reset_state: {"evidence": ["esp32-c6-ds-v1.5#pin-overview-gpio24"], "note": "Pin Overview (pin 20) At Reset = 'WPU', After Reset = 'IE, WPU'. Blank = no pull and input not enabled (state 'disabled'); value taken from the At Reset column.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "pullup"}
+    strap: {"evidence": ["esp32-c6-ds-v1.5#strap-list-boot", "esp32-c6-ds-v1.5#strap-list-sdio", "esp32-c6-ds-v1.5#strap-list-jtag"], "note": "Negative finding: the datasheet's Boot Configurations chapter lists the strapping pins as GPIO8/GPIO9 (boot), MTMS/MTDI (SDIO edge) and GPIO15 (JTAG source); GPIO24 is not one of them. Not independently re-read (one key).", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "none"}
+  GPIO25:
+    errata: []
+    functions:
+      - {"fn": "GPIO", "routing": "matrix"}
+      - {"fn": "SPIQ", "routing": "iomux"}
+    gpio: 25
+    input_only: {"evidence": ["esp32-c6-ds-v1.5#iomux-gpio25"], "note": "ESP32-C6 IO MUX table row for GPIO25: GPIO function typed I/O/T (input, output, high impedance); not input-only.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": false}
+    power_up_glitch: {"evidence": ["esp32-c6-errata-v1.3#errata-list"], "note": "Negative finding: the ESP32-C6 datasheet has no power-up glitch table (no such table exists in the document) and the errata document lists no pad-level glitch erratum. Weak basis: no document states 'no glitch' explicitly; the owner may downgrade this to missing. Not independently re-read (one key).", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "none"}
+    reset_state: {"evidence": ["esp32-c6-ds-v1.5#pin-overview-gpio25"], "note": "Pin Overview (pin 21) At Reset = 'WPU', After Reset = 'IE, WPU'. Blank = no pull and input not enabled (state 'disabled'); value taken from the At Reset column.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "pullup"}
+    strap: {"evidence": ["esp32-c6-ds-v1.5#strap-list-boot", "esp32-c6-ds-v1.5#strap-list-sdio", "esp32-c6-ds-v1.5#strap-list-jtag"], "note": "Negative finding: the datasheet's Boot Configurations chapter lists the strapping pins as GPIO8/GPIO9 (boot), MTMS/MTDI (SDIO edge) and GPIO15 (JTAG source); GPIO25 is not one of them. Not independently re-read (one key).", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "none"}
+  GPIO26:
+    errata: []
+    functions:
+      - {"fn": "GPIO", "routing": "matrix"}
+      - {"fn": "SPIWP", "routing": "iomux"}
+    gpio: 26
+    input_only: {"evidence": ["esp32-c6-ds-v1.5#iomux-gpio26"], "note": "ESP32-C6 IO MUX table row for GPIO26: GPIO function typed I/O/T (input, output, high impedance); not input-only.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": false}
+    power_up_glitch: {"evidence": ["esp32-c6-errata-v1.3#errata-list"], "note": "Negative finding: the ESP32-C6 datasheet has no power-up glitch table (no such table exists in the document) and the errata document lists no pad-level glitch erratum. Weak basis: no document states 'no glitch' explicitly; the owner may downgrade this to missing. Not independently re-read (one key).", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "none"}
+    reset_state: {"evidence": ["esp32-c6-ds-v1.5#pin-overview-gpio26"], "note": "Pin Overview (pin 22) At Reset = 'WPU', After Reset = 'IE, WPU'. Blank = no pull and input not enabled (state 'disabled'); value taken from the At Reset column.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "pullup"}
+    strap: {"evidence": ["esp32-c6-ds-v1.5#strap-list-boot", "esp32-c6-ds-v1.5#strap-list-sdio", "esp32-c6-ds-v1.5#strap-list-jtag"], "note": "Negative finding: the datasheet's Boot Configurations chapter lists the strapping pins as GPIO8/GPIO9 (boot), MTMS/MTDI (SDIO edge) and GPIO15 (JTAG source); GPIO26 is not one of them. Not independently re-read (one key).", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "none"}
+  GPIO27:
+    errata: []
+    functions:
+      - {"fn": "GPIO", "routing": "matrix"}
+      - {"fn": "VDD_SPI", "routing": "fixed"}
+    gpio: 27
+    input_only: {"evidence": ["esp32-c6-ds-v1.5#iomux-gpio27"], "note": "ESP32-C6 IO MUX table row for GPIO27: GPIO function typed I/O/T (input, output, high impedance); not input-only.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": false}
+    power_up_glitch: {"evidence": ["esp32-c6-errata-v1.3#errata-list"], "note": "Negative finding: the ESP32-C6 datasheet has no power-up glitch table (no such table exists in the document) and the errata document lists no pad-level glitch erratum. Weak basis: no document states 'no glitch' explicitly; the owner may downgrade this to missing. Not independently re-read (one key).", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "none"}
+    reset_state: {"evidence": ["esp32-c6-ds-v1.5#pin-overview-gpio27"], "note": "Pin Overview (pin 23) At Reset = '(blank)', After Reset = '(blank)'. Blank = no pull and input not enabled (state 'disabled'); value taken from the At Reset column.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "disabled"}
+    strap: {"evidence": ["esp32-c6-ds-v1.5#strap-list-boot", "esp32-c6-ds-v1.5#strap-list-sdio", "esp32-c6-ds-v1.5#strap-list-jtag"], "note": "Negative finding: the datasheet's Boot Configurations chapter lists the strapping pins as GPIO8/GPIO9 (boot), MTMS/MTDI (SDIO edge) and GPIO15 (JTAG source); GPIO27 is not one of them. Not independently re-read (one key).", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "none"}
+  GPIO28:
+    errata: []
+    functions:
+      - {"fn": "GPIO", "routing": "matrix"}
+      - {"fn": "SPIHD", "routing": "iomux"}
+    gpio: 28
+    input_only: {"evidence": ["esp32-c6-ds-v1.5#iomux-gpio28"], "note": "ESP32-C6 IO MUX table row for GPIO28: GPIO function typed I/O/T (input, output, high impedance); not input-only.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": false}
+    power_up_glitch: {"evidence": ["esp32-c6-errata-v1.3#errata-list"], "note": "Negative finding: the ESP32-C6 datasheet has no power-up glitch table (no such table exists in the document) and the errata document lists no pad-level glitch erratum. Weak basis: no document states 'no glitch' explicitly; the owner may downgrade this to missing. Not independently re-read (one key).", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "none"}
+    reset_state: {"evidence": ["esp32-c6-ds-v1.5#pin-overview-gpio28"], "note": "Pin Overview (pin 24) At Reset = 'WPU', After Reset = 'IE, WPU'. Blank = no pull and input not enabled (state 'disabled'); value taken from the At Reset column.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "pullup"}
+    strap: {"evidence": ["esp32-c6-ds-v1.5#strap-list-boot", "esp32-c6-ds-v1.5#strap-list-sdio", "esp32-c6-ds-v1.5#strap-list-jtag"], "note": "Negative finding: the datasheet's Boot Configurations chapter lists the strapping pins as GPIO8/GPIO9 (boot), MTMS/MTDI (SDIO edge) and GPIO15 (JTAG source); GPIO28 is not one of them. Not independently re-read (one key).", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "none"}
+  GPIO29:
+    errata: []
+    functions:
+      - {"fn": "GPIO", "routing": "matrix"}
+      - {"fn": "SPICLK", "routing": "iomux"}
+    gpio: 29
+    input_only: {"evidence": ["esp32-c6-ds-v1.5#iomux-gpio29"], "note": "ESP32-C6 IO MUX table row for GPIO29: GPIO function typed I/O/T (input, output, high impedance); not input-only.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": false}
+    power_up_glitch: {"evidence": ["esp32-c6-errata-v1.3#errata-list"], "note": "Negative finding: the ESP32-C6 datasheet has no power-up glitch table (no such table exists in the document) and the errata document lists no pad-level glitch erratum. Weak basis: no document states 'no glitch' explicitly; the owner may downgrade this to missing. Not independently re-read (one key).", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "none"}
+    reset_state: {"evidence": ["esp32-c6-ds-v1.5#pin-overview-gpio29"], "note": "Pin Overview (pin 25) At Reset = 'WPU', After Reset = 'IE, WPU'. Blank = no pull and input not enabled (state 'disabled'); value taken from the At Reset column.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "pullup"}
+    strap: {"evidence": ["esp32-c6-ds-v1.5#strap-list-boot", "esp32-c6-ds-v1.5#strap-list-sdio", "esp32-c6-ds-v1.5#strap-list-jtag"], "note": "Negative finding: the datasheet's Boot Configurations chapter lists the strapping pins as GPIO8/GPIO9 (boot), MTMS/MTDI (SDIO edge) and GPIO15 (JTAG source); GPIO29 is not one of them. Not independently re-read (one key).", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "none"}
+  GPIO3:
+    adc:
+      channel: 3
+      radio_conflict: {"evidence": ["esp32-c6-ds-v1.5#analog-gpio3"], "note": "Negative finding: ESP32-C6 has only the ADC1 unit on GPIO pads and this datasheet states no Wi-Fi/radio sharing for it; no document states explicitly that ADC1 is free of a radio conflict. Weak basis: one key; the owner may downgrade this to missing.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": false}
+      unit: "ADC1"
+    errata: []
+    functions:
+      - {"fn": "GPIO", "routing": "matrix"}
+      - {"fn": "LP_GPIO3", "routing": "fixed"}
+      - {"fn": "LP_UART_CTSN", "routing": "fixed"}
+      - {"fn": "ADC1_CH3", "routing": "fixed"}
+    gpio: 3
+    input_only: {"evidence": ["esp32-c6-ds-v1.5#iomux-gpio3"], "note": "ESP32-C6 IO MUX table row for GPIO3: GPIO function typed I/O/T (input, output, high impedance); not input-only.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": false}
+    power_up_glitch: {"evidence": ["esp32-c6-errata-v1.3#errata-list"], "note": "Negative finding: the ESP32-C6 datasheet has no power-up glitch table (no such table exists in the document) and the errata document lists no pad-level glitch erratum. Weak basis: no document states 'no glitch' explicitly; the owner may downgrade this to missing. Not independently re-read (one key).", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "none"}
+    reset_state: {"evidence": ["esp32-c6-ds-v1.5#pin-overview-gpio3"], "note": "Pin Overview (pin 9) At Reset = 'IE', After Reset = 'IE'. Blank = no pull and input not enabled (state 'disabled'); value taken from the At Reset column.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "input"}
+    strap: {"evidence": ["esp32-c6-ds-v1.5#strap-list-boot", "esp32-c6-ds-v1.5#strap-list-sdio", "esp32-c6-ds-v1.5#strap-list-jtag"], "note": "Negative finding: the datasheet's Boot Configurations chapter lists the strapping pins as GPIO8/GPIO9 (boot), MTMS/MTDI (SDIO edge) and GPIO15 (JTAG source); GPIO3 is not one of them. Not independently re-read (one key).", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "none"}
+  GPIO30:
+    errata: []
+    functions:
+      - {"fn": "GPIO", "routing": "matrix"}
+      - {"fn": "SPID", "routing": "iomux"}
+    gpio: 30
+    input_only: {"evidence": ["esp32-c6-ds-v1.5#iomux-gpio30"], "note": "ESP32-C6 IO MUX table row for GPIO30: GPIO function typed I/O/T (input, output, high impedance); not input-only.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": false}
+    power_up_glitch: {"evidence": ["esp32-c6-errata-v1.3#errata-list"], "note": "Negative finding: the ESP32-C6 datasheet has no power-up glitch table (no such table exists in the document) and the errata document lists no pad-level glitch erratum. Weak basis: no document states 'no glitch' explicitly; the owner may downgrade this to missing. Not independently re-read (one key).", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "none"}
+    reset_state: {"evidence": ["esp32-c6-ds-v1.5#pin-overview-gpio30"], "note": "Pin Overview (pin 26) At Reset = 'WPU', After Reset = 'IE, WPU'. Blank = no pull and input not enabled (state 'disabled'); value taken from the At Reset column.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "pullup"}
+    strap: {"evidence": ["esp32-c6-ds-v1.5#strap-list-boot", "esp32-c6-ds-v1.5#strap-list-sdio", "esp32-c6-ds-v1.5#strap-list-jtag"], "note": "Negative finding: the datasheet's Boot Configurations chapter lists the strapping pins as GPIO8/GPIO9 (boot), MTMS/MTDI (SDIO edge) and GPIO15 (JTAG source); GPIO30 is not one of them. Not independently re-read (one key).", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "none"}
+  GPIO4:
+    adc:
+      channel: 4
+      radio_conflict: {"evidence": ["esp32-c6-ds-v1.5#analog-gpio4"], "note": "Negative finding: ESP32-C6 has only the ADC1 unit on GPIO pads and this datasheet states no Wi-Fi/radio sharing for it; no document states explicitly that ADC1 is free of a radio conflict. Weak basis: one key; the owner may downgrade this to missing.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": false}
+      unit: "ADC1"
+    errata: []
+    functions:
+      - {"fn": "GPIO", "routing": "matrix"}
+      - {"fn": "MTMS", "routing": "iomux"}
+      - {"fn": "FSPIHD", "routing": "iomux"}
+      - {"fn": "LP_GPIO4", "routing": "fixed"}
+      - {"fn": "LP_UART_RXD", "routing": "fixed"}
+      - {"fn": "ADC1_CH4", "routing": "fixed"}
+    gpio: 4
+    input_only: {"evidence": ["esp32-c6-ds-v1.5#iomux-gpio4"], "note": "ESP32-C6 IO MUX table row for GPIO4: GPIO function typed I/O/T (input, output, high impedance); not input-only.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": false}
+    jtag: "MTMS"
+    power_up_glitch: {"evidence": ["esp32-c6-errata-v1.3#errata-list"], "note": "Negative finding: the ESP32-C6 datasheet has no power-up glitch table (no such table exists in the document) and the errata document lists no pad-level glitch erratum. Weak basis: no document states 'no glitch' explicitly; the owner may downgrade this to missing. Not independently re-read (one key).", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "none"}
+    reset_state: {"evidence": ["esp32-c6-ds-v1.5#pin-overview-gpio4"], "note": "Pin Overview (pin 10) At Reset = 'IE', After Reset = 'IE'. Blank = no pull and input not enabled (state 'disabled'); value taken from the At Reset column.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "input"}
+    strap: {"evidence": ["esp32-c6-ds-v1.5#strap-list-sdio", "esp32-c6-ds-v1.5#strap-default-mtms", "esp32-c6-ds-v1.5#strap-sdio-edge-note"], "note": "Table 3-1: MTMS floating. Table 3-4: the two bits select the SDIO sampling/driving edge; footnote: MTMS and MTDI are floating by default, so the table rows are not default configurations. Only matters when SDIO slave is used.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": {"default_pull": "none", "required_at_reset": "any", "role": "SDIO input sampling / output driving clock edge (with MTDI); floating by default so no default configuration"}}
+  GPIO5:
+    adc:
+      channel: 5
+      radio_conflict: {"evidence": ["esp32-c6-ds-v1.5#analog-gpio5"], "note": "Negative finding: ESP32-C6 has only the ADC1 unit on GPIO pads and this datasheet states no Wi-Fi/radio sharing for it; no document states explicitly that ADC1 is free of a radio conflict. Weak basis: one key; the owner may downgrade this to missing.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": false}
+      unit: "ADC1"
+    errata: []
+    functions:
+      - {"fn": "GPIO", "routing": "matrix"}
+      - {"fn": "MTDI", "routing": "iomux"}
+      - {"fn": "FSPIWP", "routing": "iomux"}
+      - {"fn": "LP_GPIO5", "routing": "fixed"}
+      - {"fn": "LP_UART_TXD", "routing": "fixed"}
+      - {"fn": "ADC1_CH5", "routing": "fixed"}
+    gpio: 5
+    input_only: {"evidence": ["esp32-c6-ds-v1.5#iomux-gpio5"], "note": "ESP32-C6 IO MUX table row for GPIO5: GPIO function typed I/O/T (input, output, high impedance); not input-only.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": false}
+    jtag: "MTDI"
+    power_up_glitch: {"evidence": ["esp32-c6-errata-v1.3#errata-list"], "note": "Negative finding: the ESP32-C6 datasheet has no power-up glitch table (no such table exists in the document) and the errata document lists no pad-level glitch erratum. Weak basis: no document states 'no glitch' explicitly; the owner may downgrade this to missing. Not independently re-read (one key).", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "none"}
+    reset_state: {"evidence": ["esp32-c6-ds-v1.5#pin-overview-gpio5"], "note": "Pin Overview (pin 11) At Reset = 'IE', After Reset = 'IE'. Blank = no pull and input not enabled (state 'disabled'); value taken from the At Reset column.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "input"}
+    strap: {"evidence": ["esp32-c6-ds-v1.5#strap-list-sdio", "esp32-c6-ds-v1.5#strap-default-mtdi", "esp32-c6-ds-v1.5#strap-sdio-edge-note"], "note": "Table 3-1: MTDI floating. See GPIO4.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": {"default_pull": "none", "required_at_reset": "any", "role": "SDIO input sampling / output driving clock edge (with MTMS); floating by default so no default configuration"}}
+  GPIO6:
+    adc:
+      channel: 6
+      radio_conflict: {"evidence": ["esp32-c6-ds-v1.5#analog-gpio6"], "note": "Negative finding: ESP32-C6 has only the ADC1 unit on GPIO pads and this datasheet states no Wi-Fi/radio sharing for it; no document states explicitly that ADC1 is free of a radio conflict. Weak basis: one key; the owner may downgrade this to missing.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": false}
+      unit: "ADC1"
+    errata: []
+    functions:
+      - {"fn": "GPIO", "routing": "matrix"}
+      - {"fn": "MTCK", "routing": "iomux"}
+      - {"fn": "FSPICLK", "routing": "iomux"}
+      - {"fn": "LP_GPIO6", "routing": "fixed"}
+      - {"fn": "LP_I2C_SDA", "routing": "fixed"}
+      - {"fn": "ADC1_CH6", "routing": "fixed"}
+    gpio: 6
+    input_only: {"evidence": ["esp32-c6-ds-v1.5#iomux-gpio6"], "note": "ESP32-C6 IO MUX table row for GPIO6: GPIO function typed I/O/T (input, output, high impedance); not input-only.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": false}
+    jtag: "MTCK"
+    power_up_glitch: {"evidence": ["esp32-c6-errata-v1.3#errata-list"], "note": "Negative finding: the ESP32-C6 datasheet has no power-up glitch table (no such table exists in the document) and the errata document lists no pad-level glitch erratum. Weak basis: no document states 'no glitch' explicitly; the owner may downgrade this to missing. Not independently re-read (one key).", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "none"}
+    reset_state: {"evidence": ["esp32-c6-ds-v1.5#pin-overview-gpio6"], "note": "Pin Overview (pin 12) At Reset = '(blank)', After Reset = 'IE, WPU 5'. Blank = no pull and input not enabled (state 'disabled'); value taken from the At Reset column. The After Reset column differs (input/pull enabled after reset).", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "disabled"}
+    strap: {"evidence": ["esp32-c6-ds-v1.5#strap-list-boot", "esp32-c6-ds-v1.5#strap-list-sdio", "esp32-c6-ds-v1.5#strap-list-jtag"], "note": "Negative finding: the datasheet's Boot Configurations chapter lists the strapping pins as GPIO8/GPIO9 (boot), MTMS/MTDI (SDIO edge) and GPIO15 (JTAG source); GPIO6 is not one of them. Not independently re-read (one key).", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "none"}
+  GPIO7:
+    errata: []
+    functions:
+      - {"fn": "GPIO", "routing": "matrix"}
+      - {"fn": "MTDO", "routing": "iomux"}
+      - {"fn": "FSPID", "routing": "iomux"}
+      - {"fn": "LP_GPIO7", "routing": "fixed"}
+      - {"fn": "LP_I2C_SCL", "routing": "fixed"}
+    gpio: 7
+    input_only: {"evidence": ["esp32-c6-ds-v1.5#iomux-gpio7"], "note": "ESP32-C6 IO MUX table row for GPIO7: GPIO function typed I/O/T (input, output, high impedance); not input-only.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": false}
+    jtag: "MTDO"
+    power_up_glitch: {"evidence": ["esp32-c6-errata-v1.3#errata-list"], "note": "Negative finding: the ESP32-C6 datasheet has no power-up glitch table (no such table exists in the document) and the errata document lists no pad-level glitch erratum. Weak basis: no document states 'no glitch' explicitly; the owner may downgrade this to missing. Not independently re-read (one key).", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "none"}
+    reset_state: {"evidence": ["esp32-c6-ds-v1.5#pin-overview-gpio7"], "note": "Pin Overview (pin 13) At Reset = '(blank)', After Reset = 'IE'. Blank = no pull and input not enabled (state 'disabled'); value taken from the At Reset column. The After Reset column differs (input/pull enabled after reset).", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "disabled"}
+    strap: {"evidence": ["esp32-c6-ds-v1.5#strap-list-boot", "esp32-c6-ds-v1.5#strap-list-sdio", "esp32-c6-ds-v1.5#strap-list-jtag"], "note": "Negative finding: the datasheet's Boot Configurations chapter lists the strapping pins as GPIO8/GPIO9 (boot), MTMS/MTDI (SDIO edge) and GPIO15 (JTAG source); GPIO7 is not one of them. Not independently re-read (one key).", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "none"}
+  GPIO8:
+    errata: []
+    functions:
+      - {"fn": "GPIO", "routing": "matrix"}
+    gpio: 8
+    input_only: {"evidence": ["esp32-c6-ds-v1.5#iomux-gpio8"], "note": "ESP32-C6 IO MUX table row for GPIO8: GPIO function typed I/O/T (input, output, high impedance); not input-only.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": false}
+    power_up_glitch: {"evidence": ["esp32-c6-errata-v1.3#errata-list"], "note": "Negative finding: the ESP32-C6 datasheet has no power-up glitch table (no such table exists in the document) and the errata document lists no pad-level glitch erratum. Weak basis: no document states 'no glitch' explicitly; the owner may downgrade this to missing. Not independently re-read (one key).", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "none"}
+    reset_state: {"evidence": ["esp32-c6-ds-v1.5#pin-overview-gpio8"], "note": "Pin Overview (pin 14) At Reset = 'IE', After Reset = 'IE'. Blank = no pull and input not enabled (state 'disabled'); value taken from the At Reset column.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "input"}
+    strap: {"evidence": ["esp32-c6-ds-v1.5#strap-list-boot", "esp32-c6-ds-v1.5#strap-default-gpio8", "esp32-c6-ds-v1.5#boot-spi", "esp32-c6-ds-v1.5#boot-download", "esp32-c6-ds-v1.5#strap-gpio8-rom-print"], "note": "Table 3-1: floating by default. Table 3-3: any value for SPI Boot, 1 for Joint Download Boot. Also controls UART0 ROM printing (Table 3-5). required_at_reset = any for normal (SPI) boot.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": {"default_pull": "none", "required_at_reset": "any", "role": "Boot mode (Joint Download needs 1, SPI Boot any value) and UART0 ROM message printing control"}}
+  GPIO9:
+    errata: []
+    functions:
+      - {"fn": "GPIO", "routing": "matrix"}
+    gpio: 9
+    input_only: {"evidence": ["esp32-c6-ds-v1.5#iomux-gpio9"], "note": "ESP32-C6 IO MUX table row for GPIO9: GPIO function typed I/O/T (input, output, high impedance); not input-only.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": false}
+    power_up_glitch: {"evidence": ["esp32-c6-errata-v1.3#errata-list"], "note": "Negative finding: the ESP32-C6 datasheet has no power-up glitch table (no such table exists in the document) and the errata document lists no pad-level glitch erratum. Weak basis: no document states 'no glitch' explicitly; the owner may downgrade this to missing. Not independently re-read (one key).", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "none"}
+    reset_state: {"evidence": ["esp32-c6-ds-v1.5#pin-overview-gpio9"], "note": "Pin Overview (pin 15) At Reset = 'IE, WPU', After Reset = 'IE, WPU'. Blank = no pull and input not enabled (state 'disabled'); value taken from the At Reset column.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "pullup"}
+    strap: {"evidence": ["esp32-c6-ds-v1.5#strap-list-boot", "esp32-c6-ds-v1.5#strap-default-gpio9", "esp32-c6-ds-v1.5#boot-spi", "esp32-c6-ds-v1.5#boot-download"], "note": "Table 3-1: weak pull-up, bit value 1. Table 3-3: SPI Boot needs GPIO9 = 1; Joint Download needs GPIO9 = 0 (a BOOT button pulls it low).", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": {"default_pull": "up", "required_at_reset": "high", "role": "Boot mode select: GPIO9 = 1 selects SPI Boot (default, weak pull-up); GPIO9 = 0 with GPIO8 = 1 selects Joint Download Boot"}}
+peripherals:
+  ADC1:
+    adc_effective_range_mv: {"evidence": ["esp32-c6-ds-v1.5#adc-atten0-range", "esp32-c6-ds-v1.5#adc-atten1-range", "esp32-c6-ds-v1.5#adc-atten2-range", "esp32-c6-ds-v1.5#adc-atten3-range"], "note": "Keys are the attenuation settings ATTEN0..ATTEN3; values are the 'effective measurement range' of datasheet Table 5-6 (after hardware + software calibration; total error +-12/12/23/40 mV is not stored). The datasheet note says the range applies to chips with Date Code 212023 or later.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "unit": "mV", "value": {"ATTEN0": [0, 1000], "ATTEN1": [0, 1300], "ATTEN2": [0, 1900], "ATTEN3": [0, 3300]}}
+    kind: "adc"
+    matrix_routable: false
+  I2C0: {"kind": "i2c", "matrix_routable": true}
+  SPI2:
+    iomux_pins: {"cs0": "GPIO16", "hd": "GPIO4", "miso": "GPIO2", "mosi": "GPIO7", "sck": "GPIO6", "wp": "GPIO5"}
+    kind: "spi"
+    limits:
+      iomux_max_hz: {"evidence": ["esp32-c6-ds-v1.5#spi2-master-80mhz"], "note": "Datasheet 4.2.1.2: GP-SPI2 master up to 80 MHz (2-line full duplex and 1/2/4-line half duplex); slave up to 40 MHz (not stored). The datasheet does not distinguish IO MUX from GPIO-matrix routing, so 80 MHz is the controller limit attributed to IO MUX.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "unit": "Hz", "value": 80000000}
+      matrix_max_hz: {"evidence": [], "note": "No hard maximum for GPIO-matrix routing is documented in the ESP32-C6 datasheet v1.5.", "status": "missing", "unit": "Hz", "value": null}
+    matrix_routable: true
+  UART0:
+    iomux_pins: {"rx": "GPIO17", "tx": "GPIO16"}
+    kind: "uart"
+    matrix_routable: true
+  UART1: {"kind": "uart", "matrix_routable": true}
+revisions:
+  - "v0.0"
+  - "v0.1"
+  - "v0.2"
+series: "ESP32-C6"
+vdd_io: {"evidence": ["esp32-c6-ds-v1.5#recommended-supply"], "note": "Table 5-2: VDDPST1 / VDDPST2 recommended 3.0 / 3.3 / 3.6 V (min/typ/max); every electrical fact is stated at 3.3 V, 25 C (Table 5-4). Pads GPIO24-GPIO30 are powered from VDD_SPI. The schema holds one number; 3.3 V is the typical value.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "unit": "V", "value": 3.3}
+vendor: "Espressif Systems"

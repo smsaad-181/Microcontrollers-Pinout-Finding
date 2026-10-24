@@ -1,0 +1,79 @@
+# Espressif ESP32-S2-Saola-1 revision V1.2 (user guide v1.2 = the first revision; schematic file name says V1.1, title block V1.2, 2020-03-06). Board is EOL. Variants: WROVER (4 MB flash + 2 MB PSRAM) and WROOM (4 MB flash); WROVER-I/WROOM-I share the records. Two keys (researcher + blind auditor) agree on every fact.
+# Sources: user guide v1.2 Header Block tables J2/J3 and the schematic PDF.
+# Labels = the guide Name column (IO0..); positions J2-1..21 and J3-1..21. RESOLVED: the guide prints J3 positions 14, 16, 17, 17 for IO35, IO34, IO33, IO26 (typo in the guide: 15 missing, 17 twice); the schematic J3 drawing (read by the second key) gives J3-14 IO35, 15 IO34, 16 IO33, 17 IO26, which is what is recorded.
+# GPIO26 is on the header J3-17 but is the PSRAM chip select on the WROVER variant (module record: consumed psram). GPIO27-GPIO32 have no header pin (flash/PSRAM bus). GPIO0, GPIO45, GPIO46 are strapping pins; GPIO46 is input-only.
+# Gap: no current rating for the 3V3/5V rails (missing).
+connectors:
+  - id: "J2"
+    pins:
+      - {"kind": "power", "label": "3V3", "position": 1, "rail": "3V3"}
+      - {"kind": "gpio", "label": "IO0", "pad": "GPIO0", "position": 2}
+      - {"kind": "gpio", "label": "IO1", "pad": "GPIO1", "position": 3}
+      - {"kind": "gpio", "label": "IO2", "pad": "GPIO2", "position": 4}
+      - {"kind": "gpio", "label": "IO3", "pad": "GPIO3", "position": 5}
+      - {"kind": "gpio", "label": "IO4", "pad": "GPIO4", "position": 6}
+      - {"kind": "gpio", "label": "IO5", "pad": "GPIO5", "position": 7}
+      - {"kind": "gpio", "label": "IO6", "pad": "GPIO6", "position": 8}
+      - {"kind": "gpio", "label": "IO7", "pad": "GPIO7", "position": 9}
+      - {"kind": "gpio", "label": "IO8", "pad": "GPIO8", "position": 10}
+      - {"kind": "gpio", "label": "IO9", "pad": "GPIO9", "position": 11}
+      - {"kind": "gpio", "label": "IO10", "pad": "GPIO10", "position": 12}
+      - {"kind": "gpio", "label": "IO11", "pad": "GPIO11", "position": 13}
+      - {"kind": "gpio", "label": "IO12", "pad": "GPIO12", "position": 14}
+      - {"kind": "gpio", "label": "IO13", "pad": "GPIO13", "position": 15}
+      - {"kind": "gpio", "label": "IO14", "pad": "GPIO14", "position": 16}
+      - {"kind": "gpio", "label": "IO15", "pad": "GPIO15", "position": 17}
+      - {"kind": "gpio", "label": "IO16", "pad": "GPIO16", "position": 18}
+      - {"kind": "gpio", "label": "IO17", "pad": "GPIO17", "position": 19}
+      - {"kind": "power", "label": "5V0", "position": 20, "rail": "5V"}
+      - {"kind": "ground", "label": "GND", "position": 21}
+  - id: "J3"
+    pins:
+      - {"kind": "ground", "label": "GND", "position": 1}
+      - {"kind": "reset", "label": "RST", "position": 2}
+      - {"kind": "gpio", "label": "IO46", "pad": "GPIO46", "position": 3}
+      - {"kind": "gpio", "label": "IO45", "pad": "GPIO45", "position": 4}
+      - {"kind": "gpio", "label": "IO44", "pad": "GPIO44", "position": 5}
+      - {"kind": "gpio", "label": "IO43", "pad": "GPIO43", "position": 6}
+      - {"kind": "gpio", "label": "IO42", "pad": "GPIO42", "position": 7}
+      - {"kind": "gpio", "label": "IO41", "pad": "GPIO41", "position": 8}
+      - {"kind": "gpio", "label": "IO40", "pad": "GPIO40", "position": 9}
+      - {"kind": "gpio", "label": "IO39", "pad": "GPIO39", "position": 10}
+      - {"kind": "gpio", "label": "IO38", "pad": "GPIO38", "position": 11}
+      - {"kind": "gpio", "label": "IO37", "pad": "GPIO37", "position": 12}
+      - {"kind": "gpio", "label": "IO36", "pad": "GPIO36", "position": 13}
+      - {"kind": "gpio", "label": "IO35", "pad": "GPIO35", "position": 14}
+      - {"kind": "gpio", "label": "IO34", "pad": "GPIO34", "position": 15}
+      - {"kind": "gpio", "label": "IO33", "pad": "GPIO33", "position": 16}
+      - {"kind": "gpio", "label": "IO26", "pad": "GPIO26", "position": 17}
+      - {"kind": "gpio", "label": "IO21", "pad": "GPIO21", "position": 18}
+      - {"kind": "gpio", "label": "IO20", "pad": "GPIO20", "position": 19}
+      - {"kind": "gpio", "label": "IO19", "pad": "GPIO19", "position": 20}
+      - {"kind": "gpio", "label": "IO18", "pad": "GPIO18", "position": 21}
+id: "esp32-s2-saola-1"
+logic_voltage: {"evidence": ["esp32-s2-saola-1-sch-v1.2#ldo-part", "esp32-s2-saola-1-ug-v1.2#power-options"], "note": "Schematic: U5 SGM2212-3.3XKC3G/TR makes VDD33 for the module; the guide has a 3.3V pin and \"3.3 V Power On LED\". No document states a logic voltage in words; derived from the 3.3 V LDO.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "unit": "V", "value": 3.3}
+name: "ESP32-S2-Saola-1"
+numbering: {"primary": "label"}
+onboard:
+  - {"effect": "DIN is driven from GPIO18 through 0 ohm R40 (net RGB_GPIO18); header J3-21 connects through 0 ohm R41 (EXT_GPIO18), so a load there disturbs the LED. GPIO18 has a 10 kohm pull-up R42 to VDD33, which is the board-level workaround for errata SYSTEM-117 (chip revision v0.0 needs GPIO18 pulled up for UART download).", "evidence": ["esp32-s2-saola-1-ug-v1.2#rgb-led", "esp32-s2-saola-1-ug-v1.2#j3-gpio18-rgb", "esp32-s2-saola-1-sch-v1.2#rgb-gpio18", "esp32-s2-saola-1-sch-v1.2#rgb-part"], "part": "u6 WS2812 addressable RGB LED", "uses_pad": ["GPIO18"]}
+  - {"effect": "Pulls GPIO0 (strapping pin, normally high) to ground; hold Boot and press Reset for download mode. GPIO0 is also header J2-2.", "evidence": ["esp32-s2-saola-1-ug-v1.2#boot-button", "esp32-s2-saola-1-ug-v1.2#j2-gpio0-boot", "esp32-s2-saola-1-sch-v1.2#buttons", "esp32-s2-saola-1-sch-v1.2#auto-program"], "part": "SW1 Boot button", "uses_pad": ["GPIO0"]}
+  - {"effect": "Pulls CHIP_PU (EN) to ground and restarts the system; CHIP_PU is not a GPIO pad.", "evidence": ["esp32-s2-saola-1-ug-v1.2#reset-button", "esp32-s2-saola-1-sch-v1.2#buttons"], "part": "SW2 Reset button on CHIP_PU", "uses_pad": []}
+  - {"effect": "Bridge TXD -> R34 -> U0RXD (GPIO44); bridge RXD -> R35 -> U0TXD (GPIO43), for flashing and console; the same pads are on header J3-6/J3-5.", "evidence": ["esp32-s2-saola-1-ug-v1.2#usb-bridge", "esp32-s2-saola-1-ug-v1.2#usb-port", "esp32-s2-saola-1-ug-v1.2#j3-table", "esp32-s2-saola-1-sch-v1.2#bridge-part"], "part": "U4 CP2102N-A02-GQFN28 USB-to-UART bridge (micro-USB J1)", "uses_pad": ["GPIO43", "GPIO44"]}
+  - {"effect": "DTR/RTS can pull EN and GPIO0 low to enter download mode automatically (drawing also names IO2 in the table).", "evidence": ["esp32-s2-saola-1-sch-v1.2#auto-program"], "part": "Q1/Q2 L8050QLT1G auto-program circuit (bridge DTR/RTS)", "uses_pad": ["GPIO0"]}
+  - {"effect": "On the header only (J3-20 IO19 = USB_D-, J3-19 IO20 = USB_D+); the drawing marks the links from the connector as \"USB Debug ... Reserved\" with not-fitted resistors, so the micro-USB goes to the bridge. Not independently confirmed.", "evidence": ["esp32-s2-saola-1-ug-v1.2#j3-usb", "esp32-s2-saola-1-sch-v1.2#usb-debug-reserved", "esp32-s2-ds-v1.9#usb-default"], "part": "USB D-/D+ pads (native USB OTG)", "uses_pad": ["GPIO19", "GPIO20"]}
+  - {"effect": "Lights when USB power is connected; no GPIO pad.", "evidence": ["esp32-s2-saola-1-ug-v1.2#power-led"], "part": "Red 3.3 V power LED D5", "uses_pad": []}
+rails:
+  - max_current: {"evidence": [], "note": "Neither the user guide nor the schematic states a current rating; the SGM2212 datasheet was not opened.", "status": "missing", "unit": "mA", "value": null}
+    name: "3V3"
+    source: "U5 SGM2212-3.3XKC3G/TR LDO from +5V (schematic)"
+    voltage: {"evidence": ["esp32-s2-saola-1-sch-v1.2#ldo-part"], "note": "LDO output 3.3 V (part name carries the voltage).", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "unit": "V", "value": 3.3}
+  - max_current: {"evidence": [], "note": "No 5 V current rating in the guide or the schematic.", "status": "missing", "unit": "mA", "value": null}
+    name: "5V"
+    source: "Micro-USB VBUS through diode D1 (+5V), or the 5V0 header pin"
+    voltage: {"evidence": ["esp32-s2-saola-1-ug-v1.2#power-options", "esp32-s2-saola-1-ug-v1.2#j2-table"], "note": "J2-20 is labelled 5V0 (guide: \"5 V power supply\"); nominal 5 V only.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "unit": "V", "value": 5}
+revision: "V1.2"
+status: "partially-verified"
+variants:
+  - {"id": "esp32-s2-saola-1-wrover", "module": "esp32-s2-wrover"}
+  - {"id": "esp32-s2-saola-1-wroom", "module": "esp32-s2-wroom"}
+vendor: "Espressif Systems"

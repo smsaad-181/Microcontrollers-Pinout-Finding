@@ -1,0 +1,23 @@
+# Evidence record: ESP32-S3-Tiny - Waveshare Wiki (read 2026-10-24; one key, boards-2 task; a blind auditor must re-read every claim).
+# HTML wiki page read 2026-10-24. The pinout / onboard-interface pictures on the page are images; their text was transcribed (claims marked image).
+accessed: "2026-10-24"
+claims:
+  - {"id": "waveshare-esp32-s3-tiny-wiki#chip", "locator": "Overview > Features", "quote": "Adopts ESP32-S3FH4R2 chip with Xtensa 32-bit LX7 dual-core processor", "supports": "The board uses ESP32-S3FH4R2"}
+  - {"id": "waveshare-esp32-s3-tiny-wiki#memory", "locator": "Overview > Features", "quote": "Built-in 512KB of SRAM, 384KB ROM, 16 KB RTC SRAM, 2MB PSRAM and 4MB Flash memory.", "supports": "2 MB PSRAM and 4 MB flash"}
+  - {"id": "waveshare-esp32-s3-tiny-wiki#split-design", "locator": "Overview > Introduction", "quote": "The product adopts a split design, allowing the separation of USB and button circuits", "supports": "USB and buttons are on a separate adapter board joined by an FPC"}
+  - {"id": "waveshare-esp32-s3-tiny-wiki#gpio33-37-note", "locator": "Overview > Features, Note", "quote": "GPIO33 to GPIO37 on the ESP32-S3-Tiny-N8R8 are used for the internal PSRAM and cannot be used externally", "supports": "A variant ESP32-S3-Tiny-N8R8 uses GPIO33-GPIO37 for PSRAM (that variant is not catalogued; the FH4R2 board has Quad PSRAM)"}
+  - {"id": "waveshare-esp32-s3-tiny-wiki#gpio-count", "locator": "Overview > Features", "quote": "34 multi-function GPIO pins", "supports": "34 GPIO pins led out"}
+  - {"id": "waveshare-esp32-s3-tiny-wiki#onboard-image", "locator": "Overview > What's Onboard (ESP32-S3-Tiny-onboard.png) [drawing/image, transcribed]", "quote": "ME6217C33M5G low dropout LDO, 800mA (Max)", "supports": "Onboard list: ESP32-S3, ME6217C33M5G LDO 800 mA max, FPC connector 0.5 mm 8 pin, WS2812 RGB LED, GPIO pins; adapter board: USB Type-C, power indicator, RESET and BOOT buttons"}
+  - {"id": "waveshare-esp32-s3-tiny-wiki#pinout-image", "locator": "Overview > Pinout (ESP32-S3-Tiny-pinout.jpg) [drawing/image, transcribed]", "quote": "WS2812 RGB LED used pins GP38", "supports": "Pinout picture: front 5V, GND, 3V3(OUT), GP1-GP6, then pads 7-11 at the bottom, TX, RX, GP18-GP12 on the right; back pads GP48, GP47, GP45, GP42, GP41, GP40, GP39 (left) and GP21, GP33-GP38 (right); WS2812 on GP38"}
+doc_number: null
+id: "waveshare-esp32-s3-tiny-wiki"
+kind: "board-guide"
+manual: false
+publisher: "Waveshare"
+revision: null
+revision_date: null
+secondary: false
+sha256: null
+title: "ESP32-S3-Tiny - Waveshare Wiki"
+url: "https://www.waveshare.com/wiki/ESP32-S3-Tiny"
+url_original: null

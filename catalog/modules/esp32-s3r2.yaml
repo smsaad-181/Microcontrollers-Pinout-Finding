@@ -1,0 +1,53 @@
+# ESP32-S3R2 chip package as a "module" (2 MB Quad SPI PSRAM in the package, no in-package flash; used bare on the Waveshare ESP32-S3-Pico with a 16 MB external flash on the board). Two keys agree (researcher + blind auditor).
+# Source: ESP32-S3 Series Datasheet v2.2 Table 1-1 (S3R2 is EOL, upgraded to S3RH2) and Table 2-14.
+# bonded_pads = all chip pads except GPIO26-GPIO32. GPIO29 (SPICS0, flash CS) is used by the board flash (see the board onboard list), not by the package, so it is not listed as consumed here; no board pin uses it.
+bonded_pads:
+  - "GPIO0"
+  - "GPIO1"
+  - "GPIO2"
+  - "GPIO3"
+  - "GPIO4"
+  - "GPIO5"
+  - "GPIO6"
+  - "GPIO7"
+  - "GPIO8"
+  - "GPIO9"
+  - "GPIO10"
+  - "GPIO11"
+  - "GPIO12"
+  - "GPIO13"
+  - "GPIO14"
+  - "GPIO15"
+  - "GPIO16"
+  - "GPIO17"
+  - "GPIO18"
+  - "GPIO19"
+  - "GPIO20"
+  - "GPIO21"
+  - "GPIO33"
+  - "GPIO34"
+  - "GPIO35"
+  - "GPIO36"
+  - "GPIO37"
+  - "GPIO38"
+  - "GPIO39"
+  - "GPIO40"
+  - "GPIO41"
+  - "GPIO42"
+  - "GPIO43"
+  - "GPIO44"
+  - "GPIO45"
+  - "GPIO46"
+  - "GPIO47"
+  - "GPIO48"
+chip: "esp32-s3"
+consumed:
+  GPIO26: {"evidence": ["esp32-s3-ds-v2.2#pin-map-spics1", "esp32-s3-ds-v2.2#table-1-1-s3r2"], "note": "GPIO26 = SPICS1 is CE# of the in-package 2 MB Quad SPI PSRAM.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "psram"}
+  GPIO27: {"evidence": ["esp32-s3-ds-v2.2#pin-map-spihd", "esp32-s3-ds-v2.2#table-1-1-s3r2", "esp32-s3-ds-v2.2#p4-gpio26-32"], "note": "GPIO27 (SPIHD) is part of the Quad SPI bus to the in-package PSRAM (shared with the board's external flash) - chip Table 2-14.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "psram"}
+  GPIO28: {"evidence": ["esp32-s3-ds-v2.2#pin-map-spiwp", "esp32-s3-ds-v2.2#table-1-1-s3r2", "esp32-s3-ds-v2.2#p4-gpio26-32"], "note": "GPIO28 (SPIWP) is part of the Quad SPI bus to the in-package PSRAM (shared with the board's external flash) - chip Table 2-14.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "psram"}
+  GPIO30: {"evidence": ["esp32-s3-ds-v2.2#pin-map-spiclk", "esp32-s3-ds-v2.2#table-1-1-s3r2", "esp32-s3-ds-v2.2#p4-gpio26-32"], "note": "GPIO30 (SPICLK) is part of the Quad SPI bus to the in-package PSRAM (shared with the board's external flash) - chip Table 2-14.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "psram"}
+  GPIO31: {"evidence": ["esp32-s3-ds-v2.2#pin-map-spiq", "esp32-s3-ds-v2.2#table-1-1-s3r2", "esp32-s3-ds-v2.2#p4-gpio26-32"], "note": "GPIO31 (SPIQ) is part of the Quad SPI bus to the in-package PSRAM (shared with the board's external flash) - chip Table 2-14.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "psram"}
+  GPIO32: {"evidence": ["esp32-s3-ds-v2.2#pin-map-spid", "esp32-s3-ds-v2.2#table-1-1-s3r2", "esp32-s3-ds-v2.2#p4-gpio26-32"], "note": "GPIO32 (SPID) is part of the Quad SPI bus to the in-package PSRAM (shared with the board's external flash) - chip Table 2-14.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "psram"}
+flash_voltage: {"evidence": ["esp32-s3-ds-v2.2#table-1-1-s3r2-3v3"], "note": "Chip Table 1-1 lists VDD_SPI voltage 3.3 V for ESP32-S3R2 (the board flash W25Q128 is supplied from VDD_SPI per the board schematic).", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "unit": "V", "value": 3.3}
+id: "esp32-s3r2"
+psram: {"evidence": ["esp32-s3-ds-v2.2#table-1-1-s3r2"], "note": "Chip Table 1-1: 2 MB (Quad SPI) in-package PSRAM.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "2 MB Quad SPI"}

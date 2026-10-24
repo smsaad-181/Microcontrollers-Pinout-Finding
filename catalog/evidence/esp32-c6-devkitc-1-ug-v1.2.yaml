@@ -1,0 +1,34 @@
+# Evidence record: ESP32-C6-DevKitC-1 v1.2 User Guide (esp-dev-kits, latest) (read 2026-10-24; one key, boards-2 task; a blind auditor must re-read every claim).
+# HTML page read 2026-10-24. Guide covers v1.2; schematic v1.4 is the latest of the v1.2 hardware (R-value changes only, see Hardware Revision Details).
+accessed: "2026-10-24"
+claims:
+  - {"id": "esp32-c6-devkitc-1-ug-v1.2#rgb-led", "locator": "Description of Components, RGB LED", "quote": "Addressable RGB LED, driven by GPIO8.", "supports": "On-board addressable RGB LED is on GPIO8"}
+  - {"id": "esp32-c6-devkitc-1-ug-v1.2#boot-button", "locator": "Description of Components, Boot Button", "quote": "Download button. Holding down Boot and then pressing Reset initiates Firmware Download mode", "supports": "Boot button: hold Boot, press Reset for download mode"}
+  - {"id": "esp32-c6-devkitc-1-ug-v1.2#reset-button", "locator": "Description of Components, Reset Button", "quote": "Press this button to restart the system.", "supports": "Reset button restarts the system"}
+  - {"id": "esp32-c6-devkitc-1-ug-v1.2#ldo", "locator": "Description of Components, 5 V to 3.3 V LDO", "quote": "Power regulator that converts a 5 V supply into a 3.3 V output.", "supports": "3V3 rail from a 5 V to 3.3 V LDO; no current rating in the guide"}
+  - {"id": "esp32-c6-devkitc-1-ug-v1.2#usb-bridge", "locator": "Description of Components, USB-to-UART Bridge", "quote": "Single USB-to-UART bridge chip provides transfer rates up to 3 Mbps.", "supports": "USB-to-UART bridge chip on the board"}
+  - {"id": "esp32-c6-devkitc-1-ug-v1.2#usb-c-native", "locator": "Description of Components, ESP32-C6 USB Type-C Port", "quote": "The USB Type-C port on the ESP32-C6 chip compliant with USB 2.0 full speed.", "supports": "Second USB-C port is the ESP32-C6 native full-speed USB (GPIO12/GPIO13)"}
+  - {"id": "esp32-c6-devkitc-1-ug-v1.2#usb-c-uart", "locator": "Description of Components, USB Type-C to UART Port", "quote": "communication with the ESP32-C6 chip via the on-board USB-to-UART bridge.", "supports": "USB-C to UART port with the bridge"}
+  - {"id": "esp32-c6-devkitc-1-ug-v1.2#headers-all-gpio", "locator": "Description of Components, Pin Header", "quote": "All available GPIO pins (except for the SPI bus for flash) are broken out to the pin headers on the board.", "supports": "All available GPIOs except the flash bus are on the headers"}
+  - {"id": "esp32-c6-devkitc-1-ug-v1.2#j5-current", "locator": "Description of Components, J5", "quote": "Used for current measurement.", "supports": "J5 jumper in the module supply path (current measurement)"}
+  - {"id": "esp32-c6-devkitc-1-ug-v1.2#strap-note", "locator": "Header Block footnote [3]", "quote": "MTMS, MTDI, GPIO8, GPIO9, and GPIO15 are strapping pins of the ESP32-C6 chip.", "supports": "Header pins 4, 5, 8, 9 and 15 are strapping pins"}
+  - {"id": "esp32-c6-devkitc-1-ug-v1.2#header-numbering", "locator": "Hardware Reference, Header Block", "quote": "The numbering is the same as in the ESP32-C6-DevKitC-1 Schematic v1.2 (PDF).", "supports": "Header positions J1/J3 follow the schematic numbering"}
+  - {"id": "esp32-c6-devkitc-1-ug-v1.2#j1-table", "locator": "Header Block, J1 table (rows 1-16)", "quote": "3 | 4 | I/O/T | MTMS [3], GPIO4, LP_GPIO4, LP_UART_RXD, ADC1_CH4, FSPIHD", "supports": "J1 table rows (position | name | type | function): J1-1 3V3, J1-2 RST, J1-3 4 ... J1-16 NC; the table was transcribed row by row"}
+  - {"id": "esp32-c6-devkitc-1-ug-v1.2#j3-table", "locator": "Header Block, J3 table (rows 1-16)", "quote": "2 | TX | I/O/T | U0TXD, GPIO16, FSPICS0", "supports": "J3 table rows: J3-2 TX = GPIO16, J3-3 RX = GPIO17 ... J3-16 NC"}
+  - {"id": "esp32-c6-devkitc-1-ug-v1.2#j1-gpio8-rgb", "locator": "Header Block, J1 row 9 and footnote [2]", "quote": "9 | 8 | I/O/T | GPIO8 [2] [3]", "supports": "J1-9 is GPIO8, footnote [2]: used to drive the RGB LED"}
+  - {"id": "esp32-c6-devkitc-1-ug-v1.2#j1-nc", "locator": "Header Block, J1 row 16", "quote": "16 | NC | | No connection", "supports": "J1-16 and J3-16 are NC"}
+  - {"id": "esp32-c6-devkitc-1-ug-v1.2#j3-usb", "locator": "Header Block, J3 rows 13-14", "quote": "13 | 13 | I/O/T | GPIO13, USB_D+ | 14 | 12 | I/O/T | GPIO12, USB_D-", "supports": "J3-13 = GPIO13 USB_D+, J3-14 = GPIO12 USB_D- on the header"}
+  - {"id": "esp32-c6-devkitc-1-ug-v1.2#ordering-n8", "locator": "Contents and Packaging, Ordering Information", "quote": "ESP32-C6-DevKitC-1-N8 | ESP32-C6-WROOM-1 | 8 MB", "supports": "DevKitC-1-N8 carries ESP32-C6-WROOM-1 with 8 MB flash"}
+  - {"id": "esp32-c6-devkitc-1-ug-v1.2#power-options", "locator": "Hardware Reference, Power Supply Options", "quote": "There are three mutually exclusive ways to provide power to the board", "supports": "Power via USB-C (either port), 5V pin or 3V3 pin"}
+doc_number: null
+id: "esp32-c6-devkitc-1-ug-v1.2"
+kind: "board-guide"
+manual: false
+publisher: "Espressif Systems"
+revision: "1.2"
+revision_date: null
+secondary: false
+sha256: null
+title: "ESP32-C6-DevKitC-1 v1.2 User Guide (esp-dev-kits, latest)"
+url: "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32c6/esp32-c6-devkitc-1/user_guide.html"
+url_original: null

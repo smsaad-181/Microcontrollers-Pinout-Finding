@@ -1,0 +1,58 @@
+# Evidence record: ESP32-S2-WROVER & ESP32-S2-WROVER-I Datasheet (read 2026-10-24; one key, boards-2 task; a blind auditor must re-read every claim).
+accessed: "2026-10-24"
+claims:
+  - {"id": "esp32-s2-wrover-ds-v1.4#pin-io0", "locator": "§3.2, Table 2 Pin Definitions", "quote": "IO0 3 I/O/T RTC_GPIO0, GPIO0", "supports": "Module pin IO0 carries GPIO0"}
+  - {"id": "esp32-s2-wrover-ds-v1.4#pin-io1", "locator": "§3.2, Table 2 Pin Definitions", "quote": "IO1 4 I/O/T RTC_GPIO1, GPIO1, TOUCH1, ADC1_CH0", "supports": "Module pin IO1 carries GPIO1"}
+  - {"id": "esp32-s2-wrover-ds-v1.4#pin-io2", "locator": "§3.2, Table 2 Pin Definitions", "quote": "IO2 5 I/O/T RTC_GPIO2, GPIO2, TOUCH2, ADC1_CH1", "supports": "Module pin IO2 carries GPIO2"}
+  - {"id": "esp32-s2-wrover-ds-v1.4#pin-io3", "locator": "§3.2, Table 2 Pin Definitions", "quote": "IO3 6 I/O/T RTC_GPIO3, GPIO3, TOUCH3, ADC1_CH2", "supports": "Module pin IO3 carries GPIO3"}
+  - {"id": "esp32-s2-wrover-ds-v1.4#pin-io4", "locator": "§3.2, Table 2 Pin Definitions", "quote": "IO4 7 I/O/T RTC_GPIO4, GPIO4, TOUCH4, ADC1_CH3", "supports": "Module pin IO4 carries GPIO4"}
+  - {"id": "esp32-s2-wrover-ds-v1.4#pin-io5", "locator": "§3.2, Table 2 Pin Definitions", "quote": "IO5 8 I/O/T RTC_GPIO5, GPIO5, TOUCH5, ADC1_CH4", "supports": "Module pin IO5 carries GPIO5"}
+  - {"id": "esp32-s2-wrover-ds-v1.4#pin-io6", "locator": "§3.2, Table 2 Pin Definitions", "quote": "IO6 9 I/O/T RTC_GPIO6, GPIO6, TOUCH6, ADC1_CH5", "supports": "Module pin IO6 carries GPIO6"}
+  - {"id": "esp32-s2-wrover-ds-v1.4#pin-io7", "locator": "§3.2, Table 2 Pin Definitions", "quote": "IO7 10 I/O/T RTC_GPIO7, GPIO7, TOUCH7, ADC1_CH6", "supports": "Module pin IO7 carries GPIO7"}
+  - {"id": "esp32-s2-wrover-ds-v1.4#pin-io8", "locator": "§3.2, Table 2 Pin Definitions", "quote": "IO8 11 I/O/T RTC_GPIO8, GPIO8, TOUCH8, ADC1_CH7", "supports": "Module pin IO8 carries GPIO8"}
+  - {"id": "esp32-s2-wrover-ds-v1.4#pin-io9", "locator": "§3.2, Table 2 Pin Definitions", "quote": "IO9 12 I/O/T RTC_GPIO9, GPIO9, TOUCH9, ADC1_CH8, FSPIHD", "supports": "Module pin IO9 carries GPIO9"}
+  - {"id": "esp32-s2-wrover-ds-v1.4#pin-io10", "locator": "§3.2, Table 2 Pin Definitions", "quote": "IO10 13 I/O/T RTC_GPIO10, GPIO10, TOUCH10, ADC1_CH9, FSPICS0, FSPIIO4", "supports": "Module pin IO10 carries GPIO10"}
+  - {"id": "esp32-s2-wrover-ds-v1.4#pin-io11", "locator": "§3.2, Table 2 Pin Definitions", "quote": "IO11 14 I/O/T RTC_GPIO11, GPIO11, TOUCH11, ADC2_CH0, FSPID, FSPIIO5", "supports": "Module pin IO11 carries GPIO11"}
+  - {"id": "esp32-s2-wrover-ds-v1.4#pin-io12", "locator": "§3.2, Table 2 Pin Definitions", "quote": "IO12 15 I/O/T RTC_GPIO12, GPIO12, TOUCH12, ADC2_CH1, FSPICLK, FSPIIO6", "supports": "Module pin IO12 carries GPIO12"}
+  - {"id": "esp32-s2-wrover-ds-v1.4#pin-io13", "locator": "§3.2, Table 2 Pin Definitions", "quote": "IO13 16 I/O/T RTC_GPIO13, GPIO13, TOUCH13, ADC2_CH2, FSPIQ, FSPIIO7", "supports": "Module pin IO13 carries GPIO13"}
+  - {"id": "esp32-s2-wrover-ds-v1.4#pin-io14", "locator": "§3.2, Table 2 Pin Definitions", "quote": "IO14 17 I/O/T RTC_GPIO14, GPIO14, TOUCH14, ADC2_CH3, FSPIWP, FSPIDQS", "supports": "Module pin IO14 carries GPIO14"}
+  - {"id": "esp32-s2-wrover-ds-v1.4#pin-io15", "locator": "§3.2, Table 2 Pin Definitions", "quote": "IO15 18 I/O/T RTC_GPIO15, GPIO15, U0RTS, ADC2_CH4, XTAL_32K_P", "supports": "Module pin IO15 carries GPIO15"}
+  - {"id": "esp32-s2-wrover-ds-v1.4#pin-io16", "locator": "§3.2, Table 2 Pin Definitions", "quote": "IO16 19 I/O/T RTC_GPIO16, GPIO16, U0CTS, ADC2_CH5, XTAL_32K_N", "supports": "Module pin IO16 carries GPIO16"}
+  - {"id": "esp32-s2-wrover-ds-v1.4#pin-io17", "locator": "§3.2, Table 2 Pin Definitions", "quote": "IO17 20 I/O/T RTC_GPIO17, GPIO17, U1TXD, ADC2_CH6, DAC_1", "supports": "Module pin IO17 carries GPIO17"}
+  - {"id": "esp32-s2-wrover-ds-v1.4#pin-io18", "locator": "§3.2, Table 2 Pin Definitions", "quote": "IO18 21 I/O/T RTC_GPIO18, GPIO18, U1RXD, ADC2_CH7, DAC_2, CLK_OUT3", "supports": "Module pin IO18 carries GPIO18"}
+  - {"id": "esp32-s2-wrover-ds-v1.4#pin-io19", "locator": "§3.2, Table 2 Pin Definitions", "quote": "IO19 22 I/O/T RTC_GPIO19, GPIO19, U1RTS, ADC2_CH8, CLK_OUT2, USB_D-", "supports": "Module pin IO19 carries GPIO19"}
+  - {"id": "esp32-s2-wrover-ds-v1.4#pin-io20", "locator": "§3.2, Table 2 Pin Definitions", "quote": "IO20 23 I/O/T RTC_GPIO20, GPIO20, U1CTS, ADC2_CH9, CLK_OUT1, USB_D+", "supports": "Module pin IO20 carries GPIO20"}
+  - {"id": "esp32-s2-wrover-ds-v1.4#pin-io21", "locator": "§3.2, Table 2 Pin Definitions", "quote": "IO21 24 I/O/T RTC_GPIO21, GPIO21", "supports": "Module pin IO21 carries GPIO21"}
+  - {"id": "esp32-s2-wrover-ds-v1.4#pin-io26", "locator": "§3.2, Table 2 Pin Definitions", "quote": "IO26 25 I/O/T SPICS1, GPIO26 2", "supports": "Module pin IO26 carries GPIO26"}
+  - {"id": "esp32-s2-wrover-ds-v1.4#pin-io33", "locator": "§3.2, Table 2 Pin Definitions", "quote": "IO33 27 I/O/T SPIIO4, GPIO33, FSPIHD", "supports": "Module pin IO33 carries GPIO33"}
+  - {"id": "esp32-s2-wrover-ds-v1.4#pin-io34", "locator": "§3.2, Table 2 Pin Definitions", "quote": "IO34 28 I/O/T SPIIO5, GPIO34, FSPICS0", "supports": "Module pin IO34 carries GPIO34"}
+  - {"id": "esp32-s2-wrover-ds-v1.4#pin-io35", "locator": "§3.2, Table 2 Pin Definitions", "quote": "IO35 29 I/O/T SPIIO6, GPIO35, FSPID", "supports": "Module pin IO35 carries GPIO35"}
+  - {"id": "esp32-s2-wrover-ds-v1.4#pin-io36", "locator": "§3.2, Table 2 Pin Definitions", "quote": "IO36 30 I/O/T SPIIO7, GPIO36, FSPICLK", "supports": "Module pin IO36 carries GPIO36"}
+  - {"id": "esp32-s2-wrover-ds-v1.4#pin-io37", "locator": "§3.2, Table 2 Pin Definitions", "quote": "IO37 31 I/O/T SPIDQS, GPIO37, FSPIQ", "supports": "Module pin IO37 carries GPIO37"}
+  - {"id": "esp32-s2-wrover-ds-v1.4#pin-io38", "locator": "§3.2, Table 2 Pin Definitions", "quote": "IO38 32 I/O/T GPIO38, FSPIWP", "supports": "Module pin IO38 carries GPIO38"}
+  - {"id": "esp32-s2-wrover-ds-v1.4#pin-io39", "locator": "§3.2, Table 2 Pin Definitions", "quote": "IO39 33 I/O/T MTCK, GPIO39, CLK_OUT3", "supports": "Module pin IO39 carries GPIO39"}
+  - {"id": "esp32-s2-wrover-ds-v1.4#pin-io40", "locator": "§3.2, Table 2 Pin Definitions", "quote": "IO40 34 I/O/T MTDO, GPIO40, CLK_OUT2", "supports": "Module pin IO40 carries GPIO40"}
+  - {"id": "esp32-s2-wrover-ds-v1.4#pin-io41", "locator": "§3.2, Table 2 Pin Definitions", "quote": "IO41 35 I/O/T MTDI, GPIO41, CLK_OUT1", "supports": "Module pin IO41 carries GPIO41"}
+  - {"id": "esp32-s2-wrover-ds-v1.4#pin-io42", "locator": "§3.2, Table 2 Pin Definitions", "quote": "IO42 36 I/O/T MTMS, GPIO42", "supports": "Module pin IO42 carries GPIO42"}
+  - {"id": "esp32-s2-wrover-ds-v1.4#pin-txd0", "locator": "§3.2, Table 2 Pin Definitions", "quote": "TXD0 37 I/O/T U0TXD, GPIO43, CLK_OUT1", "supports": "Module pin TXD0 carries GPIO43"}
+  - {"id": "esp32-s2-wrover-ds-v1.4#pin-rxd0", "locator": "§3.2, Table 2 Pin Definitions", "quote": "RXD0 38 I/O/T U0RXD, GPIO44, CLK_OUT2", "supports": "Module pin RXD0 carries GPIO44"}
+  - {"id": "esp32-s2-wrover-ds-v1.4#pin-io45", "locator": "§3.2, Table 2 Pin Definitions", "quote": "IO45 39 I/O/T GPIO45", "supports": "Module pin IO45 carries GPIO45"}
+  - {"id": "esp32-s2-wrover-ds-v1.4#pin-io46", "locator": "§3.2, Table 2 Pin Definitions", "quote": "IO46 40 I GPIO46", "supports": "Module pin IO46 carries GPIO46"}
+  - {"id": "esp32-s2-wrover-ds-v1.4#flash-psram", "locator": "§1 Module Overview", "quote": "They both feature a 4 MB external SPI flash and an additional 2 MB SPI Pseudo static RAM (PSRAM).", "supports": "ESP32-S2-WROVER: 4 MB external SPI flash and 2 MB SPI PSRAM"}
+  - {"id": "esp32-s2-wrover-ds-v1.4#io26-psram-cs", "locator": "§3.2, Table 2 footnote 2", "quote": "By default, IO26 is connected to the CS pin of the PSRAM and cannot", "supports": "IO26 (GPIO26 = SPICS1) is wired to the PSRAM chip select on the WROVER and cannot be used for other functions"}
+  - {"id": "esp32-s2-wrover-ds-v1.4#sch-spics0-spid", "locator": "§5 Module Schematics, Figure 5 (Flash and PSRAM)", "quote": "SPICS0 1 /CS VDD DI 5 SPID SPICS1 1 CS VDD SI/SIO0 5 SPID", "supports": "Schematic: flash (CS = SPICS0, DI = SPID) and PSRAM (CS = SPICS1, SI = SPID)"}
+  - {"id": "esp32-s2-wrover-ds-v1.4#sch-spiclk-spiq", "locator": "§5 Module Schematics, Figure 5 (Flash and PSRAM)", "quote": "SPICLK 6 CLK DO 2 SPIQ SPICLK 6 SCLK SO/SIO1 2 SPIQ", "supports": "Schematic: flash and PSRAM share SPICLK and SPIQ"}
+  - {"id": "esp32-s2-wrover-ds-v1.4#sch-spihd-spiwp", "locator": "§5 Module Schematics, Figure 5 (Flash and PSRAM)", "quote": "SPIHD 7 /HOLD GND /W P 3 SPIWP SPIHD 7 SIO3 VSS SIO2 3 SPIWP", "supports": "Schematic: flash and PSRAM share SPIHD and SPIWP"}
+  - {"id": "esp32-s2-wrover-ds-v1.4#sch-flash-3v3", "locator": "§5 Module Schematics, Figure 5", "quote": "4 FLASH-3V3 4 PSRAM-3V3 GND", "supports": "Schematic: the flash and PSRAM are supplied from FLASH-3V3 / PSRAM-3V3 (3.3 V rails)"}
+doc_number: null
+id: "esp32-s2-wrover-ds-v1.4"
+kind: "datasheet"
+manual: false
+publisher: "Espressif Systems"
+revision: "1.4"
+revision_date: null
+secondary: false
+sha256: "1d09a3001192c1be579c5353aac97d2ed20690fa99f3fd9f93980dc35e631f8b"
+title: "ESP32-S2-WROVER & ESP32-S2-WROVER-I Datasheet"
+url: "https://documentation.espressif.com/esp32-s2-wrover_esp32-s2-wrover-i_datasheet_en.pdf"
+url_original: "https://www.espressif.com/sites/default/files/documentation/esp32-s2-wrover_esp32-s2-wrover-i_datasheet_en.pdf"

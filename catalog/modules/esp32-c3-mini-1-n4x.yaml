@@ -1,0 +1,31 @@
+# ESP32-C3-MINI-1-N4X module (ESP32-C3FH4X chip rev v1.1, 4 MB Quad SPI flash in the chip package, no PSRAM; also covers MINI-1U and the H4X/N4 flash variants) - two keys agree (researcher + blind auditor).
+# Source: ESP32-C3-MINI-1 & ESP32-C3-MINI-1U Datasheet v2.2 (Table 3-1) + ESP32-C3 Series Datasheet v2.4 (Tables 1-1, 2-12). Read 2026-10-24.
+# bonded_pads = the 15 GPIOs on module pins (Table 3-1): IO0-IO10, IO18, IO19, RXD0 (GPIO20), TXD0 (GPIO21). GPIO11-GPIO17 have no module pin (NC pins).
+# consumed: GPIO12-GPIO17 are wired to the in-package flash inside the chip; GPIO11 (VDD_SPI) powers it.
+bonded_pads:
+  - "GPIO0"
+  - "GPIO1"
+  - "GPIO2"
+  - "GPIO3"
+  - "GPIO4"
+  - "GPIO5"
+  - "GPIO6"
+  - "GPIO7"
+  - "GPIO8"
+  - "GPIO9"
+  - "GPIO10"
+  - "GPIO18"
+  - "GPIO19"
+  - "GPIO20"
+  - "GPIO21"
+chip: "esp32-c3"
+consumed:
+  GPIO11: {"evidence": ["esp32-c3-mini-1-ds-v2.2#series-n4x", "esp32-c3-ds-v2.4#vdd-spi-flash-supply", "esp32-c3-ds-v2.4#vdd-spi-gpio11"], "note": "GPIO11 is the VDD_SPI pin that powers the in-package flash (chip datasheet footnote 8); it has no module pin.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "internal"}
+  GPIO12: {"evidence": ["esp32-c3-mini-1-ds-v2.2#series-n4x", "esp32-c3-mini-1-ds-v2.2#flash-in-package", "esp32-c3-mini-1-ds-v2.2#flash-pins-not-bonded", "esp32-c3-ds-v2.4#table-2-12-inpackage-flash"], "note": "GPIO12 = SPIHD: the 4 MB flash is inside the ESP32-C3FH4X package and uses the SPI0/1 pads; the chip datasheet Table 2-12 maps them to the in-package flash; the pad is not led out on a module pin.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "flash"}
+  GPIO13: {"evidence": ["esp32-c3-mini-1-ds-v2.2#series-n4x", "esp32-c3-mini-1-ds-v2.2#flash-in-package", "esp32-c3-mini-1-ds-v2.2#flash-pins-not-bonded", "esp32-c3-ds-v2.4#table-2-12-inpackage-flash"], "note": "GPIO13 = SPIWP: the 4 MB flash is inside the ESP32-C3FH4X package and uses the SPI0/1 pads; the chip datasheet Table 2-12 maps them to the in-package flash; the pad is not led out on a module pin.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "flash"}
+  GPIO14: {"evidence": ["esp32-c3-mini-1-ds-v2.2#series-n4x", "esp32-c3-mini-1-ds-v2.2#flash-in-package", "esp32-c3-mini-1-ds-v2.2#flash-pins-not-bonded", "esp32-c3-ds-v2.4#table-2-12-inpackage-flash"], "note": "GPIO14 = SPICS0: the 4 MB flash is inside the ESP32-C3FH4X package and uses the SPI0/1 pads; the chip datasheet Table 2-12 maps them to the in-package flash; the pad is not led out on a module pin.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "flash"}
+  GPIO15: {"evidence": ["esp32-c3-mini-1-ds-v2.2#series-n4x", "esp32-c3-mini-1-ds-v2.2#flash-in-package", "esp32-c3-mini-1-ds-v2.2#flash-pins-not-bonded", "esp32-c3-ds-v2.4#table-2-12-inpackage-flash"], "note": "GPIO15 = SPICLK: the 4 MB flash is inside the ESP32-C3FH4X package and uses the SPI0/1 pads; the chip datasheet Table 2-12 maps them to the in-package flash; the pad is not led out on a module pin.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "flash"}
+  GPIO16: {"evidence": ["esp32-c3-mini-1-ds-v2.2#series-n4x", "esp32-c3-mini-1-ds-v2.2#flash-in-package", "esp32-c3-mini-1-ds-v2.2#flash-pins-not-bonded", "esp32-c3-ds-v2.4#table-2-12-inpackage-flash"], "note": "GPIO16 = SPID: the 4 MB flash is inside the ESP32-C3FH4X package and uses the SPI0/1 pads; the chip datasheet Table 2-12 maps them to the in-package flash; the pad is not led out on a module pin.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "flash"}
+  GPIO17: {"evidence": ["esp32-c3-mini-1-ds-v2.2#series-n4x", "esp32-c3-mini-1-ds-v2.2#flash-in-package", "esp32-c3-mini-1-ds-v2.2#flash-pins-not-bonded", "esp32-c3-ds-v2.4#table-2-12-inpackage-flash"], "note": "GPIO17 = SPIQ: the 4 MB flash is inside the ESP32-C3FH4X package and uses the SPI0/1 pads; the chip datasheet Table 2-12 maps them to the in-package flash; the pad is not led out on a module pin.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "value": "flash"}
+flash_voltage: {"evidence": ["esp32-c3-ds-v2.4#flash-3v3", "esp32-c3-mini-1-ds-v2.2#flash-vcc-3v3"], "note": "Not stated for the module in so many words: the chip datasheet (Table 2-3) calls the SPI0/1 flash interface a 3.3 V interface, and the module flash table lists 1.8 V and 3.3 V supply options; 3.3 V is the interface voltage.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "unit": "V", "value": 3.3}
+id: "esp32-c3-mini-1-n4x"

@@ -1,0 +1,30 @@
+# ESP32-C6FH4 chip package as a "module" (4 MB Quad SPI flash in the QFN32 package; used bare on the Waveshare ESP32-C6-Zero). Two keys agree (researcher + blind auditor).
+# Source: ESP32-C6 Series Datasheet v1.5 Table 1-1, Table 2-2/2-5 (QFN32) and section 2.6 ("pins allocated for communication with in-package flash are not routed out").
+# bonded_pads = the 22 QFN32 GPIOs: GPIO0-GPIO9, GPIO12-GPIO15, GPIO16 (U0TXD), GPIO17 (U0RXD), GPIO18-GPIO23. The flash pads GPIO24-GPIO30 and GPIO10/GPIO11 are not bonded on QFN32, so nothing is listed as consumed.
+bonded_pads:
+  - "GPIO0"
+  - "GPIO1"
+  - "GPIO2"
+  - "GPIO3"
+  - "GPIO4"
+  - "GPIO5"
+  - "GPIO6"
+  - "GPIO7"
+  - "GPIO8"
+  - "GPIO9"
+  - "GPIO12"
+  - "GPIO13"
+  - "GPIO14"
+  - "GPIO15"
+  - "GPIO16"
+  - "GPIO17"
+  - "GPIO18"
+  - "GPIO19"
+  - "GPIO20"
+  - "GPIO21"
+  - "GPIO22"
+  - "GPIO23"
+chip: "esp32-c6"
+consumed: {}
+flash_voltage: {"evidence": ["esp32-c6-ds-v1.5#flash-3v3", "esp32-c6-ds-v1.5#table-1-1-fh4"], "note": "Chip Table 2-3 calls the SPI0/1 flash interface a 3.3 V interface; not stated per variant in so many words.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "unit": "V", "value": 3.3}
+id: "esp32-c6fh4"

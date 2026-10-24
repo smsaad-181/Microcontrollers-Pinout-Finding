@@ -1,0 +1,23 @@
+# Evidence record: ESP32-S3-Tiny schematic (ESP32-S3-Tiny-Sch.pdf) (read 2026-10-24; one key, boards-2 task; a blind auditor must re-read every claim).
+# One sheet; header and FPC read from the rendered drawing; quotes are text printed in the drawing.
+accessed: "2026-10-24"
+claims:
+  - {"id": "waveshare-esp32-s3-tiny-sch#ldo-part", "locator": "Schematic, Power", "quote": "ME6217C33M5G", "supports": "LDO U1 ME6217C33M5G from VCC_5V to 3V3 (drawing)"}
+  - {"id": "waveshare-esp32-s3-tiny-sch#rgb-part", "locator": "Schematic, RGB", "quote": "WS2812B", "supports": "LED1 WS2812B-0807 with DIN on IO38 (10K pull-up R1 to 3V3), VDD 3V3 (drawing)"}
+  - {"id": "waveshare-esp32-s3-tiny-sch#chip-part", "locator": "Schematic, U2", "quote": "ESP32-S3FH4R2", "supports": "U2 is ESP32-S3FH4R2 (drawing)"}
+  - {"id": "waveshare-esp32-s3-tiny-sch#vbus-diode", "locator": "Schematic, USB", "quote": "B5819WS", "supports": "D1 B5819WS from VBUS to VCC_5V (drawing)"}
+  - {"id": "waveshare-esp32-s3-tiny-sch#header", "locator": "Schematic, header P1 (23 pins) [drawing/image, transcribed]", "quote": "P1", "supports": "P1 pins 1-23 = VCC_5V, GND, 3V3, IO1-IO6 (4-9), TX (10, via R2 499R from IO43), RX (11, IO44), IO18, IO17, IO16, IO15, IO14, IO13, IO12 (12-18), IO7-IO11 (19-23) (drawing)"}
+  - {"id": "waveshare-esp32-s3-tiny-sch#fpc", "locator": "Schematic, USB block L1 (0.5 mm 8-pin FPC) [drawing/image, transcribed]", "quote": "L1", "supports": "L1 pins: 2 USB_N, 3 USB_P, 4 GND, 5 IO0 (10K pull-up R3), 6 RESET (10K pull-up R4), 7 VBUS, 8 GND; USB_N/USB_P reach IO19/IO20 through R6/R7 22R (drawing)"}
+  - {"id": "waveshare-esp32-s3-tiny-sch#test-points", "locator": "Schematic, test points P2-P15 [drawing/image, transcribed]", "quote": "Testpoint", "supports": "Test points IO39, IO38, IO40, IO37, IO41, IO36, IO42, IO35, IO45, IO34, IO47, IO33, IO48, IO21 (drawing)"}
+doc_number: null
+id: "waveshare-esp32-s3-tiny-sch"
+kind: "schematic"
+manual: false
+publisher: "Waveshare"
+revision: null
+revision_date: null
+secondary: false
+sha256: "7a1069dc3c1f966f6bcea56c25272cb8ad3a7f992c46a194e6a1fdfe5b503b14"
+title: "ESP32-S3-Tiny schematic (ESP32-S3-Tiny-Sch.pdf)"
+url: "https://files.waveshare.com/wiki/ESP32-S3-Tiny/ESP32-S3-Tiny-Sch.pdf"
+url_original: null
