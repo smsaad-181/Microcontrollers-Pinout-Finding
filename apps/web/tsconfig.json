@@ -11,5 +11,5 @@
     "declaration": false,
     "declarationMap": false
   },
-  "include": ["src", "test", "vite.config.ts"]
+  "include": ["src", "test", "e2e", "vite.config.ts", "playwright.config.ts"]
 }
