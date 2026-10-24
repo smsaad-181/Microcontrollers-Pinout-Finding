@@ -455,8 +455,8 @@ describe('golden fixtures (2b.9)', () => {
   const reports = fixtures.map(runFixture);
   const disputesDoc = readFileSync(`${ROOT}docs/validation/phase-2b/fixture-disputes.md`, 'utf8');
 
-  it('loads the 24 fixtures', () => {
-    expect(fixtures.length).toBe(24);
+  it('loads the 25 fixtures', () => {
+    expect(fixtures.length).toBe(25);
   });
   it('prints the per-fixture table', () => {
     const lines = reports.map((x) => {

@@ -1,0 +1,17 @@
+# DHT11 bare 4-pin sensor (pin 1 VCC, 2 DATA, 3 not connected, 4 GND). Sources are Adafruit pages only (secondary); Aosong datasheet not obtained.
+hardwired: []
+ic: dht11
+id: dht11-4pin
+interfaces_exposed: [digital]
+level_shifter: { evidence: [], note: "Bare sensor: no level shifter mentioned in the sources read.", status: missing, value: null }
+notes: "Bare 4-pin DHT11 (blue body). Needs an EXTERNAL pull-up from DATA to VCC: 4.7 k or 10 k (adafruit-product-386#pullup, adafruit-dht-learn#pullup-10k); pullups is [] because none is onboard, and the schema cannot express 'external pull-up required' (the engine will not add the resistor). Protocol is Aosong single-wire (not 1-Wire, not I2C), one GPIO. Minimum sampling interval 1 s per vendor spec (adafruit-product-386#sampling-rate); the vendor library uses 2 s (adafruit-product-386#library-2s), use 2 s to be safe; the schema has no field for it. Start-pulse and bit timing not captured (Aosong datasheet unread). Max current 2.5 mA during conversion. Aosong datasheet unreachable (login), so all facts are interim."
+pins:
+  - { label: VCC, maps_to: VCC }
+  - { label: DATA, maps_to: DATA }
+  - { label: NC, maps_to: NC }
+  - { label: GND, maps_to: GND }
+pullups: []
+regulator: { evidence: [], note: "Bare sensor: no regulator mentioned.", status: missing, value: null }
+supply_current: { evidence: [adafruit-product-386#max-current], note: "2.5 mA max during conversion (vendor text); standby not stated.", status: interim, unit: mA, value: { max: 2.5 } }
+variant_names: ["DHT11", "DHT11 4-pin", "DHT11 temperature humidity sensor", "ASAIR DHT11"]
+vendor: Aosong

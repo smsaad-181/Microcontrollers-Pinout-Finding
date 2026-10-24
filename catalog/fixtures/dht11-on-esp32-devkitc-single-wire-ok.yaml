@@ -1,0 +1,32 @@
+# Golden fixture 25 - DHT11 (bare 4-pin) on an ESP32-DevKitC V4: one bidirectional single-wire DATA line on a plain GPIO. Expected: ok.
+# The sensor facts are interim (secondary Adafruit sources); the datasheet gives no VIH/VOH, so the electrical-level assertion is deliberately not made here.
+id: dht11-on-esp32-devkitc-single-wire-ok
+board: esp32-devkitc-v4@V4
+variant: esp32-devkitc-32e
+project:
+  board: esp32-devkitc-v4@V4
+  variant: esp32-devkitc-32e
+  wifi: true
+  modules:
+    - { breakout: dht11-4pin, instance: climate }
+  locked: []
+  reserved: []
+expect:
+  status: ok
+  properties:
+    - no_pad_in: [GPIO6, GPIO7, GPIO8, GPIO9, GPIO10, GPIO11, GPIO1, GPIO3]
+    - outputs_not_in: [GPIO34, GPIO35, GPIO36, GPIO39]   # climate.DATA is bidirectional (dir io), so it needs an output-capable pad
+    - no_warning_at_level: [critical]
+evidence:
+  - adafruit-product-386#pins
+  - adafruit-dht-learn#single-pin
+  - adafruit-dht-learn#pin-order
+  - esp32-devkitc-v4-ug#j2-1-4
+  - esp32-ds-v5.3#strap-default-config
+derivations:
+  - "DHT11 uses one digital data pin (adafruit-dht-learn#single-pin); the catalog models it as kind digital, role DATA, dir io. A bidirectional line cannot sit on the input-only ESP32 pads GPIO34/35/36/39 (esp32-ds-v5.3), so outputs_not_in excludes them."
+  - "GPIO6-11 are the SPI-flash pads and GPIO1/GPIO3 are the UART0 console, none usable for a free data line (esp32-devkitc-v4-ug#j2-1-4); same exclusions as fixture hc-sr04-echo-into-esp32-level-unknown."
+  - "No critical warning: nothing read states an absolute maximum or a level conflict (the 3.3 V ESP32 drives a 3 to 5 V I/O sensor powered at 3.3 V, adafruit-product-386#supply-io); any missing-level notice is at most Caution."
+  - "Not asserted: the external 4.7 k / 10 k pull-up (the schema has no field for it), the sampling interval and timing. These are in the breakout notes."
+changelog:
+  - "2026-10-24: created (DHT11 onboarding)."

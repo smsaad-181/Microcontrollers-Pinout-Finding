@@ -1,0 +1,31 @@
+# DHT11 single-wire digital temperature/humidity sensor (Aosong/ASAIR). Aosong datasheet NOT obtained; every stored value is from Adafruit pages (secondary), status interim.
+# Interface modelling: the DHT11 protocol is Aosong's own single-wire timing, NOT Maxim 1-Wire and not I2C. The schema 'onewire' kind would route to the
+# 1-Wire peripheral/bus-sharing logic, so the closest honest kind is 'digital' with one bidirectional role DATA. The schema has NO field for
+# "needs external pull-up" or "min sampling interval" or "start-pulse timing": those live in notes only (gap reported).
+# drive: not stated by any read source; open-drain is common knowledge but unsourced, so push-pull is a structural placeholder, not a fact.
+id: dht11
+input_abs_max: { evidence: [], note: "No absolute-maximum statement in the Adafruit pages; Aosong datasheet not read.", status: missing, value: null }
+interfaces:
+  - kind: digital
+    limits: {}
+    signals:
+      - { dir: io, drive: push-pull, role: DATA, shareable: false }
+logic_levels:
+  vih_min: { evidence: [], note: "No VIH number in the sources read; Aosong datasheet not obtained.", status: missing, unit: V, value: null }
+  vil_max: { evidence: [], note: "No VIL number in the sources read; Aosong datasheet not obtained.", status: missing, unit: V, value: null }
+  voh_min: { evidence: [], note: "Not stated in the sources read.", status: missing, unit: V, value: null }
+  vol_max: { evidence: [], note: "Not stated in the sources read.", status: missing, unit: V, value: null }
+part: DHT11
+supply_current: { evidence: [adafruit-product-386#max-current], note: "Vendor text: 2.5 mA max during conversion. Standby current and the conditions are not stated. Single secondary source.", status: interim, unit: mA, value: { max: 2.5 } }
+vdd_range:
+  active: [3.3, 5]
+  evidence: [adafruit-product-386#supply-io, adafruit-dht-learn#vcc-range]
+  note: "Product page says 3 to 5 V; the learning guide says 3.3 - 5 V (and that 3.3 V is sometimes not enough). Most restrictive reading is active. Both are secondary; the Aosong datasheet was not read."
+  readings:
+    - { evidence: [adafruit-product-386#supply-io], value: [3, 5] }
+    - { evidence: [adafruit-dht-learn#vcc-range], value: [3.3, 5] }
+  status: conflict
+  unit: V
+  value: [3.3, 5]
+vendor: Aosong
+vio_range: { evidence: [adafruit-product-386#supply-io], note: "Vendor text 'power and I/O' 3 to 5 V: the data line runs at the supply level; there is no separate I/O supply. Secondary source only; the learning guide gives 3.3 V as the lower bound for power, not for I/O.", status: interim, unit: V, value: [3, 5] }

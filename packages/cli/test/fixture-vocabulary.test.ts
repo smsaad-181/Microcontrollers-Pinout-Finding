@@ -22,7 +22,7 @@ const docs = readdirSync(dir)
 
 describe('catalog fixtures vs the vocabulary registry', () => {
   it('has the 24 hand-written fixtures and all validate', () => {
-    expect(docs.length).toBe(24);
+    expect(docs.length).toBe(25);
     for (const { f, y } of docs) {
       const r = FixtureSchema.safeParse(y);
       expect(r.success, `${f} ${JSON.stringify(r.error?.issues)}`).toBe(true);

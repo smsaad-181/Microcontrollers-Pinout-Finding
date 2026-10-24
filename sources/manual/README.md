@@ -17,3 +17,4 @@ Claude "continue".
 | 9 | PTV09A potentiometer datasheet | Bourns | https://www.bourns.com/docs/Product-Datasheets/PTV09A.pdf (returns HTTP 403 to scripts) | Optional: a panel-mount potentiometer instead of the 3386 trimmer used as the representative part | requested (optional) |
 
 Name files as you like; Claude will hash and identify them. Add more rows here when an agent requests them.
+| 10 | DHT11 Humidity & Temperature Sensor datasheet (latest revision) | Aosong / ASAIR (aosong.com, product itemid=2257) | aosong.com → Products → DHT11 → Download Center (the product page has no datasheet link; downloads need a login) | DHT11: supply range, VIH/VIL, absolute maximum, start-signal and bit timing, sampling period, standby current. Until then every DHT11 fact is interim from Adafruit pages. | requested |
