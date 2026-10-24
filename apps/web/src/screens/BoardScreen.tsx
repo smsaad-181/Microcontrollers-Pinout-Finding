@@ -38,7 +38,7 @@ function BoardPicker({ data }: { data: LoadedCatalog }) {
       : '',
   );
   const [vendor, setVendor] = useState('');
-  const [open, setOpen] = useState<string | null>(null);
+  const [focusKey, setFocusKey] = useState<string | null>(null);
   const id = useId();
   const searchRef = useRef<HTMLInputElement>(null);
 
@@ -53,19 +53,36 @@ function BoardPicker({ data }: { data: LoadedCatalog }) {
           platformOf(b) === activePlatform && (vendor === '' || shortVendor(b.vendor) === vendor),
       );
   const cards = filterCards(scope, { query, vendor: '', family: '' });
+  const allCards = filterCards(data.boards, { query: '', vendor: '', family: '' });
   const where = vendor === '' ? activePlatform : vendor;
+  const focusCard = focusKey === null ? undefined : allCards.find((c) => c.key === focusKey);
+  const focusVersion =
+    focusCard?.versions.find((v) => v.ref === draft.board && v.variant === draft.variant) ??
+    focusCard?.versions[0];
+  const detailOption = focusVersion?.option ?? selected;
 
   const choose = (c: BoardCard) => {
     const only = c.versions[0];
     if (c.versions.length === 1 && only) {
       dispatch({ type: 'select-board', board: only.ref, variant: only.variant });
-      setOpen(null);
     } else {
-      setOpen(c.key);
+      setFocusKey(c.key);
     }
   };
   const isCardSelected = (c: BoardCard) =>
     c.versions.some((v) => v.ref === draft.board && v.variant === draft.variant);
+  const openBoard = (c: BoardCard) => {
+    setFocusKey(c.key);
+    setQuery('');
+  };
+
+  /** Boards of one brand, for the tree leaves. */
+  const boardsOf = (platformName: string, vendorLabel: string) =>
+    allCards.filter(
+      (c) =>
+        platformOf({ vendor: c.vendor, family: c.family }) === platformName &&
+        shortVendor(c.vendor) === vendorLabel,
+    );
 
   return (
     <>
@@ -103,76 +120,139 @@ function BoardPicker({ data }: { data: LoadedCatalog }) {
             </button>
           </>
         ) : (
-          <p className="selected-none">No board picked yet. Choose one from the list below.</p>
+          <p className="selected-none">
+            No board picked yet. Open a group on the left, then choose your board.
+          </p>
         )}
       </section>
-      {selected ? <BoardDetails board={selected} variant={selected.variant} data={data} /> : null}
 
-      <form
-        role="search"
-        className="search"
-        onSubmit={(e) => {
-          e.preventDefault();
-        }}
-      >
-        <label htmlFor={`${id}-q`}>Search all boards by name</label>
-        <span className="search-field">
-          <span className="big-search-icon">
-            <Icon name="search" size={20} />
-          </span>
-          <input
-            id={`${id}-q`}
-            ref={searchRef}
-            type="search"
-            value={query}
-            autoComplete="off"
-            placeholder="e.g. DevKit, NodeMCU, Pico, Zero"
-            onChange={(e) => {
-              setQuery(e.target.value);
+      <div className="board-layout tree-layout">
+        <nav aria-label="Boards by brand" className="board-tree">
+          <form
+            role="search"
+            className="search tree-search"
+            onSubmit={(e) => {
+              e.preventDefault();
             }}
-          />
-        </span>
-      </form>
-
-      <div className="board-layout">
-        <div>
-          <p role="status" className="muted">
-            {searching
-              ? `${String(cards.length)} boards match your search.`
-              : `${String(cards.length)} boards in ${where}.`}
-          </p>
-          {cards.length === 0 ? <p>No board matches. Clear the search.</p> : null}
-          <ul className="card-grid" aria-label="Boards">
-            {cards.map((c) => {
-              const sel = isCardSelected(c);
+          >
+            <label htmlFor={`${id}-q`}>Search all boards by name</label>
+            <span className="search-field">
+              <span className="big-search-icon">
+                <Icon name="search" size={20} />
+              </span>
+              <input
+                id={`${id}-q`}
+                ref={searchRef}
+                type="search"
+                value={query}
+                autoComplete="off"
+                placeholder="e.g. DevKit, NodeMCU, Pico"
+                onChange={(e) => {
+                  setQuery(e.target.value);
+                  setFocusKey(null);
+                }}
+              />
+            </span>
+          </form>
+          <ul className="tree-root">
+            {tree.map((p) => {
+              const open = !searching && p.name === activePlatform;
               return (
-                <li key={c.key} className={`pick-card${sel ? ' is-selected' : ''}`}>
-                  <ItemPicture
-                    id={c.versions[0]?.ref.split('@')[0] ?? c.key}
-                    name={c.name}
-                    board={{ vendor: c.vendor, family: c.family }}
-                  />
-                  <h2>{c.name}</h2>
-                  <p className="muted maker">{shortVendor(c.vendor)}</p>
-                  {c.versions[0] ? <BoardSpecs option={c.versions[0].option} /> : null}
+                <li key={p.name} className="tree-cat">
                   <button
                     type="button"
-                    aria-pressed={sel}
+                    className="tree-head"
+                    aria-expanded={open}
                     onClick={() => {
-                      choose(c);
+                      setPlatform(p.name);
+                      setVendor('');
+                      setQuery('');
+                      setFocusKey(null);
                     }}
                   >
-                    {sel ? 'Selected' : 'Use this board'}
-                    <span className="visually-hidden"> {c.name}</span>
+                    <span className="tree-caret" aria-hidden="true">
+                      {open ? '▾' : '▸'}
+                    </span>
+                    {p.name} <span className="tree-count">{p.count}</span>
                   </button>
-                  {open === c.key && c.versions.length > 1 ? (
+                  {open ? (
+                    <ul className="tree-sub">
+                      {p.vendors.map((v) => {
+                        const vOpen = p.vendors.length === 1 || vendor === v.label;
+                        return (
+                          <li key={v.name}>
+                            <button
+                              type="button"
+                              className="tree-head tree-brand"
+                              aria-expanded={vOpen}
+                              onClick={() => {
+                                setVendor(vendor === v.label ? '' : v.label);
+                                setFocusKey(null);
+                              }}
+                            >
+                              <span className="tree-caret" aria-hidden="true">
+                                {vOpen ? '▾' : '▸'}
+                              </span>
+                              {v.label} <span className="tree-count">{v.count}</span>
+                            </button>
+                            {vOpen ? (
+                              <ul className="tree-leaves">
+                                {boardsOf(p.name, v.label).map((c) => (
+                                  <li key={c.key}>
+                                    <button
+                                      type="button"
+                                      className="tree-leaf"
+                                      aria-current={focusKey === c.key ? 'true' : undefined}
+                                      onClick={() => {
+                                        openBoard(c);
+                                      }}
+                                    >
+                                      {c.name}
+                                      {isCardSelected(c) ? (
+                                        <span className="tree-picked">
+                                          <span aria-hidden="true"> ✓</span>
+                                          <span className="visually-hidden"> (selected)</span>
+                                        </span>
+                                      ) : null}
+                                    </button>
+                                  </li>
+                                ))}
+                              </ul>
+                            ) : null}
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  ) : null}
+                </li>
+              );
+            })}
+          </ul>
+        </nav>
+
+        <div className="tree-main">
+          {focusCard && detailOption ? (
+            <section className="board-focus" aria-label={`${focusCard.name} details`}>
+              <div className="board-focus-head">
+                <div className="board-focus-pic">
+                  <ItemPicture
+                    id={focusCard.versions[0]?.ref.split('@')[0] ?? focusCard.key}
+                    name={focusCard.name}
+                    board={{ vendor: focusCard.vendor, family: focusCard.family }}
+                  />
+                </div>
+                <div>
+                  <h2>{focusCard.name}</h2>
+                  <p className="muted maker">{shortVendor(focusCard.vendor)}</p>
+                  <BoardSpecs option={detailOption} />
+                  {focusCard.versions.length > 1 ? (
                     <fieldset>
                       <legend>Which version do you have?</legend>
-                      {c.versions.map((v) => (
+                      {focusCard.versions.map((v) => (
                         <label key={`${v.ref}|${v.variant}`} className="field-inline">
                           <input
                             type="radio"
-                            name={`${id}-${c.key}`}
+                            name={`${id}-${focusCard.key}`}
                             checked={v.ref === draft.board && v.variant === draft.variant}
                             onChange={() => {
                               dispatch({ type: 'select-board', board: v.ref, variant: v.variant });
@@ -186,58 +266,84 @@ function BoardPicker({ data }: { data: LoadedCatalog }) {
                         board.
                       </p>
                     </fieldset>
-                  ) : null}
-                </li>
-              );
-            })}
-          </ul>
+                  ) : (
+                    <button
+                      type="button"
+                      className="primary"
+                      aria-pressed={isCardSelected(focusCard)}
+                      onClick={() => {
+                        const v = focusCard.versions[0];
+                        if (v) dispatch({ type: 'select-board', board: v.ref, variant: v.variant });
+                      }}
+                    >
+                      {isCardSelected(focusCard) ? 'Selected' : 'Pick this board'}
+                      <span className="visually-hidden"> {focusCard.name}</span>
+                    </button>
+                  )}
+                </div>
+              </div>
+              <BoardDetails board={detailOption} variant={detailOption.variant} data={data} />
+            </section>
+          ) : (
+            <>
+              <p role="status" className="muted">
+                {searching
+                  ? `${String(cards.length)} boards match your search.`
+                  : `${String(cards.length)} boards in ${where}. Pick one below, or open it in the list on the left.`}
+              </p>
+              {cards.length === 0 ? <p>No board matches. Clear the search.</p> : null}
+              <ul className="card-grid" aria-label="Boards">
+                {cards.map((c) => {
+                  const sel = isCardSelected(c);
+                  return (
+                    <li key={c.key} className={`pick-card${sel ? ' is-selected' : ''}`}>
+                      <ItemPicture
+                        id={c.versions[0]?.ref.split('@')[0] ?? c.key}
+                        name={c.name}
+                        board={{ vendor: c.vendor, family: c.family }}
+                      />
+                      <h2>{c.name}</h2>
+                      <p className="muted maker">{shortVendor(c.vendor)}</p>
+                      {c.versions[0] ? <BoardSpecs option={c.versions[0].option} /> : null}
+                      <button
+                        type="button"
+                        aria-pressed={sel}
+                        onClick={() => {
+                          choose(c);
+                        }}
+                      >
+                        {sel ? 'Selected' : 'Use this board'}
+                        <span className="visually-hidden"> {c.name}</span>
+                      </button>
+                      <button
+                        type="button"
+                        className="link-button"
+                        onClick={() => {
+                          openBoard(c);
+                        }}
+                      >
+                        View pinout<span className="visually-hidden"> of {c.name}</span>
+                      </button>
+                    </li>
+                  );
+                })}
+              </ul>
+            </>
+          )}
+          {focusCard ? (
+            <p>
+              <button
+                type="button"
+                className="secondary"
+                onClick={() => {
+                  setFocusKey(null);
+                }}
+              >
+                Back to the list
+              </button>
+            </p>
+          ) : null}
         </div>
-
-        <nav aria-label="Board brands" className="side-nav filter-panel">
-          <h2 className="filter-title">
-            <span className="icon-tile">
-              <Icon name="sliders" size={20} />
-            </span>
-            Filter by brand
-          </h2>
-          <ul className="cat-list">
-            {tree.map((p) => {
-              const on = !searching && p.name === activePlatform;
-              return (
-                <li key={p.name}>
-                  <button
-                    type="button"
-                    aria-current={on && vendor === ''}
-                    onClick={() => {
-                      setPlatform(p.name);
-                      setVendor('');
-                      setQuery('');
-                    }}
-                  >
-                    {p.name} ({p.count})
-                  </button>
-                  {on && p.vendors.length > 1 ? (
-                    <ul className="cat-sub">
-                      {p.vendors.map((v) => (
-                        <li key={v.name}>
-                          <button
-                            type="button"
-                            aria-current={vendor === v.name}
-                            onClick={() => {
-                              setVendor(v.name);
-                            }}
-                          >
-                            {v.label} ({v.count})
-                          </button>
-                        </li>
-                      ))}
-                    </ul>
-                  ) : null}
-                </li>
-              );
-            })}
-          </ul>
-        </nav>
       </div>
     </>
   );

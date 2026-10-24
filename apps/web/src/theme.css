@@ -1506,3 +1506,188 @@ tbody tr:hover {
     background: #ffffff;
   }
 }
+
+/* ---- board picker: tree on the left (category > brand > boards) ---- */
+.tree-layout {
+  grid-template-columns: minmax(250px, 310px) minmax(0, 1fr);
+  align-items: start;
+  gap: 1.5rem;
+}
+
+.board-tree {
+  position: sticky;
+  top: 5rem;
+  max-height: calc(100vh - 7rem);
+  overflow: auto;
+  background: var(--card-bg);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: 1rem;
+}
+
+.tree-search {
+  margin-bottom: 0.75rem;
+}
+
+.tree-root,
+.tree-sub,
+.tree-leaves {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.tree-sub {
+  padding-left: 0.75rem;
+  margin-left: 0.6rem;
+  border-left: 2px solid var(--line);
+}
+
+.tree-leaves {
+  padding-left: 0.75rem;
+  margin: 0.15rem 0 0.35rem 0.6rem;
+  border-left: 2px solid var(--line);
+}
+
+.tree-head,
+.tree-leaf {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  width: 100%;
+  text-align: left;
+  border: 0;
+  background: transparent;
+  border-radius: 10px;
+  padding: 0.5rem 0.6rem;
+  min-height: 44px;
+  color: var(--fg);
+}
+
+.tree-head {
+  font-weight: 800;
+}
+
+.tree-brand {
+  font-weight: 700;
+}
+
+.tree-leaf {
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+
+.tree-head:hover,
+.tree-leaf:hover {
+  background: var(--tile);
+}
+
+.tree-leaf[aria-current='true'] {
+  background: var(--btn-bg);
+  color: var(--btn-fg);
+  font-weight: 700;
+}
+
+.tree-caret {
+  width: 1rem;
+  flex: none;
+}
+
+.tree-count {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  padding: 0.05rem 0.5rem;
+  border-radius: 999px;
+  background: var(--tile);
+  color: var(--muted);
+}
+
+.tree-picked {
+  margin-left: auto;
+  font-weight: 800;
+}
+
+.board-focus {
+  background: var(--card-bg);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: 1.25rem;
+}
+
+.board-focus-head {
+  display: grid;
+  grid-template-columns: minmax(160px, 260px) 1fr;
+  gap: 1.5rem;
+  align-items: start;
+  margin-bottom: 1rem;
+}
+
+.board-focus-pic .photo,
+.board-focus-pic .art {
+  width: 100%;
+  height: 190px;
+  background: #ffffff;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 6px;
+}
+
+.board-focus h2 {
+  font-size: 1.6rem;
+  margin: 0;
+}
+
+.link-button {
+  border: 0;
+  background: transparent;
+  color: var(--link);
+  text-decoration: underline;
+  padding: 0.35rem 0;
+  font-weight: 600;
+  min-height: 44px;
+}
+
+button.primary {
+  background: var(--btn-bg);
+  border-color: var(--btn-bg);
+  color: var(--btn-fg);
+}
+
+@media (max-width: 760px) {
+  .tree-layout,
+  .board-focus-head {
+    grid-template-columns: 1fr;
+  }
+
+  .board-tree {
+    position: static;
+    max-height: none;
+  }
+}
+
+/* picker polish */
+.tree-main .pinout-layout {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+button.tree-head,
+button.tree-leaf {
+  justify-content: flex-start;
+  text-align: left;
+}
+
+button.tree-leaf[aria-current='true'],
+button.tree-leaf[aria-current='true']:hover {
+  background: var(--btn-bg);
+  border-color: var(--btn-bg);
+  color: var(--btn-fg);
+}
+
+button.link-button,
+button.link-button:hover:not(:disabled) {
+  background: transparent;
+  border: 0;
+  color: var(--link);
+  justify-content: flex-start;
+}
