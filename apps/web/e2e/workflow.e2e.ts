@@ -83,9 +83,9 @@ test('every board version of a part is its own card', async ({ page }) => {
     .filter({ hasText: /Adafruit/ })
     .getByRole('button')
     .click();
-  await expect(page.getByRole('heading', { name: /Modules in this project (1)/ })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /Modules in this project \(1\)/ })).toBeVisible();
   await addModule(page, 'rc522');
-  await expect(page.getByRole('heading', { name: /Modules in this project (2)/ })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /Modules in this project \(2\)/ })).toBeVisible();
 });
 
 test('share link round trip gives the same allocation in a fresh browser', async ({
