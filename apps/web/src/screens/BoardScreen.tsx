@@ -1,12 +1,13 @@
-import { useId, useState } from 'react';
+import { useId, useRef, useState } from 'react';
 import { BOARD_STATUS_META } from '../catalog/boards';
 import { filterCards, type BoardCard } from '../catalog/boardGroups';
 import { platformOf, platformTree, shortVendor } from '../catalog/platforms';
 import { ItemPicture } from '../components/art';
 import { StatusBadge } from '../components/common';
-import { hrefFor } from '../route';
+import { Help, Term } from '../components/Help';
+import { StepHeader } from '../components/StepHeader';
 import { useAppState, type LoadedCatalog } from '../state/AppState';
-import { PageHeading, WithCatalog, type HeadingRef } from './shared';
+import { WithCatalog, type HeadingRef } from './shared';
 
 function BoardPicker({ data }: { data: LoadedCatalog }) {
   const { draft, dispatch } = useAppState();
@@ -15,6 +16,7 @@ function BoardPicker({ data }: { data: LoadedCatalog }) {
   const [vendor, setVendor] = useState('');
   const [open, setOpen] = useState<string | null>(null);
   const id = useId();
+  const searchRef = useRef<HTMLInputElement>(null);
 
   const tree = platformTree(data.boards);
   const selected = data.boards.find((b) => b.ref === draft.board && b.variant === draft.variant);
@@ -43,6 +45,41 @@ function BoardPicker({ data }: { data: LoadedCatalog }) {
 
   return (
     <>
+      <section className="selected-bar" aria-label="Your board">
+        {selected ? (
+          <>
+            <div className="selected-thumb">
+              <ItemPicture
+                id={selected.ref.split('@')[0] ?? selected.ref}
+                name={selected.name}
+                board={{ vendor: selected.vendor, family: selected.family }}
+              />
+            </div>
+            <div className="selected-text">
+              <h2>Selected</h2>
+              <p>
+                <strong>{selected.name}</strong> ({shortVendor(selected.vendor)})
+                {selected.name.includes(selected.module) ? '' : ` · ${selected.module}`}{' '}
+                <StatusBadge status={selected.status} />
+              </p>
+              <p className="muted">{BOARD_STATUS_META[selected.status].hint}</p>
+            </div>
+            <button
+              type="button"
+              className="secondary"
+              onClick={() => {
+                searchRef.current?.focus();
+                searchRef.current?.scrollIntoView({ block: 'center' });
+              }}
+            >
+              Change<span className="visually-hidden"> board</span>
+            </button>
+          </>
+        ) : (
+          <p className="selected-none">No board picked yet. Choose one from the list below.</p>
+        )}
+      </section>
+
       <form
         role="search"
         className="search"
@@ -53,6 +90,7 @@ function BoardPicker({ data }: { data: LoadedCatalog }) {
         <label htmlFor={`${id}-q`}>Search all boards by name</label>
         <input
           id={`${id}-q`}
+          ref={searchRef}
           type="search"
           value={query}
           autoComplete="off"
@@ -164,22 +202,6 @@ function BoardPicker({ data }: { data: LoadedCatalog }) {
           </ul>
         </nav>
       </div>
-
-      {selected ? (
-        <section className="card" aria-labelledby={`${id}-sel`}>
-          <h2 id={`${id}-sel`}>Selected</h2>
-          <p>
-            <strong>{selected.name}</strong> ({shortVendor(selected.vendor)}) ·{' '}
-            <StatusBadge status={selected.status} />
-          </p>
-          <p className="muted">{BOARD_STATUS_META[selected.status].hint}</p>
-          <p>
-            <a className="button" href={hrefFor('/modules')}>
-              Next: add modules
-            </a>
-          </p>
-        </section>
-      ) : null}
     </>
   );
 }
@@ -187,11 +209,29 @@ function BoardPicker({ data }: { data: LoadedCatalog }) {
 export function BoardScreen({ headingRef }: { headingRef: HeadingRef }) {
   return (
     <>
-      <PageHeading headingRef={headingRef}>Choose your board</PageHeading>
-      <p>
-        Pick the brand in the list on the right (ESP, Arduino, Raspberry Pi), or search by the name
-        printed on your board. If a board comes in more than one version, we ask which one you have.
-      </p>
+      <StepHeader
+        headingRef={headingRef}
+        step={1}
+        title="Choose your board"
+        intro="Pick the microcontroller board you own. Everything else depends on it, because every board has different pins."
+        help={
+          <Help>
+            <Term word="Board version">
+              Some boards were sold in several versions with different pins or chips. If we show
+              more than one, pick the one that matches the text printed on your board or on the
+              metal-shielded module.
+            </Term>
+            <Term word="Boot pins">
+              A few pins are read when the board starts up. Wiring the wrong thing to them can stop
+              it from booting. You do not need to remember which: the app avoids them for you.
+            </Term>
+            <Term word="Verified">
+              How well the board's pin facts are checked against datasheets. The badge on each card
+              tells you.
+            </Term>
+          </Help>
+        }
+      />
       <WithCatalog>{(data) => <BoardPicker data={data} />}</WithCatalog>
     </>
   );

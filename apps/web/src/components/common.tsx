@@ -1,3 +1,4 @@
+import { useId, useState } from 'react';
 import type { BoardStatus } from '@pinout/schema';
 import { BOARD_STATUS_META } from '../catalog/boards';
 import type { CitationLookup } from '../catalog/evidence';
@@ -28,25 +29,99 @@ export function LevelBadge({ level }: { level: WarningLevel }) {
 }
 
 const STEP_LABELS: Record<StepName, string> = {
-  board: 'Board',
-  modules: 'Modules',
-  constraints: 'Constraints',
-  results: 'Results',
+  board: 'Pick board',
+  modules: 'Add parts',
+  constraints: 'Your rules (optional)',
+  results: 'Get pins',
 };
 
-/** The four workflow steps; the current one is marked with aria-current. */
-export function StepNav({ current }: { current: StepName | null }) {
+type StepState = 'done' | 'current' | 'todo';
+
+/** What the project has so far; decides which steps show as done. */
+export interface StepProgress {
+  board: boolean;
+  modules: number;
+  rules: boolean;
+}
+
+/** Why a step cannot give a useful answer yet, or null when it can. */
+export function stepNeeds(step: StepName, p: StepProgress): string | null {
+  if (step !== 'results') return null;
+  if (!p.board) return 'Needs a board first: pick one in step 1.';
+  if (p.modules === 0) return 'Needs at least one part: add one in step 2.';
+  return null;
+}
+
+export function stepState(step: StepName, current: StepName | null, p: StepProgress): StepState {
+  if (step === current) return 'current';
+  if (step === 'board') return p.board ? 'done' : 'todo';
+  if (step === 'modules') return p.modules > 0 ? 'done' : 'todo';
+  if (step === 'constraints') return p.rules ? 'done' : 'todo';
+  return 'todo';
+}
+
+const STATE_TEXT: Record<StepState, string> = {
+  done: 'done',
+  current: 'you are here',
+  todo: 'to do',
+};
+
+/** The four workflow steps with done / current / to do states; the current one has aria-current. */
+export function StepNav({
+  current,
+  progress,
+}: {
+  current: StepName | null;
+  progress: StepProgress;
+}) {
+  const [hint, setHint] = useState<string | null>(null);
+  const id = useId();
   return (
     <nav aria-label="Workflow steps" className="steps">
       <ol>
-        {STEPS.map((s, i) => (
-          <li key={s}>
-            <a href={hrefFor(`/${s}`)} aria-current={s === current ? 'step' : undefined}>
-              <span className="step-number">{i + 1}.</span> {STEP_LABELS[s]}
-            </a>
-          </li>
-        ))}
+        {STEPS.map((s, i) => {
+          const state = stepState(s, current, progress);
+          const needs = stepNeeds(s, progress);
+          return (
+            <li key={s} className={`step step-${state}${needs ? ' step-blocked' : ''}`}>
+              <a
+                href={hrefFor(`/${s}`)}
+                aria-current={state === 'current' ? 'step' : undefined}
+                {...(needs ? { 'aria-describedby': `${id}-${s}` } : {})}
+                onMouseEnter={() => {
+                  setHint(needs);
+                }}
+                onMouseLeave={() => {
+                  setHint(null);
+                }}
+                onFocus={() => {
+                  setHint(needs);
+                }}
+                onBlur={() => {
+                  setHint(null);
+                }}
+              >
+                <span className="step-mark" aria-hidden="true">
+                  {state === 'done' ? '✓' : String(i + 1)}
+                </span>
+                <span className="step-text">{STEP_LABELS[s]}</span>
+                <span className="visually-hidden">
+                  {' '}
+                  (step {i + 1}, {STATE_TEXT[state]})
+                </span>
+              </a>
+              {needs ? (
+                <span id={`${id}-${s}`} className="visually-hidden">
+                  {needs}
+                </span>
+              ) : null}
+            </li>
+          );
+        })}
       </ol>
+      <p className="step-hint" aria-hidden="true">
+        {hint ?? ''}
+      </p>
     </nav>
   );
 }

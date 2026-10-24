@@ -3,6 +3,8 @@ import { headerPads, type HeaderPad } from '../catalog/boards';
 import { boardView } from '../catalog/boardView';
 import { BoardView } from '../components/BoardView';
 import { Citations } from '../components/common';
+import { Help, Term } from '../components/Help';
+import { StepHeader } from '../components/StepHeader';
 import {
   FRAMEWORK_LABELS,
   FRAMEWORKS,
@@ -13,7 +15,7 @@ import {
 import { STOP_AFTER_CHOICES } from '../project/settings';
 import { hrefFor } from '../route';
 import { useAppState, type LoadedCatalog } from '../state/AppState';
-import { PageHeading, WithCatalog, type HeadingRef } from './shared';
+import { WithCatalog, type HeadingRef } from './shared';
 
 export const padText = (p: HeaderPad): string =>
   `${p.pad} · ${p.places.map((x) => `${x.label} (${x.connector} pin ${String(x.position)})`).join(', ')}`;
@@ -57,14 +59,14 @@ function LockForm({ data, pads }: { data: LoadedCatalog; pads: HeaderPad[] }) {
   if (draft.modules.length === 0) {
     return (
       <p>
-        Add modules first to lock their pins. <a href={hrefFor('/modules')}>Add modules</a>
+        Add parts first, then you can choose their pins. <a href={hrefFor('/modules')}>Add parts</a>
       </p>
     );
   }
   return (
     <form onSubmit={submit} className="lock-form">
       <div className="field">
-        <label htmlFor={`${id}-inst`}>Module</label>
+        <label htmlFor={`${id}-inst`}>Part</label>
         <select
           id={`${id}-inst`}
           value={instance}
@@ -81,7 +83,7 @@ function LockForm({ data, pads }: { data: LoadedCatalog; pads: HeaderPad[] }) {
         </select>
       </div>
       <div className="field">
-        <label htmlFor={`${id}-role`}>Signal</label>
+        <label htmlFor={`${id}-role`}>Wire of that part</label>
         <select
           id={`${id}-role`}
           value={role}
@@ -99,7 +101,7 @@ function LockForm({ data, pads }: { data: LoadedCatalog; pads: HeaderPad[] }) {
         </select>
       </div>
       <div className="field">
-        <label htmlFor={`${id}-pad`}>Pin</label>
+        <label htmlFor={`${id}-pad`}>Pin on your board</label>
         <select
           id={`${id}-pad`}
           value={pad}
@@ -116,7 +118,7 @@ function LockForm({ data, pads }: { data: LoadedCatalog; pads: HeaderPad[] }) {
         </select>
       </div>
       <button type="submit" disabled={instance === '' || role === '' || pad === ''}>
-        Lock pin
+        Use this pin
       </button>
     </form>
   );
@@ -146,10 +148,10 @@ function Rails({ data, boardRef }: { data: LoadedCatalog; boardRef: string }) {
   if (!board || board.rails.length === 0) return null;
   return (
     <section aria-labelledby={`${id}-rails`} className="card">
-      <h2 id={`${id}-rails`}>Voltage rails</h2>
+      <h2 id={`${id}-rails`}>Voltage rails (power on your board)</h2>
       <p className="muted">
-        The engine powers each module from a rail that fits its supply range and adds up the current
-        per rail. These values come from the catalog; check them against your board.
+        Your board has power outputs (rails), such as 3.3 V and 5 V. Each part is powered from one
+        that suits it. This is information only: there is nothing to set here.
       </p>
       <div
         className="table-scroll"
@@ -214,14 +216,14 @@ function Connections({ pads }: { pads: HeaderPad[] }) {
   };
   return (
     <section aria-labelledby={`${id}-conn`} className="card">
-      <h2 id={`${id}-conn`}>Existing connections</h2>
+      <h2 id={`${id}-conn`}>Pins already wired to something</h2>
       <p className="muted">
-        Pins already wired to something (a LED, a jumper, another circuit). The engine keeps them
-        free.
+        Example: an LED or a jumper you already soldered to a pin. Tell us, and the app keeps that
+        pin free.
       </p>
       <form onSubmit={submit} className="lock-form">
         <div className="field">
-          <label htmlFor={`${id}-cpad`}>Pin</label>
+          <label htmlFor={`${id}-cpad`}>Pin on your board</label>
           <select
             id={`${id}-cpad`}
             value={pad}
@@ -285,7 +287,9 @@ function WireLength() {
     value !== null && (!Number.isFinite(value) || value <= 0 || value > MAX_WIRING_LENGTH_M);
   return (
     <div className="field">
-      <label htmlFor={`${id}-len`}>Typical wire length in metres (optional)</label>
+      <label htmlFor={`${id}-len`}>
+        Wire length: how long are your wires, in metres? (optional)
+      </label>
       <input
         id={`${id}-len`}
         type="text"
@@ -304,7 +308,7 @@ function WireLength() {
       <span id={`${id}-len-hint`} className={invalid ? 'field-error' : 'muted'}>
         {invalid
           ? `Enter a number above 0 and up to ${String(MAX_WIRING_LENGTH_M)}.`
-          : 'Used for I²C bus capacitance and long-wire warnings. Empty = engine default.'}
+          : 'Example: 0.2 for short jumper wires, 2 for a cable. Long wires can make sensors unreliable, so we warn you. Empty is fine.'}
       </span>
     </div>
   );
@@ -353,10 +357,29 @@ function ConstraintsForm({ data }: { data: LoadedCatalog }) {
           locked: draft.locked,
         });
 
+  const nothing =
+    draft.locked.length === 0 &&
+    draft.reserved.length === 0 &&
+    draft.connections.length === 0 &&
+    !draft.wifi &&
+    draft.wiringLengthM === null &&
+    draft.framework === null;
+
   return (
     <>
+      {nothing ? (
+        <section className="skip-box" aria-label="You can skip this step">
+          <p>
+            <strong>You can skip this:</strong> the app picks safe pins for you.
+          </p>
+          <a className="button big" href={hrefFor('/results')}>
+            Get my pins
+          </a>
+        </section>
+      ) : null}
+
       <section aria-labelledby={`${id}-general`} className="card">
-        <h2 id={`${id}-general`}>Project</h2>
+        <h2 id={`${id}-general`}>About your project</h2>
         <div className="field-inline">
           <input
             id={`${id}-wifi`}
@@ -398,9 +421,10 @@ function ConstraintsForm({ data }: { data: LoadedCatalog }) {
       <Rails data={data} boardRef={draft.board} />
 
       <section aria-labelledby={`${id}-locks`} className="card">
-        <h2 id={`${id}-locks`}>Locked pins</h2>
+        <h2 id={`${id}-locks`}>Use this pin for this part</h2>
         <p className="muted">
-          A locked pin is never moved. If it cannot work, the result says why and how to relax it.
+          Example: you want the screen's CS wire on GPIO5. We never move a pin you choose. If it
+          cannot work, the result says why and how to change it.
         </p>
         <LockForm data={data} pads={pads} />
         {draft.locked.length > 0 ? (
@@ -430,10 +454,12 @@ function ConstraintsForm({ data }: { data: LoadedCatalog }) {
       </section>
 
       <section aria-labelledby={`${id}-res`} className="card">
-        <h2 id={`${id}-res`}>Reserved pins</h2>
-        <p className="muted">Reserved pins are kept free (for wiring you already have).</p>
+        <h2 id={`${id}-res`}>Keep these pins free for me</h2>
+        <p className="muted">
+          Example: GPIO4 already runs a motor you built in, so tick it and nothing else gets it.
+        </p>
         <fieldset className="pad-grid">
-          <legend>Pins to keep free</legend>
+          <legend>Pins to keep free (tick any)</legend>
           {pads.map((p) => (
             <label key={p.pad} className="field-inline">
               <input
@@ -453,16 +479,10 @@ function ConstraintsForm({ data }: { data: LoadedCatalog }) {
 
       {view !== null ? (
         <section aria-labelledby={`${id}-view`} className="card">
-          <h2 id={`${id}-view`}>Header view</h2>
+          <h2 id={`${id}-view`}>Your board's pins</h2>
           <BoardView connectors={view} title="Board headers with your locked and reserved pins" />
         </section>
       ) : null}
-
-      <p>
-        <a className="button" href={hrefFor('/results')}>
-          Find pins
-        </a>
-      </p>
     </>
   );
 }
@@ -470,8 +490,36 @@ function ConstraintsForm({ data }: { data: LoadedCatalog }) {
 export function ConstraintsScreen({ headingRef }: { headingRef: HeadingRef }) {
   return (
     <>
-      <PageHeading headingRef={headingRef}>Constraints</PageHeading>
-      <p>All optional. Leave everything as it is to let the engine choose every pin.</p>
+      <StepHeader
+        headingRef={headingRef}
+        step={3}
+        optional
+        title="Your rules (optional)"
+        intro="Only fill this in if you already have wiring or needs of your own. Otherwise leave everything empty."
+        help={
+          <Help>
+            <Term word="Use this pin for this part (lock a pin)">
+              You decide that one wire of a part goes to one exact pin. The app will not move it.
+            </Term>
+            <Term word="Keep these pins free (reserve a pin)">
+              You tell the app not to use some pins, for example because something is already wired
+              to them.
+            </Term>
+            <Term word="Wire length">
+              Long wires pick up noise and can make sensors misbehave. Tell us roughly how long
+              yours are, in metres, and we warn you if it could be a problem.
+            </Term>
+            <Term word="Parts that share a connection">
+              Many parts can talk over the same two or four wires (I²C or SPI). The app works out
+              the sharing for you, so there is nothing to set for it.
+            </Term>
+            <Term word="Boot pins">
+              Pins read while the board starts. The app avoids them unless it has to, and warns you
+              when it does.
+            </Term>
+          </Help>
+        }
+      />
       <WithCatalog>{(data) => <ConstraintsForm data={data} />}</WithCatalog>
     </>
   );

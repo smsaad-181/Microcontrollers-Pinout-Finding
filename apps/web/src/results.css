@@ -1,0 +1,224 @@
+/* Results screen: plain-language layout. Text always uses --fg / --muted on --card-bg or a tint
+   of it, so contrast follows the theme tokens in light and dark. State is shown with icon + text. */
+.results-page {
+  --r-ok: #1c7a4f;
+  --r-warn: #b3261e;
+  --r-bad: #b3261e;
+  --r-need-bg: #fff4d6;
+  --r-ok-bg: #e3f2ea;
+  --r-warn-bg: #fde8e6;
+}
+@media (prefers-color-scheme: dark) {
+  .results-page {
+    --r-ok: #5fd39d;
+    --r-warn: #ff9a9a;
+    --r-bad: #ff9a9a;
+    --r-need-bg: #3a2f0a;
+    --r-ok-bg: #12301f;
+    --r-warn-bg: #3b1a18;
+  }
+}
+
+.r-banner {
+  margin-top: 1rem;
+  padding: 1.25rem 1.5rem;
+  border: 2px solid var(--border);
+  border-left-width: 10px;
+  border-radius: 12px;
+  background: var(--card-bg);
+  color: var(--fg);
+}
+.r-banner-ok {
+  border-color: var(--r-ok);
+  background: var(--r-ok-bg);
+}
+.r-banner-warn,
+.r-banner-bad {
+  border-color: var(--r-warn);
+  background: var(--r-warn-bg);
+}
+.r-banner h2 {
+  font-size: clamp(1.6rem, 1.1rem + 2vw, 2.4rem);
+  margin: 0.1rem 0 0.4rem;
+  line-height: 1.15;
+}
+.r-kicker {
+  margin: 0;
+  font-weight: 700;
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.r-lead {
+  font-size: 1.1rem;
+  margin: 0.25rem 0 0.75rem;
+}
+.r-alert {
+  font-size: 1.05rem;
+  margin: 0.5rem 0;
+}
+.r-fixes li,
+.r-banner ul li {
+  margin: 0.3rem 0;
+}
+.button-link {
+  display: inline-block;
+  padding: 0.5rem 0.9rem;
+  border-radius: 8px;
+  background: var(--btn-bg, var(--link));
+  color: var(--btn-fg, #fff);
+  font-weight: 600;
+  text-decoration: none;
+  margin-right: 0.5rem;
+}
+
+.r-board {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  margin-top: 1rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--line, var(--border));
+}
+.r-board-pic {
+  width: 9rem;
+  flex: none;
+}
+.r-board-name {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.r-modules {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 22rem), 1fr));
+}
+.r-module {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1rem 1.1rem;
+  break-inside: avoid;
+}
+.r-module-head {
+  display: flex;
+  gap: 0.9rem;
+  align-items: center;
+}
+.r-module-pic {
+  width: 6rem;
+  flex: none;
+}
+.r-module-head h3 {
+  margin: 0;
+  font-size: 1.15rem;
+}
+.r-module-head p {
+  margin: 0.1rem 0 0;
+}
+.r-list-head {
+  margin: 0.9rem 0 0.2rem;
+  font-weight: 700;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+.r-wires {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.r-wires li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.2rem 0.55rem;
+  padding: 0.4rem 0;
+  border-bottom: 1px solid var(--line, var(--border));
+  font-size: 1.15rem;
+}
+.r-from,
+.r-to {
+  font-weight: 700;
+  font-family: var(--font-mono, monospace);
+}
+.r-arrow {
+  font-weight: 700;
+}
+.r-where {
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+.r-power .r-from,
+.r-power .r-to {
+  font-weight: 600;
+}
+.r-need {
+  margin: 0.8rem 0 0.5rem;
+  padding: 0.6rem 0.8rem;
+  background: var(--r-need-bg);
+  border: 2px dashed var(--border);
+  border-radius: 8px;
+  color: var(--fg);
+}
+
+.r-group {
+  margin: 1rem 0;
+  padding: 0.5rem 1rem 0.75rem;
+  border-left: 8px solid var(--border);
+  background: var(--card-bg);
+  border-radius: 0 8px 8px 0;
+}
+.r-group h3 {
+  margin: 0.4rem 0 0;
+  font-size: 1.2rem;
+}
+.r-group-fix {
+  border-left-color: var(--r-bad);
+}
+.r-group-check {
+  border-left-style: double;
+}
+.r-group-know {
+  border-left-style: dotted;
+}
+.r-warning {
+  margin: 0.8rem 0;
+}
+.r-warning-what {
+  font-size: 1.05rem;
+}
+.r-warning-todo {
+  margin: 0.2rem 0;
+}
+.r-code {
+  font-size: 0.85rem;
+}
+.r-tech summary {
+  font-size: 0.9rem;
+}
+
+.r-fold {
+  margin: 0.75rem 0;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--card-bg);
+  padding: 0.25rem 1rem 0.75rem;
+}
+.r-fold > summary {
+  font-weight: 700;
+  font-size: 1.1rem;
+  padding: 0.5rem 0;
+  cursor: pointer;
+}
+
+@media (max-width: 640px) {
+  .r-board {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

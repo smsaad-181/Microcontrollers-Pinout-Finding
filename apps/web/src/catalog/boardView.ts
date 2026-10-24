@@ -20,7 +20,10 @@ export const PIN_STATE_META: Record<PinState, { label: string; hint: string }> =
   free: { label: 'Free', hint: 'GPIO not used by this project' },
   assigned: { label: 'Assigned', hint: 'used by one module signal' },
   bus: { label: 'Bus', hint: 'shared bus signal (I²C or SPI)' },
-  restricted: { label: 'Restricted', hint: 'reserved, already wired, used inside the module, or a control pin' },
+  restricted: {
+    label: 'Restricted',
+    hint: 'reserved, already wired, used inside the module, or a control pin',
+  },
   power: { label: 'Power', hint: 'supply rail pin' },
   ground: { label: 'Ground', hint: 'ground pin' },
   analog: { label: 'Analog', hint: 'analog-only or reference pin' },
@@ -53,7 +56,18 @@ export interface BoardViewInput {
 
 const BUS_KINDS = new Set(['i2c', 'spi']);
 /** Shared-bus signal roles (chip selects, resets and data/command lines are per module). */
-export const BUS_ROLES = new Set(['SDA', 'SCL', 'SCK', 'SCLK', 'MOSI', 'MISO', 'SDI', 'SDO', 'COPI', 'CIPO']);
+export const BUS_ROLES = new Set([
+  'SDA',
+  'SCL',
+  'SCK',
+  'SCLK',
+  'MOSI',
+  'MISO',
+  'SDI',
+  'SDO',
+  'COPI',
+  'CIPO',
+]);
 const CONTROL_KINDS: Partial<Record<ConnectorPin['kind'], string>> = {
   reset: 'reset or boot control pin',
   enable: 'enable pin',

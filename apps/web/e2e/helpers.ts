@@ -97,6 +97,10 @@ export async function addWorkedModules(page: Page): Promise<void> {
 
 /** The allocation table as { "instance.role": "GPIOn" }. */
 export async function allocation(page: Page): Promise<Record<string, string>> {
+  // The full pin table sits in a collapsed section on the results screen.
+  await page.locator('details.r-fold').evaluateAll((all) => {
+    for (const d of all) (d as HTMLDetailsElement).open = true;
+  });
   const rows = page.getByRole('region', { name: /Pin allocation table/ }).locator('tbody tr');
   const out: Record<string, string> = {};
   for (const row of await rows.all()) {

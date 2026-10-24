@@ -68,7 +68,7 @@ export const PHOTOS_BOARDS: Record<string, Photo> = {
     license: 'Product image, used with credit',
     page: 'https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32s3/esp32-s3-devkitc-1/user_guide_v1.1.html',
   },
-  'lolin32': {
+  lolin32: {
     src: lolin32Img,
     credit: 'Zbotic',
     license: 'Product image, used with credit',

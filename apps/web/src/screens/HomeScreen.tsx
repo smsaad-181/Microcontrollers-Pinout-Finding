@@ -49,23 +49,57 @@ function HeroArt() {
   );
 }
 
+/** The demo project: loaded into the draft, then shown on the results screen. */
+export const DEMO = {
+  board: 'esp32-devkitc-v4@V4',
+  variant: 'esp32-devkitc-32e',
+  modules: [
+    { breakout: 'gy-bme280-4pin', base: 'bme280' },
+    { breakout: 'dht11-3pin-module', base: 'dht11' },
+  ],
+} as const;
+
+const HOW = [
+  ['Pick your board', 'Choose the exact board you have in front of you.'],
+  ['Add your parts', 'Sensors, displays, relays, buttons: whatever you want to connect.'],
+  ['Get your pins', 'See which pin each part goes on, how to wire it, and why it is safe.'],
+] as const;
+
 export function HomeScreen({ headingRef }: { headingRef: HeadingRef }) {
-  const { manifest } = useAppState();
+  const { manifest, draft, dispatch } = useAppState();
+  const tryExample = () => {
+    const hasWork = draft.board !== null || draft.modules.length > 0;
+    if (
+      hasWork &&
+      !window.confirm('This replaces the project you are working on with an example. Continue?')
+    )
+      return;
+    dispatch({ type: 'reset' });
+    dispatch({ type: 'select-board', board: DEMO.board, variant: DEMO.variant });
+    for (const m of DEMO.modules) dispatch({ type: 'add-module', ...m });
+    window.location.hash = hrefFor('/results');
+  };
   return (
     <>
       <section className="hero">
         <div>
           <PageHeading headingRef={headingRef}>Pinout Finder</PageHeading>
           <p className="lede">
-            Pick your board, add the modules you want to connect, and get a pin assignment for the
-            whole project. Every pin is chosen by a deterministic rule engine from cited datasheet
-            facts, and every fact links to its source.
+            Tell us which board you have and what you want to plug into it. We tell you which pin to
+            use for each part, and why. Every answer comes from datasheets and links to its source.
           </p>
           <div className="hero-actions">
             <a className="button" href={hrefFor('/board')}>
               Start: choose a board
             </a>
+            <button type="button" className="secondary" onClick={tryExample}>
+              Try an example
+            </button>
           </div>
+          <p className="muted hero-note">
+            Not sure? Try an example: an ESP32 board with a temperature sensor and a humidity
+            sensor. It opens the finished answer so you can see what you get.
+          </p>
           <ul className="trust" aria-label="What you get">
             <li>No AI guessing</li>
             <li>Datasheet citations</li>
@@ -74,12 +108,17 @@ export function HomeScreen({ headingRef }: { headingRef: HeadingRef }) {
         </div>
         <HeroArt />
       </section>
-      <ol className="intro-steps">
-        <li>Choose the exact board and module variant.</li>
-        <li>Add sensors, displays and other modules.</li>
-        <li>Optionally lock or reserve pins.</li>
-        <li>Read the allocation, wiring, warnings and sources.</li>
-      </ol>
+      <section aria-labelledby="how-heading">
+        <h2 id="how-heading">How it works</h2>
+        <ol className="intro-steps">
+          {HOW.map(([title, text]) => (
+            <li key={title}>
+              <strong>{title}</strong>
+              <span>{text}</span>
+            </li>
+          ))}
+        </ol>
+      </section>
       <div className="home-grid">
         <section aria-labelledby="open-heading" className="card">
           <h2 id="open-heading">Continue a saved project</h2>

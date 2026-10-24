@@ -19,7 +19,7 @@ test('worked example end to end matches the engine fixture', async ({ page }) =>
   await page.getByRole('link', { name: /Start: choose a board/ }).click();
   await chooseWorkedBoard(page);
   await addWorkedModules(page);
-  await expect(page.getByRole('heading', { name: /Modules in this project \(8\)/ })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /Your parts \(8\)/ })).toBeVisible();
 
   await page.goto('./#/constraints');
   await page.getByLabel(/This project uses Wi-Fi/).check();
@@ -83,9 +83,9 @@ test('every board version of a part is its own card', async ({ page }) => {
     .filter({ hasText: /Adafruit/ })
     .getByRole('button')
     .click();
-  await expect(page.getByRole('heading', { name: /Modules in this project \(1\)/ })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /Your parts \(1\)/ })).toBeVisible();
   await addModule(page, 'rc522');
-  await expect(page.getByRole('heading', { name: /Modules in this project \(2\)/ })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /Your parts \(2\)/ })).toBeVisible();
 });
 
 test('share link round trip gives the same allocation in a fresh browser', async ({
@@ -122,7 +122,7 @@ test('unsatisfiable project shows the conflict and the fixes', async ({ page }) 
       wifi: true,
     }),
   );
-  await expect(page.getByRole('heading', { name: /No safe assignment/ })).toBeVisible({
+  await expect(page.getByRole('heading', { name: /No safe way to connect/ })).toBeVisible({
     timeout: SOLVE_TIMEOUT,
   });
   await expect(page.getByText('locked:pot.WIPER=GPIO25')).toBeVisible();

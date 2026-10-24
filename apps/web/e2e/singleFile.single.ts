@@ -32,7 +32,7 @@ async function solveWorkedExample(page: Page): Promise<Record<string, string>> {
   await addModule(page, 'st7735');
   await addModule(page, 'relay', /transistor|keyestudio/i);
   for (let i = 0; i < 4; i++) await addModule(page, 'push button');
-  await expect(page.getByRole('heading', { name: /Modules in this project \(8\)/ })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /Your parts \(8\)/ })).toBeVisible();
   await page.goto(`${SINGLE_FILE}#/constraints`);
   await page.getByLabel(/This project uses Wi-Fi/).check();
   await page.goto(`${SINGLE_FILE}#/results`);

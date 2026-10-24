@@ -1,7 +1,8 @@
 import { useEffect, useId, useState } from 'react';
-import type { Recommendation } from '@pinout/schema';
+import type { Recommendation, Warning } from '@pinout/schema';
 import type { BoardOption } from '../catalog/boards';
 import { boardView } from '../catalog/boardView';
+import { ItemPicture } from '../components/art';
 import { BoardView } from '../components/BoardView';
 import { Citations, LevelBadge, StatusBadge } from '../components/common';
 import { ProjectActions } from '../components/ProjectActions';
@@ -13,18 +14,25 @@ import {
   describePart,
   describeRelaxation,
   headerPosition,
-  INTERFACE_LABELS,
   LEVEL_META,
   sortWarnings,
-  WARNING_LEVELS,
   wiringRows,
   type NameLookup,
+  type WiringRow,
 } from '../results/explain';
+import {
+  groupOf,
+  PLAIN_INTERFACE,
+  PLAIN_ROLES,
+  plainWarning,
+  WARNING_GROUPS,
+} from '../results/plain';
 import { hrefFor } from '../route';
 import { useAppState, type LoadedCatalog, type SolveState } from '../state/AppState';
 import type { SolveResponse } from '../worker/api';
 import { SLOW_NOTICE_MS } from '../worker/solverClient';
 import { PageHeading, WithCatalog, type HeadingRef } from './shared';
+import '../results.css';
 
 function Elapsed() {
   const [start] = useState(() => performance.now());
@@ -58,7 +66,7 @@ function Progress({
       </p>
       <p role="status">
         {slow
-          ? `This is taking longer than the engine's ${String(SLOW_NOTICE_MS / 1000)} s limit. It will stop by itself after ${String(stopAfterMs / 1000)} s (change this under Constraints), or you can stop it now and simplify the project.`
+          ? `This is taking longer than the engine's ${String(SLOW_NOTICE_MS / 1000)} s limit. It will stop by itself after ${String(stopAfterMs / 1000)} s (change this under Your rules), or you can stop it now and simplify the project.`
           : 'The engine runs in the background; the page stays usable.'}
       </p>
       <button type="button" onClick={onCancel}>
@@ -97,11 +105,16 @@ function Disclaimer() {
       <ol>
         <li>Compare the board revision and module marking with the ones shown above.</li>
         <li>
-          For each pin, open “Why this pin” and follow at least one source link to the datasheet
-          section quoted.
+          For each pin, open “Why these pins? (sources)” and follow at least one source link to the
+          datasheet section quoted.
         </li>
-        <li>Read every Critical, Warning and Caution item and apply or check the fix.</li>
-        <li>Fit the required parts (pull-ups, pull-downs, level shifters) before powering up.</li>
+        <li>
+          Read every item under “Fix before you wire”, “Check this” and “Good to know”, and apply or
+          check the fix.
+        </li>
+        <li>
+          Fit the parts listed under “You also need” (resistors, level shifters) before powering up.
+        </li>
         <li>Power the board without modules first, then add one module at a time.</li>
         <li>Measure supply voltages and check that no pin gets hot.</li>
       </ol>
@@ -109,47 +122,595 @@ function Disclaimer() {
   );
 }
 
+/* ---------- warnings, in plain words ---------- */
+
+function WarningItem({ w, data }: { w: Warning; data: LoadedCatalog }) {
+  const plain = plainWarning(w);
+  return (
+    <li className={`warning warning-${w.level} r-warning`}>
+      <p className="r-warning-what">
+        <LevelBadge level={w.level} /> <span>{plain ? plain.what : w.message.split('; ')[0]}</span>
+      </p>
+      {plain ? (
+        <p className="r-warning-todo">
+          <strong>What to do:</strong> {plain.todo}
+        </p>
+      ) : null}
+      {w.pads.length > 0 ? <p className="muted">Pins: {w.pads.join(', ')}</p> : null}
+      <p className="muted r-code">
+        Code: <code>{w.code}</code>
+        <span className="visually-hidden"> — {LEVEL_META[w.level].hint}</span>
+      </p>
+      <details className="r-tech">
+        <summary>Technical detail</summary>
+        <ul className="message-parts">
+          {w.message.split('; ').map((part, j) => (
+            <li key={j}>{part}</li>
+          ))}
+        </ul>
+        <Citations ids={w.evidence} cite={data.cite} />
+      </details>
+    </li>
+  );
+}
+
 function Warnings({ rec, data }: { rec: Recommendation; data: LoadedCatalog }) {
   const id = useId();
   const sorted = sortWarnings(rec.warnings);
-  const counts = countByLevel(rec.warnings);
   return (
-    <section aria-labelledby={`${id}-w`}>
-      <h2 id={`${id}-w`}>Warnings ({rec.warnings.length})</h2>
-      <p>
-        {WARNING_LEVELS.map((l) => (
-          <span key={l} className="count-chip">
-            <LevelBadge level={l} />: {counts[l]}
-          </span>
-        ))}
-      </p>
-      {sorted.length === 0 ? <p>No warnings.</p> : null}
-      <ul className="warnings">
-        {sorted.map((w, i) => (
-          <li key={`${w.code}-${String(i)}`} className={`warning warning-${w.level}`}>
-            <p>
-              <LevelBadge level={w.level} /> <code>{w.code}</code>
-              <span className="visually-hidden"> — {LEVEL_META[w.level].hint}</span>
-            </p>
-            <ul className="message-parts">
-              {w.message.split('; ').map((part, j) => (
-                <li key={j}>{part}</li>
+    <section aria-labelledby={`${id}-w`} id="warnings">
+      <h2 id={`${id}-w`}>What to watch out for</h2>
+      {sorted.length === 0 ? <p>Nothing to watch out for. The engine raised no warnings.</p> : null}
+      {WARNING_GROUPS.map((g) => {
+        const items = sorted.filter((w) => groupOf(w.level) === g.id);
+        if (items.length === 0) return null;
+        return (
+          <div key={g.id} className={`r-group r-group-${g.id}`}>
+            <h3>
+              <span aria-hidden="true">{g.icon} </span>
+              {g.title} ({items.length})
+            </h3>
+            <p className="muted">{g.hint}</p>
+            <ul className="warnings">
+              {items.map((w, i) => (
+                <WarningItem key={`${w.code}-${String(i)}`} w={w} data={data} />
               ))}
             </ul>
-            {w.pads.length > 0 ? <p className="muted">Pins: {w.pads.join(', ')}</p> : null}
-            <Citations ids={w.evidence} cite={data.cite} />
-          </li>
-        ))}
-      </ul>
+          </div>
+        );
+      })}
     </section>
   );
 }
 
-function OkResult({ response, data }: { response: SolveResponse; data: LoadedCatalog }) {
+/* ---------- wiring guide ---------- */
+
+interface ModuleCardData {
+  instance: string;
+  breakout: string | null;
+  name: string;
+  rows: WiringRow[];
+  powerPins: string[];
+  groundPins: string[];
+  parts: string[];
+}
+
+function moduleCards(
+  rows: WiringRow[],
+  modules: { instance: string; breakout: string }[],
+  data: LoadedCatalog,
+): ModuleCardData[] {
+  const breakouts = new Map(data.catalog.breakouts.map((b) => [b.id, b]));
+  return modules.map((m) => {
+    const mine = rows.filter((r) => r.instance === m.instance);
+    const b = breakouts.get(m.breakout);
+    const tokens = (t: string) => t.split('/').map((x) => x.trim().toUpperCase());
+    const pins = (kind: string) =>
+      (b?.pins ?? []).filter((p) => tokens(p.maps_to).includes(kind)).map((p) => p.label);
+    const parts = new Set<string>();
+    for (const r of mine) {
+      for (const p of r.parts) {
+        const pad = p.pads && p.pads.length > 0 ? ` (on ${r.boardLabel})` : '';
+        parts.add(`${String(p.count)} × ${describePart(p)}${pad}`);
+      }
+    }
+    return {
+      instance: m.instance,
+      breakout: m.breakout,
+      name: data.search.byId(m.breakout)?.name ?? m.breakout,
+      rows: mine,
+      powerPins: pins('VCC'),
+      groundPins: pins('GND'),
+      parts: [...parts],
+    };
+  });
+}
+
+function copyText(card: ModuleCardData): string {
+  const lines = [`${card.name} (${card.instance})`];
+  for (const r of card.rows)
+    lines.push(
+      `${r.modulePin ?? r.role} -> ${r.boardLabel} (header ${r.connector}, pin ${String(r.position)}, GPIO${String(r.gpio)})`,
+    );
+  for (const p of card.powerPins)
+    lines.push(`${p} -> a power pin on the board (see the note on the card)`);
+  for (const g of card.groundPins) lines.push(`${g} -> GND`);
+  if (card.parts.length > 0) lines.push(`You also need: ${card.parts.join('; ')}`);
+  return lines.join('\n');
+}
+
+function CopyButton({ text }: { text: string }) {
+  const [state, setState] = useState('');
+  const onClick = () => {
+    const clip = (navigator as Partial<Navigator>).clipboard;
+    if (clip?.writeText === undefined) {
+      setState('Copy not available here');
+      return;
+    }
+    clip.writeText(text).then(
+      () => {
+        setState('Copied');
+      },
+      () => {
+        setState('Copy failed');
+      },
+    );
+  };
+  return (
+    <span className="no-print">
+      <button type="button" onClick={onClick}>
+        Copy wiring
+      </button>{' '}
+      <span role="status" className="muted">
+        {state}
+      </span>
+    </span>
+  );
+}
+
+function ModuleCard({ card, headingId }: { card: ModuleCardData; headingId: string }) {
+  return (
+    <li className="r-module">
+      <div className="r-module-head">
+        <div className="r-module-pic">
+          {card.breakout !== null ? <ItemPicture id={card.breakout} name={card.name} /> : null}
+        </div>
+        <div>
+          <h3 id={headingId}>{card.name}</h3>
+          <p className="muted">
+            Name in this project: <code>{card.instance}</code>
+          </p>
+        </div>
+      </div>
+      <p className="r-list-head">Module pin → Board pin</p>
+      <ul className="r-wires" aria-labelledby={headingId}>
+        {card.rows.map((r) => (
+          <li key={r.role}>
+            <span className="r-from">{r.modulePin ?? r.role}</span>
+            <span className="r-arrow" aria-label="goes to">
+              →
+            </span>
+            <span className="r-to">{r.boardLabel}</span>
+            <span className="r-where">
+              (header {r.connector}, pin {r.position})
+              {PLAIN_ROLES[r.role.toUpperCase()]
+                ? ` · ${PLAIN_ROLES[r.role.toUpperCase()] ?? ''}`
+                : ''}
+            </span>
+          </li>
+        ))}
+        {card.powerPins.map((p) => (
+          <li key={`v-${p}`} className="r-power">
+            <span className="r-from">{p}</span>
+            <span className="r-arrow" aria-label="goes to">
+              →
+            </span>
+            <span className="r-to">3V3 or 5V pin</span>
+            <span className="r-where">(power: use the voltage printed on the module)</span>
+          </li>
+        ))}
+        {card.groundPins.map((p) => (
+          <li key={`g-${p}`} className="r-power">
+            <span className="r-from">{p}</span>
+            <span className="r-arrow" aria-label="goes to">
+              →
+            </span>
+            <span className="r-to">GND</span>
+            <span className="r-where">(any GND pin on the board)</span>
+          </li>
+        ))}
+      </ul>
+      {card.parts.length > 0 ? (
+        <p className="r-need">
+          <span aria-hidden="true">🔧 </span>
+          <strong>You also need:</strong> {card.parts.join('; ')}
+        </p>
+      ) : null}
+      <CopyButton text={copyText(card)} />
+    </li>
+  );
+}
+
+function WiringGuide({
+  rec,
+  response,
+  data,
+}: {
+  rec: Recommendation;
+  response: SolveResponse;
+  data: LoadedCatalog;
+}) {
+  const id = useId();
+  const { draft } = useAppState();
+  const rows = wiringRows(rec, response.pinLabels);
+  const cards = moduleCards(rows, draft.modules, data).filter((c) => c.rows.length > 0);
+  const loose = rec.required_parts.filter((p) => p.pads === undefined || p.pads.length === 0);
+  return (
+    <section aria-labelledby={`${id}-wire`}>
+      <h2 id={`${id}-wire`}>Wiring guide</h2>
+      <p>
+        Wire one module at a time. Each line reads “pin on the module → pin on the board”. The board
+        pin name is the one printed on your board; the header and pin number tell you where to find
+        it.
+      </p>
+      <ul className="r-modules">
+        {cards.map((c) => (
+          <ModuleCard key={c.instance} card={c} headingId={`${id}-m-${c.instance}`} />
+        ))}
+      </ul>
+      {loose.length > 0 ? (
+        <p className="r-need">
+          <span aria-hidden="true">🔧 </span>
+          <strong>You also need (for the whole project):</strong>{' '}
+          {loose.map((p) => `${String(p.count)} × ${describePart(p)}`).join('; ')}
+        </p>
+      ) : null}
+      <p className="muted">
+        Connect every module GND to a board GND pin. Power each module from a supply within its
+        rated voltage; “Power budget” under Technical details shows what the engine counted.
+      </p>
+    </section>
+  );
+}
+
+/* ---------- technical sections ---------- */
+
+function FullPinTable({ rec }: { rec: Recommendation }) {
+  return (
+    <details className="r-fold">
+      <summary>Full pin table</summary>
+      <div
+        className="table-scroll"
+        tabIndex={0}
+        role="region"
+        aria-label="Pin allocation table (scrolls sideways)"
+      >
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">Module</th>
+              <th scope="col">Signal</th>
+              <th scope="col">Chip GPIO</th>
+              <th scope="col">Board label</th>
+              <th scope="col">Header position</th>
+              <th scope="col">Routing</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rec.assignments.map((a) => (
+              <tr key={`${a.instance}.${a.role}`}>
+                <td>
+                  <code>{a.instance}</code>
+                </td>
+                <td>{a.role}</td>
+                <td>
+                  GPIO{a.gpio} <span className="muted">({a.pad})</span>
+                </td>
+                <td>{a.label}</td>
+                <td>{headerPosition(a.connector, a.position)}</td>
+                <td>
+                  {a.peripheral_instance ? `${a.peripheral_instance}, ` : ''}
+                  {a.routing}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </details>
+  );
+}
+
+function WhyPins({ rec, data }: { rec: Recommendation; data: LoadedCatalog }) {
+  return (
+    <details className="r-fold">
+      <summary>Why these pins? (sources)</summary>
+      <p className="muted">
+        For each pin: the rules the engine applied, the pins it ranked lower, and the datasheet
+        passages it relied on.
+      </p>
+      {rec.assignments.map((a) => (
+        <details key={`${a.instance}.${a.role}`} className="why">
+          <summary>
+            <code>
+              {a.instance}.{a.role}
+            </code>{' '}
+            → GPIO{a.gpio} ({a.label}, {headerPosition(a.connector, a.position)})
+          </summary>
+          <h4 className="small-h">Rule trace</h4>
+          <ul>
+            {a.trace.map((t, i) => (
+              <li key={i}>{t}</li>
+            ))}
+          </ul>
+          {a.alternatives.length > 0 ? (
+            <>
+              <h4 className="small-h">Alternatives (ranked lower)</h4>
+              <ul>
+                {a.alternatives.map((alt) => (
+                  <li key={alt.pad}>
+                    {alt.pad} — tier {alt.lower_tier}: {alt.reason}
+                  </li>
+                ))}
+              </ul>
+            </>
+          ) : null}
+          <Citations ids={a.evidence} cite={data.cite} summary="Sources for this pin" />
+        </details>
+      ))}
+    </details>
+  );
+}
+
+function TechnicalDetails({ response }: { response: SolveResponse }) {
+  const { outcome, elapsedMs } = response;
+  const rec = outcome.recommendation;
+  return (
+    <details className="r-fold">
+      <summary>Technical details</summary>
+      <dl className="facts summary">
+        <div className="facts-row">
+          <dt>Catalog</dt>
+          <dd>
+            <code>{rec.catalog_version}</code> (SHA-256{' '}
+            <code>{rec.catalog_sha256.slice(0, 12)}…</code>)
+          </dd>
+        </div>
+        <div className="facts-row">
+          <dt>Rule set</dt>
+          <dd>
+            <code>{rec.ruleset_version}</code>
+          </dd>
+        </div>
+        <div className="facts-row">
+          <dt>Solve time</dt>
+          <dd>
+            {Math.round(elapsedMs)} ms, {outcome.stats.nodes} search nodes
+          </dd>
+        </div>
+      </dl>
+      {rec.status === 'ok' ? (
+        <>
+          <h4 className="small-h">Interfaces (how each module talks to the board)</h4>
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Module</th>
+                <th scope="col">Interface</th>
+                <th scope="col">Decided by</th>
+                <th scope="col">Other options</th>
+              </tr>
+            </thead>
+            <tbody>
+              {Object.entries(rec.interfaces).map(([inst, i]) => (
+                <tr key={inst}>
+                  <td>
+                    <code>{inst}</code>
+                  </td>
+                  <td>{PLAIN_INTERFACE[i.kind] ?? i.kind}</td>
+                  <td>Interface rule {i.decided_by_rule}</td>
+                  <td>
+                    {i.alternatives.length === 0
+                      ? 'none'
+                      : i.alternatives.map((k) => PLAIN_INTERFACE[k] ?? k).join(', ')}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          {rec.budgets.length > 0 ? (
+            <>
+              <h4 className="small-h">Power budget (current each power pin must supply)</h4>
+              <table>
+                <thead>
+                  <tr>
+                    <th scope="col">Rail</th>
+                    <th scope="col">Demand</th>
+                    <th scope="col">Limit</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {rec.budgets.map((b) => (
+                    <tr key={b.rail}>
+                      <td>{b.rail}</td>
+                      <td>{b.demand_ma} mA</td>
+                      <td>
+                        {b.limit_ma === null
+                          ? 'unknown (not documented)'
+                          : `${String(b.limit_ma)} mA`}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </>
+          ) : null}
+        </>
+      ) : null}
+    </details>
+  );
+}
+
+/* ---------- banner ---------- */
+
+function BoardStrip({
+  board,
+  boardText,
+  modules,
+}: {
+  board: BoardOption | undefined;
+  boardText: string;
+  modules: number;
+}) {
+  return (
+    <div className="r-board">
+      <div className="r-board-pic">
+        {board ? (
+          <ItemPicture
+            id={board.ref.split('@')[0] ?? board.ref}
+            name={board.name}
+            board={{ vendor: board.vendor, family: board.family }}
+          />
+        ) : null}
+      </div>
+      <div>
+        <p className="r-board-name">
+          {board?.name ?? boardText} {board ? <StatusBadge status={board.status} /> : null}
+        </p>
+        <p className="muted">
+          {board
+            ? `rev. ${board.revision}, variant ${board.variant} (module ${board.module}) · `
+            : ''}
+          {modules} {modules === 1 ? 'module' : 'modules'}
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function OkBanner({
+  rec,
+  board,
+  boardText,
+  modules,
+}: {
+  rec: Recommendation;
+  board: BoardOption | undefined;
+  boardText: string;
+  modules: number;
+}) {
+  const counts = countByLevel(rec.warnings);
+  return (
+    <section
+      className={`r-banner ${counts.critical > 0 ? 'r-banner-warn' : 'r-banner-ok'}`}
+      aria-labelledby="r-banner-h"
+    >
+      <p className="r-kicker">
+        <span aria-hidden="true">{counts.critical > 0 ? '⛔' : '✔'} </span>
+        Pins assigned
+      </p>
+      <h2 id="r-banner-h">Your pins are ready</h2>
+      <p className="r-lead">
+        {rec.assignments.length} wires to connect. Follow the wiring guide below, one module at a
+        time.
+      </p>
+      {counts.critical > 0 ? (
+        <p className="r-alert">
+          <span aria-hidden="true">⛔ </span>
+          <strong>
+            {counts.critical} {counts.critical === 1 ? 'item needs' : 'items need'} fixing first.
+          </strong>{' '}
+          <a href="#warnings">See “Fix before you wire”</a>
+        </p>
+      ) : counts.warning > 0 ? (
+        <p className="r-alert">
+          <span aria-hidden="true">▲ </span>
+          {counts.warning} {counts.warning === 1 ? 'thing' : 'things'} to check.{' '}
+          <a href="#warnings">See “Check this”</a>
+        </p>
+      ) : null}
+      <BoardStrip board={board} boardText={boardText} modules={modules} />
+    </section>
+  );
+}
+
+function UnsatResult({
+  rec,
+  data,
+  board,
+  boardText,
+  modules,
+}: {
+  rec: Recommendation;
+  data: LoadedCatalog;
+  board: BoardOption | undefined;
+  boardText: string;
+  modules: number;
+}) {
+  const names: NameLookup = { breakout: (b) => data.search.byId(b)?.name };
+  const u = rec.unsat;
+  const conflict = u?.minimal_conflict ?? [];
+  return (
+    <>
+      <section className="r-banner r-banner-bad" aria-labelledby="r-banner-h">
+        <p className="r-kicker">
+          <span aria-hidden="true">✖ </span>No safe assignment
+        </p>
+        <h2 id="r-banner-h">No safe way to connect all of this</h2>
+        <p className="r-lead">
+          The engine proved that these requirements cannot all be met on this board at once.
+        </p>
+        <ul>
+          {conflict.map((t) => (
+            <li key={t}>
+              {describeConflict(t, names)} <code className="claim-id">{t}</code>
+            </li>
+          ))}
+        </ul>
+        <h3>Ways to fix it (best first)</h3>
+        {u && u.relaxations.length > 0 ? (
+          <ol className="r-fixes">
+            {u.relaxations.map((t) => (
+              <li key={t}>
+                {describeRelaxation(t, names)} <code className="claim-id">{t}</code>
+              </li>
+            ))}
+          </ol>
+        ) : (
+          <p>The engine found no single change that fixes this. Try another board.</p>
+        )}
+        <p className="muted">Each suggested fix was checked by solving the project again.</p>
+        <p className="actions">
+          <a className="button-link" href={hrefFor('/constraints')}>
+            Change constraints
+          </a>
+          <a className="button-link" href={hrefFor('/modules')}>
+            Change modules
+          </a>
+          <a className="button-link" href={hrefFor('/board')}>
+            Change board
+          </a>
+        </p>
+        <BoardStrip board={board} boardText={boardText} modules={modules} />
+      </section>
+      {rec.warnings.length > 0 ? <Warnings rec={rec} data={data} /> : null}
+    </>
+  );
+}
+
+function OkResult({
+  response,
+  data,
+  board,
+  boardText,
+}: {
+  response: SolveResponse;
+  data: LoadedCatalog;
+  board: BoardOption | undefined;
+  boardText: string;
+}) {
   const id = useId();
   const rec = response.outcome.recommendation;
-  const rows = wiringRows(rec, response.pinLabels);
-  const unattached = rec.required_parts.filter((p) => p.pads === undefined || p.pads.length === 0);
   const { draft } = useAppState();
   const view =
     draft.board === null || draft.variant === null
@@ -162,226 +723,29 @@ function OkResult({ response, data }: { response: SolveResponse; data: LoadedCat
         });
   return (
     <>
-      <section aria-labelledby={`${id}-if`}>
-        <h2 id={`${id}-if`}>Interfaces</h2>
-        <table>
-          <thead>
-            <tr>
-              <th scope="col">Module</th>
-              <th scope="col">Interface</th>
-              <th scope="col">Decided by</th>
-              <th scope="col">Other options</th>
-            </tr>
-          </thead>
-          <tbody>
-            {Object.entries(rec.interfaces).map(([inst, i]) => (
-              <tr key={inst}>
-                <td>
-                  <code>{inst}</code>
-                </td>
-                <td>{INTERFACE_LABELS[i.kind] ?? i.kind}</td>
-                <td>Interface rule {i.decided_by_rule}</td>
-                <td>
-                  {i.alternatives.length === 0
-                    ? 'none'
-                    : i.alternatives.map((k) => INTERFACE_LABELS[k] ?? k).join(', ')}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </section>
-
-      <section aria-labelledby={`${id}-alloc`}>
-        <h2 id={`${id}-alloc`}>Pin allocation</h2>
-        <div
-          className="table-scroll"
-          tabIndex={0}
-          role="region"
-          aria-label="Pin allocation table (scrolls sideways)"
-        >
-          <table>
-            <thead>
-              <tr>
-                <th scope="col">Module</th>
-                <th scope="col">Signal</th>
-                <th scope="col">Chip GPIO</th>
-                <th scope="col">Board label</th>
-                <th scope="col">Header position</th>
-                <th scope="col">Routing</th>
-              </tr>
-            </thead>
-            <tbody>
-              {rec.assignments.map((a) => (
-                <tr key={`${a.instance}.${a.role}`}>
-                  <td>
-                    <code>{a.instance}</code>
-                  </td>
-                  <td>{a.role}</td>
-                  <td>
-                    GPIO{a.gpio} <span className="muted">({a.pad})</span>
-                  </td>
-                  <td>{a.label}</td>
-                  <td>{headerPosition(a.connector, a.position)}</td>
-                  <td>
-                    {a.peripheral_instance ? `${a.peripheral_instance}, ` : ''}
-                    {a.routing}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </section>
-
+      <OkBanner rec={rec} board={board} boardText={boardText} modules={draft.modules.length} />
+      <ProjectActions csv={() => resultCsv(rec, response.pinLabels)} />
+      <WiringGuide rec={rec} response={response} data={data} />
+      <Warnings rec={rec} data={data} />
       {view !== null ? (
         <section aria-labelledby={`${id}-view`}>
-          <h2 id={`${id}-view`}>Header view</h2>
+          <h2 id={`${id}-view`}>Header view: where each pin is</h2>
+          <p>
+            These are the pin rows (headers) of your board. The highlighted pins are the ones used
+            above; the legend names every symbol, so colour is never the only clue.
+          </p>
           <BoardView connectors={view} title="Board headers with the assigned pins" />
         </section>
       ) : null}
-
-      <section aria-labelledby={`${id}-wire`}>
-        <h2 id={`${id}-wire`}>Wiring instructions</h2>
-        <ol className="wiring">
-          {rows.map((r) => (
-            <li key={`${r.instance}.${r.role}`}>
-              Connect <code>{r.instance}</code> pin <strong>{r.modulePin ?? r.role}</strong>
-              {r.modulePin !== null && r.modulePin !== r.role ? ` (${r.role})` : ''} to board pin{' '}
-              <strong>{r.boardLabel}</strong> ({headerPosition(r.connector, r.position)}, GPIO
-              {r.gpio}).{' '}
-              {r.parts.length === 0 ? (
-                <span className="tag tag-direct">Direct wire</span>
-              ) : (
-                <span className="tag tag-part">
-                  Needs part: {r.parts.map(describePart).join('; ')}
-                </span>
-              )}
-            </li>
-          ))}
-        </ol>
-        <p>
-          Connect every module GND to a board GND pin. Power each module from a supply within its
-          rated voltage; the power budget below shows what the engine counted per rail.
+      <section aria-labelledby={`${id}-tech`}>
+        <h2 id={`${id}-tech`}>For checking your work</h2>
+        <p className="muted">
+          Open a section to see the full table, the sources, or engine details.
         </p>
-        {rec.required_parts.length > 0 ? (
-          <>
-            <h3>Required parts</h3>
-            <ul>
-              {rec.required_parts.map((p, i) => (
-                <li key={i}>
-                  {p.count} × {describePart(p)}
-                  {p.pads && p.pads.length > 0 ? ` on ${p.pads.join(', ')}` : ''}
-                </li>
-              ))}
-            </ul>
-            {unattached.length > 0 ? (
-              <p className="muted">Parts without a pin apply to the module or rail as a whole.</p>
-            ) : null}
-          </>
-        ) : null}
+        <FullPinTable rec={rec} />
+        <WhyPins rec={rec} data={data} />
+        <TechnicalDetails response={response} />
       </section>
-
-      <Warnings rec={rec} data={data} />
-
-      <section aria-labelledby={`${id}-why`}>
-        <h2 id={`${id}-why`}>Why this pin</h2>
-        {rec.assignments.map((a) => (
-          <details key={`${a.instance}.${a.role}`} className="why">
-            <summary>
-              <code>
-                {a.instance}.{a.role}
-              </code>{' '}
-              → GPIO{a.gpio} ({a.label}, {headerPosition(a.connector, a.position)})
-            </summary>
-            <h3 className="small-h">Rule trace</h3>
-            <ul>
-              {a.trace.map((t, i) => (
-                <li key={i}>{t}</li>
-              ))}
-            </ul>
-            {a.alternatives.length > 0 ? (
-              <>
-                <h3 className="small-h">Alternatives (ranked lower)</h3>
-                <ul>
-                  {a.alternatives.map((alt) => (
-                    <li key={alt.pad}>
-                      {alt.pad} — tier {alt.lower_tier}: {alt.reason}
-                    </li>
-                  ))}
-                </ul>
-              </>
-            ) : null}
-            <Citations ids={a.evidence} cite={data.cite} summary="Sources for this pin" />
-          </details>
-        ))}
-      </section>
-
-      {rec.budgets.length > 0 ? (
-        <section aria-labelledby={`${id}-bud`}>
-          <h2 id={`${id}-bud`}>Power budget</h2>
-          <table>
-            <thead>
-              <tr>
-                <th scope="col">Rail</th>
-                <th scope="col">Demand</th>
-                <th scope="col">Limit</th>
-              </tr>
-            </thead>
-            <tbody>
-              {rec.budgets.map((b) => (
-                <tr key={b.rail}>
-                  <td>{b.rail}</td>
-                  <td>{b.demand_ma} mA</td>
-                  <td>
-                    {b.limit_ma === null ? 'unknown (not documented)' : `${String(b.limit_ma)} mA`}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </section>
-      ) : null}
-    </>
-  );
-}
-
-function UnsatResult({ rec, data }: { rec: Recommendation; data: LoadedCatalog }) {
-  const id = useId();
-  const names: NameLookup = { breakout: (b) => data.search.byId(b)?.name };
-  const u = rec.unsat;
-  return (
-    <>
-      <section className="card unsat" aria-labelledby={`${id}-u`}>
-        <h2 id={`${id}-u`}>
-          <span aria-hidden="true">✖ </span>No safe assignment
-        </h2>
-        <p>
-          The engine proved that these requirements cannot all be met on this board. The smallest
-          set of requirements that conflict:
-        </p>
-        <ul>
-          {(u?.minimal_conflict ?? []).map((t) => (
-            <li key={t}>
-              {describeConflict(t, names)} <code className="claim-id">{t}</code>
-            </li>
-          ))}
-        </ul>
-        <h3>Ways to fix it (best first)</h3>
-        {u && u.relaxations.length > 0 ? (
-          <ol>
-            {u.relaxations.map((t) => (
-              <li key={t}>
-                {describeRelaxation(t, names)} <code className="claim-id">{t}</code>
-              </li>
-            ))}
-          </ol>
-        ) : (
-          <p>The engine found no single change that fixes this. Try another board.</p>
-        )}
-        <p className="muted">Each suggested fix was checked by solving the project again.</p>
-      </section>
-      {rec.warnings.length > 0 ? <Warnings rec={rec} data={data} /> : null}
     </>
   );
 }
@@ -415,54 +779,18 @@ function ResultView({
   response,
   data,
   boardText,
-  boardStatus,
+  board,
 }: {
   response: SolveResponse;
   data: LoadedCatalog;
   boardText: string;
-  boardStatus?: BoardOption['status'] | undefined;
+  board: BoardOption | undefined;
 }) {
-  const { outcome, elapsedMs } = response;
+  const { outcome } = response;
   const rec = outcome.recommendation;
-  const statusText =
-    rec.status === 'ok'
-      ? 'Pins assigned'
-      : rec.status === 'unsat'
-        ? 'No safe assignment'
-        : 'Variant needed';
+  const { draft } = useAppState();
   return (
     <>
-      <dl className="facts summary">
-        <div className="facts-row">
-          <dt>Board</dt>
-          <dd>
-            {boardText} {boardStatus ? <StatusBadge status={boardStatus} /> : null}
-          </dd>
-        </div>
-        <div className="facts-row">
-          <dt>Result</dt>
-          <dd>{statusText}</dd>
-        </div>
-        <div className="facts-row">
-          <dt>Catalog</dt>
-          <dd>
-            <code>{rec.catalog_version}</code> (SHA-256{' '}
-            <code>{rec.catalog_sha256.slice(0, 12)}…</code>)
-          </dd>
-        </div>
-        <div className="facts-row">
-          <dt>Rule set</dt>
-          <dd>
-            <code>{rec.ruleset_version}</code>
-          </dd>
-        </div>
-        <div className="facts-row">
-          <dt>Solve time</dt>
-          <dd>
-            {Math.round(elapsedMs)} ms, {outcome.stats.nodes} search nodes
-          </dd>
-        </div>
-      </dl>
       {outcome.stats.budgetExhausted ? (
         <p className="notice" role="alert">
           <LevelBadge level="warning" /> The search stopped at its {SLOW_NOTICE_MS / 1000} s / node
@@ -470,9 +798,24 @@ function ResultView({
           assignment” may be wrong. Simplify the project and try again.
         </p>
       ) : null}
-      {rec.status === 'ok' ? <OkResult response={response} data={data} /> : null}
-      {rec.status === 'unsat' ? <UnsatResult rec={rec} data={data} /> : null}
+      {rec.status === 'ok' ? (
+        <OkResult response={response} data={data} board={board} boardText={boardText} />
+      ) : null}
+      {rec.status === 'unsat' ? (
+        <UnsatResult
+          rec={rec}
+          data={data}
+          board={board}
+          boardText={boardText}
+          modules={draft.modules.length}
+        />
+      ) : null}
       {rec.status === 'needs_variant' ? <NeedsVariant rec={rec} /> : null}
+      {rec.status !== 'ok' ? (
+        <section className="r-fold-wrap">
+          <TechnicalDetails response={response} />
+        </section>
+      ) : null}
     </>
   );
 }
@@ -527,14 +870,14 @@ function Results({ data }: { data: LoadedCatalog }) {
   if (project.modules.length === 0) {
     return (
       <p className="notice">
-        Add at least one module. <a href={hrefFor('/modules')}>Add modules</a>
+        Add at least one part. <a href={hrefFor('/modules')}>Add parts</a>
       </p>
     );
   }
   const done = solve.status === 'done' && current ? solve.response : null;
-  const okRec = done?.outcome.recommendation.status === 'ok' ? done : null;
+  const showActionsHere = done !== null && done.outcome.recommendation.status !== 'ok';
   return (
-    <>
+    <div className="results-page">
       <PinnedNotice data={data} />
       {solve.status === 'running' && current ? (
         <Progress slow={solve.slow} stopAfterMs={solve.stopAfterMs} onCancel={cancelSolve} />
@@ -544,18 +887,11 @@ function Results({ data }: { data: LoadedCatalog }) {
         <SolveProblem solve={solve} onRetry={runSolve} />
       ) : null}
       {solve.status === 'done' && current ? (
-        <ResultView
-          response={solve.response}
-          data={data}
-          boardText={boardText}
-          boardStatus={board?.status}
-        />
+        <ResultView response={solve.response} data={data} boardText={boardText} board={board} />
       ) : null}
-      <ProjectActions
-        {...(okRec ? { csv: () => resultCsv(okRec.outcome.recommendation, okRec.pinLabels) } : {})}
-      />
+      {done === null || showActionsHere ? <ProjectActions /> : null}
       <Disclaimer />
-    </>
+    </div>
   );
 }
 

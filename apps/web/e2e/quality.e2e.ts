@@ -123,8 +123,8 @@ test('refresh on every hash route works', async ({ page }) => {
   const routes: [string, RegExp][] = [
     ['', /Pinout Finder/],
     ['#/board', /Choose your board/],
-    ['#/modules', /Add modules/],
-    ['#/constraints', /Constraints/],
+    ['#/modules', /Add parts/],
+    ['#/constraints', /Your rules/],
     ['#/results', /Results/],
     [shareHash(cat, { modules: WORKED_MODULES }), /./],
     ['#/nothing-here', /./],
@@ -181,17 +181,17 @@ test('keyboard only: board, module, results', async ({ page }) => {
   }
   await page.keyboard.press('Space');
   await expect(page.getByRole('heading', { name: 'Selected' })).toBeVisible();
-  await tabTo('Next: add modules');
+  await tabTo('Next: add parts');
   await page.keyboard.press('Enter');
-  await expect(page.getByRole('heading', { level: 1, name: 'Add modules' })).toBeFocused();
+  await expect(page.getByRole('heading', { level: 1, name: 'Add parts' })).toBeFocused();
 
   await tabTo({ input: 'search' });
   await page.keyboard.type('bme280');
   await tabTo('Add ');
   await page.keyboard.press('Enter');
-  await expect(page.getByRole('heading', { name: /Modules in this project \(1\)/ })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /Your parts \(1\)/ })).toBeVisible();
 
-  await tabTo('Find pins now');
+  await tabTo('Get my pins');
   await page.keyboard.press('Enter');
   await expect(page.getByRole('heading', { level: 1, name: 'Results' })).toBeFocused();
   await expect(page.getByText('Pins assigned')).toBeVisible({ timeout: SOLVE_TIMEOUT });

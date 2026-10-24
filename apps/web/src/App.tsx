@@ -1,4 +1,5 @@
-import { StepNav } from './components/common';
+import { StepNav, type StepProgress } from './components/common';
+import { StepFooter } from './components/StepFooter';
 import { StorageStatus } from './components/StorageStatus';
 import { UpdatePrompt } from './pwa/UpdatePrompt';
 import { hrefFor, routeKey, stepOf, type Route } from './route';
@@ -9,7 +10,7 @@ import { ModulesScreen } from './screens/ModulesScreen';
 import { ResultsScreen } from './screens/ResultsScreen';
 import { SharedScreen } from './screens/SharedScreen';
 import { PageHeading, type HeadingRef } from './screens/shared';
-import { AppStateProvider, type AppServices } from './state/AppState';
+import { AppStateProvider, useAppState, type AppServices } from './state/AppState';
 import { useFocusOnRouteChange } from './useFocusOnRouteChange';
 import { useHashRoute } from './useHashRoute';
 
@@ -48,6 +49,38 @@ function Page({ route, headingRef }: { route: Route; headingRef: HeadingRef }) {
   }
 }
 
+function Shell({ route, headingRef }: { route: Route; headingRef: HeadingRef }) {
+  const { draft } = useAppState();
+  const current = stepOf(route);
+  const progress: StepProgress = {
+    board: draft.board !== null,
+    modules: draft.modules.length,
+    rules:
+      draft.locked.length > 0 ||
+      draft.reserved.length > 0 ||
+      draft.connections.length > 0 ||
+      draft.wifi ||
+      draft.wiringLengthM !== null ||
+      draft.framework !== null,
+  };
+  return (
+    <>
+      <header className="site-header">
+        <a className="brand" href={hrefFor('/')}>
+          Pinout Finder
+        </a>
+        <StepNav current={current} progress={progress} />
+        <StorageStatus />
+      </header>
+      <UpdatePrompt />
+      <main id="main" tabIndex={-1}>
+        <Page route={route} headingRef={headingRef} />
+      </main>
+      {current !== null && current !== 'results' ? <StepFooter step={current} /> : null}
+    </>
+  );
+}
+
 /** The app: header, step navigation, hash-routed page, focus management on route changes. */
 export function App({ services }: { services?: AppServices }) {
   const route = useHashRoute();
@@ -66,17 +99,7 @@ export function App({ services }: { services?: AppServices }) {
       >
         Skip to content
       </a>
-      <header className="site-header">
-        <a className="brand" href={hrefFor('/')}>
-          Pinout Finder
-        </a>
-        <StepNav current={stepOf(route)} />
-        <StorageStatus />
-      </header>
-      <UpdatePrompt />
-      <main id="main" tabIndex={-1}>
-        <Page route={route} headingRef={headingRef} />
-      </main>
+      <Shell route={route} headingRef={headingRef} />
     </AppStateProvider>
   );
 }

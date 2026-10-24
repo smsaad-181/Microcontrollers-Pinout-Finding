@@ -1,7 +1,15 @@
 import { renderToString } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 import { App, CatalogStatus } from '../src/App';
-import { Citations, LevelBadge, StatusBadge, StepNav } from '../src/components/common';
+import {
+  Citations,
+  LevelBadge,
+  StatusBadge,
+  StepNav,
+  stepNeeds,
+  stepState,
+} from '../src/components/common';
+import { footerSpec } from '../src/components/StepFooter';
 import { citationIndex } from '../src/catalog/evidence';
 
 describe('App shell', () => {
@@ -40,9 +48,29 @@ describe('badges', () => {
   });
 
   it('marks the current step', () => {
-    expect(renderToString(<StepNav current="modules" />)).toMatch(
+    const none = { board: false, modules: 0, rules: false };
+    expect(renderToString(<StepNav current="modules" progress={none} />)).toMatch(
       /href="#\/modules" aria-current="step"/,
     );
+  });
+
+  it('shows done steps with a check mark and says why Get pins is not ready', () => {
+    const progress = { board: true, modules: 0, rules: false };
+    const html = renderToString(<StepNav current="modules" progress={progress} />);
+    expect(html).toContain('✓');
+    expect(html).toContain('Needs at least one part');
+    expect(stepState('board', 'modules', progress)).toBe('done');
+    expect(stepNeeds('results', { board: false, modules: 2, rules: false })).toMatch(/board/);
+    expect(stepNeeds('results', { board: true, modules: 1, rules: false })).toBeNull();
+  });
+
+  it('footer says what is missing', () => {
+    expect(footerSpec('board', { board: false, modules: 0 }).missing).toBe(
+      'Pick a board to continue.',
+    );
+    expect(footerSpec('board', { board: true, modules: 0 }).missing).toBeNull();
+    expect(footerSpec('modules', { board: true, modules: 0 }).missing).toMatch(/at least one part/);
+    expect(footerSpec('constraints', { board: true, modules: 1 }).missing).toBeNull();
   });
 });
 

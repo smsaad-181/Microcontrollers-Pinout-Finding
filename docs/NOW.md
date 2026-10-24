@@ -11,3 +11,6 @@ Board page has a brand sidebar (ESP > Espressif/Waveshare/..., Arduino, Raspberr
 
 ## Update (Phase 5 built)
 Phase 5 work is done on branch phase-5 and merged to main: link checker (`pnpm check:links`, weekly links.yml), README, provenance, CONTRIBUTING, CODEOWNERS, CHANGELOG, docs/RELEASE.md, bench procedure. Reviewer: PASS (0 Critical/Major, 6 minor; 3 fixed). 12 of 12 sampled facts re-confirmed. Waiting for the owner: run docs/validation/phase-5/bench-procedure.md and fill bench.md, then follow docs/RELEASE.md (push, enable Pages, restore deploy trigger, tag v1.0.0). Overall about 98%.
+
+## Update (UX overhaul)
+Plain-language redesign: step tracker with done states, sticky Back/Next bar, help for jargon, "Your rules" screen, Home "Try an example", Results as a wiring guide with warnings grouped (Fix before you wire / Check this / Good to know). Plain wording lives in apps/web/src/results/plain.ts (not independently reviewed; fact-check before v1.0). Checks: 171 unit, 11 e2e (incl. axe light and dark) pass.

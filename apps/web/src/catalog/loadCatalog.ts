@@ -13,8 +13,7 @@ export interface WebCatalog extends Catalog {
 }
 
 export type CatalogLoadResult =
-  | { status: 'ready'; catalog: WebCatalog; sha256: string }
-  | { status: 'error'; message: string };
+  { status: 'ready'; catalog: WebCatalog; sha256: string } | { status: 'error'; message: string };
 
 /** Hex SHA-256 of a UTF-8 string (injected so tests do not need WebCrypto). */
 export type Digest = (text: string) => Promise<string>;
@@ -61,7 +60,8 @@ async function fetchCatalog(
   digest: Digest,
 ): Promise<CatalogLoadResult> {
   const file = catalogFileName(manifest);
-  if (file === null) return { status: 'error', message: 'The catalog manifest names an invalid file.' };
+  if (file === null)
+    return { status: 'error', message: 'The catalog manifest names an invalid file.' };
   let text: string;
   try {
     const response = await fetchFn(catalogUrl(baseUrl, file));

@@ -418,3 +418,550 @@ tbody tr:hover {
     margin-left: 0;
   }
 }
+
+/* ======================================================================
+   Guidance layer: stepper states, step header, help, sticky footer, parts panel.
+   ====================================================================== */
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+main {
+  flex: 1 0 auto;
+  width: 100%;
+  margin-inline: auto;
+}
+
+body {
+  font-size: 1rem;
+  line-height: 1.55;
+}
+
+p,
+li {
+  max-width: 70ch;
+}
+
+/* ---- touch targets and focus ---- */
+button,
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  min-height: 44px;
+  line-height: 1.25;
+  text-align: center;
+}
+
+.cat-list button {
+  justify-content: flex-start;
+  text-align: left;
+}
+
+select,
+input[type='search'],
+input[type='text'] {
+  min-height: 44px;
+  font-size: 1rem;
+}
+
+input[type='text'] {
+  padding: 0.55rem 0.7rem;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--card-bg);
+  color: var(--fg);
+  font: inherit;
+  max-width: 100%;
+}
+
+input[type='checkbox'],
+input[type='radio'] {
+  width: 1.4rem;
+  height: 1.4rem;
+  margin: 0.15rem 0 0;
+  flex: none;
+}
+
+.field-inline {
+  align-items: flex-start;
+  min-height: 44px;
+  padding-block: 0.2rem;
+}
+
+.button:focus-visible,
+button:focus-visible,
+a:focus-visible,
+summary:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+}
+
+button.secondary,
+.button.secondary,
+.button.secondary:hover {
+  background: var(--card-bg);
+  border: 2px solid var(--btn-bg);
+  color: var(--link);
+  outline: none;
+}
+
+.button.secondary:hover,
+button.secondary:hover:not(:disabled) {
+  background: var(--tile);
+  filter: none;
+}
+
+.button.secondary:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+}
+
+.button[aria-disabled='true'],
+.button[aria-disabled='true']:hover {
+  background: var(--tile);
+  border: 2px dashed var(--border);
+  color: var(--muted);
+  cursor: not-allowed;
+  filter: none;
+}
+
+.button.big {
+  min-height: 52px;
+  padding: 0.7rem 1.6rem;
+  font-size: 1.1rem;
+}
+
+.badge,
+.level,
+.trust li,
+th {
+  font-size: 0.875rem;
+}
+
+/* ---- header and stepper ---- */
+.site-header {
+  align-items: flex-start;
+}
+
+.steps {
+  flex: 1 1 28rem;
+  min-width: 0;
+}
+
+.steps ol {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.5rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.steps li {
+  max-width: none;
+}
+
+.steps a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  padding: 0.25rem 0.9rem 0.25rem 0.4rem;
+  border: 1px solid transparent;
+  font-size: 1rem;
+}
+
+.step-mark {
+  display: inline-grid;
+  place-items: center;
+  width: 1.7rem;
+  height: 1.7rem;
+  border-radius: 50%;
+  border: 2px solid var(--ink-muted);
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  font-weight: 700;
+  flex: none;
+}
+
+.step-done a {
+  color: var(--ink-fg);
+}
+
+.step-done .step-mark {
+  background: #2fd0a4;
+  border-color: #2fd0a4;
+  color: #04201a;
+}
+
+.steps .step-current a,
+.steps a[aria-current='step'] {
+  background: var(--copper);
+  color: #1b1405;
+  font-weight: 700;
+}
+
+.step-current .step-mark {
+  border-color: #1b1405;
+  color: #1b1405;
+}
+
+.step-blocked a {
+  border-style: dashed;
+  border-color: var(--ink-muted);
+}
+
+.step-hint {
+  margin: 0.25rem 0 0;
+  min-height: 1.5em;
+  color: var(--copper);
+  font-size: 0.95rem;
+}
+
+/* ---- step header and help ---- */
+.step-header {
+  margin-bottom: 1.25rem;
+}
+
+.step-header h1 {
+  margin: 0 0 0.5rem;
+}
+
+.step-eyebrow {
+  margin: 0 0 0.35rem;
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--link);
+}
+
+.step-intro {
+  font-size: 1.15rem;
+  margin: 0 0 0.75rem;
+  color: var(--fg);
+}
+
+.help {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--card-bg);
+  max-width: 44rem;
+}
+
+.help summary {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-height: 44px;
+  padding: 0.25rem 0.9rem;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.help-mark {
+  display: inline-grid;
+  place-items: center;
+  width: 1.6rem;
+  height: 1.6rem;
+  border-radius: 50%;
+  background: var(--btn-bg);
+  color: var(--btn-fg);
+  font-weight: 700;
+  flex: none;
+}
+
+.help-body {
+  padding: 0 1rem 0.75rem;
+  border-top: 1px solid var(--line);
+}
+
+.term {
+  margin: 0.75rem 0 0;
+}
+
+/* ---- board: selected bar ---- */
+.selected-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1.25rem;
+  margin: 0 0 1.25rem;
+  padding: 0.85rem 1.1rem;
+  background: var(--card-bg);
+  border: 1px solid var(--line);
+  border-left: 6px solid var(--btn-bg);
+  border-radius: 12px;
+}
+
+.selected-thumb {
+  width: 7rem;
+  flex: none;
+}
+
+.selected-thumb .photo,
+.selected-thumb .art {
+  height: 5rem;
+  width: 100%;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 3px;
+}
+
+.selected-text {
+  flex: 1 1 14rem;
+  min-width: 0;
+}
+
+.selected-text h2 {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--link);
+}
+
+.selected-text p {
+  margin: 0.15rem 0;
+}
+
+.selected-none {
+  margin: 0;
+  color: var(--muted);
+}
+
+/* ---- parts: layout and summary panel ---- */
+.parts-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 19rem;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.parts-main {
+  min-width: 0;
+}
+
+.parts-panel {
+  position: sticky;
+  top: 0.75rem;
+  background: var(--card-bg);
+  border: 1px solid var(--line);
+  border-top: 4px solid var(--btn-bg);
+  border-radius: 12px;
+  padding: 0.25rem 1rem 0.75rem;
+}
+
+.parts-panel summary {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  cursor: pointer;
+}
+
+.parts-panel summary h2 {
+  margin: 0;
+}
+
+.parts-empty {
+  margin: 0.25rem 0;
+  color: var(--muted);
+}
+
+.parts-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.parts-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.6rem 0;
+  border-top: 1px solid var(--line);
+}
+
+.parts-name {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.pick-card .what {
+  font-size: 0.95rem;
+}
+
+/* ---- rules: skip box ---- */
+.skip-box {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem 1.5rem;
+  margin: 0 0 1.25rem;
+  padding: 1rem 1.25rem;
+  background: var(--card-bg);
+  border: 1px solid var(--line);
+  border-left: 6px solid var(--copper);
+  border-radius: 12px;
+}
+
+.skip-box p {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.card {
+  margin-top: 1.25rem;
+}
+
+/* ---- home ---- */
+.hero-actions button.secondary {
+  padding: 0.75rem 1.4rem;
+  font-size: 1.05rem;
+}
+
+.hero-note {
+  max-width: 34rem;
+  margin: 1rem 0 0;
+}
+
+.intro-steps {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.intro-steps li {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  font-weight: 400;
+}
+
+.intro-steps li strong {
+  font-size: 1.1rem;
+}
+
+/* ---- sticky step footer: in the page flow after <main>, so it never covers content ---- */
+.step-footer {
+  position: sticky;
+  bottom: 0;
+  z-index: 20;
+  background: var(--card-bg);
+  border-top: 3px solid var(--copper);
+  box-shadow: 0 -4px 14px rgb(0 0 0 / 12%);
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+.step-footer-inner {
+  max-width: 76rem;
+  margin: 0 auto;
+  padding: 0.65rem 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem 1rem;
+}
+
+.footer-msg {
+  flex: 1 1 auto;
+  margin: 0;
+  max-width: none;
+  color: var(--muted);
+}
+
+.footer-msg.is-blocked {
+  color: var(--fg);
+  font-weight: 600;
+}
+
+.footer-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+/* ---- narrow screens ---- */
+@media (max-width: 56rem) {
+  .parts-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .parts-panel {
+    position: static;
+    order: -1;
+  }
+
+  .intro-steps {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  main {
+    padding: 1.25rem 1rem 2rem;
+  }
+
+  .site-header {
+    padding: 0.5rem 1rem;
+  }
+
+  .steps {
+    flex-basis: 100%;
+    order: 3;
+  }
+
+  .steps a {
+    padding-right: 0.7rem;
+    font-size: 0.95rem;
+  }
+
+  .step-footer-inner {
+    flex-wrap: wrap;
+    padding: 0.5rem 1rem;
+  }
+
+  .footer-msg {
+    flex-basis: 100%;
+    order: -1;
+    font-size: 0.95rem;
+  }
+
+  .footer-back {
+    flex: 0 0 auto;
+  }
+
+  .footer-actions {
+    flex: 1 1 auto;
+  }
+
+  .footer-actions .button {
+    flex: 1 1 auto;
+  }
+
+  .hero-actions .button,
+  .hero-actions button {
+    flex: 1 1 100%;
+  }
+
+  .card {
+    padding: 1rem;
+  }
+
+  .selected-thumb {
+    width: 5rem;
+  }
+
+  .pad-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
