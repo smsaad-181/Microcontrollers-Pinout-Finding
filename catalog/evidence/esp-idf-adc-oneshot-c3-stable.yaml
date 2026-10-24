@@ -1,0 +1,16 @@
+# Evidence record: ESP-IDF Programming Guide (stable) - ADC Oneshot Mode Driver (ESP32-C3) (read 2026-10-24; one key, boards-2 task; a blind auditor must re-read every claim).
+accessed: "2026-10-24"
+claims:
+  - {"id": "esp-idf-adc-oneshot-c3-stable#adc2-unsupported", "locator": "ADC Oneshot Mode Driver - ESP32-C3, ADC2 note", "quote": "ADC2 oneshot mode is no longer supported, due to hardware limitations.", "supports": "ADC2 oneshot mode is not supported on ESP32-C3 (hardware limitation); no Wi-Fi statement for ADC1"}
+doc_number: null
+id: "esp-idf-adc-oneshot-c3-stable"
+kind: "api-doc"
+manual: false
+publisher: "Espressif Systems"
+revision: "stable"
+revision_date: null
+secondary: false
+sha256: null
+title: "ESP-IDF Programming Guide (stable) - ADC Oneshot Mode Driver (ESP32-C3)"
+url: "https://docs.espressif.com/projects/esp-idf/en/stable/esp32c3/api-reference/peripherals/adc/adc_oneshot.html"
+url_original: null

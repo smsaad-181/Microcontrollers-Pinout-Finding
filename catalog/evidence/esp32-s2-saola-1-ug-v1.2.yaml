@@ -1,0 +1,32 @@
+# Evidence record: ESP32-S2-Saola-1 User Guide v1.2 (esp-dev-kits, EOL boards) (read 2026-10-24; one key, boards-2 task; a blind auditor must re-read every claim).
+# HTML page read 2026-10-24; the board is listed under EOL boards. Guide: "This is the first revision of this board released."
+accessed: "2026-10-24"
+claims:
+  - {"id": "esp32-s2-saola-1-ug-v1.2#rgb-led", "locator": "Description of Components, RGB LED", "quote": "Addressable RGB LED (WS2812), driven by GPIO18.", "supports": "On-board addressable RGB LED (WS2812) is on GPIO18"}
+  - {"id": "esp32-s2-saola-1-ug-v1.2#boot-button", "locator": "Description of Components, Boot Button", "quote": "Download button. Holding down Boot and then pressing Reset initiates Firmware Download mode", "supports": "Boot button: hold Boot, press Reset for download mode"}
+  - {"id": "esp32-s2-saola-1-ug-v1.2#reset-button", "locator": "Description of Components, Reset Button", "quote": "Reset button.", "supports": "Reset button"}
+  - {"id": "esp32-s2-saola-1-ug-v1.2#power-led", "locator": "Description of Components, 3.3 V Power On LED", "quote": "Turns on when the USB power is connected to the board.", "supports": "3.3 V power-on LED"}
+  - {"id": "esp32-s2-saola-1-ug-v1.2#usb-bridge", "locator": "Description of Components, USB-to-UART Bridge", "quote": "Single USB-UART bridge chip provides transfer rates up to 3 Mbps.", "supports": "USB-to-UART bridge chip on the board"}
+  - {"id": "esp32-s2-saola-1-ug-v1.2#usb-port", "locator": "Description of Components, Micro-USB Port", "quote": "USB interface. Power supply for the board as well as the communication interface between a computer and the ESP32-S2 chip.", "supports": "Micro-USB port: power and communication"}
+  - {"id": "esp32-s2-saola-1-ug-v1.2#headers-all-gpio", "locator": "Description of Components, Pin Headers", "quote": "All available GPIO pins (except for the SPI bus for flash and PSRAM) are broken out to the pin headers on the board.", "supports": "All available GPIOs except the flash/PSRAM bus are on the headers"}
+  - {"id": "esp32-s2-saola-1-ug-v1.2#supported-modules", "locator": "Getting Started, Overview", "quote": "ESP32-S2-WROVER-I", "supports": "Board supports ESP32-S2-WROVER, WROVER-I, WROOM and WROOM-I (the guide shows the WROVER)"}
+  - {"id": "esp32-s2-saola-1-ug-v1.2#power-options", "locator": "Hardware Reference, Power Supply Options", "quote": "There are three mutually exclusive ways to provide power to the board", "supports": "Power via micro-USB, 5V pin or 3V3 pin"}
+  - {"id": "esp32-s2-saola-1-ug-v1.2#header-numbering", "locator": "Hardware Reference, Header Block", "quote": "The numbering is the same as in the ESP32-S2-Saola-1 Schematics (PDF).", "supports": "Header positions J2/J3 follow the schematic numbering"}
+  - {"id": "esp32-s2-saola-1-ug-v1.2#j2-table", "locator": "Header Block, J2 table (rows 1-21)", "quote": "2 | IO0 | I/O | GPIO0, Boot", "supports": "J2 table rows: J2-1 3V3, J2-2 IO0 (Boot) ... J2-19 IO17, J2-20 5V0, J2-21 GND; transcribed row by row"}
+  - {"id": "esp32-s2-saola-1-ug-v1.2#j3-table", "locator": "Header Block, J3 table (rows 1-21)", "quote": "3 | IO46 | I | GPIO46", "supports": "J3 table rows: J3-1 GND, J3-2 RST, J3-3 IO46 ... J3-21 IO18"}
+  - {"id": "esp32-s2-saola-1-ug-v1.2#j3-numbering-anomaly", "locator": "Header Block, J3 rows 14-17", "quote": "16 | IO34 | I/O | GPIO34 | 17 | IO33 | I/O | GPIO33 | 17 | IO26", "supports": "The guide prints the J3 position numbers 14, 16, 17, 17 for IO35, IO34, IO33, IO26 (15 missing, 17 twice); positions are assigned here by row order 14..17"}
+  - {"id": "esp32-s2-saola-1-ug-v1.2#j3-gpio18-rgb", "locator": "Header Block, J3 row 21", "quote": "21 | IO18 | I/O | GPIO18, ADC2_CH7, DAC_2, RGB LED", "supports": "J3-21 IO18 (GPIO18) is shared with the RGB LED"}
+  - {"id": "esp32-s2-saola-1-ug-v1.2#j3-usb", "locator": "Header Block, J3 rows 19-20", "quote": "19 | IO20 | I/O | GPIO20, ADC2_CH9, USB_D+", "supports": "J3-19 IO20 = USB_D+, J3-20 IO19 = USB_D- on the header"}
+  - {"id": "esp32-s2-saola-1-ug-v1.2#j2-gpio0-boot", "locator": "Header Block, J2 row 2", "quote": "2 | IO0 | I/O | GPIO0, Boot", "supports": "J2-2 IO0 is GPIO0 / Boot"}
+doc_number: null
+id: "esp32-s2-saola-1-ug-v1.2"
+kind: "board-guide"
+manual: false
+publisher: "Espressif Systems"
+revision: "1.2"
+revision_date: null
+secondary: false
+sha256: null
+title: "ESP32-S2-Saola-1 User Guide v1.2 (esp-dev-kits, EOL boards)"
+url: "https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32s2/esp32-s2-saola-1/user_guide_v1.2.html"
+url_original: null

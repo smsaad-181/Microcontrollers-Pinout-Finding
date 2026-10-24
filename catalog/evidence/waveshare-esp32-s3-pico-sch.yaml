@@ -1,0 +1,26 @@
+# Evidence record: ESP32-S3-Pico schematic (ESP32-S3-Pico-SCH.pdf) (read 2026-10-24; one key, boards-2 task; a blind auditor must re-read every claim).
+# Two sheets; sheet 1 read from the rendered drawing; quotes are text printed in the drawing.
+accessed: "2026-10-24"
+claims:
+  - {"id": "waveshare-esp32-s3-pico-sch#pin-out", "locator": "Sheet 1, PIN OUT block (U6) [drawing/image, transcribed]", "quote": "PIN OUT", "supports": "U6 pins 1-40 = GPIO11, GPIO12, GND, GPIO13, GPIO14, GPIO15, GPIO16, GND, GPIO17, GPIO18, GPIO33, GPIO34, GND, GPIO35, GPIO36, GPIO37, GPIO38, GND, GPIO39, GPIO40 (left), GPIO42, GPIO41, GND, GPIO1, GPIO2, GPIO4, GPIO5, GND, GPIO6, CHIP_PU, GPIO7, GPIO8, GND, GPIO9, GPIO10, 3V3, 3V3_EN, GND, VSYS, VBUS (drawing)"}
+  - {"id": "waveshare-esp32-s3-pico-sch#rgb-part", "locator": "Sheet 1, RGB LED block", "quote": "WS2812B", "supports": "WS2812B L2 with DIN on net RGB_LED (GPIO21), 10K R19 pull-up to 3V3 (drawing)"}
+  - {"id": "waveshare-esp32-s3-pico-sch#rgb-led-net", "locator": "Sheet 1, PIN OUT / test point", "quote": "RGB_LED", "supports": "Net RGB_LED = GPIO21 (also test point P5) (drawing)"}
+  - {"id": "waveshare-esp32-s3-pico-sch#dcdc-part", "locator": "Sheet 1, Power", "quote": "MP28164", "supports": "U7 MP28164 from VSYS to 3V3 (drawing)"}
+  - {"id": "waveshare-esp32-s3-pico-sch#flash-part", "locator": "Sheet 1, Flash", "quote": "W25Q128", "supports": "U4 W25Q128 SPI flash on SPICS0/SPIQ/SPIWP/SPICLK/SPID/SPIHD, VCC from VDD_SPI (drawing)"}
+  - {"id": "waveshare-esp32-s3-pico-sch#ch343", "locator": "Sheet 1, USB TO UART", "quote": "CH343", "supports": "U1 CH343P: TXD/RXD to U0RXD/U0TXD through R16 0R / R17 499R, DTR/RTS auto-program to CHIP_PU and GPIO0 (drawing)"}
+  - {"id": "waveshare-esp32-s3-pico-sch#ch334", "locator": "Sheet 1, USB HUB", "quote": "CH334", "supports": "U2 CH334F hub: USB2_P/USB2_N reach GPIO20/GPIO19 through R20/R18 0R (drawing)"}
+  - {"id": "waveshare-esp32-s3-pico-sch#keys", "locator": "Sheet 1, Key block [drawing/image, transcribed]", "quote": "CHIP_PU", "supports": "One key pulls GPIO0 low, the other pulls CHIP_PU low (drawing)"}
+  - {"id": "waveshare-esp32-s3-pico-sch#usb-adc", "locator": "Sheet 1, USB-C block and PIN OUT [drawing/image, transcribed]", "quote": "USB_ADC", "supports": "VBUS divider R2/R4 100K/100K to ground with C39; the midpoint (net USB_ADC) goes to GPIO3 (test point P4) (drawing)"}
+  - {"id": "waveshare-esp32-s3-pico-sch#save-power", "locator": "Sheet 1, SAVE POWER block", "quote": "FDC6333C", "supports": "FDC6333C MOSFET pair switches the 3V3_OP supply of the UART bridge / hub (drawing)"}
+doc_number: null
+id: "waveshare-esp32-s3-pico-sch"
+kind: "schematic"
+manual: false
+publisher: "Waveshare"
+revision: null
+revision_date: null
+secondary: false
+sha256: "cb89563a2cbb8faf67d3487cd250c1b41c666986a7e52e824173e79e89725472"
+title: "ESP32-S3-Pico schematic (ESP32-S3-Pico-SCH.pdf)"
+url: "https://files.waveshare.com/upload/a/a7/ESP32-S3-Pico-SCH.pdf"
+url_original: null

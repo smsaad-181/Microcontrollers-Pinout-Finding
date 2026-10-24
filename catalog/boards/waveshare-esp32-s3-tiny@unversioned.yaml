@@ -1,0 +1,70 @@
+# Waveshare ESP32-S3-Tiny (split design: the USB-C and BOOT/RESET buttons are on a separate adapter board connected by an 8-pin 0.5 mm FPC). Chip ESP32-S3FH4R2 used bare. No revision printed; revision "unversioned". One key; every fact is single-source.
+# Sources: Waveshare wiki page (text + onboard/pinout pictures, transcribed) and the schematic PDF (23-pin header P1 and FPC L1 read from the rendered drawing; header order agrees with the wiki picture).
+# Connector P1 = the 23 castellated pads in schematic numbering (1 VCC_5V ... 23 IO11). Connector PADS = the 14 back pads shown in the wiki picture (left GP48/47/45/42/41/40/39, right GP21/33/34/35/36/37/38); positions are my picture order, transcribed.
+# GPIO0 (BOOT), GPIO19/GPIO20 (USB) and CHIP_PU (RESET) are only on the FPC L1 (no pad). GPIO38 drives the RGB LED and is also back pad IO38. GPIO26-GPIO32 are in-package flash/PSRAM.
+# Gap: the wiki note about GPIO33-GPIO37 refers to an ESP32-S3-Tiny-N8R8 variant (Octal PSRAM) that has no record here; the catalogued FH4R2 board has Quad PSRAM, so GPIO33-GPIO37 are plain pads. The adapter board schematic (Tiny-Adapter.pdf) was not read.
+connectors:
+  - id: "P1"
+    pins:
+      - {"kind": "power", "label": "5V", "position": 1, "rail": "5V"}
+      - {"kind": "ground", "label": "GND", "position": 2}
+      - {"kind": "power", "label": "3V3", "position": 3, "rail": "3V3"}
+      - {"kind": "gpio", "label": "IO1", "pad": "GPIO1", "position": 4}
+      - {"kind": "gpio", "label": "IO2", "pad": "GPIO2", "position": 5}
+      - {"kind": "gpio", "label": "IO3", "pad": "GPIO3", "position": 6}
+      - {"kind": "gpio", "label": "IO4", "pad": "GPIO4", "position": 7}
+      - {"kind": "gpio", "label": "IO5", "pad": "GPIO5", "position": 8}
+      - {"kind": "gpio", "label": "IO6", "pad": "GPIO6", "position": 9}
+      - {"kind": "gpio", "label": "TX", "pad": "GPIO43", "position": 10}
+      - {"kind": "gpio", "label": "RX", "pad": "GPIO44", "position": 11}
+      - {"kind": "gpio", "label": "IO18", "pad": "GPIO18", "position": 12}
+      - {"kind": "gpio", "label": "IO17", "pad": "GPIO17", "position": 13}
+      - {"kind": "gpio", "label": "IO16", "pad": "GPIO16", "position": 14}
+      - {"kind": "gpio", "label": "IO15", "pad": "GPIO15", "position": 15}
+      - {"kind": "gpio", "label": "IO14", "pad": "GPIO14", "position": 16}
+      - {"kind": "gpio", "label": "IO13", "pad": "GPIO13", "position": 17}
+      - {"kind": "gpio", "label": "IO12", "pad": "GPIO12", "position": 18}
+      - {"kind": "gpio", "label": "IO7", "pad": "GPIO7", "position": 19}
+      - {"kind": "gpio", "label": "IO8", "pad": "GPIO8", "position": 20}
+      - {"kind": "gpio", "label": "IO9", "pad": "GPIO9", "position": 21}
+      - {"kind": "gpio", "label": "IO10", "pad": "GPIO10", "position": 22}
+      - {"kind": "gpio", "label": "IO11", "pad": "GPIO11", "position": 23}
+  - id: "PADS"
+    pins:
+      - {"kind": "gpio", "label": "IO48", "pad": "GPIO48", "position": 1}
+      - {"kind": "gpio", "label": "IO47", "pad": "GPIO47", "position": 2}
+      - {"kind": "gpio", "label": "IO45", "pad": "GPIO45", "position": 3}
+      - {"kind": "gpio", "label": "IO42", "pad": "GPIO42", "position": 4}
+      - {"kind": "gpio", "label": "IO41", "pad": "GPIO41", "position": 5}
+      - {"kind": "gpio", "label": "IO40", "pad": "GPIO40", "position": 6}
+      - {"kind": "gpio", "label": "IO39", "pad": "GPIO39", "position": 7}
+      - {"kind": "gpio", "label": "IO21", "pad": "GPIO21", "position": 8}
+      - {"kind": "gpio", "label": "IO33", "pad": "GPIO33", "position": 9}
+      - {"kind": "gpio", "label": "IO34", "pad": "GPIO34", "position": 10}
+      - {"kind": "gpio", "label": "IO35", "pad": "GPIO35", "position": 11}
+      - {"kind": "gpio", "label": "IO36", "pad": "GPIO36", "position": 12}
+      - {"kind": "gpio", "label": "IO37", "pad": "GPIO37", "position": 13}
+      - {"kind": "gpio", "label": "IO38", "pad": "GPIO38", "position": 14}
+id: "waveshare-esp32-s3-tiny"
+logic_voltage: {"evidence": ["waveshare-esp32-s3-tiny-sch#ldo-part", "waveshare-esp32-s3-tiny-wiki#pinout-image"], "note": "LDO ME6217C33M5G (33 = 3.3 V) makes 3V3 for the chip; the picture labels the pad 3V3(OUT). Derived. One key (hardware-researcher): a blind audit must re-read it.", "status": "single-source", "unit": "V", "value": 3.3}
+name: "ESP32-S3-Tiny"
+numbering: {"primary": "gpio"}
+onboard:
+  - {"effect": "DIN is on GPIO38 (10K pull-up R1). GPIO38 is also back pad IO38, so a load there disturbs the LED.", "evidence": ["waveshare-esp32-s3-tiny-wiki#pinout-image", "waveshare-esp32-s3-tiny-sch#rgb-part"], "part": "LED1 WS2812B-0807 addressable RGB LED", "uses_pad": ["GPIO38"]}
+  - {"effect": "The FPC carries IO0 (BOOT, 10K pull-up R3; strapping pin), RESET (CHIP_PU, 10K pull-up R4) and the native USB D-/D+ (GPIO19/GPIO20 through 22 ohm R6/R7), plus VBUS. None of these has a pad on the main board.", "evidence": ["waveshare-esp32-s3-tiny-wiki#split-design", "waveshare-esp32-s3-tiny-wiki#onboard-image", "waveshare-esp32-s3-tiny-sch#fpc"], "part": "FPC L1 to the USB/button adapter (BOOT button, RESET button, USB Type-C)", "uses_pad": ["GPIO0", "GPIO19", "GPIO20"]}
+  - {"effect": "TX (GPIO43, through R2 499 ohm) and RX (GPIO44) are header pins 10/11; no bridge is attached.", "evidence": ["waveshare-esp32-s3-tiny-sch#header"], "part": "UART0 pads TX/RX", "uses_pad": ["GPIO43", "GPIO44"]}
+  - {"effect": "GPIO26-GPIO32 carry the in-package flash and PSRAM; none is led out.", "evidence": ["waveshare-esp32-s3-tiny-wiki#memory", "waveshare-esp32-s3-tiny-wiki#chip", "waveshare-esp32-s3-tiny-sch#chip-part"], "part": "ESP32-S3FH4R2 in-package flash and PSRAM", "uses_pad": ["GPIO26", "GPIO27", "GPIO28", "GPIO29", "GPIO30", "GPIO31", "GPIO32"]}
+rails:
+  - max_current: {"evidence": ["waveshare-esp32-s3-tiny-wiki#onboard-image"], "note": "Onboard picture text: \"low dropout LDO, 800mA (Max)\" (transcribed; LDO rating, part of it is used by the board). One key (hardware-researcher): a blind audit must re-read it.", "status": "single-source", "transcribed": true, "unit": "mA", "value": 800}
+    name: "3V3"
+    source: "U1 ME6217C33M5G LDO from VCC_5V"
+    voltage: {"evidence": ["waveshare-esp32-s3-tiny-sch#ldo-part"], "note": "LDO output 3.3 V (part code C33). One key (hardware-researcher): a blind audit must re-read it.", "status": "single-source", "unit": "V", "value": 3.3}
+  - max_current: {"evidence": [], "note": "No current rating for the 5 V pad is stated.", "status": "missing", "unit": "mA", "value": null}
+    name: "5V"
+    source: "USB-C VBUS of the adapter via the FPC and D1 B5819WS (VCC_5V), or the 5V pad"
+    voltage: {"evidence": ["waveshare-esp32-s3-tiny-sch#vbus-diode", "waveshare-esp32-s3-tiny-wiki#pinout-image"], "note": "Pad labelled 5V; USB VBUS nominal 5 V (no external input range is stated). One key (hardware-researcher): a blind audit must re-read it.", "status": "single-source", "unit": "V", "value": 5}
+revision: "unversioned"
+status: "partially-verified"
+variants:
+  - {"id": "waveshare-esp32-s3-tiny-fh4r2", "module": "esp32-s3fh4r2"}
+vendor: "Waveshare"

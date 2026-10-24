@@ -1,0 +1,54 @@
+# ESP32-S3FH4R2 chip package as a "module" (4 MB Quad SPI flash + 2 MB Quad SPI PSRAM in the package; used bare on the Waveshare ESP32-S3-Zero and ESP32-S3-Tiny). One key, single-source.
+# Source: ESP32-S3 Series Datasheet v2.2 Table 1-1 and Table 2-14 (existing evidence record, two new claims appended).
+# bonded_pads = all chip pads except GPIO26-GPIO32 (QFN56 pads GPIO0-GPIO21 and GPIO33-GPIO48). GPIO33-GPIO37 are NOT used by the Quad PSRAM (octal lines only) and are plain GPIOs on this part; Waveshare text calls them "reserved for Octal PSRAM" on a different variant (see the boards).
+bonded_pads:
+  - "GPIO0"
+  - "GPIO1"
+  - "GPIO2"
+  - "GPIO3"
+  - "GPIO4"
+  - "GPIO5"
+  - "GPIO6"
+  - "GPIO7"
+  - "GPIO8"
+  - "GPIO9"
+  - "GPIO10"
+  - "GPIO11"
+  - "GPIO12"
+  - "GPIO13"
+  - "GPIO14"
+  - "GPIO15"
+  - "GPIO16"
+  - "GPIO17"
+  - "GPIO18"
+  - "GPIO19"
+  - "GPIO20"
+  - "GPIO21"
+  - "GPIO33"
+  - "GPIO34"
+  - "GPIO35"
+  - "GPIO36"
+  - "GPIO37"
+  - "GPIO38"
+  - "GPIO39"
+  - "GPIO40"
+  - "GPIO41"
+  - "GPIO42"
+  - "GPIO43"
+  - "GPIO44"
+  - "GPIO45"
+  - "GPIO46"
+  - "GPIO47"
+  - "GPIO48"
+chip: "esp32-s3"
+consumed:
+  GPIO26: {"evidence": ["esp32-s3-ds-v2.2#pin-map-spics1", "esp32-s3-ds-v2.2#table-1-1-s3fh4r2"], "note": "GPIO26 = SPICS1 is CE# of the in-package 2 MB Quad SPI PSRAM (chip Table 2-14 footnote 2; Table 1-1: ESP32-S3FH4R2 has 2 MB Quad PSRAM). One key (hardware-researcher): a blind audit must re-read it.", "status": "single-source", "value": "psram"}
+  GPIO27: {"evidence": ["esp32-s3-ds-v2.2#pin-map-spihd", "esp32-s3-ds-v2.2#table-1-1-s3fh4r2", "esp32-s3-ds-v2.2#p4-gpio26-32"], "note": "GPIO27 (SPIHD) is wired to the in-package 4 MB Quad SPI flash (and shared with the in-package PSRAM bus) - chip Table 2-14; priority-4 pad. One key (hardware-researcher): a blind audit must re-read it.", "status": "single-source", "value": "flash"}
+  GPIO28: {"evidence": ["esp32-s3-ds-v2.2#pin-map-spiwp", "esp32-s3-ds-v2.2#table-1-1-s3fh4r2", "esp32-s3-ds-v2.2#p4-gpio26-32"], "note": "GPIO28 (SPIWP) is wired to the in-package 4 MB Quad SPI flash (and shared with the in-package PSRAM bus) - chip Table 2-14; priority-4 pad. One key (hardware-researcher): a blind audit must re-read it.", "status": "single-source", "value": "flash"}
+  GPIO29: {"evidence": ["esp32-s3-ds-v2.2#pin-map-spics0", "esp32-s3-ds-v2.2#table-1-1-s3fh4r2", "esp32-s3-ds-v2.2#p4-gpio26-32"], "note": "GPIO29 (SPICS0) is wired to the in-package 4 MB Quad SPI flash (and shared with the in-package PSRAM bus) - chip Table 2-14; priority-4 pad. One key (hardware-researcher): a blind audit must re-read it.", "status": "single-source", "value": "flash"}
+  GPIO30: {"evidence": ["esp32-s3-ds-v2.2#pin-map-spiclk", "esp32-s3-ds-v2.2#table-1-1-s3fh4r2", "esp32-s3-ds-v2.2#p4-gpio26-32"], "note": "GPIO30 (SPICLK) is wired to the in-package 4 MB Quad SPI flash (and shared with the in-package PSRAM bus) - chip Table 2-14; priority-4 pad. One key (hardware-researcher): a blind audit must re-read it.", "status": "single-source", "value": "flash"}
+  GPIO31: {"evidence": ["esp32-s3-ds-v2.2#pin-map-spiq", "esp32-s3-ds-v2.2#table-1-1-s3fh4r2", "esp32-s3-ds-v2.2#p4-gpio26-32"], "note": "GPIO31 (SPIQ) is wired to the in-package 4 MB Quad SPI flash (and shared with the in-package PSRAM bus) - chip Table 2-14; priority-4 pad. One key (hardware-researcher): a blind audit must re-read it.", "status": "single-source", "value": "flash"}
+  GPIO32: {"evidence": ["esp32-s3-ds-v2.2#pin-map-spid", "esp32-s3-ds-v2.2#table-1-1-s3fh4r2", "esp32-s3-ds-v2.2#p4-gpio26-32"], "note": "GPIO32 (SPID) is wired to the in-package 4 MB Quad SPI flash (and shared with the in-package PSRAM bus) - chip Table 2-14; priority-4 pad. One key (hardware-researcher): a blind audit must re-read it.", "status": "single-source", "value": "flash"}
+flash_voltage: {"evidence": ["esp32-s3-ds-v2.2#table-1-1-s3fh4r2-3v3"], "note": "Chip Table 1-1 lists VDD_SPI voltage 3.3 V for ESP32-S3FH4R2. One key (hardware-researcher): a blind audit must re-read it.", "status": "single-source", "unit": "V", "value": 3.3}
+id: "esp32-s3fh4r2"
+psram: {"evidence": ["esp32-s3-ds-v2.2#table-1-1-s3fh4r2"], "note": "Chip Table 1-1: 2 MB (Quad SPI) in-package PSRAM. One key (hardware-researcher): a blind audit must re-read it.", "status": "single-source", "value": "2 MB Quad SPI"}

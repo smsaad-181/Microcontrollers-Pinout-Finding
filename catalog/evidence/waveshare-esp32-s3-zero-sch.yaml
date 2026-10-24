@@ -1,0 +1,22 @@
+# Evidence record: ESP32-S3-Zero schematic (ESP32-S3-Zero-Sch.pdf) (read 2026-10-24; one key, boards-2 task; a blind auditor must re-read every claim).
+# One sheet. Connectivity read from the rendered drawing; quotes are text printed in the drawing.
+accessed: "2026-10-24"
+claims:
+  - {"id": "waveshare-esp32-s3-zero-sch#ldo-part", "locator": "Schematic, power", "quote": "ME6217C33M5G", "supports": "LDO U3 ME6217C33M5G, VIN from VBUS, VOUT 3V3 (drawing)"}
+  - {"id": "waveshare-esp32-s3-zero-sch#rgb-part", "locator": "Schematic, RGB", "quote": "WS2812B", "supports": "WS2812B-0807 U1 with DIN on IO21 through R1 1K, VDD 3V3 (drawing)"}
+  - {"id": "waveshare-esp32-s3-zero-sch#chip-part", "locator": "Schematic, core", "quote": "ESP32-S3FH4R2", "supports": "U2 is ESP32-S3FH4R2 (drawing)"}
+  - {"id": "waveshare-esp32-s3-zero-sch#p15-header", "locator": "Schematic, header P15 (18 pins) [drawing/image, transcribed]", "quote": "P15", "supports": "P15 pins 1-18 = IO43 (via R6 499R), IO44, IO13, IO12, IO11, IO10, IO9, IO8, IO7, IO6, IO5, IO4, IO3, IO2, IO1, 3V3, GND, VBUS (drawing)"}
+  - {"id": "waveshare-esp32-s3-zero-sch#keys", "locator": "Schematic, key section [drawing/image, transcribed]", "quote": "RESET", "supports": "K1 pulls RESET (CHIP_PU) low via R2 10K pull-up; K2 pulls IO0 low via R3 10K pull-up (drawing)"}
+  - {"id": "waveshare-esp32-s3-zero-sch#usb-native", "locator": "Schematic, USB block and U2 [drawing/image, transcribed]", "quote": "USB_N", "supports": "Type-C D-/D+ reach IO19/IO20 through R7/R8 22R; CC1/CC2 5.1k pull-downs (drawing)"}
+doc_number: null
+id: "waveshare-esp32-s3-zero-sch"
+kind: "schematic"
+manual: false
+publisher: "Waveshare"
+revision: null
+revision_date: null
+secondary: false
+sha256: "4bbdae93cde588eb87e20d7cda5b38fb729444d55cae0b579b329f23f0d69503"
+title: "ESP32-S3-Zero schematic (ESP32-S3-Zero-Sch.pdf)"
+url: "https://files.waveshare.com/wiki/ESP32-S3-Zero/ESP32-S3-Zero-Sch.pdf"
+url_original: null

@@ -1,0 +1,23 @@
+# Evidence record: ESP32-C6-Zero schematic (ESP32-C6-Zero-Sch.pdf) (read 2026-10-24; one key, boards-2 task; a blind auditor must re-read every claim).
+# One sheet; header read from the rendered drawing; quotes are text printed in the drawing.
+accessed: "2026-10-24"
+claims:
+  - {"id": "waveshare-esp32-c6-zero-sch#ldo-part", "locator": "Schematic, Power U1", "quote": "ME6217C33M5G", "supports": "LDO U1 ME6217C33M5G from VCC_5V to 3V3 (drawing)"}
+  - {"id": "waveshare-esp32-c6-zero-sch#rgb-part", "locator": "Schematic, RGB", "quote": "WS2812B", "supports": "LED1 WS2812B-0807 with DI on IO8 (10K pull-up R1 to 3V3), VDD 3V3 (drawing)"}
+  - {"id": "waveshare-esp32-c6-zero-sch#chip-part", "locator": "Schematic, U2", "quote": "ESP32-C6FH4", "supports": "U2 is ESP32-C6FH4 (drawing)"}
+  - {"id": "waveshare-esp32-c6-zero-sch#header", "locator": "Schematic, header P8 (18 pins) [drawing/image, transcribed]", "quote": "P8", "supports": "P8 pins 1-18 = VCC_5V, GND, 3V3, IO0-IO5 (4-9), IO22, IO21, IO20, IO19, IO18, IO15, IO14 (10-16), RX (17), TX (18) (drawing)"}
+  - {"id": "waveshare-esp32-c6-zero-sch#usb-diode", "locator": "Schematic, USB J1", "quote": "B5819WS", "supports": "USB-C J1; D1 B5819WS from VBUS to VCC_5V; D-/D+ go to USB_N/USB_P = IO12/IO13 (drawing)"}
+  - {"id": "waveshare-esp32-c6-zero-sch#keys", "locator": "Schematic, keys [drawing/image, transcribed]", "quote": "RESET", "supports": "Key1 pulls IO9 low (10K pull-up R5), Key2 pulls RESET/CHIP_PU low (10K pull-up R6, C16 1uF) (drawing)"}
+  - {"id": "waveshare-esp32-c6-zero-sch#test-points", "locator": "Schematic, test points P1-P7 [drawing/image, transcribed]", "quote": "Testpoint", "supports": "Test points: USB_P (IO13), IO8, USB_N (IO12), IO9, IO6, IO23, IO7 (drawing)"}
+doc_number: null
+id: "waveshare-esp32-c6-zero-sch"
+kind: "schematic"
+manual: false
+publisher: "Waveshare"
+revision: null
+revision_date: null
+secondary: false
+sha256: "b6234fb7e8e4af6d369fb6f20470b8f65c1d0165c7c290c8bb82671be78dd780"
+title: "ESP32-C6-Zero schematic (ESP32-C6-Zero-Sch.pdf)"
+url: "https://files.waveshare.com/wiki/ESP32-C6-Zero/ESP32-C6-Zero-Sch.pdf"
+url_original: null

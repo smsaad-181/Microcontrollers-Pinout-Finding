@@ -1,0 +1,26 @@
+# Evidence record: ESP32-S3-DEV-KIT-N8R8 schematic (ESP32-S3-DEV-KIT-N8R8-schematic.pdf) (read 2026-10-24; one key, boards-2 task; a blind auditor must re-read every claim).
+# One sheet; headers read from the rendered drawing; quotes are text printed in the drawing.
+accessed: "2026-10-24"
+claims:
+  - {"id": "waveshare-esp32-s3-dev-kit-n8r8-sch#headers", "locator": "Sheet, headers P1/P2 (22 pins each) [drawing/image, transcribed]", "quote": "Header 22", "supports": "P1 pins 1-22 = 3V3, 3V3, CHIP_PU, GPIO4-7, 15-18, 8, 3, 46, 9-14, VCC_5V, GND; P2 pins 1-22 = GND, U0TXD, U0RXD, GPIO1, GPIO2, 42-38, 37-35, 0, 45, 48, 47, 21, 20, 19, GND, GND (drawing)"}
+  - {"id": "waveshare-esp32-s3-dev-kit-n8r8-sch#rgb-part", "locator": "Sheet, RGB block", "quote": "WS2812B", "supports": "LED1 WS2812B, DIN from GPIO38 through R5 0R (net RGB_CTRL), VDD3V3 (drawing)"}
+  - {"id": "waveshare-esp32-s3-dev-kit-n8r8-sch#ldo-part", "locator": "Sheet, regulator U2", "quote": "SGM2212", "supports": "U2 labelled SGM2212-3.3/AMS1117 from VDDUSB to VDD3V3 (drawing)"}
+  - {"id": "waveshare-esp32-s3-dev-kit-n8r8-sch#key-flash", "locator": "Sheet, Key block", "quote": "KEY_FLASH", "supports": "S1 KEY_FLASH pulls IO0 low (10K pull-up R3); S2 resets EN (10K pull-up R2, 1uF C5) (drawing)"}
+  - {"id": "waveshare-esp32-s3-dev-kit-n8r8-sch#ch343", "locator": "Sheet, USB to UART", "quote": "CH343", "supports": "U4 CH343P: TXD/RXD to U0RXD/U0TXD through R7/R8 0R, auto-program S8050 pair on DTR/RTS to EN and IO0 (drawing)"}
+  - {"id": "waveshare-esp32-s3-dev-kit-n8r8-sch#ch334", "locator": "Sheet, HUB", "quote": "CH334", "supports": "U3 CH334F hub: USB1_P/USB1_N = GPIO20/GPIO19 (drawing)"}
+  - {"id": "waveshare-esp32-s3-dev-kit-n8r8-sch#auto-program", "locator": "Sheet, Auto program circuit", "quote": "S8050", "supports": "VT1/VT2 S8050 auto-program circuit on DTR/RTS (drawing)"}
+  - {"id": "waveshare-esp32-s3-dev-kit-n8r8-sch#module-part", "locator": "Sheet, U1", "quote": "ESP32-S3-WROOM-1-N8R8", "supports": "U1 is ESP32-S3-WROOM-1-N8R8 (drawing)"}
+  - {"id": "waveshare-esp32-s3-dev-kit-n8r8-sch#vbus-diode", "locator": "Sheet, USB-C block", "quote": "B5819WS", "supports": "D1 B5819WS from VBUS to VDDUSB (drawing)"}
+  - {"id": "waveshare-esp32-s3-dev-kit-n8r8-sch#save-power", "locator": "Sheet, top right", "quote": "FDC6333C", "supports": "FDC6333C MOSFET pair switches the 3V3_OP supply (drawing)"}
+doc_number: null
+id: "waveshare-esp32-s3-dev-kit-n8r8-sch"
+kind: "schematic"
+manual: false
+publisher: "Waveshare"
+revision: null
+revision_date: null
+secondary: false
+sha256: "73285a0b5c8f3603b73a6cb07be95146f5bb9f707fbea6d5aafb04d410ceb7b8"
+title: "ESP32-S3-DEV-KIT-N8R8 schematic (ESP32-S3-DEV-KIT-N8R8-schematic.pdf)"
+url: "https://files.waveshare.com/wiki/ESP32-S3-DEV-KIT-N8R8/ESP32-S3-DEV-KIT-N8R8-schematic.pdf"
+url_original: null

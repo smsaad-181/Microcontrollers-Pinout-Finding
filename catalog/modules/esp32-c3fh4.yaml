@@ -1,0 +1,30 @@
+# ESP32-C3FH4 chip package as a "module" (4 MB Quad SPI flash in the package, chip revision v0.4; used bare on the Waveshare ESP32-C3-Zero). One key, single-source.
+# Source: ESP32-C3 Series Datasheet v2.4 Table 1-1 and Table 2-12; Waveshare ESP32-C3-Zero wiki.
+# bonded_pads = GPIO0-GPIO10 and GPIO18-GPIO21 (pads not wired to the flash and not VDD_SPI). GPIO12-GPIO17 are the flash pads, GPIO11 is VDD_SPI.
+bonded_pads:
+  - "GPIO0"
+  - "GPIO1"
+  - "GPIO2"
+  - "GPIO3"
+  - "GPIO4"
+  - "GPIO5"
+  - "GPIO6"
+  - "GPIO7"
+  - "GPIO8"
+  - "GPIO9"
+  - "GPIO10"
+  - "GPIO18"
+  - "GPIO19"
+  - "GPIO20"
+  - "GPIO21"
+chip: "esp32-c3"
+consumed:
+  GPIO11: {"evidence": ["esp32-c3-ds-v2.4#vdd-spi-flash-supply", "esp32-c3-ds-v2.4#vdd-spi-gpio11"], "note": "GPIO11 is the VDD_SPI pin that powers the in-package flash. One key (hardware-researcher): a blind audit must re-read it.", "status": "single-source", "value": "internal"}
+  GPIO12: {"evidence": ["esp32-c3-ds-v2.4#table-1-1-fh4", "esp32-c3-ds-v2.4#table-2-12-inpackage-flash", "esp32-c3-ds-v2.4#flash-pins", "waveshare-esp32-c3-zero-wiki#flash-pins"], "note": "GPIO12 = SPIHD: in-package 4 MB flash of the ESP32-C3FH4 (chip Table 2-12); the Waveshare wiki says GPIO12-GPIO17 are not exposed because they stack the 4 MB flash. One key (hardware-researcher): a blind audit must re-read it.", "status": "single-source", "value": "flash"}
+  GPIO13: {"evidence": ["esp32-c3-ds-v2.4#table-1-1-fh4", "esp32-c3-ds-v2.4#table-2-12-inpackage-flash", "esp32-c3-ds-v2.4#flash-pins", "waveshare-esp32-c3-zero-wiki#flash-pins"], "note": "GPIO13 = SPIWP: in-package 4 MB flash of the ESP32-C3FH4 (chip Table 2-12); the Waveshare wiki says GPIO12-GPIO17 are not exposed because they stack the 4 MB flash. One key (hardware-researcher): a blind audit must re-read it.", "status": "single-source", "value": "flash"}
+  GPIO14: {"evidence": ["esp32-c3-ds-v2.4#table-1-1-fh4", "esp32-c3-ds-v2.4#table-2-12-inpackage-flash", "esp32-c3-ds-v2.4#flash-pins", "waveshare-esp32-c3-zero-wiki#flash-pins"], "note": "GPIO14 = SPICS0: in-package 4 MB flash of the ESP32-C3FH4 (chip Table 2-12); the Waveshare wiki says GPIO12-GPIO17 are not exposed because they stack the 4 MB flash. One key (hardware-researcher): a blind audit must re-read it.", "status": "single-source", "value": "flash"}
+  GPIO15: {"evidence": ["esp32-c3-ds-v2.4#table-1-1-fh4", "esp32-c3-ds-v2.4#table-2-12-inpackage-flash", "esp32-c3-ds-v2.4#flash-pins", "waveshare-esp32-c3-zero-wiki#flash-pins"], "note": "GPIO15 = SPICLK: in-package 4 MB flash of the ESP32-C3FH4 (chip Table 2-12); the Waveshare wiki says GPIO12-GPIO17 are not exposed because they stack the 4 MB flash. One key (hardware-researcher): a blind audit must re-read it.", "status": "single-source", "value": "flash"}
+  GPIO16: {"evidence": ["esp32-c3-ds-v2.4#table-1-1-fh4", "esp32-c3-ds-v2.4#table-2-12-inpackage-flash", "esp32-c3-ds-v2.4#flash-pins", "waveshare-esp32-c3-zero-wiki#flash-pins"], "note": "GPIO16 = SPID: in-package 4 MB flash of the ESP32-C3FH4 (chip Table 2-12); the Waveshare wiki says GPIO12-GPIO17 are not exposed because they stack the 4 MB flash. One key (hardware-researcher): a blind audit must re-read it.", "status": "single-source", "value": "flash"}
+  GPIO17: {"evidence": ["esp32-c3-ds-v2.4#table-1-1-fh4", "esp32-c3-ds-v2.4#table-2-12-inpackage-flash", "esp32-c3-ds-v2.4#flash-pins", "waveshare-esp32-c3-zero-wiki#flash-pins"], "note": "GPIO17 = SPIQ: in-package 4 MB flash of the ESP32-C3FH4 (chip Table 2-12); the Waveshare wiki says GPIO12-GPIO17 are not exposed because they stack the 4 MB flash. One key (hardware-researcher): a blind audit must re-read it.", "status": "single-source", "value": "flash"}
+flash_voltage: {"evidence": ["esp32-c3-ds-v2.4#flash-3v3", "esp32-c3-ds-v2.4#table-1-1-fh4"], "note": "Chip Table 2-3 calls the SPI0/1 flash interface a 3.3 V interface; not stated per variant in so many words. One key (hardware-researcher): a blind audit must re-read it.", "status": "single-source", "unit": "V", "value": 3.3}
+id: "esp32-c3fh4"

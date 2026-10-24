@@ -1,0 +1,26 @@
+# Evidence record: ESP32-S3-Zero - Waveshare Wiki (read 2026-10-24; one key, boards-2 task; a blind auditor must re-read every claim).
+# HTML wiki page read 2026-10-24. The pinout / onboard-interface pictures on the page are images; their text was transcribed (claims marked image).
+accessed: "2026-10-24"
+claims:
+  - {"id": "waveshare-esp32-s3-zero-wiki#chip", "locator": "Overview > Introduction", "quote": "ESP32-S3FH4R2, Type-C USB", "supports": "The board uses ESP32-S3FH4R2 (4 MB flash, 2 MB PSRAM in package) with a Type-C USB"}
+  - {"id": "waveshare-esp32-s3-zero-wiki#memory", "locator": "Features", "quote": "onboard 4MB Flash memory and 2MB PSRAM", "supports": "Onboard 4 MB flash and 2 MB PSRAM"}
+  - {"id": "waveshare-esp32-s3-zero-wiki#rgb-led", "locator": "Hardware Description", "quote": "ESP32-S3-Zero uses GPIO21 to connect with WS2812 RGB LED.", "supports": "The WS2812 RGB LED is on GPIO21"}
+  - {"id": "waveshare-esp32-s3-zero-wiki#boot-button", "locator": "Hardware Description", "quote": "press and hold the BOOT button (GPIO0)", "supports": "BOOT button is on GPIO0"}
+  - {"id": "waveshare-esp32-s3-zero-wiki#no-uart-chip", "locator": "Hardware Description", "quote": "ESP32-S3-Zero does not employ a USB to UART chip.", "supports": "No USB-UART bridge: the Type-C goes to the native USB"}
+  - {"id": "waveshare-esp32-s3-zero-wiki#uart0-pins", "locator": "Hardware Description", "quote": "TX is GPIO43, and RX is GPIO44.", "supports": "TX/RX markings are UART0 GPIO43/GPIO44"}
+  - {"id": "waveshare-esp32-s3-zero-wiki#vin-range", "locator": "Hardware Connection", "quote": "Input 3.7V~6V for the castellated hole with 5V silkscreen when connecting the external power.", "supports": "External supply 3.7-6 V on the 5V castellated pad"}
+  - {"id": "waveshare-esp32-s3-zero-wiki#ldo-800ma", "locator": "Interfaces, item 3", "quote": "ME6217C33M5G: Low dropout linear regulator with a maximum output current of 800mA", "supports": "Onboard LDO ME6217C33M5G, maximum output current 800 mA"}
+  - {"id": "waveshare-esp32-s3-zero-wiki#gpio33-37", "locator": "Hardware Description", "quote": "Pins GPIO33 ~ GPIO37 are not led out and reserved for Octal PSRAM.", "supports": "GPIO33-GPIO37 are not led out (wiki says reserved for Octal PSRAM; the FH4R2 has Quad PSRAM)"}
+  - {"id": "waveshare-esp32-s3-zero-wiki#pinout-image", "locator": "Overview > Pinout (ESP32-S3-Zero-details-inter.jpg) [drawing/image, transcribed]", "quote": "3V3(OUT)", "supports": "Pinout picture: front pads 5V, GND, 3V3(OUT), GP1-GP6 (left), TX, RX, GP13-GP7 (right), GP16, GP15, GP14 (bottom); back pads GP45, GP42, GP41, GP40, GP39, GP38, GP18, GP17"}
+doc_number: null
+id: "waveshare-esp32-s3-zero-wiki"
+kind: "board-guide"
+manual: false
+publisher: "Waveshare"
+revision: null
+revision_date: null
+secondary: false
+sha256: null
+title: "ESP32-S3-Zero - Waveshare Wiki"
+url: "https://www.waveshare.com/wiki/ESP32-S3-Zero"
+url_original: null

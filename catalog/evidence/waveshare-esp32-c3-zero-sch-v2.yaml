@@ -1,0 +1,21 @@
+# Evidence record: ESP32-C3-Zero schematic (ESP32-C3-Zero-Sch-V2.pdf) (read 2026-10-24; one key, boards-2 task; a blind auditor must re-read every claim).
+# One sheet; header read from the rendered drawing; quotes are text printed in the drawing. The revision V2 comes from the file name.
+accessed: "2026-10-24"
+claims:
+  - {"id": "waveshare-esp32-c3-zero-sch-v2#ldo-part", "locator": "Schematic, regulator U1", "quote": "ME6217C33M5G", "supports": "LDO ME6217C33M5G from 5V to VCC3.3 (drawing)"}
+  - {"id": "waveshare-esp32-c3-zero-sch-v2#rgb-part", "locator": "Schematic, WS_L1", "quote": "WS2812B", "supports": "WS_L1 WS2812B, DIN on IO10, VDD 5V (drawing)"}
+  - {"id": "waveshare-esp32-c3-zero-sch-v2#header", "locator": "Schematic, header (ESP32-C3-ZERO, 18 pins) [drawing/image, transcribed]", "quote": "ESP32-C3-ZERO", "supports": "Header pins 1-18 = 5V, GND, VCC3.3, IO0-IO10 (4-14), IO18 (15, USB D-), IO19 (16, USB D+), RXD0 (17), TXD0 (18) (drawing)"}
+  - {"id": "waveshare-esp32-c3-zero-sch-v2#keys", "locator": "Schematic, buttons [drawing/image, transcribed]", "quote": "BOOT", "supports": "B pulls IO9 to ground; R pulls CHP_EN to ground (10K pull-up R21, C6 104) (drawing)"}
+  - {"id": "waveshare-esp32-c3-zero-sch-v2#usb-native", "locator": "Schematic, USB-C block [drawing/image, transcribed]", "quote": "USB_D+=IO19", "supports": "Type-C D+/D- go to IO19/IO18 (USB_D+ = IO19, USB_D- = IO18); CC pull-downs R25/R30 5.1K (drawing)"}
+doc_number: null
+id: "waveshare-esp32-c3-zero-sch-v2"
+kind: "schematic"
+manual: false
+publisher: "Waveshare"
+revision: null
+revision_date: null
+secondary: false
+sha256: "3fd4a8f696b47149eb5cbc61ef2325540f1a64c95c49b48e72ece54424044ab2"
+title: "ESP32-C3-Zero schematic (ESP32-C3-Zero-Sch-V2.pdf)"
+url: "https://files.waveshare.com/wiki/ESP32-C3-Zero/ESP32-C3-Zero-Sch-V2.pdf"
+url_original: null

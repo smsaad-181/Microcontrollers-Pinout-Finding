@@ -1,0 +1,24 @@
+# Evidence record: ESP32-C3-DevKitM-1 Schematic (SCH_ESP32-C3-DEVKITM-1_V1_20200915A) (read 2026-10-24; one key, boards-2 task; a blind auditor must re-read every claim).
+# Sheet 2 (dated 2021-05-20). Connectivity was read from the rendered drawing; the quotes are text printed in the drawing. Claims marked drawing/image are transcriptions.
+accessed: "2026-10-24"
+claims:
+  - {"id": "esp32-c3-devkitm-1-sch-v1.0#ldo-part", "locator": "Sheet 2, power regulator", "quote": "SGM2212-3.3XKC3G/TR", "supports": "5 V to 3.3 V LDO U2 is SGM2212-3.3"}
+  - {"id": "esp32-c3-devkitm-1-sch-v1.0#bridge-part", "locator": "Sheet 2, USB to UART", "quote": "CP2102N-A02-GQFN28", "supports": "USB-to-UART bridge U3 is CP2102N-A02-GQFN28; its TXD/RXD go to U0RXD/U0TXD via R21/R22 (drawing)"}
+  - {"id": "esp32-c3-devkitm-1-sch-v1.0#rgb-part", "locator": "Sheet 2, RGB LED", "quote": "SK68XXMINI-HS", "supports": "RGB LED D6 SK68XXMINI-HS; DIN driven from GPIO8 through R17 0 ohm (net RGB_CTRL) (drawing)"}
+  - {"id": "esp32-c3-devkitm-1-sch-v1.0#rgb-ctrl-net", "locator": "Sheet 2, RGB LED", "quote": "RGB_CTRL", "supports": "Net RGB_CTRL joins GPIO8 (via R17) to the LED DIN (drawing)"}
+  - {"id": "esp32-c3-devkitm-1-sch-v1.0#auto-program", "locator": "Sheet 2, Auto program", "quote": "DTR RTS-->EN IO9", "supports": "Auto-program circuit: bridge DTR/RTS drive CHIP_PU (EN) and IO9 through Q1/Q2 (drawing)"}
+  - {"id": "esp32-c3-devkitm-1-sch-v1.0#buttons", "locator": "Sheet 2, bottom right [drawing/image, transcribed]", "quote": "NTC013-AT1J-A160T", "supports": "SW1 pulls GPIO9 to ground (Boot), SW2 pulls CHIP_PU to ground (Reset) (drawing)"}
+  - {"id": "esp32-c3-devkitm-1-sch-v1.0#usb-native-nc", "locator": "Sheet 2, USB block (J2) [drawing/image, transcribed]", "quote": "0(1%)(NC)", "supports": "Micro-USB D-/D+ go through R1/R4 0 ohm to the bridge (USB_DN/USB_DP); the links to GPIO18/GPIO19 (R2/R3) are NC, so the native USB pads are only on the header (drawing)"}
+  - {"id": "esp32-c3-devkitm-1-sch-v1.0#power-led", "locator": "Sheet 2, power block [drawing/image, transcribed]", "quote": "RED LED", "supports": "D5 red LED with R11 5.1 kohm from VCC_5V, no GPIO (drawing)"}
+doc_number: null
+id: "esp32-c3-devkitm-1-sch-v1.0"
+kind: "schematic"
+manual: false
+publisher: "Espressif Systems"
+revision: "V1.0"
+revision_date: "2020-09-15"
+secondary: false
+sha256: "d2ac6d649cbea3ce4b2295a261f78823bf61e536f69fe4bee2b6e4142bd86542"
+title: "ESP32-C3-DevKitM-1 Schematic (SCH_ESP32-C3-DEVKITM-1_V1_20200915A)"
+url: "https://dl.espressif.com/dl/schematics/SCH_ESP32-C3-DEVKITM-1_V1_20200915A.pdf"
+url_original: null

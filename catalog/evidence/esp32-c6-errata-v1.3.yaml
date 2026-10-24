@@ -1,0 +1,16 @@
+# Evidence record: ESP32-C6 Series SoC Errata (read 2026-10-24; one key, boards-2 task; a blind auditor must re-read every claim).
+accessed: "2026-10-24"
+claims:
+  - {"id": "esp32-c6-errata-v1.3#errata-list", "locator": "§3 All Errata Descriptions (contents)", "quote": "3.2 [CPU-863] Misaligned Memory Access May Lead to Exception", "supports": "The errata document (v1.3) lists ten errata (CPU, CLK, RES, SPI, RMT, ADC, WIFI); none is a pad-level (GPIO/glitch) erratum"}
+doc_number: null
+id: "esp32-c6-errata-v1.3"
+kind: "errata"
+manual: false
+publisher: "Espressif Systems"
+revision: "1.3"
+revision_date: null
+secondary: false
+sha256: "cd35d235cfdd54f0d3bceaf97f302cde409d22355575d5ee882e78e5fbfac081"
+title: "ESP32-C6 Series SoC Errata"
+url: "https://docs.espressif.com/projects/esp-chip-errata/en/latest/esp32c6/esp-chip-errata-en-master-esp32c6.pdf"
+url_original: "https://docs.espressif.com/projects/esp-chip-errata/en/latest/esp32c6/index.html"

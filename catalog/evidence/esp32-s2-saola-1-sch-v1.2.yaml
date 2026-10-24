@@ -1,0 +1,23 @@
+# Evidence record: ESP32-S2-Saola-1 Schematic (ESP32-S2-SAOLA-1_V1.1_schematics.pdf, title block V1.2, 2020-03-06) (read 2026-10-24; one key, boards-2 task; a blind auditor must re-read every claim).
+# The file name says V1.1 but the title block says V1.2. Connectivity read from the text layer; quotes are text printed in the drawing.
+accessed: "2026-10-24"
+claims:
+  - {"id": "esp32-s2-saola-1-sch-v1.2#ldo-part", "locator": "Sheet 2, regulator U5", "quote": "SGM2212-3.3XKC3G/TR", "supports": "5 V to 3.3 V LDO U5 is SGM2212-3.3 (net VDD33)"}
+  - {"id": "esp32-s2-saola-1-sch-v1.2#bridge-part", "locator": "Sheet 2, USB to UART", "quote": "CP2102N-A02-GQFN28", "supports": "USB-to-UART bridge U4 is CP2102N; TXD/RXD go to the module U0RXD/U0TXD through R34/R35 0 ohm (drawing)"}
+  - {"id": "esp32-s2-saola-1-sch-v1.2#rgb-gpio18", "locator": "Sheet 2, RGB LED", "quote": "RGB_GPIO18", "supports": "Net RGB_GPIO18 joins GPIO18 (R41 0 ohm) to the LED DIN; EXT_GPIO18 goes to the header (R40 0 ohm) (drawing)"}
+  - {"id": "esp32-s2-saola-1-sch-v1.2#rgb-part", "locator": "Sheet 2, RGB LED [drawing/image, transcribed]", "quote": "RGB LED", "supports": "RGB LED u6 (WS2812 per the guide) supplied from VDD33 (drawing)"}
+  - {"id": "esp32-s2-saola-1-sch-v1.2#auto-program", "locator": "Sheet 2, Auto program", "quote": "DTR RTS-->EN IO0 IO2", "supports": "Auto-program circuit: DTR/RTS drive EN and IO0 through Q1/Q2 (drawing)"}
+  - {"id": "esp32-s2-saola-1-sch-v1.2#buttons", "locator": "Sheet 2, bottom right [drawing/image, transcribed]", "quote": "NTC013-AA1J-A160T", "supports": "SW1 pulls GPIO0 to ground (Boot), SW2 pulls CHIP_PU to ground (Reset) (drawing)"}
+  - {"id": "esp32-s2-saola-1-sch-v1.2#usb-debug-reserved", "locator": "Sheet 2, USB block (resistors R32/R33/R38/R39)", "quote": "USB Debug", "supports": "Drawing labels the D+/D- links to GPIO19/GPIO20 as \"USB Debug ... Reserved\" with 0 ohm (NC) resistors; the micro-USB D+/D- go to the bridge (drawing)"}
+doc_number: null
+id: "esp32-s2-saola-1-sch-v1.2"
+kind: "schematic"
+manual: false
+publisher: "Espressif Systems"
+revision: "V1.2"
+revision_date: "2020-03-06"
+secondary: false
+sha256: "d59cd8ce2512d31c7475dc68f22ed72ef7ae7b235b3f2f019b11dee6810044e7"
+title: "ESP32-S2-Saola-1 Schematic (ESP32-S2-SAOLA-1_V1.1_schematics.pdf, title block V1.2, 2020-03-06)"
+url: "https://dl.espressif.com/dl/schematics/ESP32-S2-SAOLA-1_V1.1_schematics.pdf"
+url_original: null

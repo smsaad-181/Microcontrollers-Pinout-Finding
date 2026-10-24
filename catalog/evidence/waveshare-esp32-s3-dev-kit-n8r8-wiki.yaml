@@ -1,0 +1,21 @@
+# Evidence record: ESP32-S3-DEV-KIT-N8R8 - Waveshare Wiki (read 2026-10-24; one key, boards-2 task; a blind auditor must re-read every claim).
+# HTML wiki page read 2026-10-24. The pinout / onboard-interface pictures on the page are images; their text was transcribed (claims marked image).
+accessed: "2026-10-24"
+claims:
+  - {"id": "waveshare-esp32-s3-dev-kit-n8r8-wiki#module", "locator": "Overview > Introduction", "quote": "it adopts ESP32-S3-WROOM-1-NxR8 module", "supports": "The board carries an ESP32-S3-WROOM-1-NxR8 module (N8R8 = 8 MB flash + 8 MB Octal PSRAM)"}
+  - {"id": "waveshare-esp32-s3-dev-kit-n8r8-wiki#devkitc-compatible", "locator": "Overview > Introduction", "quote": "Compatible with the pinout of ESP32-S3-DevKitC-1 development board", "supports": "Header pinout compatible with ESP32-S3-DevKitC-1"}
+  - {"id": "waveshare-esp32-s3-dev-kit-n8r8-wiki#bridge-chips", "locator": "Overview > Features", "quote": "Onboard CH343 and CH334 chips for USB and UART development via USB-C port", "supports": "CH343 USB-UART bridge and CH334 hub on one USB-C port"}
+  - {"id": "waveshare-esp32-s3-dev-kit-n8r8-wiki#memory", "locator": "Overview > Features", "quote": "Integrated 512KB SRAM, 384KB ROM, 8MB PSRAM, 8MB/16MB Flash memory", "supports": "8 MB PSRAM and 8/16 MB flash"}
+  - {"id": "waveshare-esp32-s3-dev-kit-n8r8-wiki#pinout-image", "locator": "Overview > Pinout Definition (ESP32-S3-DEV-KIT-N8R8-details-13.png) [drawing/image, transcribed]", "quote": "RGB_LED", "supports": "Pinout picture: left 3V3, 3V3, RST, GPIO4-7, 15-18, 8, 3, 46, 9-14, 5V0, GND; right GND, U0TXD GPIO43, U0RXD GPIO44, GPIO1, GPIO2, 42-38, 37-35, 0, 45, 48, 47, 21, 20, 19, GND, GND; GPIO38 marked RGB_LED, GPIO0 BOOT, GPIO45 STRAP"}
+doc_number: null
+id: "waveshare-esp32-s3-dev-kit-n8r8-wiki"
+kind: "board-guide"
+manual: false
+publisher: "Waveshare"
+revision: null
+revision_date: null
+secondary: false
+sha256: null
+title: "ESP32-S3-DEV-KIT-N8R8 - Waveshare Wiki"
+url: "https://www.waveshare.com/wiki/ESP32-S3-DEV-KIT-N8R8"
+url_original: null

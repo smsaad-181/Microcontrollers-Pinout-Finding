@@ -1,0 +1,26 @@
+# Evidence record: ESP32-C6-DevKitC-1 Schematic v1.4 (2024-05-09) (read 2026-10-24; one key, boards-2 task; a blind auditor must re-read every claim).
+# Connectivity read from the rendered/text layer; quotes are text printed in the drawing.
+accessed: "2026-10-24"
+claims:
+  - {"id": "esp32-c6-devkitc-1-sch-v1.4#ldo-part", "locator": "Sheet 2, Power Regulator", "quote": "SGM2212-3.3XKC3G/TR", "supports": "5 V to 3.3 V LDO U2 is SGM2212-3.3"}
+  - {"id": "esp32-c6-devkitc-1-sch-v1.4#bridge-part", "locator": "Sheet 2, UART", "quote": "CP2102N-A02-GQFN28", "supports": "USB-to-UART bridge U3 is CP2102N; TXD/RXD go to the module TXD0/RXD0 through R9 0 ohm / R7 470 ohm (drawing)"}
+  - {"id": "esp32-c6-devkitc-1-sch-v1.4#rgb-part", "locator": "Sheet 2, RGB LED", "quote": "WS2812B", "supports": "RGB LED D6 is a WS2812B; DIN from GPIO8 through R17 0 ohm (net RGB_CTRL) (drawing)"}
+  - {"id": "esp32-c6-devkitc-1-sch-v1.4#rgb-ctrl-net", "locator": "Sheet 2, RGB LED", "quote": "RGB_CTRL", "supports": "Net RGB_CTRL joins GPIO8 (via R17) to the LED DIN (drawing)"}
+  - {"id": "esp32-c6-devkitc-1-sch-v1.4#auto-program", "locator": "Sheet 2, Auto Download", "quote": "DTR RTS --> EN IO9", "supports": "Auto-download circuit: DTR/RTS drive CHIP_PU (EN) and IO9 (drawing)"}
+  - {"id": "esp32-c6-devkitc-1-sch-v1.4#usb-type-c", "locator": "Sheet 2, USB / USB to UART", "quote": "USB_TYPEC_16P_F", "supports": "Two USB Type-C receptacles: J2 (to UART bridge) and J4 (USB on GPIO12/GPIO13) (drawing)"}
+  - {"id": "esp32-c6-devkitc-1-sch-v1.4#j5-jumper", "locator": "Sheet 2", "quote": "JUMPER-2.54MM", "supports": "J5 jumper between VCC_3V3 and the module supply ESP_3V3 (drawing)"}
+  - {"id": "esp32-c6-devkitc-1-sch-v1.4#buttons", "locator": "Sheet 2, bottom right [drawing/image, transcribed]", "quote": "NTC013-AT1J-A160T", "supports": "SW1 pulls GPIO9 to ground (Boot), SW2 pulls CHIP_PU to ground (Reset) (drawing)"}
+  - {"id": "esp32-c6-devkitc-1-sch-v1.4#power-led", "locator": "Sheet 2, power block [drawing/image, transcribed]", "quote": "RED LED", "supports": "D5 red LED from VCC_3V3 with R11 5.1 kohm, no GPIO (drawing)"}
+  - {"id": "esp32-c6-devkitc-1-sch-v1.4#usb-gpio12-13", "locator": "Sheet 2, USB block J4 [drawing/image, transcribed]", "quote": "USB_DN", "supports": "J4 D-/D+ connect straight to GPIO12/GPIO13 (drawing)"}
+doc_number: null
+id: "esp32-c6-devkitc-1-sch-v1.4"
+kind: "schematic"
+manual: false
+publisher: "Espressif Systems"
+revision: "V1.4"
+revision_date: "2024-05-09"
+secondary: false
+sha256: "ac01136198f286f11a3628e1ca39d22714aa6ce059cba85bd0c39e641c415a8a"
+title: "ESP32-C6-DevKitC-1 Schematic v1.4 (2024-05-09)"
+url: "https://dl.espressif.com/dl/schematics/esp32-c6-devkitc-1-schematics_v1.4.pdf"
+url_original: null

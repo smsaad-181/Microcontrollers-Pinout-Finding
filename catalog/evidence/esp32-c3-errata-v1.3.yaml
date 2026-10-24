@@ -1,0 +1,17 @@
+# Evidence record: ESP32-C3 Series SoC Errata (read 2026-10-24; one key, boards-2 task; a blind auditor must re-read every claim).
+accessed: "2026-10-24"
+claims:
+  - {"id": "esp32-c3-errata-v1.3#errata-list", "locator": "§3 All Errata Descriptions (contents)", "quote": "3.1 [CPU-863] Misaligned Memory Access May Lead to Exception", "supports": "The errata document (v1.3) lists CPU-863, ADC-183 and ADC-270 only; none is a pad-level (GPIO/glitch) erratum"}
+  - {"id": "esp32-c3-errata-v1.3#adc-183", "locator": "§3.2", "quote": "3.2 [ADC-183] The Digital Controller (DMA) of SAR ADC2 Cannot Work", "supports": "ADC-183: ADC2 digital controller can enter an inoperative state (affects the ADC2 pad GPIO5)"}
+doc_number: null
+id: "esp32-c3-errata-v1.3"
+kind: "errata"
+manual: false
+publisher: "Espressif Systems"
+revision: "1.3"
+revision_date: null
+secondary: false
+sha256: "f52d37dd3cecff8a07d3e6f654e490b0a367f65fad07c7d0570c992fb876103a"
+title: "ESP32-C3 Series SoC Errata"
+url: "https://docs.espressif.com/projects/esp-chip-errata/en/latest/esp32c3/esp-chip-errata-en-master-esp32c3.pdf"
+url_original: "https://docs.espressif.com/projects/esp-chip-errata/en/latest/esp32c3/index.html"

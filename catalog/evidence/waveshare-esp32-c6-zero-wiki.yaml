@@ -1,0 +1,20 @@
+# Evidence record: ESP32-C6-Zero - Waveshare Wiki (read 2026-10-24; one key, boards-2 task; a blind auditor must re-read every claim).
+# HTML wiki page read 2026-10-24. The pinout / onboard-interface pictures on the page are images; their text was transcribed (claims marked image).
+accessed: "2026-10-24"
+claims:
+  - {"id": "waveshare-esp32-c6-zero-wiki#chip", "locator": "Overview", "quote": "Adopts ESP32-C6FH4 as the main chip", "supports": "The board uses ESP32-C6FH4 (4 MB in-package flash)"}
+  - {"id": "waveshare-esp32-c6-zero-wiki#memory", "locator": "Overview > Features", "quote": "Integrated 320KB ROM, 512KB HP SRAM, 16KB LP SRAM and 4MB Flash memory.", "supports": "4 MB flash"}
+  - {"id": "waveshare-esp32-c6-zero-wiki#pinout-image", "locator": "Overview > Pinout (ESP32-C6-Zero_Pin.png) [drawing/image, transcribed]", "quote": "WS2812 RGB LED used pin GP8", "supports": "Pinout picture: front 5V, GND, 3V3(OUT), GP0-GP5 (left), TX, RX, GP14, GP15, GP18-GP22 (right); back pads GP13, GP12, GP23, GP9 (BOOT), GP8, GP7, GP6; WS2812 on GP8"}
+  - {"id": "waveshare-esp32-c6-zero-wiki#onboard-image", "locator": "Overview > Onboard Interfaces (ESP32-C6-Zero_Inter.png) [drawing/image, transcribed]", "quote": "ME6217C33M5G low dropout LDO, 800mA (Max)", "supports": "Onboard: ESP32-C6FH4, USB Type-C, ME6217C33M5G LDO 800 mA max, WS2812 RGB LED, 2.4G ceramic antenna, BOOT and RESET buttons"}
+doc_number: null
+id: "waveshare-esp32-c6-zero-wiki"
+kind: "board-guide"
+manual: false
+publisher: "Waveshare"
+revision: null
+revision_date: null
+secondary: false
+sha256: null
+title: "ESP32-C6-Zero - Waveshare Wiki"
+url: "https://www.waveshare.com/wiki/ESP32-C6-Zero"
+url_original: null

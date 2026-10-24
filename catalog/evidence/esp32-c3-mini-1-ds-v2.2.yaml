@@ -1,0 +1,35 @@
+# Evidence record: ESP32-C3-MINI-1 & ESP32-C3-MINI-1U Datasheet (read 2026-10-24; one key, boards-2 task; a blind auditor must re-read every claim).
+accessed: "2026-10-24"
+claims:
+  - {"id": "esp32-c3-mini-1-ds-v2.2#pin-io2", "locator": "§3.2, Table 3-1 Pin Definitions", "quote": "IO2 5 I/O/T GPIO2, ADC1_CH2, FSPIQ", "supports": "Module pin IO2 carries GPIO2"}
+  - {"id": "esp32-c3-mini-1-ds-v2.2#pin-io3", "locator": "§3.2, Table 3-1 Pin Definitions", "quote": "IO3 6 I/O/T GPIO3, ADC1_CH3", "supports": "Module pin IO3 carries GPIO3"}
+  - {"id": "esp32-c3-mini-1-ds-v2.2#pin-io0", "locator": "§3.2, Table 3-1 Pin Definitions", "quote": "IO0 12 I/O/T GPIO0, ADC1_CH0, XTAL_32K_P", "supports": "Module pin IO0 carries GPIO0"}
+  - {"id": "esp32-c3-mini-1-ds-v2.2#pin-io1", "locator": "§3.2, Table 3-1 Pin Definitions", "quote": "IO1 13 I/O/T GPIO1, ADC1_CH1, XTAL_32K_N", "supports": "Module pin IO1 carries GPIO1"}
+  - {"id": "esp32-c3-mini-1-ds-v2.2#pin-io10", "locator": "§3.2, Table 3-1 Pin Definitions", "quote": "IO10 16 I/O/T GPIO10, FSPICS0", "supports": "Module pin IO10 carries GPIO10"}
+  - {"id": "esp32-c3-mini-1-ds-v2.2#pin-io4", "locator": "§3.2, Table 3-1 Pin Definitions", "quote": "IO4 18 I/O/T GPIO4, ADC1_CH4, FSPIHD, MTMS", "supports": "Module pin IO4 carries GPIO4"}
+  - {"id": "esp32-c3-mini-1-ds-v2.2#pin-io5", "locator": "§3.2, Table 3-1 Pin Definitions", "quote": "IO5 19 I/O/T GPIO5, ADC2_CH0, FSPIWP, MTDI", "supports": "Module pin IO5 carries GPIO5"}
+  - {"id": "esp32-c3-mini-1-ds-v2.2#pin-io6", "locator": "§3.2, Table 3-1 Pin Definitions", "quote": "IO6 20 I/O/T GPIO6, FSPICLK, MTCK", "supports": "Module pin IO6 carries GPIO6"}
+  - {"id": "esp32-c3-mini-1-ds-v2.2#pin-io7", "locator": "§3.2, Table 3-1 Pin Definitions", "quote": "IO7 21 I/O/T GPIO7, FSPID, MTDO", "supports": "Module pin IO7 carries GPIO7"}
+  - {"id": "esp32-c3-mini-1-ds-v2.2#pin-io8", "locator": "§3.2, Table 3-1 Pin Definitions", "quote": "IO8 22 I/O/T GPIO8", "supports": "Module pin IO8 carries GPIO8"}
+  - {"id": "esp32-c3-mini-1-ds-v2.2#pin-io9", "locator": "§3.2, Table 3-1 Pin Definitions", "quote": "IO9 23 I/O/T GPIO9", "supports": "Module pin IO9 carries GPIO9"}
+  - {"id": "esp32-c3-mini-1-ds-v2.2#pin-io18", "locator": "§3.2, Table 3-1 Pin Definitions", "quote": "IO18 26 I/O/T GPIO18, USB_D-", "supports": "Module pin IO18 carries GPIO18"}
+  - {"id": "esp32-c3-mini-1-ds-v2.2#pin-io19", "locator": "§3.2, Table 3-1 Pin Definitions", "quote": "IO19 27 I/O/T GPIO19, USB_D+", "supports": "Module pin IO19 carries GPIO19"}
+  - {"id": "esp32-c3-mini-1-ds-v2.2#pin-rxd0", "locator": "§3.2, Table 3-1 Pin Definitions", "quote": "RXD0 30 I/O/T GPIO20, U0RXD", "supports": "Module pin RXD0 carries GPIO20"}
+  - {"id": "esp32-c3-mini-1-ds-v2.2#pin-txd0", "locator": "§3.2, Table 3-1 Pin Definitions", "quote": "TXD0 31 I/O/T GPIO21, U0TXD", "supports": "Module pin TXD0 carries GPIO21"}
+  - {"id": "esp32-c3-mini-1-ds-v2.2#flash-in-package", "locator": "§1, Table 1-1 footnote 4", "quote": "The flash is integrated in the chip's package.", "supports": "The 4 MB flash is integrated in the chip package (not a separate part)"}
+  - {"id": "esp32-c3-mini-1-ds-v2.2#series-n4x", "locator": "§1, Table 1-1 / chip list", "quote": "ESP32-C3FH4X: chip revision v1.1, 4 MB flash", "supports": "ESP32-C3-MINI-1-N4X embeds ESP32-C3FH4X (v1.1), 4 MB flash"}
+  - {"id": "esp32-c3-mini-1-ds-v2.2#flash-pins-not-bonded", "locator": "§1, chip list", "quote": "For this chip, SPI0/SPI1 pins for flash connection are not bonded.", "supports": "On the FH4X chip the SPI0/SPI1 flash pins are not bonded out"}
+  - {"id": "esp32-c3-mini-1-ds-v2.2#flash-vcc-3v3", "locator": "§6.5, Table 6-8 Flash Specifications", "quote": "Power supply voltage (3.3 V) 2.7 3.3 3.6 V", "supports": "Flash supply options 1.8 V and 3.3 V are specified; the chip flash interface is 3.3 V"}
+  - {"id": "esp32-c3-mini-1-ds-v2.2#pin-nc", "locator": "§3.2, Table 3-1", "quote": "4, 7, 9, 10, NC 15, 17, 24, -- NC 25, 28, 29, 32-35", "supports": "Module pins 4, 7, 9, 10, 15, 17, 24, 25, 28, 29, 32-35 are NC (so GPIO11-GPIO17 have no module pin)"}
+doc_number: null
+id: "esp32-c3-mini-1-ds-v2.2"
+kind: "datasheet"
+manual: false
+publisher: "Espressif Systems"
+revision: "2.2"
+revision_date: null
+secondary: false
+sha256: "de7361381348d82a1abd337f10170be7a420675987568f71fe3c5b100deed270"
+title: "ESP32-C3-MINI-1 & ESP32-C3-MINI-1U Datasheet"
+url: "https://documentation.espressif.com/esp32-c3-mini-1_datasheet_en.pdf"
+url_original: "https://www.espressif.com/sites/default/files/documentation/esp32-c3-mini-1_datasheet_en.pdf"

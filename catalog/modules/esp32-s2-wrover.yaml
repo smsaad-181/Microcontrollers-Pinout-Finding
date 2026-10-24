@@ -1,0 +1,54 @@
+# ESP32-S2-WROVER module (ESP32-S2 chip, 4 MB external SPI flash + 2 MB SPI PSRAM; the datasheet also covers the WROVER-I antenna-connector variant) - one key, single-source.
+# Source: ESP32-S2-WROVER & WROVER-I Datasheet v1.4 (Table 2 Pin Definitions, module schematic) + ESP32-S2 Series Datasheet v1.9 (Table 2-14). Read 2026-10-24. Both modules are EOL in the datasheets.
+# bonded_pads = the 37 GPIOs on module pins: IO0-IO21, IO26, IO33-IO38, IO39-IO42, TXD0 (GPIO43), RXD0 (GPIO44), IO45, IO46. GPIO27-GPIO32 have no module pin.
+# consumed: GPIO26 (PSRAM CS) and GPIO27-GPIO32 (flash bus, shared with the PSRAM).
+bonded_pads:
+  - "GPIO0"
+  - "GPIO1"
+  - "GPIO2"
+  - "GPIO3"
+  - "GPIO4"
+  - "GPIO5"
+  - "GPIO6"
+  - "GPIO7"
+  - "GPIO8"
+  - "GPIO9"
+  - "GPIO10"
+  - "GPIO11"
+  - "GPIO12"
+  - "GPIO13"
+  - "GPIO14"
+  - "GPIO15"
+  - "GPIO16"
+  - "GPIO17"
+  - "GPIO18"
+  - "GPIO19"
+  - "GPIO20"
+  - "GPIO21"
+  - "GPIO26"
+  - "GPIO33"
+  - "GPIO34"
+  - "GPIO35"
+  - "GPIO36"
+  - "GPIO37"
+  - "GPIO38"
+  - "GPIO39"
+  - "GPIO40"
+  - "GPIO41"
+  - "GPIO42"
+  - "GPIO43"
+  - "GPIO44"
+  - "GPIO45"
+  - "GPIO46"
+chip: "esp32-s2"
+consumed:
+  GPIO26: {"evidence": ["esp32-s2-wrover-ds-v1.4#io26-psram-cs", "esp32-s2-ds-v1.9#pin-map-spics1", "esp32-s2-wrover-ds-v1.4#sch-spics0-spid"], "note": "GPIO26 = SPICS1 is the PSRAM chip select inside the WROVER (module Table 2 footnote 2: cannot be used for other functions). It also has a module pin (IO26), so it stays in bonded_pads. One key (hardware-researcher): a blind audit must re-read it.", "status": "single-source", "value": "psram"}
+  GPIO27: {"evidence": ["esp32-s2-wrover-ds-v1.4#sch-spihd-spiwp", "esp32-s2-ds-v1.9#pin-map-spihd"], "note": "GPIO27 = SPIHD: wired inside the module to the external SPI flash (flash and PSRAM share this signal); chip datasheet Table 2-14; not led out on a module pin. One key (hardware-researcher): a blind audit must re-read it.", "status": "single-source", "value": "flash"}
+  GPIO28: {"evidence": ["esp32-s2-wrover-ds-v1.4#sch-spihd-spiwp", "esp32-s2-ds-v1.9#pin-map-spiwp"], "note": "GPIO28 = SPIWP: wired inside the module to the external SPI flash (flash and PSRAM share this signal); chip datasheet Table 2-14; not led out on a module pin. One key (hardware-researcher): a blind audit must re-read it.", "status": "single-source", "value": "flash"}
+  GPIO29: {"evidence": ["esp32-s2-wrover-ds-v1.4#sch-spics0-spid", "esp32-s2-ds-v1.9#pin-map-spics0"], "note": "GPIO29 = SPICS0: wired inside the module to the external SPI flash; chip datasheet Table 2-14; not led out on a module pin. One key (hardware-researcher): a blind audit must re-read it.", "status": "single-source", "value": "flash"}
+  GPIO30: {"evidence": ["esp32-s2-wrover-ds-v1.4#sch-spiclk-spiq", "esp32-s2-ds-v1.9#pin-map-spiclk"], "note": "GPIO30 = SPICLK: wired inside the module to the external SPI flash (flash and PSRAM share this signal); chip datasheet Table 2-14; not led out on a module pin. One key (hardware-researcher): a blind audit must re-read it.", "status": "single-source", "value": "flash"}
+  GPIO31: {"evidence": ["esp32-s2-wrover-ds-v1.4#sch-spiclk-spiq", "esp32-s2-ds-v1.9#pin-map-spiq"], "note": "GPIO31 = SPIQ: wired inside the module to the external SPI flash (flash and PSRAM share this signal); chip datasheet Table 2-14; not led out on a module pin. One key (hardware-researcher): a blind audit must re-read it.", "status": "single-source", "value": "flash"}
+  GPIO32: {"evidence": ["esp32-s2-wrover-ds-v1.4#sch-spics0-spid", "esp32-s2-ds-v1.9#pin-map-spid"], "note": "GPIO32 = SPID: wired inside the module to the external SPI flash (flash and PSRAM share this signal); chip datasheet Table 2-14; not led out on a module pin. One key (hardware-researcher): a blind audit must re-read it.", "status": "single-source", "value": "flash"}
+flash_voltage: {"evidence": ["esp32-s2-wrover-ds-v1.4#sch-flash-3v3", "esp32-s2-ds-v1.9#vdd-spi-3v3-default"], "note": "Module schematic names the flash supply net FLASH-3V3; the chip datasheet Table 3-4 default (GPIO45 = 0, no eFuse override) is VDD_SPI = 3.3 V. Not stated as a sentence; derived from the net name. One key (hardware-researcher): a blind audit must re-read it.", "status": "single-source", "unit": "V", "value": 3.3}
+id: "esp32-s2-wrover"
+psram: {"evidence": ["esp32-s2-wrover-ds-v1.4#flash-psram", "esp32-s2-wrover-ds-v1.4#sch-spics0-spid"], "note": "PSRAM U3 on the module (CS = SPICS1/GPIO26, shared SPICLK/SPID/SPIQ/SPIHD/SPIWP with the flash); the datasheet says \"SPI PSRAM\" without naming Quad/Octal. One key (hardware-researcher): a blind audit must re-read it.", "status": "single-source", "value": "2 MB SPI PSRAM"}

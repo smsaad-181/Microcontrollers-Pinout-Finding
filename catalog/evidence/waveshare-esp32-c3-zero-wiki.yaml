@@ -1,0 +1,24 @@
+# Evidence record: ESP32-C3-Zero - Waveshare Wiki (read 2026-10-24; one key, boards-2 task; a blind auditor must re-read every claim).
+# HTML wiki page read 2026-10-24. The pinout / onboard-interface pictures on the page are images; their text was transcribed (claims marked image).
+accessed: "2026-10-24"
+claims:
+  - {"id": "waveshare-esp32-c3-zero-wiki#chip", "locator": "Overview > Introduction", "quote": "It adopts ESP32-C3FH4 as a System-on-Chip", "supports": "The board uses ESP32-C3FH4 with 4 MB flash"}
+  - {"id": "waveshare-esp32-c3-zero-wiki#flash-pins", "locator": "Hardware Description", "quote": "GPIO12 to GPIO17 pins are not exposed; these pins are used for stacking the 4MB Flash.", "supports": "GPIO12-GPIO17 are not exposed (used by the stacked 4 MB flash)"}
+  - {"id": "waveshare-esp32-c3-zero-wiki#rgb-led", "locator": "Hardware Description", "quote": "ESP32-C3-Zero uses GPIO10 to connect with WS2812 RGB LED.", "supports": "The WS2812 RGB LED is on GPIO10"}
+  - {"id": "waveshare-esp32-c3-zero-wiki#boot-button", "locator": "Hardware Description", "quote": "press and hold the BOOT button (GPIO9)", "supports": "BOOT button is on GPIO9"}
+  - {"id": "waveshare-esp32-c3-zero-wiki#no-uart-chip", "locator": "Hardware Description", "quote": "ESP32-C3-Zero does not employ a USB to UART chip.", "supports": "No USB-UART bridge: Type-C goes to the native USB (GPIO18/GPIO19)"}
+  - {"id": "waveshare-esp32-c3-zero-wiki#uart0-pins", "locator": "Hardware Description", "quote": "TX is GPIO21, and RX is GPIO20.", "supports": "TX/RX markings are UART0 GPIO21/GPIO20"}
+  - {"id": "waveshare-esp32-c3-zero-wiki#vin-range", "locator": "Hardware Connection", "quote": "Input 3.7V~6V for the castellated hole with 5V silkscreen when connecting the external power.", "supports": "External supply 3.7-6 V on the 5V castellated pad"}
+  - {"id": "waveshare-esp32-c3-zero-wiki#gpio-count", "locator": "Overview > Features", "quote": "15 GPIO pins", "supports": "15 GPIO pins"}
+doc_number: null
+id: "waveshare-esp32-c3-zero-wiki"
+kind: "board-guide"
+manual: false
+publisher: "Waveshare"
+revision: null
+revision_date: null
+secondary: false
+sha256: null
+title: "ESP32-C3-Zero - Waveshare Wiki"
+url: "https://www.waveshare.com/wiki/ESP32-C3-Zero"
+url_original: null

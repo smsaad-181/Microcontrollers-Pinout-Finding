@@ -1,0 +1,17 @@
+# Evidence record: ESP32-S2 Series SoC Errata (read 2026-10-24; one key, boards-2 task; a blind auditor must re-read every claim).
+accessed: "2026-10-24"
+claims:
+  - {"id": "esp32-s2-errata-v1.2#errata-list", "locator": "§3 All Errata Descriptions (contents)", "quote": "3.1 [SYSTEM-86] Leakage Current at the VDDA and VDD3P3_RTC Pins during Shutdown", "supports": "The errata document (v1.2) lists nine errata (SYSTEM-86, SYSTEM-117, I2C-97, SPI-106, USB-105, ADC-112, RTC-126, TOUCH-100, TOUCH-99); only SYSTEM-117 names a pad (GPIO18)"}
+  - {"id": "esp32-s2-errata-v1.2#system-117-gpio18", "locator": "§3.2 [SYSTEM-117] Random Flash Download Failure, Description", "quote": "pin 24 DAC_2 (GPIO18) is not pulled up by default.", "supports": "On chip revision v0.0 GPIO18 (pin 24 DAC_2) is not pulled up by default; floating it breaks UART download; fixed in v1.0"}
+doc_number: null
+id: "esp32-s2-errata-v1.2"
+kind: "errata"
+manual: false
+publisher: "Espressif Systems"
+revision: "1.2"
+revision_date: null
+secondary: false
+sha256: "2dfe36f76b54928903e8af80cae92268da34a6941b76c06bb37a98b8f1bc088b"
+title: "ESP32-S2 Series SoC Errata"
+url: "https://docs.espressif.com/projects/esp-chip-errata/en/latest/esp32s2/esp-chip-errata-en-master-esp32s2.pdf"
+url_original: "https://docs.espressif.com/projects/esp-chip-errata/en/latest/esp32s2/index.html"

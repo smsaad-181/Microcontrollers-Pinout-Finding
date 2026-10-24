@@ -1,0 +1,38 @@
+# ESP32-C6-WROOM-1-N8 module (ESP32-C6 QFN40 chip, 8 MB external Quad SPI flash, no PSRAM; the datasheet also covers the N4/N16 and -1U variants) - one key, single-source.
+# Source: ESP32-C6-WROOM-1 & ESP32-C6-WROOM-1U Datasheet v1.4 (Table 3-1) + ESP32-C6 Series Datasheet v1.5 (Table 2-16). Read 2026-10-24.
+# bonded_pads = the 23 GPIOs on module pins (Table 3-1): IO0-IO13, IO15, IO18-IO23, TXD0 (GPIO16), RXD0 (GPIO17). GPIO14 does not exist on the QFN40 chip; GPIO24-GPIO30 are the flash pads (no module pin).
+bonded_pads:
+  - "GPIO0"
+  - "GPIO1"
+  - "GPIO2"
+  - "GPIO3"
+  - "GPIO4"
+  - "GPIO5"
+  - "GPIO6"
+  - "GPIO7"
+  - "GPIO8"
+  - "GPIO9"
+  - "GPIO10"
+  - "GPIO11"
+  - "GPIO12"
+  - "GPIO13"
+  - "GPIO15"
+  - "GPIO16"
+  - "GPIO17"
+  - "GPIO18"
+  - "GPIO19"
+  - "GPIO20"
+  - "GPIO21"
+  - "GPIO22"
+  - "GPIO23"
+chip: "esp32-c6"
+consumed:
+  GPIO24: {"evidence": ["esp32-c6-wroom-1-ds-v1.4#external-flash", "esp32-c6-wroom-1-ds-v1.4#block-diagram-flash-bus", "esp32-c6-ds-v1.5#flash-pins-p4", "esp32-c6-ds-v1.5#flash-notice"], "note": "GPIO24 = SPICS0: the module's external QSPI flash is wired to SPICS0, SPICLK, SPID, SPIQ, SPIHD, SPIWP (block diagram, schematic, chip datasheet Table 2-16); not led out on a module pin. One key (hardware-researcher): a blind audit must re-read it.", "status": "single-source", "value": "flash"}
+  GPIO25: {"evidence": ["esp32-c6-wroom-1-ds-v1.4#external-flash", "esp32-c6-wroom-1-ds-v1.4#block-diagram-flash-bus", "esp32-c6-ds-v1.5#flash-pins-p4", "esp32-c6-ds-v1.5#flash-notice"], "note": "GPIO25 = SPIQ: the module's external QSPI flash is wired to SPICS0, SPICLK, SPID, SPIQ, SPIHD, SPIWP (block diagram, schematic, chip datasheet Table 2-16); not led out on a module pin. One key (hardware-researcher): a blind audit must re-read it.", "status": "single-source", "value": "flash"}
+  GPIO26: {"evidence": ["esp32-c6-wroom-1-ds-v1.4#external-flash", "esp32-c6-wroom-1-ds-v1.4#block-diagram-flash-bus", "esp32-c6-ds-v1.5#flash-pins-p4", "esp32-c6-ds-v1.5#flash-notice"], "note": "GPIO26 = SPIWP: the module's external QSPI flash is wired to SPICS0, SPICLK, SPID, SPIQ, SPIHD, SPIWP (block diagram, schematic, chip datasheet Table 2-16); not led out on a module pin. One key (hardware-researcher): a blind audit must re-read it.", "status": "single-source", "value": "flash"}
+  GPIO27: {"evidence": ["esp32-c6-wroom-1-ds-v1.4#block-diagram-flash-bus", "esp32-c6-ds-v1.5#vdd-spi-gpio27"], "note": "GPIO27 is the VDD_SPI pin that powers the module flash (block diagram: VDD_SPI to the flash); it has no module pin. One key (hardware-researcher): a blind audit must re-read it.", "status": "single-source", "value": "internal"}
+  GPIO28: {"evidence": ["esp32-c6-wroom-1-ds-v1.4#external-flash", "esp32-c6-wroom-1-ds-v1.4#block-diagram-flash-bus", "esp32-c6-ds-v1.5#flash-pins-p4", "esp32-c6-ds-v1.5#flash-notice"], "note": "GPIO28 = SPIHD: the module's external QSPI flash is wired to SPICS0, SPICLK, SPID, SPIQ, SPIHD, SPIWP (block diagram, schematic, chip datasheet Table 2-16); not led out on a module pin. One key (hardware-researcher): a blind audit must re-read it.", "status": "single-source", "value": "flash"}
+  GPIO29: {"evidence": ["esp32-c6-wroom-1-ds-v1.4#external-flash", "esp32-c6-wroom-1-ds-v1.4#block-diagram-flash-bus", "esp32-c6-ds-v1.5#flash-pins-p4", "esp32-c6-ds-v1.5#flash-notice"], "note": "GPIO29 = SPICLK: the module's external QSPI flash is wired to SPICS0, SPICLK, SPID, SPIQ, SPIHD, SPIWP (block diagram, schematic, chip datasheet Table 2-16); not led out on a module pin. One key (hardware-researcher): a blind audit must re-read it.", "status": "single-source", "value": "flash"}
+  GPIO30: {"evidence": ["esp32-c6-wroom-1-ds-v1.4#external-flash", "esp32-c6-wroom-1-ds-v1.4#block-diagram-flash-bus", "esp32-c6-ds-v1.5#flash-pins-p4", "esp32-c6-ds-v1.5#flash-notice"], "note": "GPIO30 = SPID: the module's external QSPI flash is wired to SPICS0, SPICLK, SPID, SPIQ, SPIHD, SPIWP (block diagram, schematic, chip datasheet Table 2-16); not led out on a module pin. One key (hardware-researcher): a blind audit must re-read it.", "status": "single-source", "value": "flash"}
+flash_voltage: {"evidence": ["esp32-c6-ds-v1.5#flash-3v3", "esp32-c6-wroom-1-ds-v1.4#series-n8"], "note": "Not stated for the module in so many words: the chip datasheet (Table 2-3) calls the SPI0/1 flash interface a 3.3 V interface and the module flash table lists 1.8 V and 3.3 V supply options; 3.3 V is the interface voltage. One key (hardware-researcher): a blind audit must re-read it.", "status": "single-source", "unit": "V", "value": 3.3}
+id: "esp32-c6-wroom-1-n8"

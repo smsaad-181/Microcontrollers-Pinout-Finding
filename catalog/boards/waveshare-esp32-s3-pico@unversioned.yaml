@@ -1,0 +1,87 @@
+# Waveshare ESP32-S3-Pico (Raspberry-Pi-Pico form factor, 40 castellated pins). Chip ESP32-S3R2 (2 MB Quad PSRAM in the package) used bare with a 16 MB W25Q128 flash on the board. No revision printed; revision "unversioned". One key; every fact is single-source.
+# Sources: Waveshare wiki page (text + the pinout picture, transcribed) and the schematic PDF (PIN OUT block of sheet 1 read from the rendered drawing; both agree).
+# Connector J: positions 1-40 are the printed Pico pin numbers (1-20 on one side, 21-40 on the other). GP label = chip GPIO number. Pin 30 is CHIP_PU (printed RUN), pin 37 3V3_EN (kind enable). VSYS and VBUS are separate rails; their voltages are not stated -> VSYS missing.
+# Connector TP: five test pads (D_N = GPIO19, D_P = GPIO20, GP3, GP21, GP0) in the wiki picture order (left to right); positions are my order and are transcribed. GPIO43/GPIO44 (CH343 UART) have no pad.
+# GPIO3 sits on the VBUS divider (USB_ADC) and is a strapping pin; GPIO21 drives the RGB LED.
+# Gap: the "27 multi-function GPIO pins" count and the extra TP pads are not cross-checked beyond the picture.
+connectors:
+  - id: "J"
+    pins:
+      - {"kind": "gpio", "label": "GP11", "pad": "GPIO11", "position": 1}
+      - {"kind": "gpio", "label": "GP12", "pad": "GPIO12", "position": 2}
+      - {"kind": "ground", "label": "GND", "position": 3}
+      - {"kind": "gpio", "label": "GP13", "pad": "GPIO13", "position": 4}
+      - {"kind": "gpio", "label": "GP14", "pad": "GPIO14", "position": 5}
+      - {"kind": "gpio", "label": "GP15", "pad": "GPIO15", "position": 6}
+      - {"kind": "gpio", "label": "GP16", "pad": "GPIO16", "position": 7}
+      - {"kind": "ground", "label": "GND", "position": 8}
+      - {"kind": "gpio", "label": "GP17", "pad": "GPIO17", "position": 9}
+      - {"kind": "gpio", "label": "GP18", "pad": "GPIO18", "position": 10}
+      - {"kind": "gpio", "label": "GP33", "pad": "GPIO33", "position": 11}
+      - {"kind": "gpio", "label": "GP34", "pad": "GPIO34", "position": 12}
+      - {"kind": "ground", "label": "GND", "position": 13}
+      - {"kind": "gpio", "label": "GP35", "pad": "GPIO35", "position": 14}
+      - {"kind": "gpio", "label": "GP36", "pad": "GPIO36", "position": 15}
+      - {"kind": "gpio", "label": "GP37", "pad": "GPIO37", "position": 16}
+      - {"kind": "gpio", "label": "GP38", "pad": "GPIO38", "position": 17}
+      - {"kind": "ground", "label": "GND", "position": 18}
+      - {"kind": "gpio", "label": "GP39", "pad": "GPIO39", "position": 19}
+      - {"kind": "gpio", "label": "GP40", "pad": "GPIO40", "position": 20}
+      - {"kind": "gpio", "label": "GP42", "pad": "GPIO42", "position": 21}
+      - {"kind": "gpio", "label": "GP41", "pad": "GPIO41", "position": 22}
+      - {"kind": "ground", "label": "GND", "position": 23}
+      - {"kind": "gpio", "label": "GP1", "pad": "GPIO1", "position": 24}
+      - {"kind": "gpio", "label": "GP2", "pad": "GPIO2", "position": 25}
+      - {"kind": "gpio", "label": "GP4", "pad": "GPIO4", "position": 26}
+      - {"kind": "gpio", "label": "GP5", "pad": "GPIO5", "position": 27}
+      - {"kind": "ground", "label": "GND", "position": 28}
+      - {"kind": "gpio", "label": "GP6", "pad": "GPIO6", "position": 29}
+      - {"kind": "reset", "label": "RUN", "position": 30}
+      - {"kind": "gpio", "label": "GP7", "pad": "GPIO7", "position": 31}
+      - {"kind": "gpio", "label": "GP8", "pad": "GPIO8", "position": 32}
+      - {"kind": "ground", "label": "GND", "position": 33}
+      - {"kind": "gpio", "label": "GP9", "pad": "GPIO9", "position": 34}
+      - {"kind": "gpio", "label": "GP10", "pad": "GPIO10", "position": 35}
+      - {"kind": "power", "label": "3V3", "position": 36, "rail": "3V3"}
+      - {"kind": "enable", "label": "3V3_EN", "position": 37}
+      - {"kind": "ground", "label": "GND", "position": 38}
+      - {"kind": "power", "label": "VSYS", "position": 39, "rail": "VSYS"}
+      - {"kind": "power", "label": "VBUS", "position": 40, "rail": "VBUS"}
+  - id: "TP"
+    pins:
+      - {"kind": "gpio", "label": "D_N", "pad": "GPIO19", "position": 1}
+      - {"kind": "gpio", "label": "D_P", "pad": "GPIO20", "position": 2}
+      - {"kind": "gpio", "label": "GP3", "pad": "GPIO3", "position": 3}
+      - {"kind": "gpio", "label": "GP21", "pad": "GPIO21", "position": 4}
+      - {"kind": "gpio", "label": "GP0", "pad": "GPIO0", "position": 5}
+id: "waveshare-esp32-s3-pico"
+logic_voltage: {"evidence": ["waveshare-esp32-s3-pico-sch#dcdc-part", "waveshare-esp32-s3-pico-wiki#dcdc"], "note": "The MP28164 buck-boost produces the 3V3 rail (pin 36 3V3(OUT)); the chip VDD_SPI/IO domains run at 3.3 V. No sentence states the logic voltage; derived. One key (hardware-researcher): a blind audit must re-read it.", "status": "single-source", "unit": "V", "value": 3.3}
+name: "ESP32-S3-Pico"
+numbering: {"primary": "gpio"}
+onboard:
+  - {"effect": "DIN is on net RGB_LED = GPIO21 (10K pull-up R19 to 3V3). GPIO21 is only on test pad TP.", "evidence": ["waveshare-esp32-s3-pico-sch#rgb-part", "waveshare-esp32-s3-pico-sch#rgb-led-net"], "part": "L2 WS2812B addressable RGB LED", "uses_pad": ["GPIO21"]}
+  - {"effect": "Pulls GPIO0 (strapping pin) low for download mode; GPIO0 is on test pad TP only.", "evidence": ["waveshare-esp32-s3-pico-sch#keys"], "part": "BOOT key", "uses_pad": ["GPIO0"]}
+  - {"effect": "Pulls CHIP_PU low; CHIP_PU is Pico pin 30 (RUN).", "evidence": ["waveshare-esp32-s3-pico-sch#keys"], "part": "RESET key on CHIP_PU", "uses_pad": []}
+  - {"effect": "Bridge TXD/RXD wired to U0RXD/U0TXD through R16 0 ohm / R17 499 ohm; DTR/RTS auto-program drives CHIP_PU and GPIO0. GPIO43/GPIO44 have no pad.", "evidence": ["waveshare-esp32-s3-pico-wiki#bridge-chips", "waveshare-esp32-s3-pico-sch#ch343"], "part": "U1 CH343P USB-UART bridge", "uses_pad": ["GPIO43", "GPIO44"]}
+  - {"effect": "The hub exposes the chip native USB (D-/D+ on GPIO19/GPIO20, through R18/R20 0 ohm) next to the CH343 on the single USB-C port. GPIO19/GPIO20 are on test pads D_N/D_P only.", "evidence": ["waveshare-esp32-s3-pico-wiki#bridge-chips", "waveshare-esp32-s3-pico-sch#ch334"], "part": "U2 CH334F USB hub (shared USB-C port)", "uses_pad": ["GPIO19", "GPIO20"]}
+  - {"effect": "GPIO3 is loaded by the VBUS divider (midpoint) and C39; GPIO3 is also a strapping pin (JTAG source). Pin is on test pad TP only.", "evidence": ["waveshare-esp32-s3-pico-sch#usb-adc"], "part": "VBUS divider R2/R4 100K/100K with C39 (USB_ADC)", "uses_pad": ["GPIO3"]}
+  - {"effect": "External flash on SPICS0 (GPIO29), SPIQ, SPIWP, SPICLK, SPID, SPIHD; shares the Quad bus with the in-package PSRAM. None is led out.", "evidence": ["waveshare-esp32-s3-pico-wiki#memory", "waveshare-esp32-s3-pico-sch#flash-part"], "part": "U4 W25Q128 16 MB SPI flash", "uses_pad": ["GPIO27", "GPIO28", "GPIO29", "GPIO30", "GPIO31", "GPIO32"]}
+  - {"effect": "Switches the 3V3_OP supply of the bridge/hub chips; control source not traced.", "evidence": ["waveshare-esp32-s3-pico-sch#save-power"], "part": "FDC6333C MOSFET pair (SAVE POWER)", "uses_pad": []}
+rails:
+  - max_current: {"evidence": ["waveshare-esp32-s3-pico-wiki#dcdc"], "note": "Wiki: MP28164 \"load current of up to 2A\" - the converter rating, not necessarily what the 3V3 pad should deliver after the board load. One key (hardware-researcher): a blind audit must re-read it.", "status": "single-source", "unit": "mA", "value": 2000}
+    name: "3V3"
+    source: "U7 MP28164 buck-boost from VSYS"
+    voltage: {"evidence": ["waveshare-esp32-s3-pico-sch#dcdc-part", "waveshare-esp32-s3-pico-wiki#pinout-image"], "note": "Pad labelled 3V3(OUT); regulator output assumed 3.3 V from the rail name (the feedback divider values were not read). One key (hardware-researcher): a blind audit must re-read it.", "status": "single-source", "unit": "V", "value": 3.3}
+  - max_current: {"evidence": [], "note": "No current rating stated.", "status": "missing", "unit": "mA", "value": null}
+    name: "VBUS"
+    source: "USB-C VBUS (pin 40)"
+    voltage: {"evidence": ["waveshare-esp32-s3-pico-wiki#pinout-image"], "note": "VBUS is the USB 5 V rail (nominal); pin 40 labelled VBUS. One key (hardware-researcher): a blind audit must re-read it.", "status": "single-source", "unit": "V", "value": 5}
+  - max_current: {"evidence": [], "note": "No current rating stated.", "status": "missing", "unit": "mA", "value": null}
+    name: "VSYS"
+    source: "VBUS through diode D1 MBR230LSFT1G; external supply input"
+    voltage: {"evidence": [], "note": "The permitted VSYS input range is not stated on the wiki page (the MP28164 datasheet was not opened).", "status": "missing", "unit": "V", "value": null}
+revision: "unversioned"
+status: "partially-verified"
+variants:
+  - {"id": "waveshare-esp32-s3-pico-r2", "module": "esp32-s3r2"}
+vendor: "Waveshare"

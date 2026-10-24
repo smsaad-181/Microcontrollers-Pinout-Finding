@@ -1,0 +1,22 @@
+# Evidence record: ESP32-S3-Pico - Waveshare Wiki (read 2026-10-24; one key, boards-2 task; a blind auditor must re-read every claim).
+# HTML wiki page read 2026-10-24. The pinout / onboard-interface pictures on the page are images; their text was transcribed (claims marked image).
+accessed: "2026-10-24"
+claims:
+  - {"id": "waveshare-esp32-s3-pico-wiki#chip", "locator": "Overview > Introduction", "quote": "The main chip chip is the ESP32-S3R2", "supports": "The main chip is ESP32-S3R2 (2 MB PSRAM in package)"}
+  - {"id": "waveshare-esp32-s3-pico-wiki#memory", "locator": "Features", "quote": "Integrated 512KB SRAM, 384KB ROM, 2MB PSRAM, 16MB Flash memory", "supports": "2 MB PSRAM and 16 MB flash"}
+  - {"id": "waveshare-esp32-s3-pico-wiki#bridge-chips", "locator": "Overview > Introduction", "quote": "The interface chips are CH343 and CH334", "supports": "UART bridge CH343 and USB hub CH334 on one USB-C port"}
+  - {"id": "waveshare-esp32-s3-pico-wiki#dcdc", "locator": "Features", "quote": "Onboard DC-DC chip MP28164, a high-efficiency DC-DC buck-boost chip with a load current of up to 2A", "supports": "MP28164 buck-boost converter, load current up to 2 A"}
+  - {"id": "waveshare-esp32-s3-pico-wiki#gpio-count", "locator": "Features", "quote": "27 multi-function GPIO pins", "supports": "27 multi-function GPIO pins"}
+  - {"id": "waveshare-esp32-s3-pico-wiki#pinout-image", "locator": "Overview > Pinout Definition (ESP32-S3-Pico-details-inter-1.jpg) [drawing/image, transcribed]", "quote": "VBUS VSYS GND 3V3_EN 3V3(OUT)", "supports": "Pinout picture: Pico-style 40 pins numbered 1-40 plus test pads for GND, D_N, D_P, GP3, GP21, GP0"}
+doc_number: null
+id: "waveshare-esp32-s3-pico-wiki"
+kind: "board-guide"
+manual: false
+publisher: "Waveshare"
+revision: null
+revision_date: null
+secondary: false
+sha256: null
+title: "ESP32-S3-Pico - Waveshare Wiki"
+url: "https://www.waveshare.com/wiki/ESP32-S3-Pico"
+url_original: null
