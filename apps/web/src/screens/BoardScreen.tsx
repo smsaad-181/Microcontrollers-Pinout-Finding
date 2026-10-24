@@ -108,7 +108,7 @@ function BoardPicker({ data }: { data: LoadedCatalog }) {
           return (
             <li key={c.key} className={`pick-card${sel ? ' is-selected' : ''}`}>
               <BoardArt name={c.name} vendor={c.vendor} family={c.family} />
-              <h3>{c.name}</h3>
+              <h2>{c.name}</h2>
               <p className="muted">
                 {c.vendor} · {c.family}
               </p>

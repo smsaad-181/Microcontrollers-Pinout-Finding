@@ -180,7 +180,7 @@ function ModulePicker({ data }: { data: LoadedCatalog }) {
             return (
               <li key={g.ic} className="pick-card">
                 <ModuleArt category={categoryOf(g.ic)} name={name} />
-                <h3>{name}</h3>
+                <h2>{name}</h2>
                 <p className="muted">
                   {g.breakouts.length === 1
                     ? `${first?.vendor ?? ''} · ${(first?.interfaces ?? []).map((k) => INTERFACE_LABELS[k] ?? k).join(', ')}`

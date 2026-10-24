@@ -177,7 +177,7 @@ test('keyboard only: board, module, results', async ({ page }) => {
     const label = await page.evaluate(
       () => (document.activeElement as HTMLInputElement).closest('label')?.textContent ?? '',
     );
-    if (/ESP32-WROOM-32E/.test(label)) break;
+    if (label.includes('ESP32-WROOM-32E')) break;
     await page.keyboard.press('ArrowDown');
   }
   await page.keyboard.press('Space');
