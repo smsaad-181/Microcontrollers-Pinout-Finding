@@ -1,4 +1,4 @@
-# Waveshare ESP32-C3-Zero (and -M with headers). Chip ESP32-C3FH4 used bare. Revision "V2" is taken from the schematic file name ESP32-C3-Zero-Sch-V2.pdf (the wiki prints no revision). One key; every fact is single-source.
+# Waveshare ESP32-C3-Zero (and -M with headers). Chip ESP32-C3FH4 used bare. Revision "V2" is taken from the schematic file name ESP32-C3-Zero-Sch-V2.pdf (the wiki prints no revision). Two keys (researcher + blind auditor) agree on every fact.
 # Sources: Waveshare wiki page and the schematic PDF (18-pin header read from the rendered drawing).
 # Connector P1 = the 18 castellated pads in schematic numbering. IO18/IO19 are USB D-/D+; GPIO9 (BOOT) and GPIO10 (RGB LED) are also on the header. GPIO11-GPIO17 have no pad.
 # Gap: the wiki shows no pinout picture in the page text; the physical left/right position of each pad is not transcribed (only the schematic numbering). No current rating for the 3V3 LDO is given for this board (the 800 mA figure appears only for the sibling Zero/Tiny boards).
@@ -24,7 +24,7 @@ connectors:
       - {"kind": "gpio", "label": "RX", "pad": "GPIO20", "position": 17}
       - {"kind": "gpio", "label": "TX", "pad": "GPIO21", "position": 18}
 id: "waveshare-esp32-c3-zero"
-logic_voltage: {"evidence": ["waveshare-esp32-c3-zero-sch-v2#ldo-part"], "note": "LDO ME6217C33M5G (33 = 3.3 V) makes VCC3.3 for the chip. Derived, not stated in a sentence. One key (hardware-researcher): a blind audit must re-read it.", "status": "single-source", "unit": "V", "value": 3.3}
+logic_voltage: {"evidence": ["waveshare-esp32-c3-zero-sch-v2#ldo-part"], "note": "LDO ME6217C33M5G (33 = 3.3 V) makes VCC3.3 for the chip. Derived, not stated in a sentence.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "unit": "V", "value": 3.3}
 name: "ESP32-C3-Zero"
 numbering: {"primary": "label"}
 onboard:
@@ -38,11 +38,11 @@ rails:
   - max_current: {"evidence": [], "note": "The C3-Zero wiki and schematic do not state an LDO current rating.", "status": "missing", "unit": "mA", "value": null}
     name: "3V3"
     source: "ME6217C33M5G LDO from 5V (schematic)"
-    voltage: {"evidence": ["waveshare-esp32-c3-zero-sch-v2#ldo-part"], "note": "LDO output 3.3 V (part code C33). One key (hardware-researcher): a blind audit must re-read it.", "status": "single-source", "unit": "V", "value": 3.3}
+    voltage: {"evidence": ["waveshare-esp32-c3-zero-sch-v2#ldo-part"], "note": "LDO output 3.3 V (part code C33).", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "unit": "V", "value": 3.3}
   - max_current: {"evidence": [], "note": "No current rating for the 5 V pad is stated.", "status": "missing", "unit": "mA", "value": null}
     name: "5V"
     source: "USB-C VBUS or the 5V castellated pad (header pin 1)"
-    voltage: {"evidence": ["waveshare-esp32-c3-zero-wiki#vin-range"], "note": "Wiki: input 3.7 V to 6 V on the pad silkscreened 5V. One key (hardware-researcher): a blind audit must re-read it.", "status": "single-source", "unit": "V", "value": {"max": 6, "min": 3.7}}
+    voltage: {"evidence": ["waveshare-esp32-c3-zero-wiki#vin-range"], "note": "Wiki: input 3.7 V to 6 V on the pad silkscreened 5V.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "unit": "V", "value": {"max": 6, "min": 3.7}}
 revision: "V2"
 status: "partially-verified"
 variants:

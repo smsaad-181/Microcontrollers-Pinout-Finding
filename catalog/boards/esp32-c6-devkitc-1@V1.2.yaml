@@ -1,4 +1,4 @@
-# Espressif ESP32-C6-DevKitC-1 v1.2 (guide v1.2; schematic v1.4 of 2024-05-09 used for the drawing facts; v1.2-v1.4 differ in resistor values and J5 shape only). Variant N8 = ESP32-C6-WROOM-1-N8. One key; every fact is single-source.
+# Espressif ESP32-C6-DevKitC-1 v1.2 (guide v1.2; schematic v1.4 of 2024-05-09 used for the drawing facts; v1.2-v1.4 differ in resistor values and J5 shape only). Variant N8 = ESP32-C6-WROOM-1-N8. Two keys (researcher + blind auditor) agree on every fact.
 # Sources: user guide (esp-dev-kits, latest) Header Block tables J1/J3 and schematic v1.4.
 # Labels = the guide Name column (a bare GPIO number); positions follow the schematic numbering. J1-2 RST is CHIP_PU (kind reset, no pad). J1-16 and J3-16 are NC (guide: No connection).
 # GPIO24-GPIO30 (flash) and GPIO14 (not on QFN40) have no header pin. GPIO4, GPIO5, GPIO8, GPIO9, GPIO15 are strapping pins (guide footnote [3]); GPIO8 drives the RGB LED, GPIO9 is the BOOT button.
@@ -41,14 +41,14 @@ connectors:
       - {"kind": "ground", "label": "GND", "position": 15}
       - {"kind": "nc", "label": "NC", "position": 16}
 id: "esp32-c6-devkitc-1"
-logic_voltage: {"evidence": ["esp32-c6-devkitc-1-ug-v1.2#ldo", "esp32-c6-devkitc-1-sch-v1.4#ldo-part"], "note": "Guide: 5 V to 3.3 V LDO; schematic: U2 SGM2212-3.3XKC3G/TR. No document states a logic voltage in words; derived from the 3.3 V LDO feeding the module. One key.", "status": "single-source", "unit": "V", "value": 3.3}
+logic_voltage: {"evidence": ["esp32-c6-devkitc-1-ug-v1.2#ldo", "esp32-c6-devkitc-1-sch-v1.4#ldo-part"], "note": "Guide: 5 V to 3.3 V LDO; schematic: U2 SGM2212-3.3XKC3G/TR. No document states a logic voltage in words; derived from the 3.3 V LDO feeding the module.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "unit": "V", "value": 3.3}
 name: "ESP32-C6-DevKitC-1"
 numbering: {"primary": "gpio"}
 onboard:
-  - {"effect": "DIN is driven from GPIO8 through R17 0 ohm (net RGB_CTRL); the LED VDD is VCC_5V in schematic v1.4. GPIO8 is also header J1-9 and a strapping pin, so a load there disturbs the LED and boot.", "evidence": ["esp32-c6-devkitc-1-ug-v1.2#rgb-led", "esp32-c6-devkitc-1-ug-v1.2#j1-gpio8-rgb", "esp32-c6-devkitc-1-sch-v1.4#rgb-part", "esp32-c6-devkitc-1-sch-v1.4#rgb-ctrl-net"], "part": "D6 WS2812B addressable RGB LED", "uses_pad": ["GPIO8"]}
+  - {"effect": "GPIO8 drives DIN through diode D11 (1N4148W, cathode at GPIO8) and R17 0 ohm (net RGB_CTRL); R29 10 kohm pulls DIN up to VCC_5V; the LED VDD is VCC_5V in schematic v1.4. GPIO8 itself has a 3.3 kohm pull-up R6 to VCC_3V3, so any external load on J1-9 works against 3.3 kohm. GPIO8 is also a strapping pin, so a load there disturbs the LED and boot.", "evidence": ["esp32-c6-devkitc-1-ug-v1.2#rgb-led", "esp32-c6-devkitc-1-ug-v1.2#j1-gpio8-rgb", "esp32-c6-devkitc-1-sch-v1.4#rgb-part", "esp32-c6-devkitc-1-sch-v1.4#rgb-ctrl-net"], "part": "D6 WS2812B addressable RGB LED", "uses_pad": ["GPIO8"]}
   - {"effect": "Pulls GPIO9 (strapping pin, normally high) to ground; hold Boot and press Reset for download mode. GPIO9 is also header J3-11.", "evidence": ["esp32-c6-devkitc-1-ug-v1.2#boot-button", "esp32-c6-devkitc-1-sch-v1.4#buttons", "esp32-c6-devkitc-1-sch-v1.4#auto-program"], "part": "SW1 Boot button", "uses_pad": ["GPIO9"]}
   - {"effect": "Pulls CHIP_PU (EN) to ground and restarts the system; CHIP_PU is not a GPIO pad.", "evidence": ["esp32-c6-devkitc-1-ug-v1.2#reset-button", "esp32-c6-devkitc-1-sch-v1.4#buttons"], "part": "SW2 Reset button on CHIP_PU", "uses_pad": []}
-  - {"effect": "Bridge TXD/RXD connect to the module TXD0 (GPIO16) / RXD0 (GPIO17) through R9 0 ohm and R7 (470 ohm from the March 2024 boards); same pads on header J3-2 (TX) and J3-3 (RX).", "evidence": ["esp32-c6-devkitc-1-ug-v1.2#usb-bridge", "esp32-c6-devkitc-1-ug-v1.2#usb-c-uart", "esp32-c6-devkitc-1-ug-v1.2#j3-table", "esp32-c6-devkitc-1-sch-v1.4#bridge-part"], "part": "U3 CP2102N-A02-GQFN28 USB-to-UART bridge (USB Type-C J2)", "uses_pad": ["GPIO16", "GPIO17"]}
+  - {"effect": "Bridge TXD/RXD connect to the module TXD0 (GPIO16) / RXD0 (GPIO17) through R9 0 ohm and R7 (470 ohm in schematic v1.4; the guide does not state a revision date for the 470 ohm value); same pads on header J3-2 (TX) and J3-3 (RX).", "evidence": ["esp32-c6-devkitc-1-ug-v1.2#usb-bridge", "esp32-c6-devkitc-1-ug-v1.2#usb-c-uart", "esp32-c6-devkitc-1-ug-v1.2#j3-table", "esp32-c6-devkitc-1-sch-v1.4#bridge-part"], "part": "U3 CP2102N-A02-GQFN28 USB-to-UART bridge (USB Type-C J2)", "uses_pad": ["GPIO16", "GPIO17"]}
   - {"effect": "DTR/RTS can pull CHIP_PU (EN) and GPIO9 low to enter download mode automatically.", "evidence": ["esp32-c6-devkitc-1-sch-v1.4#auto-program"], "part": "Auto-download circuit (BC847BDW1T1G dual NPN, bridge DTR/RTS)", "uses_pad": ["GPIO9"]}
   - {"effect": "D- is wired to GPIO12 and D+ to GPIO13 (USB Serial/JTAG, JTAG debugging); VBUS reaches VCC_5V through D7. The pads are also on header J3-14/J3-13.", "evidence": ["esp32-c6-devkitc-1-ug-v1.2#usb-c-native", "esp32-c6-devkitc-1-ug-v1.2#j3-usb", "esp32-c6-devkitc-1-sch-v1.4#usb-type-c", "esp32-c6-devkitc-1-sch-v1.4#usb-gpio12-13", "esp32-c6-ds-v1.5#usb-default"], "part": "J4 USB Type-C (ESP32-C6 native USB, full speed)", "uses_pad": ["GPIO12", "GPIO13"]}
   - {"effect": "Jumper in the module 3V3 supply path; removing it cuts power to the module.", "evidence": ["esp32-c6-devkitc-1-ug-v1.2#j5-current", "esp32-c6-devkitc-1-sch-v1.4#j5-jumper"], "part": "J5 jumper (current measurement)", "uses_pad": []}
@@ -57,11 +57,11 @@ rails:
   - max_current: {"evidence": [], "note": "Neither the user guide nor the schematic states a current rating; the SGM2212 datasheet was not opened.", "status": "missing", "unit": "mA", "value": null}
     name: "3V3"
     source: "U2 SGM2212-3.3XKC3G/TR LDO from VCC_5V; reaches the module through the J5 jumper"
-    voltage: {"evidence": ["esp32-c6-devkitc-1-ug-v1.2#ldo", "esp32-c6-devkitc-1-sch-v1.4#ldo-part"], "note": "LDO output 3.3 V (part name carries the voltage). One key.", "status": "single-source", "unit": "V", "value": 3.3}
+    voltage: {"evidence": ["esp32-c6-devkitc-1-ug-v1.2#ldo", "esp32-c6-devkitc-1-sch-v1.4#ldo-part"], "note": "LDO output 3.3 V (part name carries the voltage).", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "unit": "V", "value": 3.3}
   - max_current: {"evidence": [], "note": "No 5 V current rating in the guide or the schematic.", "status": "missing", "unit": "mA", "value": null}
     name: "5V"
     source: "USB-C VBUS of J2 or J4 through diodes D1/D7 (VCC_5V), or the 5V header pin"
-    voltage: {"evidence": ["esp32-c6-devkitc-1-ug-v1.2#power-options", "esp32-c6-devkitc-1-ug-v1.2#headers-all-gpio"], "note": "J1-14 is labelled 5V; nominal 5 V only. One key.", "status": "single-source", "unit": "V", "value": 5}
+    voltage: {"evidence": ["esp32-c6-devkitc-1-ug-v1.2#power-options", "esp32-c6-devkitc-1-ug-v1.2#headers-all-gpio"], "note": "J1-14 is labelled 5V; nominal 5 V only.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "unit": "V", "value": 5}
 revision: "V1.2"
 status: "partially-verified"
 variants:

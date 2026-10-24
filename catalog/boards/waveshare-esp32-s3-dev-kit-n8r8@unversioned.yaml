@@ -1,4 +1,4 @@
-# Waveshare ESP32-S3-DEV-KIT-N8R8 (ESP32-S3-WROOM-1-N8R8; the wiki family also lists N16R8/N32R16V, only N8R8 is catalogued). Header-compatible with Espressif ESP32-S3-DevKitC-1. No revision printed; revision "unversioned". One key; every fact is single-source.
+# Waveshare ESP32-S3-DEV-KIT-N8R8 (ESP32-S3-WROOM-1-N8R8; the wiki family also lists N16R8/N32R16V, only N8R8 is catalogued). Header-compatible with Espressif ESP32-S3-DevKitC-1. No revision printed; revision "unversioned". Two keys (researcher + blind auditor) agree on every fact.
 # Sources: Waveshare wiki page (text + pinout picture) and the schematic PDF (headers P1/P2 read from the rendered drawing; they match the wiki picture and the DevKitC-1 J1/J3 pin for pin).
 # Connectors P1 (22) and P2 (22) use the schematic numbering. Labels: bare GPIO numbers as in the DevKitC-1 record; TX/RX = GPIO43/GPIO44 (U0TXD/U0RXD). P1-3 is CHIP_PU/EN (kind reset). P1-21 is the VCC_5V net.
 # GPIO35/GPIO36/GPIO37 are used by the Octal PSRAM (module record consumed) but stay on the header map. GPIO26-GPIO32 (flash) have no pin.
@@ -53,7 +53,7 @@ connectors:
       - {"kind": "ground", "label": "GND", "position": 21}
       - {"kind": "ground", "label": "GND", "position": 22}
 id: "waveshare-esp32-s3-dev-kit-n8r8"
-logic_voltage: {"evidence": ["waveshare-esp32-s3-dev-kit-n8r8-sch#ldo-part", "waveshare-esp32-s3-dev-kit-n8r8-wiki#module"], "note": "Schematic: 3.3 V regulator U2 (SGM2212-3.3/AMS1117) makes VDD3V3 for the module. No sentence states the logic voltage; derived. One key (hardware-researcher): a blind audit must re-read it.", "status": "single-source", "unit": "V", "value": 3.3}
+logic_voltage: {"evidence": ["waveshare-esp32-s3-dev-kit-n8r8-sch#ldo-part", "waveshare-esp32-s3-dev-kit-n8r8-wiki#module"], "note": "Schematic: 3.3 V regulator U2 (SGM2212-3.3/AMS1117) makes VDD3V3 for the module. No sentence states the logic voltage; derived.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "unit": "V", "value": 3.3}
 name: "ESP32-S3-DEV-KIT-N8R8"
 numbering: {"primary": "gpio"}
 onboard:
@@ -68,11 +68,11 @@ rails:
   - max_current: {"evidence": [], "note": "No current rating on the wiki or the schematic (the regulator is printed as two alternative parts; no datasheet opened).", "status": "missing", "unit": "mA", "value": null}
     name: "3V3"
     source: "U2 SGM2212-3.3/AMS1117 LDO from VDDUSB (schematic)"
-    voltage: {"evidence": ["waveshare-esp32-s3-dev-kit-n8r8-sch#ldo-part"], "note": "Regulator name carries the voltage. One key (hardware-researcher): a blind audit must re-read it.", "status": "single-source", "unit": "V", "value": 3.3}
+    voltage: {"evidence": ["waveshare-esp32-s3-dev-kit-n8r8-sch#ldo-part"], "note": "Regulator name carries the voltage.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "unit": "V", "value": 3.3}
   - max_current: {"evidence": [], "note": "No 5 V current rating stated.", "status": "missing", "unit": "mA", "value": null}
     name: "5V"
     source: "USB-C VBUS through D1 B5819WS (VDDUSB), or the 5V header pin"
-    voltage: {"evidence": ["waveshare-esp32-s3-dev-kit-n8r8-sch#headers", "waveshare-esp32-s3-dev-kit-n8r8-sch#vbus-diode"], "note": "P1-21 is the VCC_5V pin (picture: 5V0); nominal 5 V only. One key (hardware-researcher): a blind audit must re-read it.", "status": "single-source", "unit": "V", "value": 5}
+    voltage: {"evidence": ["waveshare-esp32-s3-dev-kit-n8r8-sch#headers", "waveshare-esp32-s3-dev-kit-n8r8-sch#vbus-diode"], "note": "P1-21 is the VCC_5V pin (picture: 5V0); nominal 5 V only.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "unit": "V", "value": 5}
 revision: "unversioned"
 status: "partially-verified"
 variants:

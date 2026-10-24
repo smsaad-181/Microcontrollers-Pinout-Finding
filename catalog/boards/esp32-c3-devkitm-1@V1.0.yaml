@@ -1,4 +1,4 @@
-# Espressif ESP32-C3-DevKitM-1 revision V1.0 (schematic V1.0, 2020-09-15; sheet 2 dated 2021-05-20). Variant: ESP32-C3-DevKitM-1-N4X with ESP32-C3-MINI-1 (the plain ESP32-C3-DevKitM-1 is EOL). One key; every fact is single-source.
+# Espressif ESP32-C3-DevKitM-1 revision V1.0 (schematic V1.0, 2020-09-15; sheet 2 dated 2021-05-20). Variant: ESP32-C3-DevKitM-1-N4X with ESP32-C3-MINI-1 (the plain ESP32-C3-DevKitM-1 is EOL). Two keys (researcher + blind auditor) agree on every fact.
 # Sources: ESP32-C3-DevKitM-1 user guide (esp-dev-kits, latest; no revision printed on the page) Header Block tables J1/J3, and the schematic PDF (connectivity read from the rendered drawing).
 # Labels = the guide Name column (IO0.. and TX/RX); positions J1-1..15 and J3-1..15 follow the schematic numbering (guide: "The numbering is the same as in the ... Schematic"). RST (J1-7) is CHIP_PU, modelled as kind reset without a pad.
 # GPIO11-GPIO17 have no header pin (flash / VDD_SPI). GPIO8 (RGB LED) and GPIO9 (BOOT) are strapping pins that are also on the header.
@@ -39,7 +39,7 @@ connectors:
       - {"kind": "gpio", "label": "IO19", "pad": "GPIO19", "position": 14}
       - {"kind": "ground", "label": "GND", "position": 15}
 id: "esp32-c3-devkitm-1"
-logic_voltage: {"evidence": ["esp32-c3-devkitm-1-ug#ldo", "esp32-c3-devkitm-1-sch-v1.0#ldo-part"], "note": "Guide: 5 V to 3.3 V LDO; schematic: U2 SGM2212-3.3XKC3G/TR. No document states a logic voltage in words; 3.3 V is derived from the 3.3 V LDO feeding the module (VCC_3V3). One key.", "status": "single-source", "unit": "V", "value": 3.3}
+logic_voltage: {"evidence": ["esp32-c3-devkitm-1-ug#ldo", "esp32-c3-devkitm-1-sch-v1.0#ldo-part"], "note": "Guide: 5 V to 3.3 V LDO; schematic: U2 SGM2212-3.3XKC3G/TR. No document states a logic voltage in words; 3.3 V is derived from the 3.3 V LDO feeding the module (VCC_3V3).", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "unit": "V", "value": 3.3}
 name: "ESP32-C3-DevKitM-1"
 numbering: {"primary": "label"}
 onboard:
@@ -54,11 +54,11 @@ rails:
   - max_current: {"evidence": [], "note": "Neither the user guide nor the schematic states a current rating; the SGM2212 datasheet was not opened.", "status": "missing", "unit": "mA", "value": null}
     name: "3V3"
     source: "U2 SGM2212-3.3XKC3G/TR LDO from VCC_5V (schematic)"
-    voltage: {"evidence": ["esp32-c3-devkitm-1-ug#ldo", "esp32-c3-devkitm-1-sch-v1.0#ldo-part"], "note": "LDO output 3.3 V (regulator part name carries the voltage). One key.", "status": "single-source", "unit": "V", "value": 3.3}
+    voltage: {"evidence": ["esp32-c3-devkitm-1-ug#ldo", "esp32-c3-devkitm-1-sch-v1.0#ldo-part"], "note": "LDO output 3.3 V (regulator part name carries the voltage).", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "unit": "V", "value": 3.3}
   - max_current: {"evidence": [], "note": "No 5 V current rating in the guide or the schematic.", "status": "missing", "unit": "mA", "value": null}
     name: "5V"
     source: "Micro-USB VBUS through diode D1 (VCC_5V), or the 5V header pins"
-    voltage: {"evidence": ["esp32-c3-devkitm-1-ug#power-options", "esp32-c3-devkitm-1-ug#j1-table"], "note": "Header pins J1-13/J1-14 are labelled 5V (guide: \"5 V power supply\"); nominal 5 V only. One key.", "status": "single-source", "unit": "V", "value": 5}
+    voltage: {"evidence": ["esp32-c3-devkitm-1-ug#power-options", "esp32-c3-devkitm-1-ug#j1-table"], "note": "Header pins J1-13/J1-14 are labelled 5V (guide: \"5 V power supply\"); nominal 5 V only.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "unit": "V", "value": 5}
 revision: "V1.0"
 status: "partially-verified"
 variants:

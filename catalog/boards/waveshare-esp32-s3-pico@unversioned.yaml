@@ -1,4 +1,4 @@
-# Waveshare ESP32-S3-Pico (Raspberry-Pi-Pico form factor, 40 castellated pins). Chip ESP32-S3R2 (2 MB Quad PSRAM in the package) used bare with a 16 MB W25Q128 flash on the board. No revision printed; revision "unversioned". One key; every fact is single-source.
+# Waveshare ESP32-S3-Pico (Raspberry-Pi-Pico form factor, 40 castellated pins). Chip ESP32-S3R2 (2 MB Quad PSRAM in the package) used bare with a 16 MB W25Q128 flash on the board. No revision printed; revision "unversioned". Two keys (researcher + blind auditor) agree on every fact.
 # Sources: Waveshare wiki page (text + the pinout picture, transcribed) and the schematic PDF (PIN OUT block of sheet 1 read from the rendered drawing; both agree).
 # Connector J: positions 1-40 are the printed Pico pin numbers (1-20 on one side, 21-40 on the other). GP label = chip GPIO number. Pin 30 is CHIP_PU (printed RUN), pin 37 3V3_EN (kind enable). VSYS and VBUS are separate rails; their voltages are not stated -> VSYS missing.
 # Connector TP: five test pads (D_N = GPIO19, D_P = GPIO20, GP3, GP21, GP0) in the wiki picture order (left to right); positions are my order and are transcribed. GPIO43/GPIO44 (CH343 UART) have no pad.
@@ -54,8 +54,9 @@ connectors:
       - {"kind": "gpio", "label": "GP3", "pad": "GPIO3", "position": 3}
       - {"kind": "gpio", "label": "GP21", "pad": "GPIO21", "position": 4}
       - {"kind": "gpio", "label": "GP0", "pad": "GPIO0", "position": 5}
+      - {"kind": "ground", "label": "GND", "position": 6}
 id: "waveshare-esp32-s3-pico"
-logic_voltage: {"evidence": ["waveshare-esp32-s3-pico-sch#dcdc-part", "waveshare-esp32-s3-pico-wiki#dcdc"], "note": "The MP28164 buck-boost produces the 3V3 rail (pin 36 3V3(OUT)); the chip VDD_SPI/IO domains run at 3.3 V. No sentence states the logic voltage; derived. One key (hardware-researcher): a blind audit must re-read it.", "status": "single-source", "unit": "V", "value": 3.3}
+logic_voltage: {"evidence": ["waveshare-esp32-s3-pico-sch#dcdc-part", "waveshare-esp32-s3-pico-wiki#dcdc"], "note": "The MP28164 buck-boost produces the 3V3 rail (pin 36 3V3(OUT)); the chip VDD_SPI/IO domains run at 3.3 V. No sentence states the logic voltage; derived.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "unit": "V", "value": 3.3}
 name: "ESP32-S3-Pico"
 numbering: {"primary": "gpio"}
 onboard:
@@ -68,14 +69,14 @@ onboard:
   - {"effect": "External flash on SPICS0 (GPIO29), SPIQ, SPIWP, SPICLK, SPID, SPIHD; shares the Quad bus with the in-package PSRAM. None is led out.", "evidence": ["waveshare-esp32-s3-pico-wiki#memory", "waveshare-esp32-s3-pico-sch#flash-part"], "part": "U4 W25Q128 16 MB SPI flash", "uses_pad": ["GPIO27", "GPIO28", "GPIO29", "GPIO30", "GPIO31", "GPIO32"]}
   - {"effect": "Switches the 3V3_OP supply of the bridge/hub chips; control source not traced.", "evidence": ["waveshare-esp32-s3-pico-sch#save-power"], "part": "FDC6333C MOSFET pair (SAVE POWER)", "uses_pad": []}
 rails:
-  - max_current: {"evidence": ["waveshare-esp32-s3-pico-wiki#dcdc"], "note": "Wiki: MP28164 \"load current of up to 2A\" - the converter rating, not necessarily what the 3V3 pad should deliver after the board load. One key (hardware-researcher): a blind audit must re-read it.", "status": "single-source", "unit": "mA", "value": 2000}
+  - max_current: {"evidence": ["waveshare-esp32-s3-pico-wiki#dcdc"], "note": "Wiki: MP28164 \"load current of up to 2A\" - the converter rating, not necessarily what the 3V3 pad should deliver after the board load.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "unit": "mA", "value": 2000}
     name: "3V3"
     source: "U7 MP28164 buck-boost from VSYS"
-    voltage: {"evidence": ["waveshare-esp32-s3-pico-sch#dcdc-part", "waveshare-esp32-s3-pico-wiki#pinout-image"], "note": "Pad labelled 3V3(OUT); regulator output assumed 3.3 V from the rail name (the feedback divider values were not read). One key (hardware-researcher): a blind audit must re-read it.", "status": "single-source", "unit": "V", "value": 3.3}
+    voltage: {"evidence": ["waveshare-esp32-s3-pico-sch#dcdc-part", "waveshare-esp32-s3-pico-wiki#pinout-image"], "note": "Pad labelled 3V3(OUT); regulator output assumed 3.3 V from the rail name (the feedback divider values were not read).", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "unit": "V", "value": 3.3}
   - max_current: {"evidence": [], "note": "No current rating stated.", "status": "missing", "unit": "mA", "value": null}
     name: "VBUS"
     source: "USB-C VBUS (pin 40)"
-    voltage: {"evidence": ["waveshare-esp32-s3-pico-wiki#pinout-image"], "note": "VBUS is the USB 5 V rail (nominal); pin 40 labelled VBUS. One key (hardware-researcher): a blind audit must re-read it.", "status": "single-source", "unit": "V", "value": 5}
+    voltage: {"evidence": ["waveshare-esp32-s3-pico-wiki#pinout-image"], "note": "VBUS is the USB 5 V rail (nominal); pin 40 labelled VBUS.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "unit": "V", "value": 5}
   - max_current: {"evidence": [], "note": "No current rating stated.", "status": "missing", "unit": "mA", "value": null}
     name: "VSYS"
     source: "VBUS through diode D1 MBR230LSFT1G; external supply input"

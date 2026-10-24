@@ -1,4 +1,4 @@
-# Waveshare ESP32-C6-Zero (and -M with headers). Chip ESP32-C6FH4 (QFN32, 4 MB in-package flash) used bare. No revision printed; revision "unversioned". One key; every fact is single-source.
+# Waveshare ESP32-C6-Zero (and -M with headers). Chip ESP32-C6FH4 (QFN32, 4 MB in-package flash) used bare. No revision printed; revision "unversioned". Two keys (researcher + blind auditor) agree on every fact.
 # Sources: Waveshare wiki page (text + pinout/onboard pictures, transcribed) and the schematic PDF (18-pin header P8 read from the rendered drawing; it agrees with the wiki picture).
 # Connector P8 = the 18 castellated pads in schematic numbering; connector PADS = the 7 back pads of the wiki picture (GP13, GP12, GP23, GP9, GP8, GP7, GP6; positions are my picture order, transcribed). GPIO8 (RGB LED, strapping) and GPIO9 (BOOT, strapping) are on back pads. GPIO12/GPIO13 are USB D-/D+ (back pads).
 # GPIO4/GPIO5 (strapping pins) are on header pins 8/9 (IO4/IO5). GPIO10/GPIO11 and GPIO24-GPIO30 do not exist on QFN32.
@@ -34,7 +34,7 @@ connectors:
       - {"kind": "gpio", "label": "IO7", "pad": "GPIO7", "position": 6}
       - {"kind": "gpio", "label": "IO6", "pad": "GPIO6", "position": 7}
 id: "waveshare-esp32-c6-zero"
-logic_voltage: {"evidence": ["waveshare-esp32-c6-zero-sch#ldo-part", "waveshare-esp32-c6-zero-wiki#pinout-image"], "note": "LDO ME6217C33M5G (33 = 3.3 V) makes 3V3 for the chip; the picture labels the pad 3V3(OUT). Derived. One key (hardware-researcher): a blind audit must re-read it.", "status": "single-source", "unit": "V", "value": 3.3}
+logic_voltage: {"evidence": ["waveshare-esp32-c6-zero-sch#ldo-part", "waveshare-esp32-c6-zero-wiki#pinout-image"], "note": "LDO ME6217C33M5G (33 = 3.3 V) makes 3V3 for the chip; the picture labels the pad 3V3(OUT). Derived.", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "unit": "V", "value": 3.3}
 name: "ESP32-C6-Zero"
 numbering: {"primary": "gpio"}
 onboard:
@@ -44,14 +44,14 @@ onboard:
   - {"effect": "D-/D+ are wired to GPIO12/GPIO13 (USB_N/USB_P), which are also back pads GP12/GP13.", "evidence": ["waveshare-esp32-c6-zero-sch#usb-diode", "esp32-c6-ds-v1.5#usb-default"], "part": "USB Type-C connector (native USB Serial/JTAG, no bridge chip)", "uses_pad": ["GPIO12", "GPIO13"]}
   - {"effect": "TX (GPIO16, through R7 499 ohm) and RX (GPIO17) are header pins 18/17; no bridge is attached.", "evidence": ["waveshare-esp32-c6-zero-sch#header"], "part": "UART0 pads TX/RX", "uses_pad": ["GPIO16", "GPIO17"]}
 rails:
-  - max_current: {"evidence": ["waveshare-esp32-c6-zero-wiki#onboard-image"], "note": "Onboard-interfaces picture: \"low dropout LDO, 800mA (Max)\" (image text, transcribed; LDO rating, part of it is used by the board). One key (hardware-researcher): a blind audit must re-read it.", "status": "single-source", "transcribed": true, "unit": "mA", "value": 800}
+  - max_current: {"evidence": ["waveshare-esp32-c6-zero-wiki#onboard-image"], "note": "Onboard-interfaces picture: \"low dropout LDO, 800mA (Max)\" (image text, transcribed; LDO rating, part of it is used by the board).", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "transcribed": true, "unit": "mA", "value": 800}
     name: "3V3"
     source: "U1 ME6217C33M5G LDO from VCC_5V"
-    voltage: {"evidence": ["waveshare-esp32-c6-zero-sch#ldo-part"], "note": "LDO output 3.3 V (part code C33). One key (hardware-researcher): a blind audit must re-read it.", "status": "single-source", "unit": "V", "value": 3.3}
+    voltage: {"evidence": ["waveshare-esp32-c6-zero-sch#ldo-part"], "note": "LDO output 3.3 V (part code C33).", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "unit": "V", "value": 3.3}
   - max_current: {"evidence": [], "note": "No current rating for the 5 V pad is stated.", "status": "missing", "unit": "mA", "value": null}
     name: "5V"
     source: "USB-C VBUS through D1 B5819WS (VCC_5V) or the 5V castellated pad"
-    voltage: {"evidence": ["waveshare-esp32-c6-zero-sch#usb-diode", "waveshare-esp32-c6-zero-wiki#pinout-image"], "note": "Pad labelled 5V; USB VBUS nominal 5 V (no external input range is stated for this board). One key (hardware-researcher): a blind audit must re-read it.", "status": "single-source", "unit": "V", "value": 5}
+    voltage: {"evidence": ["waveshare-esp32-c6-zero-sch#usb-diode", "waveshare-esp32-c6-zero-wiki#pinout-image"], "note": "Pad labelled 5V; USB VBUS nominal 5 V (no external input range is stated for this board).", "reviewers": ["hardware-researcher", "hardware-fact-auditor"], "status": "verified", "unit": "V", "value": 5}
 revision: "unversioned"
 status: "partially-verified"
 variants:
