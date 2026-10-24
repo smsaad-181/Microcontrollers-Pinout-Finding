@@ -722,3 +722,7 @@ section {
     --pin-analog: #000000;
   }
 }
+
+.pin-text {
+  pointer-events: none;
+}

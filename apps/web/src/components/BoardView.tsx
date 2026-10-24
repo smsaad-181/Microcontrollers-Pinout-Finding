@@ -1,6 +1,6 @@
 // SVG header view generated from catalog connector data (no vendor graphics). Each pin state has
 // its own shape and a text legend; the pins form one tab stop and are walked with the arrow keys.
-import { useId, useRef, useState, type KeyboardEvent } from 'react';
+import { Fragment, useId, useRef, useState, type KeyboardEvent } from 'react';
 import {
   PIN_STATE_META,
   PIN_STATES,
@@ -161,47 +161,51 @@ export function BoardView({ connectors, title }: { connectors: ViewConnector[]; 
               const y = TOP + i * ROW;
               const isActive = k === (selected ? keyOf(selected) : null);
               return (
-                <g
-                  key={k}
-                  ref={(el) => {
-                    if (el) refs.current.set(k, el);
-                    else refs.current.delete(k);
-                  }}
-                  role="button"
-                  tabIndex={isActive ? 0 : -1}
-                  aria-label={pinDescription(p)}
-                  aria-pressed={isActive}
-                  className={`pin pin-${p.state}${isActive ? ' pin-active' : ''}`}
-                  onFocus={() => {
-                    setActive(k);
-                  }}
-                  onClick={() => {
-                    move(p);
-                  }}
-                >
-                  <rect
-                    x={2}
-                    y={y - ROW / 2}
-                    width={WIDTH - 4}
-                    height={ROW}
-                    rx={3}
-                    className="pin-hit"
-                  />
-                  <text x={20} y={y + 4} className="pin-pos" textAnchor="end">
-                    {p.position}
-                  </text>
-                  <g transform={`translate(${String(PIN_X)} ${String(y)})`}>
-                    <PinMarker state={p.state} />
+                <Fragment key={k}>
+                  <g
+                    ref={(el) => {
+                      if (el) refs.current.set(k, el);
+                      else refs.current.delete(k);
+                    }}
+                    role="button"
+                    tabIndex={isActive ? 0 : -1}
+                    aria-label={pinDescription(p)}
+                    aria-pressed={isActive}
+                    className={`pin pin-${p.state}${isActive ? ' pin-active' : ''}`}
+                    onFocus={() => {
+                      setActive(k);
+                    }}
+                    onClick={() => {
+                      move(p);
+                    }}
+                  >
+                    <rect
+                      x={2}
+                      y={y - ROW / 2}
+                      width={WIDTH - 4}
+                      height={ROW}
+                      rx={3}
+                      className="pin-hit"
+                    />
+                    <g transform={`translate(${String(PIN_X)} ${String(y)})`}>
+                      <PinMarker state={p.state} />
+                    </g>
                   </g>
-                  <text x={PIN_X + 18} y={y + 4} className="pin-label">
-                    {p.label}
-                    {p.detail !== '' ? (
-                      <tspan className="pin-detail" dx={6}>
-                        {p.detail.length > 22 ? `${p.detail.slice(0, 21)}…` : p.detail}
-                      </tspan>
-                    ) : null}
-                  </text>
-                </g>
+                  {/* Visible text sits beside the button, so its name is the full description. */}
+                  <g aria-hidden="true" className="pin-text">
+                    <text x={20} y={y + 4} className="pin-pos" textAnchor="end">
+                      {p.position}
+                    </text>
+                    <text x={PIN_X + 18} y={y + 4} className="pin-label">
+                      {p.label}
+                      {p.detail !== '' ? (
+                        <tspan className="pin-detail" dx={6}>
+                          {p.detail.length > 22 ? `${p.detail.slice(0, 21)}…` : p.detail}
+                        </tspan>
+                      ) : null}
+                    </text>
+                  </g>
+                </Fragment>
               );
             })}
           </svg>
