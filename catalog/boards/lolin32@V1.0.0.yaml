@@ -1,0 +1,218 @@
+# LOLIN32 V1.0.0 (WEMOS, retired) (task boards-1). Sources: WEMOS LOLIN32 V1.0.0 schematic (Internet Archive copy of the maker PDF; transcribed from the rendered image) and the archived WEMOS wiki product page.
+# Positions are the P2 (1x16) / P3 (1x20) pin numbers printed in the schematic; labels are the schematic net names (VP/VN = SENSOR_VP/SENSOR_VN = GPIO36/GPIO39 via the module symbol).
+# Flash chip, regulator and PSRAM data: flash size 4 MB (wiki). Module is ESP-WROOM-32 (schematic U1 label); the boards variant uses module record esp32-wroom-32.
+# Hardware revisions of LOLIN32 other than 1.0.0 are not covered. Blind audit done (pins and onboard entries agree); rail facts stay single-source because the sources are Internet Archive copies.
+connectors:
+  - id: "P2"
+    pins:
+      - kind: "power"
+        label: "3V3"
+        position: 1
+        rail: "3V3"
+      - kind: "reset"
+        label: "EN"
+        position: 2
+      - kind: "gpio"
+        label: "VP"
+        pad: "GPIO36"
+        position: 3
+      - kind: "gpio"
+        label: "VN"
+        pad: "GPIO39"
+        position: 4
+      - kind: "gpio"
+        label: "IO32"
+        pad: "GPIO32"
+        position: 5
+      - kind: "gpio"
+        label: "IO33"
+        pad: "GPIO33"
+        position: 6
+      - kind: "gpio"
+        label: "IO34"
+        pad: "GPIO34"
+        position: 7
+      - kind: "gpio"
+        label: "IO35"
+        pad: "GPIO35"
+        position: 8
+      - kind: "gpio"
+        label: "IO25"
+        pad: "GPIO25"
+        position: 9
+      - kind: "gpio"
+        label: "IO26"
+        pad: "GPIO26"
+        position: 10
+      - kind: "gpio"
+        label: "IO27"
+        pad: "GPIO27"
+        position: 11
+      - kind: "gpio"
+        label: "IO14"
+        pad: "GPIO14"
+        position: 12
+      - kind: "gpio"
+        label: "IO12"
+        pad: "GPIO12"
+        position: 13
+      - kind: "gpio"
+        label: "IO13"
+        pad: "GPIO13"
+        position: 14
+      - kind: "power"
+        label: "5V"
+        position: 15
+        rail: "5V"
+      - kind: "ground"
+        label: "GND"
+        position: 16
+    side: "left"
+  - id: "P3"
+    pins:
+      - kind: "ground"
+        label: "GND"
+        position: 1
+      - kind: "gpio"
+        label: "TXD0"
+        pad: "GPIO1"
+        position: 2
+      - kind: "gpio"
+        label: "RXD0"
+        pad: "GPIO3"
+        position: 3
+      - kind: "power"
+        label: "3V3"
+        position: 4
+        rail: "3V3"
+      - kind: "gpio"
+        label: "IO22"
+        pad: "GPIO22"
+        position: 5
+      - kind: "gpio"
+        label: "IO21"
+        pad: "GPIO21"
+        position: 6
+      - kind: "ground"
+        label: "GND"
+        position: 7
+      - kind: "ground"
+        label: "GND"
+        position: 8
+      - kind: "gpio"
+        label: "IO19"
+        pad: "GPIO19"
+        position: 9
+      - kind: "gpio"
+        label: "IO23"
+        pad: "GPIO23"
+        position: 10
+      - kind: "gpio"
+        label: "IO18"
+        pad: "GPIO18"
+        position: 11
+      - kind: "gpio"
+        label: "IO5"
+        pad: "GPIO5"
+        position: 12
+      - kind: "power"
+        label: "3V3"
+        position: 13
+        rail: "3V3"
+      - kind: "gpio"
+        label: "IO17"
+        pad: "GPIO17"
+        position: 14
+      - kind: "gpio"
+        label: "IO16"
+        pad: "GPIO16"
+        position: 15
+      - kind: "gpio"
+        label: "IO4"
+        pad: "GPIO4"
+        position: 16
+      - kind: "gpio"
+        label: "IO0"
+        pad: "GPIO0"
+        position: 17
+      - kind: "ground"
+        label: "GND"
+        position: 18
+      - kind: "gpio"
+        label: "IO2"
+        pad: "GPIO2"
+        position: 19
+      - kind: "gpio"
+        label: "IO15"
+        pad: "GPIO15"
+        position: 20
+    side: "right"
+id: "lolin32"
+logic_voltage:
+  evidence:
+    - "lolin32-wiki#voltage"
+    - "lolin32-wiki#io-voltage"
+  status: "single-source"
+  unit: "V"
+  value: 3.3
+name: "LOLIN32"
+numbering:
+  primary: "label"
+onboard:
+  - effect: "LED load on GPIO5 (VSPI CS0), lit when the pad is driven low."
+    evidence:
+      - "lolin32-sch-v1.0.0#led2"
+    part: "LED2 with R9 2k (3V3 to IO5)"
+    uses_pad:
+      - "GPIO5"
+  - effect: "UART0 TXD0/RXD0 wired to the bridge (also on P3)."
+    evidence:
+      - "lolin32-sch-v1.0.0#usb-uart"
+      - "lolin32-sch-v1.0.0#p3-a"
+    part: "U6 CP2104 USB-to-UART bridge"
+    uses_pad:
+      - "GPIO1"
+      - "GPIO3"
+  - effect: "Bridge RTS/DTR can pull EN and IO0 low to enter download mode."
+    evidence:
+      - "lolin32-sch-v1.0.0#autoprog"
+    part: "U4 UMH3N auto-program transistors (RTS/DTR)"
+    uses_pad:
+      - "GPIO0"
+rails:
+  - max_current:
+      evidence: []
+      note: "No current rating for the ME6211 output is printed in the schematic or on the wiki page."
+      status: "missing"
+      unit: "mA"
+      value: null
+    name: "3V3"
+    source: "U3 ME6211 regulator (schematic)"
+    voltage:
+      evidence:
+        - "lolin32-wiki#voltage"
+      status: "single-source"
+      unit: "V"
+      value: 3.3
+  - max_current:
+      evidence: []
+      note: "No current rating stated."
+      status: "missing"
+      unit: "mA"
+      value: null
+    name: "5V"
+    source: "micro-USB VBUS (and +5V header pin)"
+    voltage:
+      evidence:
+        - "lolin32-sch-v1.0.0#p2-b"
+      note: "Net/pin name +5V; nominal USB value."
+      status: "single-source"
+      transcribed: true
+      unit: "V"
+      value: 5
+revision: "V1.0.0"
+status: "partially-verified"
+variants:
+  - id: "lolin32-wroom-32"
+    module: "esp32-wroom-32"
+vendor: "WEMOS Electronics"

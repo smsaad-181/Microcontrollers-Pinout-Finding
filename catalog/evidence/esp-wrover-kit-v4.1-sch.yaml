@@ -1,0 +1,43 @@
+# Evidence record: ESP-WROVER-KIT v4.1 official schematic PDF (linked from the guide), downloaded and read by the blind auditor (hardware-fact-auditor) 2026-10-24; sha256 re-checked at resolution. Quotes are pdftotext labels; connectivity was read visually from the rendered pages (auditor), so each "supports" says what the nets show.
+accessed: "2026-10-24"
+claims:
+  - id: "esp-wrover-kit-v4.1-sch#boot-io0"
+    locator: "Switch block (SW3 -> Q10)"
+    quote: "R172 0R(1%) IO0"
+    supports: "BOOT switch SW3 drives Q10 which pulls GPIO0 low (guide calls the switch SW2)"
+  - id: "esp-wrover-kit-v4.1-sch#boot-io2"
+    locator: "Switch block (SW3 -> Q11)"
+    quote: "R173 0R(1%) IO2"
+    supports: "BOOT switch SW3 also drives Q11 which pulls GPIO2 low"
+  - id: "esp-wrover-kit-v4.1-sch#sd-pullups"
+    locator: "SD Card block"
+    quote: "R157 10K(1%)(NC) R156 10K(1%) R155 10K(1%) R154 10K(1%) R153 10K(1%) R152 10K(1%)"
+    supports: "10 k pull-ups to VDD33: R153 GPIO2, R152 GPIO4, R156 GPIO13, R154 GPIO14, R155 GPIO15; R157 (GPIO12) not fitted (NC)"
+  - id: "esp-wrover-kit-v4.1-sch#sd-cd-r168"
+    locator: "SD Card block"
+    quote: "R168"
+    supports: "R168 10 k pull-up on GPIO21 (card detect); value and net read from the rendered page"
+  - id: "esp-wrover-kit-v4.1-sch#ldo-ncp1117"
+    locator: "Power block"
+    quote: "NCP1117 R124"
+    supports: "3V3 regulator U4 is an NCP1117"
+  - id: "esp-wrover-kit-v4.1-sch#sw-5v"
+    locator: "Connector block, JP1"
+    quote: "+5V SW_+5V"
+    supports: "JP1 pin 28 is SW_+5V, the 5V rail after the power switch"
+  - id: "esp-wrover-kit-v4.1-sch#gpio16-17-wired"
+    locator: "Connector block (R146/R147 -> R106/R108)"
+    quote: "R25 R26 R28 R146 R147 R34 R148 R30 R38 R143 R144 R145"
+    supports: "Conflict with the guide note: module IO16/IO17 reach JP1-23/22 through 0R resistors with no NC mark (read visually)"
+doc_number: null
+id: "esp-wrover-kit-v4.1-sch"
+kind: "schematic"
+manual: false
+publisher: "Espressif Systems"
+revision: "V4.1"
+revision_date: null
+secondary: false
+sha256: "fd2c3428c981716d3ceebc85eb3062d468e390aeabd3201f54fc7dc8569f0c37"
+title: "ESP-WROVER-KIT V4.1 schematic"
+url: "https://dl.espressif.com/dl/schematics/ESP-WROVER-KIT_V4_1.pdf"
+url_original: null

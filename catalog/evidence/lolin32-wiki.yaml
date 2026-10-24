@@ -1,0 +1,31 @@
+# Evidence record: WEMOS wiki LOLIN32 product page (Internet Archive snapshot, read 2026-10-24, HTML, no hash).
+accessed: "2026-10-24"
+claims:
+  - id: "lolin32-wiki#voltage"
+    locator: "Technical specs"
+    quote: "Operating Voltage 3.3V"
+    supports: "Operating voltage 3.3 V"
+  - id: "lolin32-wiki#io-voltage"
+    locator: "Pin"
+    quote: "All of the IO pins run at 3.3V."
+    supports: "IO pins are 3.3 V"
+  - id: "lolin32-wiki#flash"
+    locator: "Technical specs"
+    quote: "Flash 4M bytes"
+    supports: "4 MB flash"
+  - id: "lolin32-wiki#charge"
+    locator: "Features"
+    quote: "Lithium battery interface, 500mA Max charging current"
+    supports: "LiPo interface, 500 mA max charge current"
+doc_number: null
+id: "lolin32-wiki"
+kind: "board-guide"
+manual: false
+publisher: "WEMOS Electronics"
+revision: "page last modified 2018/04/26"
+revision_date: "2018-04-26"
+secondary: true
+sha256: null
+title: "LOLIN32 (Retired) [WEMOS Electronics]"
+url: "https://web.archive.org/web/2020/https://wiki.wemos.cc/products:lolin32:lolin32"
+url_original: "https://wiki.wemos.cc/products:lolin32:lolin32"

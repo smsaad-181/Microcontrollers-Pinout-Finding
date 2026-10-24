@@ -1,0 +1,278 @@
+# ESP-WROVER-KIT v4.1 (task boards-1). Source: ESP-WROVER-KIT v4.1 Getting Started Guide (esp-dev-kits, latest, read 2026-10-24). Blind audit done (hardware-fact-auditor), corrections applied: BOOT pulls GPIO0 and GPIO2, SD strap pull-ups added, RGB wording.
+# Positions: the guide does not number the JP1 pins; positions are the table row numbers (1..14). Connector JP1-left = left "I/O" column, JP1-right = right "I/O" column. PCB orientation of the rows is not stated.
+# IO32/IO33 are kind nc: not connected to JP1 by default (guide note). IO16/IO17 stay kind nc (conservative) with status conflict: the guide says not broken out by default, but the v4.1 schematic (esp-wrover-kit-v4.1-sch#gpio16-17-wired, R146/R147 -> R106/R108, 0R, no NC mark) wires them to JP1-23/22. They are PSRAM CS/CLK either way (module consumed).
+# 3V3 max_current 1000 mA is the LDO capability. 5V max_current missing.
+connectors:
+  - id: "JP1-left"
+    pins:
+      - kind: "power"
+        label: "3V3"
+        position: 1
+        rail: "3V3"
+      - kind: "nc"
+        label: "IO32"
+        position: 2
+      - kind: "gpio"
+        label: "IO12"
+        pad: "GPIO12"
+        position: 3
+      - kind: "gpio"
+        label: "IO14"
+        pad: "GPIO14"
+        position: 4
+      - kind: "gpio"
+        label: "IO26"
+        pad: "GPIO26"
+        position: 5
+      - kind: "gpio"
+        label: "IO35"
+        pad: "GPIO35"
+        position: 6
+      - kind: "gpio"
+        label: "IO39"
+        pad: "GPIO39"
+        position: 7
+      - kind: "reset"
+        label: "EN"
+        position: 8
+      - kind: "gpio"
+        label: "IO22"
+        pad: "GPIO22"
+        position: 9
+      - kind: "gpio"
+        label: "IO19"
+        pad: "GPIO19"
+        position: 10
+      - kind: "gpio"
+        label: "IO5"
+        pad: "GPIO5"
+        position: 11
+      - kind: "nc"
+        label: "IO16"
+        position: 12
+      - kind: "gpio"
+        label: "IO0"
+        pad: "GPIO0"
+        position: 13
+      - kind: "gpio"
+        label: "IO15"
+        pad: "GPIO15"
+        position: 14
+    side: "left"
+  - id: "JP1-right"
+    pins:
+      - kind: "ground"
+        label: "GND"
+        position: 1
+      - kind: "nc"
+        label: "IO33"
+        position: 2
+      - kind: "gpio"
+        label: "IO13"
+        pad: "GPIO13"
+        position: 3
+      - kind: "gpio"
+        label: "IO27"
+        pad: "GPIO27"
+        position: 4
+      - kind: "gpio"
+        label: "IO25"
+        pad: "GPIO25"
+        position: 5
+      - kind: "gpio"
+        label: "IO34"
+        pad: "GPIO34"
+        position: 6
+      - kind: "gpio"
+        label: "IO36"
+        pad: "GPIO36"
+        position: 7
+      - kind: "gpio"
+        label: "IO23"
+        pad: "GPIO23"
+        position: 8
+      - kind: "gpio"
+        label: "IO21"
+        pad: "GPIO21"
+        position: 9
+      - kind: "gpio"
+        label: "IO18"
+        pad: "GPIO18"
+        position: 10
+      - kind: "nc"
+        label: "IO17"
+        position: 11
+      - kind: "gpio"
+        label: "IO4"
+        pad: "GPIO4"
+        position: 12
+      - kind: "gpio"
+        label: "IO2"
+        pad: "GPIO2"
+        position: 13
+      - kind: "power"
+        label: "5V"
+        position: 14
+        rail: "5V"
+    side: "right"
+id: "esp-wrover-kit"
+logic_voltage:
+  evidence:
+    - "esp-wrover-kit-v4.1-ug#ldo"
+    - "esp-wrover-kit-v4.1-ug#spi-3v3"
+  reviewers: ["hardware-researcher", "hardware-fact-auditor"]
+  status: "verified"
+  unit: "V"
+  value: 3.3
+name: "ESP-WROVER-KIT"
+numbering:
+  primary: "gpio"
+onboard:
+  - effect: "Drives RGB LED via N-MOSFET gates (Q7 red GPIO0, Q6 green GPIO2, Q8 blue GPIO4); LED lights when the pad is high. GPIO0 and GPIO2 are boot-mode strapping pads."
+    evidence:
+      - "esp-wrover-kit-v4.1-ug#rgb-led"
+    part: "RGB LED (red GPIO0, green GPIO2, blue GPIO4)"
+    uses_pad:
+      - "GPIO0"
+      - "GPIO2"
+      - "GPIO4"
+  - effect: "Pulls GPIO0 and GPIO2 low (Q10 and Q11); with EN selects firmware download mode."
+    evidence:
+      - "esp-wrover-kit-v4.1-ug#boot-button"
+      - "esp-wrover-kit-v4.1-ug#jp1-row-13"
+      - "esp-wrover-kit-v4.1-sch#boot-io0"
+      - "esp-wrover-kit-v4.1-sch#boot-io2"
+    part: "BOOT button (guide: SW2; schematic: SW3)"
+    uses_pad:
+      - "GPIO0"
+      - "GPIO2"
+  - effect: "10 k pull-ups to 3V3 on the SD lines (R153 GPIO2, R152 GPIO4, R156 GPIO13, R154 GPIO14, R155 GPIO15) and on GPIO21 card detect (R168); the GPIO12 pull-up R157 is not fitted. GPIO2 is a strapping pad held high by 10 k: external circuits must not fight it."
+    evidence:
+      - "esp-wrover-kit-v4.1-sch#sd-pullups"
+      - "esp-wrover-kit-v4.1-sch#sd-cd-r168"
+    part: "SD card pull-ups R152-R156, R168"
+    uses_pad:
+      - "GPIO2"
+      - "GPIO4"
+      - "GPIO13"
+      - "GPIO14"
+      - "GPIO15"
+      - "GPIO21"
+  - effect: "Pads are wired to the camera header; free for other use only when nothing is plugged into JP4."
+    evidence:
+      - "esp-wrover-kit-v4.1-ug#cam-1"
+      - "esp-wrover-kit-v4.1-ug#cam-2"
+      - "esp-wrover-kit-v4.1-ug#cam-3"
+      - "esp-wrover-kit-v4.1-ug#cam-4"
+      - "esp-wrover-kit-v4.1-ug#cam-unused-note"
+    part: "Camera connector JP4 (OV7670)"
+    uses_pad:
+      - "GPIO0"
+      - "GPIO4"
+      - "GPIO5"
+      - "GPIO18"
+      - "GPIO19"
+      - "GPIO21"
+      - "GPIO22"
+      - "GPIO23"
+      - "GPIO25"
+      - "GPIO26"
+      - "GPIO27"
+      - "GPIO34"
+      - "GPIO35"
+      - "GPIO36"
+      - "GPIO39"
+  - effect: "LCD RESET/SCL/D-C/CS/SDA/SDO/Backlight; GPIO21 is shared with the SD card detect (R167)."
+    evidence:
+      - "esp-wrover-kit-v4.1-ug#lcd"
+      - "esp-wrover-kit-v4.1-ug#sd-cd-r167"
+    part: "3.2 in SPI LCD (U5)"
+    uses_pad:
+      - "GPIO5"
+      - "GPIO18"
+      - "GPIO19"
+      - "GPIO21"
+      - "GPIO22"
+      - "GPIO23"
+      - "GPIO25"
+  - effect: "SD DATA0-3/CMD/CLK on strapping pads GPIO2/GPIO12/GPIO15; GPIO21 is card detect."
+    evidence:
+      - "esp-wrover-kit-v4.1-ug#sd-1"
+      - "esp-wrover-kit-v4.1-ug#sd-2"
+      - "esp-wrover-kit-v4.1-ug#sd-cd-r167"
+    part: "microSD card slot J4"
+    uses_pad:
+      - "GPIO2"
+      - "GPIO4"
+      - "GPIO12"
+      - "GPIO13"
+      - "GPIO14"
+      - "GPIO15"
+      - "GPIO21"
+  - effect: "Pads reach the FT2232HL JTAG channel only when the JP2 jumpers are fitted; open by default."
+    evidence:
+      - "esp-wrover-kit-v4.1-ug#jtag-pins"
+      - "esp-wrover-kit-v4.1-ug#jtag-default"
+    part: "JTAG header JP2 (jumper-selected)"
+    uses_pad:
+      - "GPIO12"
+      - "GPIO13"
+      - "GPIO14"
+      - "GPIO15"
+  - effect: "ESP32 UART0 TX/RX (module TXD0/RXD0) go to the bridge when the JP2 UART jumpers are fitted (default); GPIO1/GPIO3 are not on JP1."
+    evidence:
+      - "esp-wrover-kit-v4.1-ug#uart-jp2"
+      - "esp32-wrover-e-ds-v2.4#pin-rxd0-txd0"
+    part: "FT2232HL channel B UART (JP2 jumper-selected)"
+    uses_pad:
+      - "GPIO1"
+      - "GPIO3"
+  - effect: "Pads connect to the crystal by default and are not wired to JP1."
+    evidence:
+      - "esp-wrover-kit-v4.1-ug#osc-pins"
+      - "esp-wrover-kit-v4.1-ug#osc-note"
+    part: "32.768 kHz crystal (default; R11/R23 selectable)"
+    uses_pad:
+      - "GPIO32"
+      - "GPIO33"
+rails:
+  - max_current:
+      evidence:
+        - "esp-wrover-kit-v4.1-ug#ldo"
+        - "esp-wrover-kit-v4.1-sch#ldo-ncp1117"
+      note: "Guide: \"NCP1117 can provide a maximum current of 1A\" (regulator capability; not a budget after the module and onboard peripherals). Schematic U4 is an NCP1117."
+      reviewers: ["hardware-researcher", "hardware-fact-auditor"]
+      status: "verified"
+      unit: "mA"
+      value: 1000
+    name: "3V3"
+    source: "NCP1117 5V-to-3.3V LDO (guide, LDO row)"
+    voltage:
+      evidence:
+        - "esp-wrover-kit-v4.1-ug#ldo"
+      reviewers: ["hardware-researcher", "hardware-fact-auditor"]
+      status: "verified"
+      unit: "V"
+      value: 3.3
+  - max_current:
+      evidence: []
+      note: "The guide states no current rating for the USB or DC-jack 5V input; the schematic (read by the auditor) prints none."
+      status: "missing"
+      unit: "mA"
+      value: null
+    name: "5V"
+    source: "USB VBUS or the 5.5 x 2.1 mm DC jack (JP7 jumper selects)"
+    voltage:
+      evidence:
+        - "esp-wrover-kit-v4.1-ug#5v-input"
+        - "esp-wrover-kit-v4.1-sch#sw-5v"
+      reviewers: ["hardware-researcher", "hardware-fact-auditor"]
+      status: "verified"
+      unit: "V"
+      value: 5
+revision: "v4.1"
+status: "partially-verified"
+variants:
+  - id: "esp-wrover-kit-wrover-e"
+    module: "esp32-wrover-e"
+vendor: "Espressif Systems"

@@ -1,0 +1,23 @@
+# DOIT ESP32 DevKit V1, 30-pin variant (task boards-1): status datasheet-required. Intentionally no pin map.
+# No authoritative source was found: the DOIT GitHub wiki (SmartArduino/SZDOITWiKi) has no ESP32 DevKit page, the doit.am product page was not located, and the only pinouts in circulation are third-party/forum images and clone listings whose labels differ between makers (30/36/38-pin layouts).
+# Per project rules nothing was copied from forums. The variant module esp32-wroom-32 is a PLACEHOLDER (not evidenced for this board) so the record validates; replace when a DOIT datasheet/schematic is obtained.
+# Needed: DOIT's official pinout or schematic for the 30-pin board (header order, onboard USB-UART, LED/button pins, regulator and its current rating).
+connectors: []
+id: "doit-esp32-devkit-v1-30pin"
+logic_voltage:
+  evidence: []
+  note: "No authoritative DOIT document (guide, schematic or datasheet) could be read for this board."
+  status: "missing"
+  unit: "V"
+  value: null
+name: "DOIT ESP32 DevKit V1 (30-pin)"
+numbering:
+  primary: "label"
+onboard: []
+rails: []
+revision: "V1"
+status: "datasheet-required"
+variants:
+  - id: "doit-devkit-v1-30pin-wroom-32"
+    module: "esp32-wroom-32"
+vendor: "Shenzhen DOIT (doit.am)"
