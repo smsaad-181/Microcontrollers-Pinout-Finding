@@ -33,9 +33,9 @@ export function platformTree(rows: readonly BoardOption[]): PlatformNode[] {
   for (const r of rows) {
     const p = platformOf(r);
     const m = boards.get(p) ?? new Map<string, Set<string>>();
-    const s = m.get(r.vendor) ?? new Set<string>();
-    s.add(r.name);
-    m.set(r.vendor, s);
+    const s = m.get(shortVendor(r.vendor)) ?? new Set<string>();
+    s.add(`${r.vendor}|${r.name}`);
+    m.set(shortVendor(r.vendor), s);
     boards.set(p, m);
   }
   const order = ['ESP (ESP32 / ESP8266)', 'Arduino', 'Raspberry Pi', 'Other'];
@@ -45,7 +45,7 @@ export function platformTree(rows: readonly BoardOption[]): PlatformNode[] {
       name,
       count: [...m.values()].reduce((n, s) => n + s.size, 0),
       vendors: [...m.entries()]
-        .map(([v, s]) => ({ name: v, label: shortVendor(v), count: s.size }))
+        .map(([v, s]) => ({ name: v, label: v, count: s.size }))
         .sort((a, b) => (a.label < b.label ? -1 : 1)),
     }));
 }

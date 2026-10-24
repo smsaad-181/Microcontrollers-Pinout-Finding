@@ -14,6 +14,7 @@ import dht113pinModuleImg from '../assets/photos/dht11-3pin-module.jpg';
 
 import { PHOTOS_BOARDS } from './photosBoards';
 import { PHOTOS_MODULES } from './photosModules';
+import { PHOTOS_WAVESHARE } from './photosWaveshare';
 
 export interface Photo {
   src: string;
@@ -85,4 +86,9 @@ const FIRST_PHOTOS: Record<string, Photo> = {
   },
 };
 
-export const PHOTOS: Record<string, Photo> = { ...FIRST_PHOTOS, ...PHOTOS_BOARDS, ...PHOTOS_MODULES };
+export const PHOTOS: Record<string, Photo> = {
+  ...FIRST_PHOTOS,
+  ...PHOTOS_BOARDS,
+  ...PHOTOS_MODULES,
+  ...PHOTOS_WAVESHARE,
+};
