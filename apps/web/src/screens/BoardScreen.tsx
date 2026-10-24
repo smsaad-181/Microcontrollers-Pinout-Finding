@@ -1,18 +1,42 @@
 import { useId, useRef, useState } from 'react';
-import { BOARD_STATUS_META } from '../catalog/boards';
+import { BOARD_STATUS_META, type BoardOption } from '../catalog/boards';
 import { filterCards, type BoardCard } from '../catalog/boardGroups';
 import { platformOf, platformTree, shortVendor } from '../catalog/platforms';
 import { ItemPicture } from '../components/art';
-import { StatusBadge } from '../components/common';
+import { BoardDetails } from '../components/pinout/BoardDetails';
+import { readBoardIntent } from '../boardIntent';
+import { Spec, Specs, StatusBadge } from '../components/common';
+import { Icon } from '../components/icons';
 import { Help, Term } from '../components/Help';
 import { StepHeader } from '../components/StepHeader';
 import { useAppState, type LoadedCatalog } from '../state/AppState';
 import { WithCatalog, type HeadingRef } from './shared';
 
+/** Spec tiles for a board; a value the catalog does not have is simply left out. */
+function BoardSpecs({ option }: { option: BoardOption }) {
+  return (
+    <>
+      <Specs>
+        {option.pins !== undefined ? <Spec label="Pins" value={String(option.pins)} /> : null}
+        {option.logicVoltage !== undefined ? (
+          <Spec label="Logic" value={`${String(option.logicVoltage)} V`} />
+        ) : null}
+        {option.family !== 'unknown' ? <Spec label="Chip family" value={option.family} /> : null}
+      </Specs>
+      <StatusBadge status={option.status} />
+    </>
+  );
+}
+
 function BoardPicker({ data }: { data: LoadedCatalog }) {
   const { draft, dispatch } = useAppState();
-  const [query, setQuery] = useState('');
-  const [platform, setPlatform] = useState('');
+  const [intent] = useState(readBoardIntent);
+  const [query, setQuery] = useState(intent.q ?? '');
+  const [platform, setPlatform] = useState(() =>
+    platformTree(data.boards).some((p) => p.name === intent.platform)
+      ? (intent.platform ?? '')
+      : '',
+  );
   const [vendor, setVendor] = useState('');
   const [open, setOpen] = useState<string | null>(null);
   const id = useId();
@@ -45,7 +69,7 @@ function BoardPicker({ data }: { data: LoadedCatalog }) {
 
   return (
     <>
-      <section className="selected-bar" aria-label="Your board">
+      <section className={`selected-bar${selected ? ' has-board' : ''}`} aria-label="Your board">
         {selected ? (
           <>
             <div className="selected-thumb">
@@ -57,12 +81,15 @@ function BoardPicker({ data }: { data: LoadedCatalog }) {
             </div>
             <div className="selected-text">
               <h2>Selected</h2>
-              <p>
-                <strong>{selected.name}</strong> ({shortVendor(selected.vendor)})
-                {selected.name.includes(selected.module) ? '' : ` · ${selected.module}`}{' '}
-                <StatusBadge status={selected.status} />
+              <p className="selected-name">
+                <strong>{selected.name}</strong>
               </p>
-              <p className="muted">{BOARD_STATUS_META[selected.status].hint}</p>
+              <p className="muted">
+                {shortVendor(selected.vendor)}
+                {selected.name.includes(selected.module) ? '' : ` · ${selected.module}`}
+              </p>
+              <BoardSpecs option={selected} />
+              <p className="muted selected-hint">{BOARD_STATUS_META[selected.status].hint}</p>
             </div>
             <button
               type="button"
@@ -79,6 +106,7 @@ function BoardPicker({ data }: { data: LoadedCatalog }) {
           <p className="selected-none">No board picked yet. Choose one from the list below.</p>
         )}
       </section>
+      {selected ? <BoardDetails board={selected} variant={selected.variant} data={data} /> : null}
 
       <form
         role="search"
@@ -88,17 +116,22 @@ function BoardPicker({ data }: { data: LoadedCatalog }) {
         }}
       >
         <label htmlFor={`${id}-q`}>Search all boards by name</label>
-        <input
-          id={`${id}-q`}
-          ref={searchRef}
-          type="search"
-          value={query}
-          autoComplete="off"
-          placeholder="e.g. DevKit, NodeMCU, Pico, Zero"
-          onChange={(e) => {
-            setQuery(e.target.value);
-          }}
-        />
+        <span className="search-field">
+          <span className="big-search-icon">
+            <Icon name="search" size={20} />
+          </span>
+          <input
+            id={`${id}-q`}
+            ref={searchRef}
+            type="search"
+            value={query}
+            autoComplete="off"
+            placeholder="e.g. DevKit, NodeMCU, Pico, Zero"
+            onChange={(e) => {
+              setQuery(e.target.value);
+            }}
+          />
+        </span>
       </form>
 
       <div className="board-layout">
@@ -120,10 +153,8 @@ function BoardPicker({ data }: { data: LoadedCatalog }) {
                     board={{ vendor: c.vendor, family: c.family }}
                   />
                   <h2>{c.name}</h2>
-                  <p className="muted">
-                    {shortVendor(c.vendor)} · {c.family}
-                  </p>
-                  <StatusBadge status={c.status} />
+                  <p className="muted maker">{shortVendor(c.vendor)}</p>
+                  {c.versions[0] ? <BoardSpecs option={c.versions[0].option} /> : null}
                   <button
                     type="button"
                     aria-pressed={sel}
@@ -162,7 +193,13 @@ function BoardPicker({ data }: { data: LoadedCatalog }) {
           </ul>
         </div>
 
-        <nav aria-label="Board brands" className="side-nav">
+        <nav aria-label="Board brands" className="side-nav filter-panel">
+          <h2 className="filter-title">
+            <span className="icon-tile">
+              <Icon name="sliders" size={20} />
+            </span>
+            Filter by brand
+          </h2>
           <ul className="cat-list">
             {tree.map((p) => {
               const on = !searching && p.name === activePlatform;

@@ -1,9 +1,10 @@
-import { useId, useState } from 'react';
+import { useId, useState, type ReactNode } from 'react';
 import type { BoardStatus } from '@pinout/schema';
 import { BOARD_STATUS_META } from '../catalog/boards';
 import type { CitationLookup } from '../catalog/evidence';
 import { LEVEL_META, type WarningLevel } from '../results/explain';
 import { hrefFor, STEPS, type StepName } from '../route';
+import { Icon, type IconName } from './icons';
 
 /** Board status: icon + text (the icon is decorative; the text carries the meaning). */
 export function StatusBadge({ status }: { status: BoardStatus }) {
@@ -31,8 +32,15 @@ export function LevelBadge({ level }: { level: WarningLevel }) {
 const STEP_LABELS: Record<StepName, string> = {
   board: 'Pick board',
   modules: 'Add parts',
-  constraints: 'Your rules (optional)',
+  constraints: 'Your rules',
   results: 'Get pins',
+};
+
+const STEP_ICONS: Record<StepName, IconName> = {
+  board: 'board',
+  modules: 'parts',
+  constraints: 'rules',
+  results: 'pins',
 };
 
 type StepState = 'done' | 'current' | 'todo';
@@ -66,19 +74,29 @@ const STATE_TEXT: Record<StepState, string> = {
   todo: 'to do',
 };
 
-/** The four workflow steps with done / current / to do states; the current one has aria-current. */
+/** Top-bar navigation: Home plus the four workflow steps with done / current / to do states. */
 export function StepNav({
   current,
   progress,
+  onHome = false,
 }: {
   current: StepName | null;
   progress: StepProgress;
+  onHome?: boolean;
 }) {
   const [hint, setHint] = useState<string | null>(null);
   const id = useId();
   return (
     <nav aria-label="Workflow steps" className="steps">
       <ol>
+        <li className={`step step-home${onHome ? ' step-current' : ''}`}>
+          <a href={hrefFor('/')} aria-current={onHome ? 'page' : undefined}>
+            <span className="step-icon">
+              <Icon name="home" />
+            </span>
+            <span className="step-text">Home</span>
+          </a>
+        </li>
         {STEPS.map((s, i) => {
           const state = stepState(s, current, progress);
           const needs = stepNeeds(s, progress);
@@ -101,10 +119,18 @@ export function StepNav({
                   setHint(null);
                 }}
               >
-                <span className="step-mark" aria-hidden="true">
-                  {state === 'done' ? '✓' : String(i + 1)}
+                <span className="step-icon">
+                  <Icon name={STEP_ICONS[s]} />
+                  {state === 'done' ? (
+                    <span className="step-check" aria-hidden="true">
+                      ✓
+                    </span>
+                  ) : null}
                 </span>
-                <span className="step-text">{STEP_LABELS[s]}</span>
+                <span className="step-text">
+                  {STEP_LABELS[s]}
+                  {s === 'constraints' ? <span className="step-opt"> (optional)</span> : null}
+                </span>
                 <span className="visually-hidden">
                   {' '}
                   (step {i + 1}, {STATE_TEXT[state]})
@@ -119,11 +145,26 @@ export function StepNav({
           );
         })}
       </ol>
-      <p className="step-hint" aria-hidden="true">
+      <p className="step-hint" aria-hidden="true" data-on={hint ? 'true' : 'false'}>
         {hint ?? ''}
       </p>
     </nav>
   );
+}
+
+/** One label/value spec tile (PINS 30). Rendered inside <Specs>. */
+export function Spec({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="spec">
+      <dt>{label}</dt>
+      <dd>{value}</dd>
+    </div>
+  );
+}
+
+/** A row of spec tiles; leave out any tile whose value the catalog does not have. */
+export function Specs({ children }: { children: ReactNode }) {
+  return <dl className="specs">{children}</dl>;
 }
 
 /** Evidence list for claim ids: document, revision, locator and quote, linked to the source URL. */

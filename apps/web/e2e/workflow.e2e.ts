@@ -75,7 +75,7 @@ test('every citation link is a URL listed in the evidence records', async ({ pag
 test('every board version of a part is its own card', async ({ page }) => {
   await page.goto('./#/modules');
   await page.getByLabel(/Search modules/).fill('bme280');
-  const cards = page.getByRole('list', { name: 'Search results' }).getByRole('listitem');
+  const cards = page.locator('ul[aria-label="Search results"] > li');
   await expect(cards).toHaveCount(3);
   await expect(cards.first()).toContainText('version 1 of 3');
   await expect(page.getByText('No modules yet')).toBeVisible();

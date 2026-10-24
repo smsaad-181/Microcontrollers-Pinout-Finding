@@ -1,4 +1,5 @@
 import { StepNav, type StepProgress } from './components/common';
+import { LogoMark } from './components/icons';
 import { StepFooter } from './components/StepFooter';
 import { StorageStatus } from './components/StorageStatus';
 import { UpdatePrompt } from './pwa/UpdatePrompt';
@@ -66,17 +67,22 @@ function Shell({ route, headingRef }: { route: Route; headingRef: HeadingRef }) 
   return (
     <>
       <header className="site-header">
-        <a className="brand" href={hrefFor('/')}>
-          Pinout Finder
-        </a>
-        <StepNav current={current} progress={progress} />
-        <StorageStatus />
+        <div className="site-header-inner">
+          <a className="brand" href={hrefFor('/')}>
+            <LogoMark />
+            <span>Pinout Finder</span>
+          </a>
+          <StepNav current={current} progress={progress} onHome={route.name === 'home'} />
+        </div>
       </header>
       <UpdatePrompt />
       <main id="main" tabIndex={-1}>
         <Page route={route} headingRef={headingRef} />
       </main>
       {current !== null && current !== 'results' ? <StepFooter step={current} /> : null}
+      <footer className="site-footer">
+        <StorageStatus />
+      </footer>
     </>
   );
 }

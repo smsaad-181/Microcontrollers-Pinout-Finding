@@ -13,6 +13,10 @@ export interface BoardOption {
   chip: string;
   family: string;
   status: BoardStatus;
+  /** Header pins on the board (aliases of another pin not counted); omitted when it has none. */
+  pins?: number;
+  /** Logic voltage of the headers in volts; omitted when the catalog has no value. */
+  logicVoltage?: number;
 }
 
 /** Text and icon per board status: shown together, never colour alone. */
@@ -42,6 +46,19 @@ export const BOARD_STATUS_META: Record<BoardStatus, { label: string; icon: strin
 
 const cmp = (a: string, b: string) => (a < b ? -1 : a > b ? 1 : 0);
 
+/** Pin count and logic voltage straight from the catalog; a missing value is left out. */
+function pinFacts(b: Catalog['boards'][number]): Pick<BoardOption, 'pins' | 'logicVoltage'> {
+  const pins = b.connectors.reduce(
+    (n, c) => n + c.pins.filter((p) => p.alias_of === undefined).length,
+    0,
+  );
+  const v = b.logic_voltage.value;
+  return {
+    ...(pins > 0 ? { pins } : {}),
+    ...(typeof v === 'number' ? { logicVoltage: v } : {}),
+  };
+}
+
 /** All board variants, sorted by vendor, name, revision, variant. */
 export function boardOptions(catalog: Catalog): BoardOption[] {
   const modules = new Map(catalog.modules.map((m) => [m.id, m]));
@@ -61,6 +78,7 @@ export function boardOptions(catalog: Catalog): BoardOption[] {
         chip: chip?.id ?? mod?.chip ?? 'unknown',
         family: chip?.family ?? 'unknown',
         status: b.status,
+        ...pinFacts(b),
       });
     }
   }

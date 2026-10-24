@@ -1,9 +1,8 @@
-import { useEffect, useId, useState } from 'react';
+import { useEffect, useId, useMemo, useState } from 'react';
 import type { Recommendation, Warning } from '@pinout/schema';
 import type { BoardOption } from '../catalog/boards';
-import { boardView } from '../catalog/boardView';
 import { ItemPicture } from '../components/art';
-import { BoardView } from '../components/BoardView';
+import { PinoutExplorer } from '../components/pinout/PinoutExplorer';
 import { Citations, LevelBadge, StatusBadge } from '../components/common';
 import { ProjectActions } from '../components/ProjectActions';
 import { toProject } from '../project/draft';
@@ -712,29 +711,37 @@ function OkResult({
   const id = useId();
   const rec = response.outcome.recommendation;
   const { draft } = useAppState();
-  const view =
-    draft.board === null || draft.variant === null
-      ? null
-      : boardView(data.catalog, draft.board, draft.variant, {
-          reserved: draft.reserved,
-          connections: draft.connections,
-          locked: draft.locked,
-          rec,
-        });
+  const pinInput = useMemo(
+    () => ({
+      reserved: draft.reserved,
+      connections: draft.connections,
+      locked: draft.locked,
+      rec,
+    }),
+    [draft.reserved, draft.connections, draft.locked, rec],
+  );
   return (
     <>
       <OkBanner rec={rec} board={board} boardText={boardText} modules={draft.modules.length} />
       <ProjectActions csv={() => resultCsv(rec, response.pinLabels)} />
       <WiringGuide rec={rec} response={response} data={data} />
       <Warnings rec={rec} data={data} />
-      {view !== null ? (
+      {draft.board !== null && draft.variant !== null ? (
         <section aria-labelledby={`${id}-view`}>
           <h2 id={`${id}-view`}>Header view: where each pin is</h2>
           <p>
-            These are the pin rows (headers) of your board. The highlighted pins are the ones used
-            above; the legend names every symbol, so colour is never the only clue.
+            This is your board with its pin rows (headers). Each pin that a module uses carries a
+            dark pill with the module signal, for example <code>env.SDA</code>. Every colour is
+            paired with a symbol and text.
           </p>
-          <BoardView connectors={view} title="Board headers with the assigned pins" />
+          <PinoutExplorer
+            catalog={data.catalog}
+            cite={data.cite}
+            board={draft.board}
+            variant={draft.variant}
+            input={pinInput}
+            title="Board headers with the assigned pins"
+          />
         </section>
       ) : null}
       <section aria-labelledby={`${id}-tech`}>

@@ -2,6 +2,8 @@ import { useId, useState, type SyntheticEvent } from 'react';
 import type { BreakoutOption, ModuleGroup } from '../catalog/search';
 import { CATEGORIES, categoryOf } from '../catalog/categories';
 import { ItemPicture } from '../components/art';
+import { Spec, Specs } from '../components/common';
+import { Icon } from '../components/icons';
 import { Help, Term } from '../components/Help';
 import { StepHeader } from '../components/StepHeader';
 import { INTERFACE_LABELS } from '../results/explain';
@@ -116,17 +118,22 @@ function ModulePicker({ data }: { data: LoadedCatalog }) {
           <label htmlFor={`${id}-q`}>
             Search modules by part number, name or nickname (or pick a category)
           </label>
-          <input
-            id={`${id}-q`}
-            type="search"
-            value={query}
-            autoComplete="off"
-            placeholder="e.g. BME280, RC522, relay"
-            aria-describedby={`${id}-hint`}
-            onChange={(e) => {
-              setQuery(e.target.value);
-            }}
-          />
+          <span className="search-field">
+            <span className="big-search-icon">
+              <Icon name="search" size={20} />
+            </span>
+            <input
+              id={`${id}-q`}
+              type="search"
+              value={query}
+              autoComplete="off"
+              placeholder="e.g. BME280, RC522, relay"
+              aria-describedby={`${id}-hint`}
+              onChange={(e) => {
+                setQuery(e.target.value);
+              }}
+            />
+          </span>
           <p id={`${id}-hint`} className="muted">
             Press Enter to add when exactly one part matches.
           </p>
@@ -137,7 +144,13 @@ function ModulePicker({ data }: { data: LoadedCatalog }) {
         </p>
 
         <div className="module-layout">
-          <nav aria-label="Module categories">
+          <nav aria-label="Module categories" className="filter-panel">
+            <h2 className="filter-title">
+              <span className="icon-tile">
+                <Icon name="sliders" size={20} />
+              </span>
+              Filter by type
+            </h2>
             <ul className="cat-list">
               {[{ id: '', label: 'All modules' }, ...CATEGORIES].map((c) =>
                 c.id === '' || catCount(c.id) > 0 ? (
@@ -162,19 +175,26 @@ function ModulePicker({ data }: { data: LoadedCatalog }) {
                 <li key={b.id} className="pick-card">
                   <ItemPicture id={b.id} category={categoryOf(g.ic)} name={b.name} />
                   <h2>{b.name}</h2>
-                  <p className="muted">
+                  <p className="muted maker">
                     {g.part} · {b.vendor}
                     {g.breakouts.length > 1
                       ? ` · version ${String(g.breakouts.indexOf(b) + 1)} of ${String(g.breakouts.length)}`
                       : ''}
                   </p>
-                  <p>
-                    {String(b.pins.length)} pins: {b.pins.join(', ')}
-                  </p>
-                  <p className="muted what">{CATEGORY_LABEL[categoryOf(g.ic)] ?? 'Other'}</p>
-                  <p className="muted">
-                    {b.interfaces.map((k) => INTERFACE_LABELS[k] ?? k).join(', ')}
-                  </p>
+                  <Specs>
+                    <Spec label="Pins" value={String(b.pins.length)} />
+                    <Spec label="Type" value={CATEGORY_LABEL[categoryOf(g.ic)] ?? 'Other'} />
+                  </Specs>
+                  {b.interfaces.length > 0 ? (
+                    <ul className="tags" aria-label="Interfaces">
+                      {b.interfaces.map((k) => (
+                        <li key={k} className="chip-tag">
+                          {INTERFACE_LABELS[k] ?? k}
+                        </li>
+                      ))}
+                    </ul>
+                  ) : null}
+                  <p className="muted pin-names">{b.pins.join(', ')}</p>
                   <button
                     type="button"
                     onClick={() => {

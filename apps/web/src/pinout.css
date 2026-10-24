@@ -1,0 +1,433 @@
+/* Pinout diagram. Pill colours are paired with a shape and text, never colour alone.
+   Every bg/fg pair below is at least 7:1 (AA and AAA), in light and dark. */
+.pinout {
+  --pp-label-bg: #eef2f0;
+  --pp-label-fg: #14201d;
+  --pp-label-bd: #5d6b66;
+  --pp-i2c-bg: #e3eeff;
+  --pp-i2c-fg: #0a2c66;
+  --pp-i2c-bd: #2f5fb8;
+  --pp-spi-bg: #f0e5fb;
+  --pp-spi-fg: #3a1055;
+  --pp-spi-bd: #7b3fa8;
+  --pp-uart-bg: #ffeccc;
+  --pp-uart-fg: #5a3000;
+  --pp-uart-bd: #b36a00;
+  --pp-analog-bg: #d6f3ea;
+  --pp-analog-fg: #08463a;
+  --pp-analog-bd: #1d8a73;
+  --pp-power-bg: #ffdad5;
+  --pp-power-fg: #741310;
+  --pp-power-bd: #c23a30;
+  --pp-ground-bg: #d9dedc;
+  --pp-ground-fg: #0e1412;
+  --pp-ground-bd: #1a1a1a;
+  --pp-strap-bg: #fff4a8;
+  --pp-strap-fg: #463a00;
+  --pp-strap-bd: #a08a00;
+  --pp-restricted-bg: #fbe0ec;
+  --pp-restricted-fg: #650d37;
+  --pp-restricted-bd: #b3265f;
+  --pp-other-bg: #ffffff;
+  --pp-other-fg: #2f3b37;
+  --pp-other-bd: #8d9993;
+  --pp-assigned-bg: #0a3f86;
+  --pp-assigned-fg: #ffffff;
+  --pp-assigned-bd: #0a3f86;
+  --pp-board: #dfe8e3;
+  --pp-board-line: #46564f;
+  --pp-chip: #2b3834;
+  --pp-chip-fg: #e6efeb;
+}
+
+@media (prefers-color-scheme: dark) {
+  .pinout {
+    --pp-label-bg: #26332f;
+    --pp-label-fg: #e5ebe8;
+    --pp-label-bd: #9db0a9;
+    --pp-i2c-bg: #172a4d;
+    --pp-i2c-fg: #cfe0ff;
+    --pp-i2c-bd: #6c9bec;
+    --pp-spi-bg: #2f1c44;
+    --pp-spi-fg: #ecd9ff;
+    --pp-spi-bd: #b88be0;
+    --pp-uart-bg: #43290a;
+    --pp-uart-fg: #ffe2b0;
+    --pp-uart-bd: #e0973a;
+    --pp-analog-bg: #0d3a30;
+    --pp-analog-fg: #c4f5e8;
+    --pp-analog-bd: #4fc4a8;
+    --pp-power-bg: #4d1815;
+    --pp-power-fg: #ffd2cc;
+    --pp-power-bd: #ef7a70;
+    --pp-ground-bg: #3a423f;
+    --pp-ground-fg: #f2f5f4;
+    --pp-ground-bd: #e8e8e8;
+    --pp-strap-bg: #403800;
+    --pp-strap-fg: #fff3a0;
+    --pp-strap-bd: #d4bb1c;
+    --pp-restricted-bg: #4a1330;
+    --pp-restricted-fg: #ffd3e6;
+    --pp-restricted-bd: #ee7aab;
+    --pp-other-bg: #151f1c;
+    --pp-other-fg: #d6dfdb;
+    --pp-other-bd: #8ea39b;
+    --pp-assigned-bg: #8ab4f8;
+    --pp-assigned-fg: #04152e;
+    --pp-assigned-bd: #d6e6ff;
+    --pp-board: #1b2824;
+    --pp-board-line: #8ea39b;
+    --pp-chip: #0d1513;
+    --pp-chip-fg: #cfdad5;
+  }
+}
+
+/* Spec chips */
+.spec-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1rem;
+}
+.spec-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 0.2rem 0.75rem;
+  background: var(--card-bg);
+}
+.spec-name {
+  color: var(--muted);
+  font-size: 0.85em;
+}
+
+/* Filter chips */
+.pg-filter {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0 0 0.5rem;
+}
+.pg-filter-title {
+  font-weight: 700;
+  margin-right: 0.25rem;
+}
+.pg-chip,
+.pg-clear {
+  font: inherit;
+  cursor: pointer;
+  border: 2px solid var(--border);
+  border-radius: 999px;
+  padding: 0.2rem 0.7rem;
+  background: var(--card-bg);
+  color: var(--fg);
+  min-height: 2rem;
+}
+.pg-chip[aria-pressed='true'] {
+  background: var(--fg);
+  color: var(--bg);
+  border-color: var(--fg);
+  font-weight: 700;
+}
+.pg-chip[aria-pressed='true']::before {
+  content: '\2713\00a0';
+}
+.pg-chip:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+.pg-chip:focus-visible,
+.pg-clear:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+.pg-count {
+  font-variant-numeric: tabular-nums;
+  opacity: 0.85;
+}
+.pg-clear {
+  border-style: dashed;
+}
+.pinout-help {
+  margin: 0 0 0.75rem;
+}
+
+/* Diagram + panel */
+.pinout-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1rem;
+  align-items: start;
+}
+@media (min-width: 1100px) {
+  .pinout-layout {
+    grid-template-columns: minmax(0, 1fr) 20rem;
+  }
+}
+.pinout-scroll {
+  overflow-x: auto;
+  max-width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--card-bg);
+  padding: 0.5rem;
+}
+.pinout-keys {
+  display: block;
+}
+.pinout-svg {
+  display: block;
+  height: auto;
+  margin: 0 auto;
+  overflow: visible;
+  font-family: var(--font-body, system-ui, sans-serif);
+}
+.pinout-board {
+  fill: var(--pp-board);
+  stroke: var(--pp-board-line);
+  stroke-width: 2;
+}
+.pinout-chip {
+  fill: var(--pp-chip);
+  stroke: var(--pp-board-line);
+}
+.pinout-chip-text {
+  fill: var(--pp-chip-fg);
+  font-size: 12px;
+  font-weight: 700;
+}
+.pinout-conn-title {
+  fill: var(--fg);
+  font-size: 12px;
+  font-weight: 700;
+}
+.pinout-leader {
+  stroke: var(--pp-board-line);
+  stroke-width: 2;
+}
+.pinout-svg .pin-hit {
+  fill: transparent;
+}
+.pinout-svg .pin-used .pin-hit {
+  fill: color-mix(in srgb, var(--pp-assigned-bd) 14%, transparent);
+}
+.pinout-svg .pin-active .pin-hit {
+  fill: color-mix(in srgb, var(--focus) 16%, transparent);
+  stroke: var(--fg);
+  stroke-width: 2;
+}
+.pinout-svg .pin:focus-visible .pin-hit {
+  stroke: var(--focus);
+  stroke-width: 3;
+}
+.pin-dim {
+  opacity: 0.28;
+}
+.pin-dim:hover,
+.pin-dim:focus-visible {
+  opacity: 0.8;
+}
+
+/* Pills */
+.pp-bg {
+  fill: var(--pill-bg);
+  stroke: var(--pill-bd);
+  stroke-width: 1.5;
+}
+.pp-text {
+  fill: var(--pill-fg);
+  font-size: 13px;
+  font-weight: 600;
+}
+.pi-stroke {
+  fill: none;
+  stroke: var(--pill-fg);
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.pi-fill {
+  fill: var(--pill-fg);
+}
+.pp-label {
+  --pill-bg: var(--pp-label-bg);
+  --pill-fg: var(--pp-label-fg);
+  --pill-bd: var(--pp-label-bd);
+}
+.pp-i2c {
+  --pill-bg: var(--pp-i2c-bg);
+  --pill-fg: var(--pp-i2c-fg);
+  --pill-bd: var(--pp-i2c-bd);
+}
+.pp-spi {
+  --pill-bg: var(--pp-spi-bg);
+  --pill-fg: var(--pp-spi-fg);
+  --pill-bd: var(--pp-spi-bd);
+}
+.pp-uart {
+  --pill-bg: var(--pp-uart-bg);
+  --pill-fg: var(--pp-uart-fg);
+  --pill-bd: var(--pp-uart-bd);
+}
+.pp-analog {
+  --pill-bg: var(--pp-analog-bg);
+  --pill-fg: var(--pp-analog-fg);
+  --pill-bd: var(--pp-analog-bd);
+}
+.pp-power {
+  --pill-bg: var(--pp-power-bg);
+  --pill-fg: var(--pp-power-fg);
+  --pill-bd: var(--pp-power-bd);
+}
+.pp-ground {
+  --pill-bg: var(--pp-ground-bg);
+  --pill-fg: var(--pp-ground-fg);
+  --pill-bd: var(--pp-ground-bd);
+}
+.pp-strap {
+  --pill-bg: var(--pp-strap-bg);
+  --pill-fg: var(--pp-strap-fg);
+  --pill-bd: var(--pp-strap-bd);
+}
+.pp-restricted {
+  --pill-bg: var(--pp-restricted-bg);
+  --pill-fg: var(--pp-restricted-fg);
+  --pill-bd: var(--pp-restricted-bd);
+}
+.pp-restricted .pp-bg {
+  stroke-dasharray: 4 2;
+}
+.pp-other,
+.pp-more {
+  --pill-bg: var(--pp-other-bg);
+  --pill-fg: var(--pp-other-fg);
+  --pill-bd: var(--pp-other-bd);
+}
+.pp-assigned {
+  --pill-bg: var(--pp-assigned-bg);
+  --pill-fg: var(--pp-assigned-fg);
+  --pill-bd: var(--pp-assigned-bd);
+}
+.pp-assigned .pp-bg {
+  stroke-width: 3;
+}
+.pp-assigned .pp-text {
+  font-weight: 800;
+}
+
+/* Info panel */
+.pg-info {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  background: var(--card-bg);
+}
+.pg-info-title {
+  margin: 0 0 0.25rem;
+  font-size: 1.05rem;
+}
+.pg-info h4 {
+  margin: 0.75rem 0 0.25rem;
+}
+.pg-info .pin-selected {
+  font-weight: 400;
+  color: var(--muted);
+  font-size: 0.9em;
+  margin: 0 0 0.5rem;
+}
+.pg-info-list {
+  margin: 0;
+}
+.pg-info-list div {
+  display: flex;
+  gap: 0.5rem;
+  border-top: 1px solid var(--line);
+  padding: 0.2rem 0;
+}
+.pg-info-list dt {
+  flex: 0 0 8.5rem;
+  color: var(--muted);
+}
+.pg-info-list dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.pg-fn-list,
+.pg-warn {
+  margin: 0;
+  padding-left: 1.1rem;
+}
+.pg-warn li {
+  font-weight: 600;
+}
+.pinout-legend {
+  margin-top: 0.75rem;
+}
+
+/* Phones: the diagram scrolls inside its own box; the panel stacks below. */
+@media (max-width: 600px) {
+  .pg-info-list dt {
+    flex-basis: 6.5rem;
+  }
+}
+
+/* Print: black and white pills with borders; filter and panel are not printed. */
+@media print {
+  .pinout {
+    --pp-label-bg: #fff;
+    --pp-i2c-bg: #fff;
+    --pp-spi-bg: #fff;
+    --pp-uart-bg: #fff;
+    --pp-analog-bg: #fff;
+    --pp-power-bg: #fff;
+    --pp-ground-bg: #ddd;
+    --pp-strap-bg: #fff;
+    --pp-restricted-bg: #fff;
+    --pp-assigned-bg: #000;
+    --pp-assigned-fg: #fff;
+    --pp-label-fg: #000;
+    --pp-i2c-fg: #000;
+    --pp-spi-fg: #000;
+    --pp-uart-fg: #000;
+    --pp-analog-fg: #000;
+    --pp-power-fg: #000;
+    --pp-ground-fg: #000;
+    --pp-strap-fg: #000;
+    --pp-restricted-fg: #000;
+    --pp-i2c-bd: #000;
+    --pp-spi-bd: #000;
+    --pp-uart-bd: #000;
+    --pp-analog-bd: #000;
+    --pp-power-bd: #000;
+    --pp-strap-bd: #000;
+    --pp-restricted-bd: #000;
+    --pp-board: #fff;
+    --pp-board-line: #000;
+  }
+  .pg-filter,
+  .pg-info,
+  .pinout-help,
+  .pinout-legend {
+    display: none !important;
+  }
+  .pinout-scroll {
+    overflow: visible;
+    border: 0;
+  }
+  .pinout-svg {
+    break-inside: avoid;
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+  .pin-dim {
+    opacity: 1;
+  }
+  .pinout-layout {
+    display: block;
+  }
+}

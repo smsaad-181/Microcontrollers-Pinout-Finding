@@ -14,3 +14,6 @@ Phase 5 work is done on branch phase-5 and merged to main: link checker (`pnpm c
 
 ## Update (UX overhaul)
 Plain-language redesign: step tracker with done states, sticky Back/Next bar, help for jargon, "Your rules" screen, Home "Try an example", Results as a wiring guide with warnings grouped (Fix before you wire / Check this / Good to know). Plain wording lives in apps/web/src/results/plain.ts (not independently reviewed; fact-check before v1.0). Checks: 171 unit, 11 e2e (incl. axe light and dark) pass.
+
+## Update (micropinouts-style redesign)
+Light teal theme, top-bar wizard nav, Home hero with search + brand pills, spec chips on cards, and a colour-coded pinout diagram (src/components/pinout/*) on the Board step (BoardDetails) and the Results page. Pin functions come only from catalog pad data. 176 unit tests, 11 e2e (axe light+dark) pass.
