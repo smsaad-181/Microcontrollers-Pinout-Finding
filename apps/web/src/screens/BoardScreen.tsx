@@ -1,7 +1,7 @@
 import { useId, useState } from 'react';
 import { BOARD_STATUS_META } from '../catalog/boards';
 import { countBy, filterCards, type BoardCard } from '../catalog/boardGroups';
-import { BoardArt } from '../components/art';
+import { ItemPicture } from '../components/art';
 import { StatusBadge } from '../components/common';
 import { hrefFor } from '../route';
 import { useAppState, type LoadedCatalog } from '../state/AppState';
@@ -107,7 +107,11 @@ function BoardPicker({ data }: { data: LoadedCatalog }) {
           const sel = isCardSelected(c);
           return (
             <li key={c.key} className={`pick-card${sel ? ' is-selected' : ''}`}>
-              <BoardArt name={c.name} vendor={c.vendor} family={c.family} />
+              <ItemPicture
+                id={c.versions[0]?.ref.split('@')[0] ?? c.key}
+                name={c.name}
+                board={{ vendor: c.vendor, family: c.family }}
+              />
               <h2>{c.name}</h2>
               <p className="muted">
                 {c.vendor} · {c.family}

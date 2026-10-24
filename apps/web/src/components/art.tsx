@@ -2,6 +2,7 @@
 // family, headers); modules show an icon for their kind. They are pictures to recognise things, not
 // exact photos: check the silkscreen of your own board.
 import type { ReactElement } from 'react';
+import { PHOTOS } from '../catalog/images';
 
 const hue = (s: string): number => {
   let h = 0;
@@ -115,5 +116,36 @@ export function ModuleArt({ category, name }: { category: string; name: string }
     >
       {ICONS[category] ?? ICONS.other}
     </svg>
+  );
+}
+
+/** Real photo when one exists (with its credit as the tooltip), otherwise the drawn illustration. */
+export function ItemPicture({
+  id,
+  name,
+  category,
+  board,
+}: {
+  id: string;
+  name: string;
+  category?: string;
+  board?: { vendor: string; family: string };
+}): ReactElement {
+  const photo = PHOTOS[id];
+  if (photo) {
+    return (
+      <img
+        className="photo"
+        src={photo.src}
+        alt={name}
+        loading="lazy"
+        title={`Photo: ${photo.credit} (${photo.license})`}
+      />
+    );
+  }
+  return board ? (
+    <BoardArt name={name} vendor={board.vendor} family={board.family} />
+  ) : (
+    <ModuleArt category={category ?? 'other'} name={name} />
   );
 }

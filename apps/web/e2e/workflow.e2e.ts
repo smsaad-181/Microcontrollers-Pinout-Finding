@@ -72,28 +72,20 @@ test('every citation link is a URL listed in the evidence records', async ({ pag
   expect([...new Set(hrefs)].filter((h) => !allowed.has(h))).toEqual([]);
 });
 
-test('variant prompt asks which board carries a part', async ({ page }) => {
+test('every board version of a part is its own card', async ({ page }) => {
   await page.goto('./#/modules');
   await page.getByLabel(/Search modules/).fill('bme280');
-  await page.getByRole('button', { name: /Choose variant/ }).click();
-  const dialog = page.getByRole('dialog', { name: /Which BME280 board do you have/ });
-  await expect(dialog).toBeVisible();
-  await expect(dialog.getByRole('button', { name: 'Add this board' })).toBeDisabled();
-  await page.keyboard.press('Escape');
-  await expect(dialog).toBeHidden();
+  const cards = page.getByRole('list', { name: 'Search results' }).getByRole('listitem');
+  await expect(cards).toHaveCount(3);
+  await expect(cards.first()).toContainText('version 1 of 3');
   await expect(page.getByText('No modules yet')).toBeVisible();
-
-  await page.getByRole('button', { name: /Choose variant/ }).click();
-  await page
-    .getByRole('dialog')
-    .getByRole('radio', { name: /Adafruit/ })
-    .check();
-  await page.getByRole('dialog').getByRole('button', { name: 'Add this board' }).click();
-  await expect(page.getByRole('heading', { name: /Modules in this project \(1\)/ })).toBeVisible();
-  // A part with a single board is added directly, with no prompt.
+  await cards
+    .filter({ hasText: /Adafruit/ })
+    .getByRole('button')
+    .click();
+  await expect(page.getByRole('heading', { name: /Modules in this project (1)/ })).toBeVisible();
   await addModule(page, 'rc522');
-  await expect(page.getByRole('dialog')).toHaveCount(0);
-  await expect(page.getByRole('heading', { name: /Modules in this project \(2\)/ })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /Modules in this project (2)/ })).toBeVisible();
 });
 
 test('share link round trip gives the same allocation in a fresh browser', async ({

@@ -45,7 +45,7 @@ async function expectNoSeriousViolations(page: Page): Promise<void> {
 test.describe('axe', () => {
   // axe-core is injected as an inline script, which the app's strict CSP correctly blocks.
   test.use({ bypassCSP: true });
-  test('real-browser axe-core: 0 serious or critical on all screens and the variant dialog', async ({
+  test('real-browser axe-core: 0 serious or critical on all screens and the module cards', async ({
     page,
   }) => {
     const cat = await currentCatalog(page);
@@ -67,8 +67,7 @@ test.describe('axe', () => {
 
     await page.goto('./#/modules');
     await page.getByLabel(/Search modules/).fill('bme280');
-    await page.getByRole('button', { name: /Choose variant/ }).click();
-    await expect(page.getByRole('dialog')).toBeVisible();
+    await expect(page.getByRole('button', { name: /^Add / }).first()).toBeVisible();
     await expectNoSeriousViolations(page);
   });
 });
@@ -188,15 +187,8 @@ test('keyboard only: board, module, results', async ({ page }) => {
 
   await tabTo({ input: 'search' });
   await page.keyboard.type('bme280');
-  await tabTo('Choose variant');
+  await tabTo('Add ');
   await page.keyboard.press('Enter');
-  const dialog = page.getByRole('dialog');
-  await expect(dialog).toBeVisible();
-  // Focus is trapped in the dialog; choose the first variant and confirm.
-  await page.keyboard.press('Space');
-  await tabTo('Add this board', 12);
-  await page.keyboard.press('Enter');
-  await expect(dialog).toBeHidden();
   await expect(page.getByRole('heading', { name: /Modules in this project \(1\)/ })).toBeVisible();
 
   await tabTo('Find pins now');

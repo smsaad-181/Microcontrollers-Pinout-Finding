@@ -81,14 +81,9 @@ export async function chooseWorkedBoard(page: Page): Promise<void> {
 /** Searches for a part and adds it; when several boards carry it, picks the variant by its pins. */
 export async function addModule(page: Page, query: string, variantPins?: RegExp): Promise<void> {
   await page.getByLabel(/Search modules/).fill(query);
-  const group = page.getByRole('list', { name: 'Search results' }).getByRole('listitem').first();
-  await group.getByRole('button').click();
-  if (variantPins !== undefined) {
-    const dialog = page.getByRole('dialog');
-    await dialog.getByRole('radio', { name: variantPins }).check();
-    await dialog.getByRole('button', { name: 'Add this board' }).click();
-    await expect(dialog).toBeHidden();
-  }
+  const cards = page.getByRole('list', { name: 'Search results' }).getByRole('listitem');
+  const card = variantPins === undefined ? cards.first() : cards.filter({ hasText: variantPins });
+  await card.first().getByRole('button').click();
 }
 
 export async function addWorkedModules(page: Page): Promise<void> {

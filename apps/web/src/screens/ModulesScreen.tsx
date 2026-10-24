@@ -1,7 +1,7 @@
-import { useEffect, useId, useRef, useState, type SyntheticEvent } from 'react';
+import { useId, useState, type SyntheticEvent } from 'react';
 import type { BreakoutOption, ModuleGroup } from '../catalog/search';
 import { CATEGORIES, categoryOf } from '../catalog/categories';
-import { ModuleArt } from '../components/art';
+import { ItemPicture } from '../components/art';
 import { INTERFACE_LABELS } from '../results/explain';
 import { hrefFor } from '../route';
 import { useAppState, type LoadedCatalog } from '../state/AppState';
@@ -17,88 +17,9 @@ export function groupAction(
     : { kind: 'ask' };
 }
 
-function VariantPrompt({
-  group,
-  onPick,
-  onCancel,
-}: {
-  group: ModuleGroup;
-  onPick: (b: BreakoutOption) => void;
-  onCancel: () => void;
-}) {
-  const ref = useRef<HTMLDialogElement>(null);
-  const id = useId();
-  const [choice, setChoice] = useState<string>('');
-  useEffect(() => {
-    const d = ref.current;
-    if (d && !d.open) d.showModal();
-  }, []);
-  const submit = (e: SyntheticEvent) => {
-    e.preventDefault();
-    const b = group.breakouts.find((x) => x.id === choice);
-    if (b) onPick(b);
-  };
-  return (
-    <dialog
-      ref={ref}
-      aria-labelledby={`${id}-title`}
-      className="dialog"
-      onCancel={(e) => {
-        e.preventDefault();
-        onCancel();
-      }}
-    >
-      <form onSubmit={submit}>
-        <h2 id={`${id}-title`}>Which {group.part} board do you have?</h2>
-        <p>
-          {group.breakouts.length} different boards carry this part. They differ in pins, pull-ups
-          or regulators, so the engine needs the exact one. Check the silkscreen of your board.
-        </p>
-        <fieldset>
-          <legend>Board variant</legend>
-          {group.breakouts.map((b) => (
-            <label key={b.id} className="variant-option">
-              <input
-                type="radio"
-                name={`${id}-variant`}
-                value={b.id}
-                checked={choice === b.id}
-                onChange={() => {
-                  setChoice(b.id);
-                }}
-              />
-              <span>
-                <strong>{b.name}</strong> <span className="muted">({b.vendor})</span>
-                <br />
-                Pins: {b.pins.join(', ')} · Interfaces:{' '}
-                {b.interfaces.map((k) => INTERFACE_LABELS[k] ?? k).join(', ')}
-                {b.names.length > 1 ? (
-                  <>
-                    <br />
-                    <span className="muted">Also sold as: {b.names.slice(1).join('; ')}</span>
-                  </>
-                ) : null}
-              </span>
-            </label>
-          ))}
-        </fieldset>
-        <div className="actions">
-          <button type="submit" disabled={choice === ''}>
-            Add this board
-          </button>
-          <button type="button" onClick={onCancel}>
-            Cancel
-          </button>
-        </div>
-      </form>
-    </dialog>
-  );
-}
-
 function ModulePicker({ data }: { data: LoadedCatalog }) {
   const { draft, dispatch } = useAppState();
   const [query, setQuery] = useState('');
-  const [asking, setAsking] = useState<ModuleGroup | null>(null);
   const [announce, setAnnounce] = useState('');
   const [cat, setCat] = useState('');
   const id = useId();
@@ -116,15 +37,11 @@ function ModulePicker({ data }: { data: LoadedCatalog }) {
     dispatch({ type: 'add-module', breakout: b.id, base: b.ic });
     setAnnounce(`Added ${b.name}.`);
   };
-  const pick = (g: ModuleGroup) => {
-    const a = groupAction(g);
-    if (a.kind === 'add') add(a.breakout);
-    else setAsking(g);
-  };
   const onSubmit = (e: SyntheticEvent) => {
     e.preventDefault();
-    const first = groups[0];
-    if (groups.length === 1 && first) pick(first);
+    const only = groups.length === 1 ? groups[0] : undefined;
+    const b = only?.breakouts.length === 1 ? only.breakouts[0] : undefined;
+    if (b) add(b);
   };
 
   return (
@@ -174,45 +91,37 @@ function ModulePicker({ data }: { data: LoadedCatalog }) {
           </ul>
         </nav>
         <ul className="card-grid" aria-label="Search results">
-          {groups.map((g) => {
-            const first = g.breakouts[0];
-            const name = g.breakouts.length === 1 ? (first?.name ?? g.part) : g.part;
-            return (
-              <li key={g.ic} className="pick-card">
-                <ModuleArt category={categoryOf(g.ic)} name={name} />
-                <h2>{name}</h2>
+          {groups.flatMap((g) =>
+            g.breakouts.map((b) => (
+              <li key={b.id} className="pick-card">
+                <ItemPicture id={b.id} category={categoryOf(g.ic)} name={b.name} />
+                <h2>{b.name}</h2>
                 <p className="muted">
-                  {g.breakouts.length === 1
-                    ? `${first?.vendor ?? ''} · ${(first?.interfaces ?? []).map((k) => INTERFACE_LABELS[k] ?? k).join(', ')}`
-                    : `${g.breakouts.length} board versions`}
+                  {g.part} · {b.vendor}
+                  {g.breakouts.length > 1
+                    ? ` · version ${String(g.breakouts.indexOf(b) + 1)} of ${String(g.breakouts.length)}`
+                    : ''}
+                </p>
+                <p>
+                  {String(b.pins.length)} pins: {b.pins.join(', ')}
+                </p>
+                <p className="muted">
+                  {b.interfaces.map((k) => INTERFACE_LABELS[k] ?? k).join(', ')}
                 </p>
                 <button
                   type="button"
                   onClick={() => {
-                    pick(g);
+                    add(b);
                   }}
                 >
-                  {g.breakouts.length === 1 ? 'Add' : 'Choose variant…'}
-                  <span className="visually-hidden"> {g.part}</span>
+                  Add
+                  <span className="visually-hidden"> {b.name}</span>
                 </button>
               </li>
-            );
-          })}
+            )),
+          )}
         </ul>
       </div>
-
-      {asking ? (
-        <VariantPrompt
-          group={asking}
-          onPick={(b) => {
-            add(b);
-            setAsking(null);
-          }}
-          onCancel={() => {
-            setAsking(null);
-          }}
-        />
-      ) : null}
 
       <p aria-live="polite" className="visually-hidden">
         {announce}
