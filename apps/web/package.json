@@ -6,11 +6,13 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "build:single": "pnpm -w run catalog:compile && vite build --config vite.single.config.ts",
     "preview": "vite preview",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "lint": "eslint .",
     "test": "vitest run",
-    "e2e": "vite build && playwright test"
+    "e2e": "vite build && playwright test",
+    "e2e:single": "vite build --config vite.single.config.ts && playwright test --config playwright.single.config.ts"
   },
   "dependencies": {
     "@pinout/engine": "workspace:*",
