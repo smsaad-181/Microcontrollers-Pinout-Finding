@@ -12,6 +12,9 @@ import potentiometer10kImg from '../assets/photos/potentiometer-10k.jpg';
 import pushButtonImg from '../assets/photos/push-button.jpg';
 import dht113pinModuleImg from '../assets/photos/dht11-3pin-module.jpg';
 
+import { PHOTOS_BOARDS } from './photosBoards';
+import { PHOTOS_MODULES } from './photosModules';
+
 export interface Photo {
   src: string;
   credit: string;
@@ -19,7 +22,7 @@ export interface Photo {
   page: string;
 }
 
-export const PHOTOS: Record<string, Photo> = {
+const FIRST_PHOTOS: Record<string, Photo> = {
   'raspberry-pi-pico': {
     src: raspberryPiPicoImg,
     credit: 'Phiarc / Wikimedia Commons',
@@ -76,8 +79,10 @@ export const PHOTOS: Record<string, Photo> = {
   },
   'dht11-3pin-module': {
     src: dht113pinModuleImg,
-    credit: 'Crackopl / Wikimedia Commons',
-    license: 'CC BY-SA 3.0',
-    page: 'https://commons.wikimedia.org/wiki/File:Dht11_term_and_humidity_sensor.jpg',
+    credit: 'ProtoSupplies (product image)',
+    license: 'Product image, used with credit',
+    page: 'https://protosupplies.com/product/dht11-humidity-and-temp-sensor-module/',
   },
 };
+
+export const PHOTOS: Record<string, Photo> = { ...FIRST_PHOTOS, ...PHOTOS_BOARDS, ...PHOTOS_MODULES };
