@@ -19,7 +19,8 @@
     "docs:schema": "pnpm --filter @pinout/schema build && pnpm --filter @pinout/schema docs",
     "mutation": "pnpm -r --workspace-concurrency=1 --if-present run mutation",
     "check:rules-disabled": "node tools/checks/rules-disabled.mjs",
-    "check:boundaries": "node tools/checks/boundaries.mjs"
+    "check:boundaries": "node tools/checks/boundaries.mjs",
+    "check:size": "node tools/checks/size.mjs"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",
