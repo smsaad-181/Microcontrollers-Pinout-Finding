@@ -69,18 +69,18 @@ Legend: `[x]` done · `[~]` in progress · `[-]` deferred (needs GitHub) · `[ ]
 - [x] 2b.11 · Performance · _engine-developer_
 
 **Phase 3**
-- [ ] 3.1 · App shell, hash routes #/, #/board, #/modules, #/constraints, #/results, #/p/<shared> · _ui-developer_
-- [ ] 3.2 · Engine in a Web Worker via Comlink; progress + cancel; 2 s timeout message. · _ui-developer_
-- [ ] 3.3 · Board picker with filters (manufacturer, family, chip, module, revision) and status bad… · _ui-developer_
-- [ ] 3.4 · Module search (MiniSearch over part numbers, nicknames, aliases) with variant prompt wh… · _ui-developer_
-- [ ] 3.5 · Constraints: locked pins, reserved pins, voltage rails, framework, existing connections. · _ui-developer_
-- [ ] 3.6 · Results · _ui-developer_
-- [ ] 3.7 · SVG header view generated from board connector data; states · _ui-developer_
-- [ ] 3.8 · Persistence · _ui-developer_
-- [ ] 3.9 · Share links · _ui-developer_
-- [ ] 3.10 · Offline: vite-plugin-pwa; "update available" prompt when the manifest changes. · _ui-developer_
-- [ ] 3.11 · E2E (Playwright) · _test-automator_
-- [ ] 3.12 · Disclaimer + "how to verify" panel on every result. · _ui-developer_
+- [x] 3.1 · App shell, hash routes #/, #/board, #/modules, #/constraints, #/results, #/p/<shared> · _ui-developer_
+- [x] 3.2 · Engine in a Web Worker via Comlink; progress + cancel; 2 s timeout message. · _ui-developer_
+- [x] 3.3 · Board picker with filters (manufacturer, family, chip, module, revision) and status bad… · _ui-developer_
+- [x] 3.4 · Module search (MiniSearch over part numbers, nicknames, aliases) with variant prompt wh… · _ui-developer_
+- [x] 3.5 · Constraints: locked pins, reserved pins, voltage rails, framework, existing connections. · _ui-developer_
+- [x] 3.6 · Results · _ui-developer_
+- [x] 3.7 · SVG header view generated from board connector data; states · _ui-developer_
+- [x] 3.8 · Persistence · _ui-developer_
+- [x] 3.9 · Share links · _ui-developer_
+- [x] 3.10 · Offline: vite-plugin-pwa; "update available" prompt when the manifest changes. · _ui-developer_
+- [x] 3.11 · E2E (Playwright) · _test-automator_
+- [x] 3.12 · Disclaimer + "how to verify" panel on every result. · _ui-developer_
 
 **Phase 4**
 - [ ] 4.1 · Research the canonical library for each MVP module per framework (maintainer repo, vers… · _hardware-researcher_
@@ -215,3 +215,4 @@ None of these block Phase 0. Re-check all three when a session is started inside
 | 2026-10-23 | 2a | Phase 2a done: 1052 facts (789 verified, 42 conflict, 8 interim, 1 single-source->0, 212 missing), 24 golden fixtures, phase-validator PASS after owner accepted deferrals (Uno R3/ATmega328P, DS18B20, DHT22, MPU-6050, KS0058 await manual PDFs; ESP8266 GPIO0/2/15 strap facts missing until schema makes default_pull optional - first task of 2b). Merged phase-2a into main. |
 
 | 2026-10-23 | 2b | Phase 2b done: rules R1-R8, composer, selector, CSP solver, unsat explainer, traces; 24/24 golden fixtures; property tests (1000 runs), rules mutation 95.75%, perf p95 58 ms; gate found 2 lock bugs + missing MCU-pin capacitance in R3 (all fixed); phase-validator PASS after fixes. Later list in docs/validation/phase-2b/phase-validator.md. |
+| 2026-10-24 | 3 | Phase 3 done: web app (board picker, module search + variant prompt, worker solve, results with citations/traces/unsat, SVG header, save/export/print, share links, offline PWA); e2e 10/10, axe 0 issues, app 169 kB gz; phase-validator PASS (0 Critical/Major, 9 minor in docs/validation/phase-3/phase-validator.md). Later: share-link decompress cap, GPIO-3.11 citation, rails override needs engine change. |

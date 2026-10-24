@@ -1,7 +1,7 @@
-Doing: Stopped at your request. Nothing is running.
-Why: You asked me to pause.
-Folder: D:\Development\pinout-finder-kit\pinout-finder-3 (Phase 3 branch phase-3)
-Who: Nobody.
-Next: Phase 3 stage C (browser end-to-end tests), then review, then Phase 4 and 5. Say "continue" or "go".
-Needs you: Push the commands from the chat.
-Where: Phase 3 about 60%. Overall about 80%.
+Doing: Phase 3 (web app) finished and merged into main on this computer.
+Why: The browser app works end to end and passed tests and review.
+Folder: D:\Development\pinout-finder-kit\pinout-finder
+Who: Nobody working right now.
+Next: Phase 4 (code generation: Arduino/MicroPython/ESP-IDF snippets), then Phase 5 (release).
+Needs you: Push (commands in chat). Say "go" for Phase 4.
+Where: Phase 3 100%. Overall about 87%.
