@@ -22,12 +22,12 @@ Everything works from `file://`, offline: board choice, module search, constrain
 board view, evidence links (these open the datasheet on the web, of course), project file save
 and open, CSV export, print, hash routes (`pinout-finder.html#/board`, `#/results`, ...).
 
-## Size (catalog 21f71471a3f0)
+## Size (catalog 5803ea00f666, with DHT11)
 
 | | raw | gzip |
 | --- | --- | --- |
-| `pinout-finder.html` | 1.67 MB | 352 kB |
-| of which the catalog JSON | 0.95 MB | — |
+| `pinout-finder.html` | 1.68 MB | 361 kB |
+| of which the catalog JSON | ~0.96 MB | — |
 
 The engine is in the file twice (base64 blob-worker copy + main-thread fallback copy); this is the
 price of the fallback and still opens instantly.
