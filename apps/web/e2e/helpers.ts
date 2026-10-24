@@ -83,7 +83,7 @@ export async function addModule(page: Page, query: string, variantPins?: RegExp)
   await page.getByLabel(/Search modules/).fill(query);
   const cards = page.locator('ul[aria-label="Search results"] > li');
   const card = variantPins === undefined ? cards.first() : cards.filter({ hasText: variantPins });
-  await card.first().getByRole('button').click();
+  await card.first().getByRole('button', { name: /^Add / }).click();
 }
 
 export async function addWorkedModules(page: Page): Promise<void> {

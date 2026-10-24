@@ -1691,3 +1691,35 @@ button.link-button:hover:not(:disabled) {
   color: var(--link);
   justify-content: flex-start;
 }
+
+/* "Why does this step exist?" */
+.why-rules {
+  background: var(--card-bg);
+  border: 1px solid var(--line);
+  border-left: 6px solid var(--btn-bg);
+  border-radius: 16px;
+  padding: 1.1rem 1.4rem;
+  margin: 0 0 1.25rem;
+}
+
+.why-rules h2 {
+  margin-top: 0;
+}
+
+.why-list {
+  margin: 0.5rem 0 0.75rem;
+  padding-left: 1.2rem;
+}
+
+.why-list li {
+  margin: 0.4rem 0;
+}
+
+.parts-layout {
+  display: block;
+}
+
+.parts-main .parts-panel {
+  position: static;
+  margin-bottom: 1rem;
+}

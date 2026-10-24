@@ -520,6 +520,34 @@ export function ConstraintsScreen({ headingRef }: { headingRef: HeadingRef }) {
           </Help>
         }
       />
+      <section className="why-rules" aria-labelledby="why-rules-title">
+        <h2 id="why-rules-title">Why does this step exist?</h2>
+        <p>
+          By default the app chooses every pin for you, so most people can skip this step. Your
+          project is sometimes not a blank page, though: a wire may already be soldered, a pin may
+          be saved for something else, or you may know something the app cannot see. Here you tell
+          the app, and it plans around it instead of undoing your work.
+        </p>
+        <ul className="why-list">
+          <li>
+            <strong>Already wired something?</strong> Say which part goes on which pin, and the app
+            keeps it there and fits everything else around it.
+          </li>
+          <li>
+            <strong>Saving pins for later?</strong> Mark them free and the app will not use them,
+            for example for a display you will add next month.
+          </li>
+          <li>
+            <strong>Using Wi-Fi or long wires?</strong> Wi-Fi blocks some analog pins on ESP32
+            boards, and long wires can disturb sensors. Tell us, and the answer and warnings take it
+            into account.
+          </li>
+        </ul>
+        <p className="muted">
+          The app never hides a risk because of your choice: if a pin you fixed is risky, the
+          Results page still warns you and says what could go wrong.
+        </p>
+      </section>
       <WithCatalog>{(data) => <ConstraintsForm data={data} />}</WithCatalog>
     </>
   );

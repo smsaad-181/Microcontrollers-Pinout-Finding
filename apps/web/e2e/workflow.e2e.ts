@@ -81,7 +81,7 @@ test('every board version of a part is its own card', async ({ page }) => {
   await expect(page.getByText('No modules yet')).toBeVisible();
   await cards
     .filter({ hasText: /Adafruit/ })
-    .getByRole('button')
+    .getByRole('button', { name: /^Add / })
     .click();
   await expect(page.getByRole('heading', { name: /Your parts \(1\)/ })).toBeVisible();
   await addModule(page, 'rc522');

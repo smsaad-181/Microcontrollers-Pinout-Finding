@@ -89,6 +89,8 @@ function ModulePicker({ data }: { data: LoadedCatalog }) {
   const [query, setQuery] = useState('');
   const [announce, setAnnounce] = useState('');
   const [cat, setCat] = useState('');
+  const [part, setPart] = useState('');
+  const [focusId, setFocusId] = useState<string | null>(null);
   const id = useId();
   const allGroups: ModuleGroup[] = [];
   for (const o of data.search.all) {
@@ -97,8 +99,11 @@ function ModulePicker({ data }: { data: LoadedCatalog }) {
     else allGroups.push({ ic: o.ic, part: o.part, breakouts: [o] });
   }
   const found = query.trim() === '' ? allGroups : data.search.search(query);
-  const groups = found.filter((g) => cat === '' || categoryOf(g.ic) === cat);
-  const catCount = (c: string) => found.filter((g) => c === '' || categoryOf(g.ic) === c).length;
+  const inCat = (g: ModuleGroup, c: string) => c === '' || categoryOf(g.ic) === c;
+  const groups = found.filter((g) => inCat(g, cat) && (part === '' || g.ic === part));
+  const catCount = (c: string) => found.filter((g) => inCat(g, c)).length;
+  const focused = focusId === null ? undefined : data.search.byId(focusId);
+  const focusedGroup = focused ? allGroups.find((g) => g.ic === focused.ic) : undefined;
 
   const add = (b: BreakoutOption) => {
     dispatch({ type: 'add-module', breakout: b.id, base: b.ic });
@@ -113,108 +118,260 @@ function ModulePicker({ data }: { data: LoadedCatalog }) {
 
   return (
     <div className="parts-layout">
-      <div className="parts-main">
-        <form role="search" onSubmit={onSubmit} className="search">
-          <label htmlFor={`${id}-q`}>
-            Search modules by part number, name or nickname (or pick a category)
-          </label>
-          <span className="search-field">
-            <span className="big-search-icon">
-              <Icon name="search" size={20} />
-            </span>
-            <input
-              id={`${id}-q`}
-              type="search"
-              value={query}
-              autoComplete="off"
-              placeholder="e.g. BME280, RC522, relay"
-              aria-describedby={`${id}-hint`}
-              onChange={(e) => {
-                setQuery(e.target.value);
-              }}
-            />
-          </span>
-          <p id={`${id}-hint`} className="muted">
-            Press Enter to add when exactly one part matches.
-          </p>
-        </form>
-
-        <p role="status" className="muted">
-          {groups.length} part{groups.length === 1 ? '' : 's'} shown.
-        </p>
-
-        <div className="module-layout">
-          <nav aria-label="Module categories" className="filter-panel">
-            <h2 className="filter-title">
-              <span className="icon-tile">
-                <Icon name="sliders" size={20} />
+      <div className="board-layout tree-layout">
+        <nav aria-label="Parts by type" className="board-tree">
+          <form role="search" onSubmit={onSubmit} className="search tree-search">
+            <label htmlFor={`${id}-q`}>Search modules by part number, name or nickname</label>
+            <span className="search-field">
+              <span className="big-search-icon">
+                <Icon name="search" size={20} />
               </span>
-              Filter by type
-            </h2>
-            <ul className="cat-list">
-              {[{ id: '', label: 'All modules' }, ...CATEGORIES].map((c) =>
-                c.id === '' || catCount(c.id) > 0 ? (
-                  <li key={c.id}>
-                    <button
-                      type="button"
-                      aria-current={cat === c.id}
-                      onClick={() => {
-                        setCat(c.id);
-                      }}
-                    >
-                      {c.label} ({catCount(c.id)})
-                    </button>
-                  </li>
-                ) : null,
-              )}
-            </ul>
-          </nav>
-          <ul className="card-grid" aria-label="Search results">
-            {groups.flatMap((g) =>
-              g.breakouts.map((b) => (
-                <li key={b.id} className="pick-card">
-                  <ItemPicture id={b.id} category={categoryOf(g.ic)} name={b.name} />
-                  <h2>{b.name}</h2>
+              <input
+                id={`${id}-q`}
+                type="search"
+                value={query}
+                autoComplete="off"
+                placeholder="e.g. BME280, RC522, relay"
+                aria-describedby={`${id}-hint`}
+                onChange={(e) => {
+                  setQuery(e.target.value);
+                  setFocusId(null);
+                }}
+              />
+            </span>
+            <span id={`${id}-hint`} className="muted">
+              Or open a type below. Press Enter to add when exactly one part matches.
+            </span>
+          </form>
+          <ul className="tree-root">
+            <li className="tree-cat">
+              <button
+                type="button"
+                className="tree-head"
+                aria-expanded={cat === ''}
+                onClick={() => {
+                  setCat('');
+                  setPart('');
+                  setFocusId(null);
+                }}
+              >
+                <span className="tree-caret" aria-hidden="true">
+                  {cat === '' ? '▾' : '▸'}
+                </span>
+                All parts <span className="tree-count">{catCount('')}</span>
+              </button>
+            </li>
+            {CATEGORIES.map((c) => {
+              const n = catCount(c.id);
+              if (n === 0) return null;
+              const open = cat === c.id;
+              return (
+                <li key={c.id} className="tree-cat">
+                  <button
+                    type="button"
+                    className="tree-head"
+                    aria-expanded={open}
+                    onClick={() => {
+                      setCat(open ? '' : c.id);
+                      setPart('');
+                      setFocusId(null);
+                    }}
+                  >
+                    <span className="tree-caret" aria-hidden="true">
+                      {open ? '▾' : '▸'}
+                    </span>
+                    {c.label} <span className="tree-count">{n}</span>
+                  </button>
+                  {open ? (
+                    <ul className="tree-sub">
+                      {found
+                        .filter((g) => inCat(g, c.id))
+                        .map((g) => {
+                          const pOpen = part === g.ic;
+                          return (
+                            <li key={g.ic}>
+                              <button
+                                type="button"
+                                className="tree-head tree-brand"
+                                aria-expanded={pOpen}
+                                onClick={() => {
+                                  setPart(pOpen ? '' : g.ic);
+                                  setFocusId(null);
+                                }}
+                              >
+                                <span className="tree-caret" aria-hidden="true">
+                                  {pOpen ? '▾' : '▸'}
+                                </span>
+                                {g.part} <span className="tree-count">{g.breakouts.length}</span>
+                              </button>
+                              {pOpen ? (
+                                <ul className="tree-leaves">
+                                  {g.breakouts.map((b, i) => (
+                                    <li key={b.id}>
+                                      <button
+                                        type="button"
+                                        className="tree-leaf"
+                                        aria-current={focusId === b.id ? 'true' : undefined}
+                                        onClick={() => {
+                                          setFocusId(b.id);
+                                        }}
+                                      >
+                                        {b.name}
+                                        {g.breakouts.length > 1
+                                          ? ` (${String(b.pins.length)}-pin)`
+                                          : ''}
+                                        <span className="visually-hidden">
+                                          , version {String(i + 1)} of {String(g.breakouts.length)}
+                                        </span>
+                                      </button>
+                                    </li>
+                                  ))}
+                                </ul>
+                              ) : null}
+                            </li>
+                          );
+                        })}
+                    </ul>
+                  ) : null}
+                </li>
+              );
+            })}
+          </ul>
+        </nav>
+
+        <div className="tree-main parts-main">
+          <PartsPanel data={data} onAnnounce={setAnnounce} />
+
+          {focused && focusedGroup ? (
+            <section className="board-focus" aria-label={`${focused.name} details`}>
+              <div className="board-focus-head">
+                <div className="board-focus-pic">
+                  <ItemPicture
+                    id={focused.id}
+                    category={categoryOf(focused.ic)}
+                    name={focused.name}
+                  />
+                </div>
+                <div>
+                  <h2>{focused.name}</h2>
                   <p className="muted maker">
-                    {g.part} · {b.vendor}
-                    {g.breakouts.length > 1
-                      ? ` · version ${String(g.breakouts.indexOf(b) + 1)} of ${String(g.breakouts.length)}`
+                    {focused.part} · {focused.vendor}
+                    {focusedGroup.breakouts.length > 1
+                      ? ` · version ${String(focusedGroup.breakouts.indexOf(focused) + 1)} of ${String(focusedGroup.breakouts.length)}`
                       : ''}
                   </p>
                   <Specs>
-                    <Spec label="Pins" value={String(b.pins.length)} />
-                    <Spec label="Type" value={CATEGORY_LABEL[categoryOf(g.ic)] ?? 'Other'} />
+                    <Spec label="Pins" value={String(focused.pins.length)} />
+                    <Spec label="Type" value={CATEGORY_LABEL[categoryOf(focused.ic)] ?? 'Other'} />
                   </Specs>
-                  {b.interfaces.length > 0 ? (
+                  {focused.interfaces.length > 0 ? (
                     <ul className="tags" aria-label="Interfaces">
-                      {b.interfaces.map((k) => (
+                      {focused.interfaces.map((k) => (
                         <li key={k} className="chip-tag">
                           {INTERFACE_LABELS[k] ?? k}
                         </li>
                       ))}
                     </ul>
                   ) : null}
-                  <p className="muted pin-names">{b.pins.join(', ')}</p>
+                  <h3 className="small-h">Pins printed on this board</h3>
+                  <ul className="tags" aria-label="Pins on this board">
+                    {focused.pins.map((p, i) => (
+                      <li key={`${p}${String(i)}`} className="chip-tag">
+                        {p}
+                      </li>
+                    ))}
+                  </ul>
+                  {focused.names.length > 1 ? (
+                    <p className="muted">Also sold as: {focused.names.slice(1).join('; ')}</p>
+                  ) : null}
+                  {focusedGroup.breakouts.length > 1 ? (
+                    <p className="muted">
+                      Several different boards carry this chip. Pick the one whose pins match the
+                      pins printed on yours.
+                    </p>
+                  ) : null}
                   <button
                     type="button"
+                    className="primary"
                     onClick={() => {
-                      add(b);
+                      add(focused);
                     }}
                   >
-                    Add
-                    <span className="visually-hidden"> {b.name}</span>
+                    Add to my project
+                    <span className="visually-hidden"> {focused.name}</span>
                   </button>
-                </li>
-              )),
-            )}
-          </ul>
+                </div>
+              </div>
+              <button
+                type="button"
+                className="secondary"
+                onClick={() => {
+                  setFocusId(null);
+                }}
+              >
+                Back to the list
+              </button>
+            </section>
+          ) : (
+            <>
+              <p role="status" className="muted">
+                {groups.length} part{groups.length === 1 ? '' : 's'} shown.
+              </p>
+              <ul className="card-grid" aria-label="Search results">
+                {groups.flatMap((g) =>
+                  g.breakouts.map((b) => (
+                    <li key={b.id} className="pick-card">
+                      <ItemPicture id={b.id} category={categoryOf(g.ic)} name={b.name} />
+                      <h2>{b.name}</h2>
+                      <p className="muted maker">
+                        {g.part} · {b.vendor}
+                        {g.breakouts.length > 1
+                          ? ` · version ${String(g.breakouts.indexOf(b) + 1)} of ${String(g.breakouts.length)}`
+                          : ''}
+                      </p>
+                      <Specs>
+                        <Spec label="Pins" value={String(b.pins.length)} />
+                        <Spec label="Type" value={CATEGORY_LABEL[categoryOf(g.ic)] ?? 'Other'} />
+                      </Specs>
+                      {b.interfaces.length > 0 ? (
+                        <ul className="tags" aria-label="Interfaces">
+                          {b.interfaces.map((k) => (
+                            <li key={k} className="chip-tag">
+                              {INTERFACE_LABELS[k] ?? k}
+                            </li>
+                          ))}
+                        </ul>
+                      ) : null}
+                      <p className="muted pin-names">{b.pins.join(', ')}</p>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          add(b);
+                        }}
+                      >
+                        Add
+                        <span className="visually-hidden"> {b.name}</span>
+                      </button>
+                      <button
+                        type="button"
+                        className="link-button"
+                        onClick={() => {
+                          setFocusId(b.id);
+                        }}
+                      >
+                        View details<span className="visually-hidden"> of {b.name}</span>
+                      </button>
+                    </li>
+                  )),
+                )}
+              </ul>
+            </>
+          )}
         </div>
-
-        <p aria-live="polite" className="visually-hidden">
-          {announce}
-        </p>
       </div>
-      <PartsPanel data={data} onAnnounce={setAnnounce} />
+      <p aria-live="polite" className="visually-hidden">
+        {announce}
+      </p>
     </div>
   );
 }

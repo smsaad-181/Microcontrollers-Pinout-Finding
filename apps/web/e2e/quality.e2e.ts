@@ -44,7 +44,7 @@ async function expectNoSeriousViolations(page: Page): Promise<void> {
 
 test.describe('axe', () => {
   // axe-core is injected as an inline script, which the app's strict CSP correctly blocks.
-  test.use({ bypassCSP: true });
+  test.use({ bypassCSP: true, reducedMotion: 'reduce' });
   test('real-browser axe-core: 0 serious or critical on all screens and the module cards', async ({
     page,
   }) => {
@@ -202,7 +202,7 @@ test('keyboard only: board, module, results', async ({ page }) => {
 });
 
 test.describe('axe, dark scheme', () => {
-  test.use({ bypassCSP: true, colorScheme: 'dark' });
+  test.use({ bypassCSP: true, colorScheme: 'dark', reducedMotion: 'reduce' });
   test('dark scheme: 0 serious or critical (contrast included) on the main screens', async ({
     page,
   }) => {
