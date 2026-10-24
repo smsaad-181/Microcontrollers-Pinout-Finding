@@ -36,7 +36,7 @@ jobs:
           body="Weekly link check found dead evidence links. The stored facts stay valid (each record keeps its file hash), but the source needs a new URL or an archive copy.
 
           \`\`\`
-          $(grep -E '^(DEAD)' links.txt)
+          $(grep -E '^(DEAD)' links.txt || true)
           \`\`\`"
           existing=$(gh issue list --state open --label evidence-links --json number --jq '.[0].number // empty')
           if [ -n "$existing" ]; then

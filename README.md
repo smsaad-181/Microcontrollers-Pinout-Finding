@@ -48,7 +48,7 @@ mini. Modules: BME280 (three board versions), DHT11 (two), MPU-6050, HC-SR04, MF
 ST7735S, ADS1115, relay boards, potentiometer, push button.
 
 A board marked **Datasheet required** has no pin map yet and the app will not choose pins for it.
-Each board shows a status: *fully verified*, *partially verified* or *datasheet required*.
+Each board shows a status (*fully verified*, *partially verified* or *datasheet required*). In v1.0 most boards are partially verified: some facts are still interim or missing, and the result flags each one.
 See [docs/provenance.md](docs/provenance.md) for what those mean.
 
 ## Build it yourself

@@ -2,7 +2,8 @@
 
 ## Known gaps (not blocking)
 
-- ESP32-S3-Mini and the DOIT 30/36-pin boards have no pin map ("datasheet required").
+- The DOIT 30/36-pin boards have no pin map ("datasheet required"). ESP32-S3-Mini is not in the catalog (no official source found).
+- No board is *fully verified* yet: 20 are partially verified. The Waveshare ESP32-S3-Pico VBUS "5 V" fact is marked verified but the cited image only labels the pin VBUS; re-check it.
 - NodeMCU-32S and LOLIN32 rest on secondary copies of the schematic. The two `wiki.wemos.cc` links
   (evidence `lolin32-sch-v1.0.0`, `lolin32-wiki`) are dead; the facts keep their file hashes and need
   a new URL or archive copy.
