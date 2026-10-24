@@ -1,0 +1,17 @@
+# DHT11 3-pin breakout module (generic, sold unbranded). NO source describing a 3-pin board was readable (no schematic, no vendor page with specs).
+hardwired: []
+ic: dht11
+id: dht11-3pin-module
+interfaces_exposed: [digital]
+level_shifter: { evidence: [], note: "No source for any 3-pin board; not known.", status: missing, value: null }
+notes: "Generic 3-pin DHT11 module (VCC, DATA, GND). No source was found for this board: whether it has an onboard DATA pull-up (many do, but that is NOT recorded), its value, an onboard regulator, and the PHYSICAL PIN ORDER (varies by seller; read the silkscreen) are all missing. The pins list names roles only, not the board order. Until a source is added the engine should treat the pull-up as unknown and the user should check the board. Sensor facts come from the dht11 IC record (secondary sources, interim)."
+pins:
+  - { label: VCC, maps_to: VCC }
+  - { label: DATA, maps_to: DATA }
+  - { label: GND, maps_to: GND }
+pullups:
+  - { line: DATA, value_ohm: { evidence: [], note: "No source for an onboard pull-up on 3-pin modules; presence and value unknown.", status: missing, unit: ohm, value: null } }
+regulator: { evidence: [], note: "Not known; no source.", status: missing, value: null }
+supply_current: { evidence: [adafruit-product-386#max-current], note: "Sensor figure only (2.5 mA max during conversion); board-level consumption (LED, resistor) unknown.", status: interim, unit: mA, value: { max: 2.5 } }
+variant_names: ["DHT11 module", "DHT11 3-pin module", "DHT11 breakout board"]
+vendor: generic

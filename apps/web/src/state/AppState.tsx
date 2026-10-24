@@ -14,6 +14,7 @@ import { citationIndex, type CitationLookup } from '../catalog/evidence';
 import { loadCatalog, type WebCatalog } from '../catalog/loadCatalog';
 import { createModuleSearch, type ModuleSearch } from '../catalog/search';
 import type { CatalogManifest, FetchLike, ManifestState } from '../manifest';
+import { browserFetch } from '../net';
 import {
   draftReducer,
   EMPTY_DRAFT,
@@ -97,8 +98,6 @@ export function useAppState(): AppStateValue {
   if (v === null) throw new Error('useAppState outside <AppStateProvider>');
   return v;
 }
-
-const browserFetch: FetchLike = (input, init) => fetch(input, init);
 
 function defaultServices(): AppServices {
   return {

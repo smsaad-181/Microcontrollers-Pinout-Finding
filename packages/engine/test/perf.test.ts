@@ -1,4 +1,4 @@
-// Performance (task 2b.11): wall time of `solveDetailed` over the 24 golden fixtures, warm.
+// Performance (task 2b.11): wall time of `solveDetailed` over the 25 golden fixtures, warm.
 // Target p95 <= 200 ms on a dev machine; the CI bound is generous (shared runners). Override with
 // PERF_P95_MS / PERF_MAX_MS; PERF_RUNS sets the repetitions per fixture (default 7).
 // `PERF_VERBOSE=1 pnpm --filter @pinout/engine test perf` prints the per-fixture table for perf.md.
@@ -20,7 +20,7 @@ const pct = (sorted: readonly number[], p: number): number =>
 describe('solve performance over the golden fixtures', () => {
   it('p95 and max stay within the CI bounds', () => {
     const fixtures = validateRoot(`${ROOT}catalog`).catalog.fixtures;
-    expect(fixtures.length).toBe(24);
+    expect(fixtures.length).toBe(25);
     for (const fx of fixtures) solveDetailed(index, fx.project); // warm-up (JIT, caches)
     const all: number[] = [];
     const rows: { id: string; median: number; max: number; nodes: number }[] = [];

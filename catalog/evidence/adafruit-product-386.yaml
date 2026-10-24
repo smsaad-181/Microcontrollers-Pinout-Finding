@@ -1,0 +1,41 @@
+# Evidence record: Adafruit product page 386, DHT11 basic temperature-humidity sensor (read 2026-10-24).
+# SECONDARY source: the Aosong DHT11 datasheet could not be obtained (aosong.com product page itemid=2257 has no datasheet link and its
+# download center needs a login; mirrors are not used, see sources/manual/README.md row 10). Product is discontinued at Adafruit.
+accessed: "2026-10-24"
+claims:
+  - id: "adafruit-product-386#supply-io"
+    locator: "Technical Details"
+    quote: "3 to 5V power and I/O"
+    supports: "DHT11 power and I/O range 3 V to 5 V (vendor statement, not a datasheet table)"
+  - id: "adafruit-product-386#max-current"
+    locator: "Technical Details"
+    quote: "2.5mA max current use during conversion (while requesting data)"
+    supports: "Maximum current 2.5 mA during conversion; standby current not stated"
+  - id: "adafruit-product-386#sampling-rate"
+    locator: "Technical Details"
+    quote: "No more than 1 Hz sampling rate (once every second)"
+    supports: "Minimum sampling interval 1 s"
+  - id: "adafruit-product-386#library-2s"
+    locator: "Product description"
+    quote: "you can only get new data from it once every 2 seconds"
+    supports: "The vendor's own library refreshes every 2 s; differs from the 1 Hz figure above, so the engine-safe reading is the slower one"
+  - id: "adafruit-product-386#pullup"
+    locator: "Product description"
+    quote: "Comes with a 4.7K or 10K resistor, which you will want to use as a pullup from the data pin to VCC."
+    supports: "Bare 4-pin sensor needs an external 4.7 k or 10 k pull-up from data to VCC (the resistor is a separate loose part, not on the sensor)"
+  - id: "adafruit-product-386#pins"
+    locator: "Technical Details"
+    quote: "4 pins with 0.1\" spacing"
+    supports: "The bare sensor has 4 pins at 0.1 inch pitch"
+doc_number: null
+id: "adafruit-product-386"
+kind: "board-guide"
+manual: false
+publisher: "Adafruit Industries"
+revision: null
+revision_date: null
+secondary: true
+sha256: null
+title: "DHT11 basic temperature-humidity sensor + extras (product 386)"
+url: "https://www.adafruit.com/product/386"
+url_original: null

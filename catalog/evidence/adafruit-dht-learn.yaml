@@ -1,0 +1,32 @@
+# Evidence record: Adafruit Learning System, "DHT11, DHT22 and AM2302 Sensors", pages Overview and Connecting (read 2026-10-24).
+# SECONDARY source (see adafruit-product-386 for why the Aosong datasheet is not used).
+accessed: "2026-10-24"
+claims:
+  - id: "adafruit-dht-learn#vcc-range"
+    locator: "Connecting to a DHTxx Sensor, pin list"
+    quote: "VCC - red wire Connect to 3.3 - 5V power."
+    supports: "Guide gives 3.3 V to 5 V for the VCC pin (general DHT11/DHT22 wiring text)"
+  - id: "adafruit-dht-learn#pin-order"
+    locator: "Connecting to a DHTxx Sensor, pin list"
+    quote: "Simply ignore pin 3, it's not used."
+    supports: "Bare 4-pin sensor: pin 1 VCC, pin 2 data out, pin 3 not connected, pin 4 ground"
+  - id: "adafruit-dht-learn#pullup-10k"
+    locator: "Connecting to a DHTxx Sensor"
+    quote: "place a 10 Kohm resistor between VCC and the data pin, to act as a medium-strength pull up"
+    supports: "External 10 k pull-up between VCC and data for the bare sensor"
+  - id: "adafruit-dht-learn#single-pin"
+    locator: "Overview, DHT11 vs DHT22"
+    quote: "Both use a single digital pin and are 'sluggish' in that you can't query them more than once every second or two."
+    supports: "Single digital data pin; minimum query interval one to two seconds"
+doc_number: null
+id: "adafruit-dht-learn"
+kind: "board-guide"
+manual: false
+publisher: "Adafruit Industries"
+revision: null
+revision_date: null
+secondary: true
+sha256: null
+title: "DHT11, DHT22 and AM2302 Sensors (Adafruit Learning System)"
+url: "https://learn.adafruit.com/dht"
+url_original: null
