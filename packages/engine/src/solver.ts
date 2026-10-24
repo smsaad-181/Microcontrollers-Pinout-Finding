@@ -1093,7 +1093,7 @@ function solveOnce(index: CatalogIndex, project: Project, options: SolveOptions)
         [],
         [
           {
-            level: 'error',
+            level: 'critical',
             code: 'DATASHEET_REQUIRED',
             message: `${project.board} has no pin map in the catalog: a datasheet or schematic is required before pins can be chosen`,
             pads: [],

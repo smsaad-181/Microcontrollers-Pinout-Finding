@@ -73,7 +73,8 @@ export function evidenceUrls(): Set<string> {
 
 export async function chooseWorkedBoard(page: Page): Promise<void> {
   await page.goto('./#/board');
-  await page.getByRole('radio', { name: /ESP32-DevKitC.*esp32-devkitc-32e/s }).check();
+  await page.getByRole('button', { name: /Use this board ESP32-DevKitC V4/i }).click();
+  await page.getByRole('radio', { name: /ESP32-WROOM-32E/ }).check();
   await expect(page.getByRole('heading', { name: 'Selected' })).toBeVisible();
 }
 

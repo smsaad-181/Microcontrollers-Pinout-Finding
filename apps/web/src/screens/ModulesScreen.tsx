@@ -1,5 +1,7 @@
 import { useEffect, useId, useRef, useState, type SyntheticEvent } from 'react';
 import type { BreakoutOption, ModuleGroup } from '../catalog/search';
+import { CATEGORIES, categoryOf } from '../catalog/categories';
+import { ModuleArt } from '../components/art';
 import { INTERFACE_LABELS } from '../results/explain';
 import { hrefFor } from '../route';
 import { useAppState, type LoadedCatalog } from '../state/AppState';
@@ -98,8 +100,17 @@ function ModulePicker({ data }: { data: LoadedCatalog }) {
   const [query, setQuery] = useState('');
   const [asking, setAsking] = useState<ModuleGroup | null>(null);
   const [announce, setAnnounce] = useState('');
+  const [cat, setCat] = useState('');
   const id = useId();
-  const groups = data.search.search(query);
+  const allGroups: ModuleGroup[] = [];
+  for (const o of data.search.all) {
+    const g = allGroups.find((x) => x.ic === o.ic);
+    if (g) g.breakouts.push(o);
+    else allGroups.push({ ic: o.ic, part: o.part, breakouts: [o] });
+  }
+  const found = query.trim() === '' ? allGroups : data.search.search(query);
+  const groups = found.filter((g) => cat === '' || categoryOf(g.ic) === cat);
+  const catCount = (c: string) => found.filter((g) => c === '' || categoryOf(g.ic) === c).length;
 
   const add = (b: BreakoutOption) => {
     dispatch({ type: 'add-module', breakout: b.id, base: b.ic });
@@ -119,7 +130,9 @@ function ModulePicker({ data }: { data: LoadedCatalog }) {
   return (
     <>
       <form role="search" onSubmit={onSubmit} className="search">
-        <label htmlFor={`${id}-q`}>Search modules by part number, name or nickname</label>
+        <label htmlFor={`${id}-q`}>
+          Search modules by part number, name or nickname (or pick a category)
+        </label>
         <input
           id={`${id}-q`}
           type="search"
@@ -137,36 +150,56 @@ function ModulePicker({ data }: { data: LoadedCatalog }) {
       </form>
 
       <p role="status" className="muted">
-        {query.trim() === ''
-          ? `${data.search.all.length} modules in the catalog.`
-          : `${groups.length} part${groups.length === 1 ? '' : 's'} found.`}
+        {groups.length} part{groups.length === 1 ? '' : 's'} shown.
       </p>
 
-      {groups.length > 0 ? (
-        <ul className="results-list" aria-label="Search results">
-          {groups.map((g) => (
-            <li key={g.ic}>
-              <span>
-                <strong>{g.part}</strong>{' '}
-                <span className="muted">
+      <div className="module-layout">
+        <nav aria-label="Module categories">
+          <ul className="cat-list">
+            {[{ id: '', label: 'All modules' }, ...CATEGORIES].map((c) =>
+              c.id === '' || catCount(c.id) > 0 ? (
+                <li key={c.id}>
+                  <button
+                    type="button"
+                    aria-current={cat === c.id}
+                    onClick={() => {
+                      setCat(c.id);
+                    }}
+                  >
+                    {c.label} ({catCount(c.id)})
+                  </button>
+                </li>
+              ) : null,
+            )}
+          </ul>
+        </nav>
+        <ul className="card-grid" aria-label="Search results">
+          {groups.map((g) => {
+            const first = g.breakouts[0];
+            const name = g.breakouts.length === 1 ? (first?.name ?? g.part) : g.part;
+            return (
+              <li key={g.ic} className="pick-card">
+                <ModuleArt category={categoryOf(g.ic)} name={name} />
+                <h3>{name}</h3>
+                <p className="muted">
                   {g.breakouts.length === 1
-                    ? (g.breakouts[0]?.name ?? '')
-                    : `${g.breakouts.length} board variants`}
-                </span>
-              </span>
-              <button
-                type="button"
-                onClick={() => {
-                  pick(g);
-                }}
-              >
-                {g.breakouts.length === 1 ? 'Add' : 'Choose variant…'}
-                <span className="visually-hidden"> {g.part}</span>
-              </button>
-            </li>
-          ))}
+                    ? `${first?.vendor ?? ''} · ${(first?.interfaces ?? []).map((k) => INTERFACE_LABELS[k] ?? k).join(', ')}`
+                    : `${g.breakouts.length} board versions`}
+                </p>
+                <button
+                  type="button"
+                  onClick={() => {
+                    pick(g);
+                  }}
+                >
+                  {g.breakouts.length === 1 ? 'Add' : 'Choose variant…'}
+                  <span className="visually-hidden"> {g.part}</span>
+                </button>
+              </li>
+            );
+          })}
         </ul>
-      ) : null}
+      </div>
 
       {asking ? (
         <VariantPrompt

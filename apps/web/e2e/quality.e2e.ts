@@ -115,7 +115,7 @@ test('offline reload serves the app and the worked example from the cache', asyn
   await expect(page.getByRole('heading', { level: 1, name: 'Results' })).toBeVisible();
   await expect(page.getByText('Pins assigned')).toBeVisible({ timeout: SOLVE_TIMEOUT });
   await page.goto('./#/board');
-  await expect(page.getByRole('radio', { name: /ESP32-DevKitC/ }).first()).toBeVisible();
+  await expect(page.getByRole('button', { name: /ESP32-DevKitC/ }).first()).toBeVisible();
   await context.setOffline(false);
 });
 
@@ -169,13 +169,15 @@ test('keyboard only: board, module, results', async ({ page }) => {
   await page.keyboard.press('Enter');
   await expect(page.getByRole('heading', { level: 1, name: 'Choose your board' })).toBeFocused();
 
-  // Radio group: Tab lands in the group, arrows or Space choose.
+  // Board card button opens the version radios; Tab lands in the group, arrows or Space choose.
+  await tabTo('Use this board ESP32-DevKitC V4');
+  await page.keyboard.press('Enter');
   await tabTo({ input: 'radio' });
   for (let i = 0; i < 12; i++) {
     const label = await page.evaluate(
       () => (document.activeElement as HTMLInputElement).closest('label')?.textContent ?? '',
     );
-    if (/ESP32-DevKitC.*esp32-devkitc-32e/s.test(label)) break;
+    if (/ESP32-WROOM-32E/.test(label)) break;
     await page.keyboard.press('ArrowDown');
   }
   await page.keyboard.press('Space');

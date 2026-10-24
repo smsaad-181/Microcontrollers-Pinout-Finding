@@ -23,7 +23,8 @@ async function solveWorkedExample(page: Page): Promise<Record<string, string>> {
   await page.goto(SINGLE_FILE);
   await expect(page.getByRole('heading', { level: 1 }).first()).toBeVisible();
   await page.getByRole('link', { name: /Start: choose a board/ }).click();
-  await page.getByRole('radio', { name: /ESP32-DevKitC.*esp32-devkitc-32e/s }).check();
+  await page.getByRole('button', { name: /Use this board ESP32-DevKitC V4/i }).click();
+  await page.getByRole('radio', { name: /ESP32-WROOM-32E/ }).check();
   await expect(page.getByRole('heading', { name: 'Selected' })).toBeVisible();
   await page.goto(`${SINGLE_FILE}#/modules`);
   await addModule(page, 'bme280', /VCC, GND, SCL, SDA, CSB, SDO/);
@@ -94,7 +95,7 @@ test('without Web Workers the engine runs on the main thread with the same resul
 test('hash routes load directly', async ({ page }) => {
   const seen = watch(page);
   await page.goto(`${SINGLE_FILE}#/board`);
-  await expect(page.getByRole('radio', { name: /ESP32-DevKitC/ }).first()).toBeVisible();
+  await expect(page.getByRole('button', { name: /ESP32-DevKitC/ }).first()).toBeVisible();
   expectNoRequests(seen.requests);
   expect(seen.errors).toEqual([]);
 });
