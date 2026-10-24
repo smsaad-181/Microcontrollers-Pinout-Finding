@@ -83,11 +83,11 @@ Legend: `[x]` done · `[~]` in progress · `[-]` deferred (needs GitHub) · `[ ]
 - [x] 3.12 · Disclaimer + "how to verify" panel on every result. · _ui-developer_
 
 **Phase 4**
-- [ ] 4.1 · Research the canonical library for each MVP module per framework (maintainer repo, vers… · _hardware-researcher_
-- [ ] 4.2 · Template engine in packages/codegen · _engine-developer_
-- [ ] 4.3 · Templates · _engine-developer_
-- [ ] 4.4 · CI compile check · _ci-pages-engineer_
-- [ ] 4.5 · UI: code tab with copy/download, library install notes. · _ui-developer_
+- [-] 4.1 · Research the canonical library for each MVP module per framework (maintainer repo, vers… · _hardware-researcher_
+- [-] 4.2 · Template engine in packages/codegen · _engine-developer_
+- [-] 4.3 · Templates · _engine-developer_
+- [-] 4.4 · CI compile check · _ci-pages-engineer_
+- [-] 4.5 · UI: code tab with copy/download, library install notes. · _ui-developer_
 
 **Phase 5**
 - [ ] 5.1 · links.yml · _ci-pages-engineer_
@@ -216,3 +216,4 @@ None of these block Phase 0. Re-check all three when a session is started inside
 
 | 2026-10-23 | 2b | Phase 2b done: rules R1-R8, composer, selector, CSP solver, unsat explainer, traces; 24/24 golden fixtures; property tests (1000 runs), rules mutation 95.75%, perf p95 58 ms; gate found 2 lock bugs + missing MCU-pin capacitance in R3 (all fixed); phase-validator PASS after fixes. Later list in docs/validation/phase-2b/phase-validator.md. |
 | 2026-10-24 | 3 | Phase 3 done: web app (board picker, module search + variant prompt, worker solve, results with citations/traces/unsat, SVG header, save/export/print, share links, offline PWA); e2e 10/10, axe 0 issues, app 169 kB gz; phase-validator PASS (0 Critical/Major, 9 minor in docs/validation/phase-3/phase-validator.md). Later: share-link decompress cap, GPIO-3.11 citation, rails override needs engine change. |
+| 2026-10-24 | 4 | Phase 4 (code generation) SKIPPED by owner: pin finder only. Added instead: DHT11 in catalog + single-file offline HTML build. |
