@@ -1,6 +1,6 @@
 # Bench check (needs you and a real board)
 
-Goal: prove on real hardware that two warnings the app gives are true. Takes about 20 minutes. Record
+Goal: prove on real hardware that two warnings the app gives are true. Takes about 20 minutes. The expected pins below are what the app chose on 2026-10-24. Record
 what you see in `docs/validation/phase-5/bench.md` (template at the bottom). Do not skip a step you
 cannot do: write "not done".
 
@@ -29,19 +29,22 @@ cannot do: write "not done".
 If the board still boots with the resistor in place, note which board and module you used (some modules
 have the flash voltage burned into an eFuse). That is a useful result, not a failure.
 
-## Test 2: I2C pull-ups (R3)
+## Test 2: I2C wiring and pull-ups (R3)
 
-1. In the app add one **BME280 module** (the 4-pin GY-BME280) on the DevKitC and press **Find pins**.
-   Write down the pull-up message (value, bus speed, pass or warning).
-2. Wire the BME280 (VCC 3V3, GND, SDA GPIO21, SCL GPIO22) and run any BME280 sketch. Note: reads fine
-   or not.
-3. If you have a second I2C module, add it in the app and see whether the pull-up message changes. Wire
-   it too and note whether both still read.
+1. In the app add one **GY-BME280 (4-pin)** on the DevKitC V4 (WROOM) and press **Find pins**. The app
+   should choose **SCL = GPIO16, SDA = GPIO17** and say (caution) that the module's pull-up value is
+   not documented, so R3 cannot be verified. Write down what you see.
+2. Wire the BME280 (VIN 3V3, GND, SCL to GPIO16, SDA to GPIO17) and run any BME280 sketch with those
+   two pins (`Wire.begin(17, 16)`: SDA first). Note: reads fine or not.
+3. Optional: add a GY-521 (MPU-6050) in the app. It shares the same two pins. Wire both on the same
+   bus and note whether both still read. Many boards carry 4.7 kOhm pull-ups each; you can measure the
+   resistance between SDA and 3V3 with a multimeter (power off) and write it down. That number is what
+   the app is missing.
 
 ## Test 3: DHT11 pin
 
-1. In the app add a **DHT11** and note the data pin the app chose.
-2. Wire DHT11 data to that pin (VCC 3V3, GND) and run a DHT11 sketch with that pin number. Note: reads
+1. In the app add the **DHT11 3-pin module**. Expected data pin: **GPIO17**. Write down the pin.
+2. Wire DHT11 data to GPIO17 (VCC 3V3, GND) and run a DHT11 sketch with pin 17. Note: reads
    temperature and humidity or not.
 
 ## Result template (`bench.md`)

@@ -1,0 +1,420 @@
+/* ======================================================================
+   Theme v2: "solder mask and copper". Dark ink header, paper background, one green for actions,
+   copper only for the current step. Colours meet WCAG AA in both schemes (axe checks both).
+   Loaded after styles.css, so it overrides the base look.
+   ====================================================================== */
+:root {
+  --bg: #f4f2ec;
+  --fg: #14201d;
+  --muted: #3f4d49;
+  --card-bg: #ffffff;
+  --tile: #ebe8df;
+  --border: #8d9993;
+  --line: #cfd3cb;
+  --link: #0a5c49;
+  --focus: #0a5c49;
+  --btn-bg: #0a5c49;
+  --btn-fg: #ffffff;
+  --ink: #0c2622;
+  --ink-fg: #e6efeb;
+  --ink-muted: #b7cbc4;
+  --copper: #e9a23b;
+  --font-display: 'Bahnschrift', 'Segoe UI Variable Display', 'Segoe UI', system-ui, sans-serif;
+  --font-mono: ui-monospace, 'Cascadia Mono', 'SF Mono', Consolas, monospace;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0d1513;
+    --fg: #e5ebe8;
+    --muted: #a8b8b2;
+    --card-bg: #151f1c;
+    --tile: #1b2824;
+    --border: #5d706a;
+    --line: #2b3a35;
+    --link: #6fd6b8;
+    --focus: #6fd6b8;
+    --btn-bg: #2fd0a4;
+    --btn-fg: #04201a;
+    --ink: #08110f;
+  }
+}
+
+body {
+  background: var(--bg);
+}
+
+h1,
+h2 {
+  font-family: var(--font-display);
+  letter-spacing: -0.01em;
+}
+
+h1 {
+  font-size: clamp(1.9rem, 1.2rem + 2.4vw, 2.8rem);
+  line-height: 1.1;
+  font-weight: 700;
+}
+
+h2 {
+  font-size: 1.2rem;
+  font-weight: 650;
+}
+
+main {
+  max-width: 76rem;
+  padding: 2.25rem 1.25rem 4rem;
+}
+
+/* ---- header: dark ink bar with step pills ---- */
+.site-header {
+  background: var(--ink);
+  color: var(--ink-fg);
+  border-bottom: 3px solid var(--copper);
+  padding: 0.65rem 1.25rem;
+  gap: 0.5rem 1.75rem;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  letter-spacing: 0.01em;
+  color: var(--ink-fg);
+  text-decoration: none;
+}
+
+.brand::before {
+  content: '';
+  width: 1.15rem;
+  height: 1.15rem;
+  background: radial-gradient(circle, var(--copper) 0 2px, transparent 2.5px) 0 0 / 0.384rem
+    0.384rem;
+  border: 1.5px solid var(--copper);
+  border-radius: 3px;
+}
+
+.brand:hover {
+  text-decoration: none;
+  color: #fff;
+}
+
+.steps ol {
+  gap: 0.35rem;
+}
+
+.steps a {
+  display: inline-block;
+  padding: 0.3rem 0.8rem;
+  border-radius: 999px;
+  color: var(--ink-muted);
+  text-decoration: none;
+  transition: background-color 0.12s ease;
+}
+
+.steps a:hover {
+  background: rgb(255 255 255 / 12%);
+  color: #fff;
+}
+
+.steps a[aria-current='step'] {
+  background: var(--copper);
+  color: #1b1405;
+  font-weight: 700;
+}
+
+.step-number {
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+}
+
+.site-header :focus-visible {
+  outline-color: #ffffff;
+}
+
+.site-header .storage-status {
+  margin: 0 0 0 auto;
+  color: var(--ink-muted);
+}
+
+/* ---- buttons and inputs ---- */
+button,
+.button {
+  border-radius: 8px;
+  padding: 0.45rem 1rem;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  color: var(--fg);
+  font-weight: 600;
+  transition:
+    border-color 0.12s ease,
+    background-color 0.12s ease;
+}
+
+button:hover:not(:disabled),
+.button:hover {
+  border-color: var(--link);
+  background: var(--tile);
+}
+
+.button,
+.button:hover,
+.pick-card button[aria-pressed='true'],
+.pick-card button[aria-pressed='true']:hover,
+.chip.is-on,
+.cat-list button[aria-current='true'],
+.cat-list button[aria-current='true']:hover {
+  background: var(--btn-bg);
+  border-color: var(--btn-bg);
+  color: var(--btn-fg);
+  outline: none;
+}
+
+.button:hover {
+  filter: brightness(1.1);
+}
+
+input[type='search'],
+select {
+  padding: 0.55rem 0.7rem;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--card-bg);
+}
+
+input[type='search']:focus-visible,
+select:focus-visible {
+  outline-offset: 0;
+}
+
+/* ---- cards and pick-cards ---- */
+.card {
+  background: var(--card-bg);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 1.25rem 1.5rem;
+}
+
+.pick-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  background: var(--card-bg);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 0.85rem;
+  transition: border-color 0.12s ease;
+}
+
+.pick-card:hover {
+  border-color: var(--link);
+}
+
+.pick-card.is-selected {
+  outline: none;
+  border-color: var(--btn-bg);
+  box-shadow: 0 0 0 2px var(--btn-bg);
+}
+
+.pick-card .photo,
+.pick-card .art {
+  height: 140px;
+  width: 100%;
+  margin-bottom: 0.5rem;
+  background: #ffffff;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 4px;
+}
+
+.pick-card h2 {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  line-height: 1.25;
+}
+
+.pick-card button {
+  margin-top: auto;
+  align-self: flex-start;
+}
+
+.pick-card .badge {
+  align-self: flex-start;
+  margin: 0.25rem 0;
+}
+
+.badge,
+.level {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  padding: 0.05rem 0.5rem;
+  border-radius: 999px;
+}
+
+.card-grid {
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+}
+
+/* ---- sidebars and chips ---- */
+.cat-list {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--card-bg);
+}
+
+.cat-list button {
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  border-radius: 0;
+  background: transparent;
+  padding: 0.65rem 0.9rem;
+  font-weight: 500;
+}
+
+.cat-list button:hover:not(:disabled) {
+  background: var(--tile);
+}
+
+.cat-list button[aria-current='true'] {
+  font-weight: 700;
+}
+
+.cat-sub button {
+  padding-left: 1.6rem;
+}
+
+/* ---- tables ---- */
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+th {
+  text-align: left;
+  background: var(--tile);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  padding: 0.5rem 0.75rem;
+}
+
+td {
+  padding: 0.55rem 0.75rem;
+  border-bottom: 1px solid var(--line);
+}
+
+tbody tr:hover {
+  background: var(--tile);
+}
+
+/* ---- home ---- */
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+  gap: 2.5rem;
+  align-items: center;
+  padding: 1rem 0 2.5rem;
+}
+
+.hero h1 {
+  font-size: clamp(2.3rem, 1.4rem + 3.6vw, 3.9rem);
+  margin-bottom: 1rem;
+}
+
+.hero .lede {
+  font-size: 1.15rem;
+  max-width: 34rem;
+  color: var(--muted);
+}
+
+.hero-art {
+  width: 100%;
+  height: auto;
+  color: var(--link);
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+.hero-actions .button {
+  padding: 0.75rem 1.4rem;
+  font-size: 1.05rem;
+}
+
+.intro-steps {
+  list-style: none;
+  counter-reset: s;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  padding: 0;
+  margin: 0 0 2rem;
+  border-top: 2px solid var(--fg);
+}
+
+.intro-steps li {
+  counter-increment: s;
+  padding: 1rem 1.25rem 0.5rem 0;
+  font-weight: 500;
+}
+
+.intro-steps li::before {
+  content: '0' counter(s);
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--link);
+  margin-bottom: 0.25rem;
+}
+
+.home-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+}
+
+.home-grid .card {
+  margin-top: 0;
+}
+
+.trust {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 1.25rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.trust li {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  padding: 0.25rem 0.7rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--card-bg);
+}
+
+@media (max-width: 760px) {
+  .hero,
+  .home-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .intro-steps {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .site-header .storage-status {
+    margin-left: 0;
+  }
+}
