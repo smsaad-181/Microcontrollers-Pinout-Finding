@@ -1083,6 +1083,27 @@ function solveOnce(index: CatalogIndex, project: Project, options: SolveOptions)
   if (composed.status === 'needs_variant') return base('needs_variant', composed.candidates);
   if (composed.status === 'error') throw new Error(`${composed.code}: ${composed.message}`);
   const view = composed.view;
+  if (view.pins.length === 0) {
+    // A board without a pin map (datasheet-required stub) can never yield a recommendation.
+    return {
+      recommendation: unsatRecommendation(
+        options,
+        {},
+        ['board:no-pin-map'],
+        [],
+        [
+          {
+            level: 'error',
+            code: 'DATASHEET_REQUIRED',
+            message: `${project.board} has no pin map in the catalog: a datasheet or schematic is required before pins can be chosen`,
+            pads: [],
+            evidence: [],
+          },
+        ],
+      ),
+      stats,
+    };
+  }
   const chip = index.chip(view.variant.chip);
   const board = index.board(project.board);
   if (!chip || !board) throw new Error(`unknown chip or board for ${project.board}`);

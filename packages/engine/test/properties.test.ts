@@ -27,9 +27,12 @@ const SLOW = 15 * 60_000;
 
 // ---------- scenario generator ----------
 
-const BOARDS = catalog.boards.flatMap((b) =>
-  b.variants.map((v) => ({ ref: `${b.id}@${b.revision}`, variant: v.id })),
+// Stub boards (status datasheet-required, no pin map) have no pads to pick; they are excluded here
+// and covered by a dedicated test at the end of the file (never ok).
+const ALL_BOARDS = catalog.boards.flatMap((b) =>
+  b.variants.map((v) => ({ ref: `${b.id}@${b.revision}`, variant: v.id, status: b.status })),
 );
+const BOARDS = ALL_BOARDS.filter((b) => b.status !== 'datasheet-required');
 const BREAKOUTS = catalog.breakouts.map((b) => b.id).sort();
 const KINDS = new Map(catalog.breakouts.map((b) => [b.id, [...b.interfaces_exposed] as string[]]));
 
@@ -509,4 +512,22 @@ describe('independent oracle (potentiometers need distinct ADC pads)', () => {
     },
     SLOW,
   );
+});
+
+describe('boards without a pin map', () => {
+  it('never solve ok (datasheet required)', () => {
+    const stubs = ALL_BOARDS.filter((b) => b.status === 'datasheet-required');
+    expect(stubs.length).toBeGreaterThan(0);
+    for (const b of stubs) {
+      const out = solveDetailed(index, {
+        board: b.ref,
+        variant: b.variant,
+        wifi: false,
+        modules: [],
+        locked: [],
+        reserved: [],
+      });
+      expect(out.recommendation.status).not.toBe('ok');
+    }
+  });
 });
