@@ -23,7 +23,8 @@ function BoardPicker({ data }: { data: LoadedCatalog }) {
   const scope = searching
     ? data.boards
     : data.boards.filter(
-        (b) => platformOf(b) === activePlatform && (vendor === '' || shortVendor(b.vendor) === vendor),
+        (b) =>
+          platformOf(b) === activePlatform && (vendor === '' || shortVendor(b.vendor) === vendor),
       );
   const cards = filterCards(scope, { query, vendor: '', family: '' });
   const where = vendor === '' ? activePlatform : vendor;
